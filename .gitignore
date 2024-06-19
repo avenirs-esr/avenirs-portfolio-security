@@ -63,3 +63,6 @@ replay_pid*
 
 # Node & npm
 node_modules
+
+# Sensitive files
+oidc-settings.json

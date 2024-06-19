@@ -22,7 +22,7 @@ public class AvenirsPortfolioSecurityApplication {
 	@EventListener(ApplicationReadyEvent.class)
 	public void testRoleRepo(){
 		LOGGER.warn("!!!!!!!! testRoleRepo !!!!!!!!");
-		this.roleRepo.fetchAllRoles();
+	//	this.roleRepo.fetchAllRoles();
 		
 	}
 

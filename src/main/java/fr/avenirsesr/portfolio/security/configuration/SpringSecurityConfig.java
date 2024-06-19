@@ -34,6 +34,10 @@ public class SpringSecurityConfig {
 		return httpSecurity.authorizeHttpRequests(auth -> { 
 		auth.requestMatchers("/admin").hasRole("ADMIN");
 		auth.requestMatchers("/user").hasRole("USER");
+		auth.requestMatchers("/roles").permitAll();
+		auth.requestMatchers("/oidc-callback").permitAll();
+		auth.requestMatchers("/oidc-callback/redirect").permitAll();
+//		auth.anyRequest().permitAll();
 		auth.anyRequest().authenticated();
 		}).formLogin(Customizer.withDefaults()).build();
 	}
