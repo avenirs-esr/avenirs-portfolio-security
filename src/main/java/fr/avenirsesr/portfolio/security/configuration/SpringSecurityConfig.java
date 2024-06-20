@@ -12,6 +12,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,15 +32,20 @@ public class SpringSecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		//return httpSecurity.build();
-		return httpSecurity.authorizeHttpRequests(auth -> { 
-		auth.requestMatchers("/admin").hasRole("ADMIN");
-		auth.requestMatchers("/user").hasRole("USER");
+    	//httpSecurity.csrf(AbstractHttpConfigurer::disable);
+		return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(auth -> { 
+//		auth.requestMatchers("/admin").hasRole("ADMIN");
+//		auth.requestMatchers("/user").hasRole("USER");
 		auth.requestMatchers("/roles").permitAll();
 		auth.requestMatchers("/oidc-callback").permitAll();
 		auth.requestMatchers("/oidc-callback/redirect").permitAll();
-//		auth.anyRequest().permitAll();
-		auth.anyRequest().authenticated();
-		}).formLogin(Customizer.withDefaults()).build();
+		auth.requestMatchers("/oidc-callback/validate").permitAll();
+		auth.requestMatchers("/oidc-callback/validate2").permitAll();
+		auth.anyRequest().permitAll();
+	//	auth.anyRequest().authenticated();
+		}).
+				formLogin(Customizer.withDefaults()).build();
 	}
     
     @Bean

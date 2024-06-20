@@ -16,24 +16,8 @@ public class AvenirsPortfolioSecurityApplication {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(AvenirsPortfolioSecurityApplication.class);
 	
-	@Autowired()
-	private RoleRepository roleRepo;
-	
-	@EventListener(ApplicationReadyEvent.class)
-	public void testRoleRepo(){
-		LOGGER.warn("!!!!!!!! testRoleRepo !!!!!!!!");
-	//	this.roleRepo.fetchAllRoles();
-		
-	}
-
-	
-	public static void main(String[] args) {
+		public static void main(String[] args) {
+			LOGGER.info("Starting Avenirs Portfolio Securiy Module");
 		ApplicationContext app = SpringApplication.run(AvenirsPortfolioSecurityApplication.class, args);
-		
-		
-
 	}
-	
-	public void foo() {}
-
 }
