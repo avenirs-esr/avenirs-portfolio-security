@@ -66,3 +66,6 @@ node_modules
 
 # Sensitive files
 oidc-settings.json
+
+# Local Spring boot settings
+src/main/resources/env.properties
