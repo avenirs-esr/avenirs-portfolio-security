@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.authentication.controllers;
+package fr.avenirsesr.portfolio.security.controllers;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import fr.avenirsesr.portfolio.security.authentication.services.AuthenticationService;
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
+import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**

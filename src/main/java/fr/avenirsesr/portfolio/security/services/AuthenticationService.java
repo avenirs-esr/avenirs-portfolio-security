@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.avenirsesr.portfolio.security.authentication.services;
+package fr.avenirsesr.portfolio.security.services;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
