@@ -30,7 +30,7 @@ public class AuthenticationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
 	
 	/** Authentication service. */
-	@Autowired
+	@Autowired 
 	private AuthenticationService authenticationService;
 	
 	/**
@@ -49,7 +49,7 @@ public class AuthenticationController {
 	}
 		
 	/**
-	 * Perform the redirection after the access token is retrieved.
+	 * Performs the redirection after the access token is retrieved.
 	 * @param forwardHost Header to determine the host.
 	 * @param response The servlet response instance, used to perform a redirection.
 	 * @throws IOException
@@ -64,7 +64,7 @@ public class AuthenticationController {
 	/**
 	 * Access token introspection end point. 
 	 * @param token The token to introspect.
-	 * @return
+	 * @return The response of the OIDC provider.
 	 * @throws IOException
 	 */
 	@PostMapping("${avenirs.authentication.oidc.callback.profile}")
@@ -82,8 +82,7 @@ public class AuthenticationController {
 	/**
 	 * Access token introspection end point. 
 	 * @param token The token to introspect.
-	 * @param response The servlet response (used to redirect)
-	 * @return
+	 * @return The OIDC Provider response.
 	 * @throws IOException
 	 */
 	@PostMapping("${avenirs.authentication.oidc.callback.introspect}")
