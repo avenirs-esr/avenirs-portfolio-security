@@ -1,4 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,15 @@ public class RBACActionService {
 	public RBACAction getAction(final Long actionId){
 		LOGGER.trace("getAction");
 		return this.actionRepository.findById(actionId).get();
+	}
+	
+	/**
+	 * Find an action by its name.
+	 * @param name The name of the action to retrieve.
+	 * @return The action if found (Optional).
+	 */
+	public Optional<RBACAction> getAction(final String name) {
+		return this.actionRepository.findByName(name);
 	}
 	
 	/**
