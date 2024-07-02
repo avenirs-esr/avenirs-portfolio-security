@@ -22,6 +22,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SpringSecurityConfig {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpringSecurityConfig.class);
+	
+	@Value("${avenirs.accessControl.roles}")
+	private String roles;
 
 	/** OIDC callback URI.*/
 	@Value("${avenirs.authentication.oidc.callback}")
@@ -36,12 +39,15 @@ public class SpringSecurityConfig {
 		return httpSecurity.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> { 
 		LOGGER.info("filterChain, Configuring Spring security");
-		LOGGER.info("filterChain, Permit All for authentication callbacks:")	;	
+		LOGGER.info("filterChain, Permit All for:")	;	
+		LOGGER.info("filterChain, roles: " + roles);	
 		LOGGER.info("filterChain, oidcCallback: " + oidcCallback);	
 		LOGGER.info("filterChain, oidcRedirect: " + oidcRedirect);	
+		auth.requestMatchers(roles).permitAll();
 		auth.requestMatchers(oidcCallback).permitAll();
 		auth.requestMatchers(oidcRedirect).permitAll();
-		auth.anyRequest().authenticated();
+		auth.anyRequest().permitAll();
+//		auth.anyRequest().authenticated();
 		}).formLogin(Customizer.withDefaults()).build();
 	}
     

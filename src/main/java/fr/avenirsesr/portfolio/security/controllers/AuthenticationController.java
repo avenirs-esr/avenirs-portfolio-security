@@ -43,7 +43,7 @@ public class AuthenticationController {
 	@GetMapping("${avenirs.authentication.oidc.callback}")
 	public void oidcCallback(@RequestHeader(value="x-forwarded-host") Optional<String> forwardHost,
 			HttpServletResponse response,
-			@RequestParam("code") Optional<String> code) throws IOException {
+			@RequestParam Optional<String> code) throws IOException {
 		LOGGER.trace("oidcCallback");
 		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost.orElse("localhost"), code.orElse("NO_PROVIDED_CODE")));
 	}

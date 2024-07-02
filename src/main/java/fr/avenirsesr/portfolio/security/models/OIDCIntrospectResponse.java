@@ -11,7 +11,13 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OIDCIntrospectResponse {
+	
+	/** The access token. */
 	private String token;
+	
+	/** Flag to determine if the account exists and is active. */
 	private boolean active;
+	
+	/** Id of the user. */
 	private String uniqueSecurityName;
 }
