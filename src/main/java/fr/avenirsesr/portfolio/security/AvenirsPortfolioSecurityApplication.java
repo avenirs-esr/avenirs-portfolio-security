@@ -11,8 +11,8 @@ import fr.avenirsesr.portfolio.security.models.Principal;
 import fr.avenirsesr.portfolio.security.models.RBACContext;
 import fr.avenirsesr.portfolio.security.models.RBACRole;
 import fr.avenirsesr.portfolio.security.models.RBACScope;
-import fr.avenirsesr.portfolio.security.repositories.AssignmentSpecification;
-import fr.avenirsesr.portfolio.security.services.AssignmentService;
+import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification;
+import fr.avenirsesr.portfolio.security.services.RBACAssignmentService;
 import jakarta.transaction.Transactional;
 
 /**
@@ -22,7 +22,7 @@ import jakarta.transaction.Transactional;
 public class AvenirsPortfolioSecurityApplication   implements CommandLineRunner {
 	
 	@Autowired 
-	private AssignmentService assignmentService;
+	private RBACAssignmentService assignmentService;
 
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(AvenirsPortfolioSecurityApplication.class);

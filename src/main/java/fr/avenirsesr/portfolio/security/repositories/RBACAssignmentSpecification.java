@@ -9,7 +9,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
-public interface AssignmentSpecification  {
+public interface RBACAssignmentSpecification  {
 	
 	public static Specification<RBACAssignment> assignmentHasPrincipalWithLogin(String login) {
 		return (Root<RBACAssignment> root, CriteriaQuery<?> query,  CriteriaBuilder criteriaBuilder) -> {

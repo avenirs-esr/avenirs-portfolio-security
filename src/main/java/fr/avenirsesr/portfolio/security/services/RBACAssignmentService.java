@@ -6,18 +6,18 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.models.RBACAssignment;
-import fr.avenirsesr.portfolio.security.repositories.AssignmentRepository;
+import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 
 
 
 @Service
-public class AssignmentService {
+public class RBACAssignmentService {
 	
 	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(AssignmentService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RBACAssignmentService.class);
 	
 	@Autowired
-	private AssignmentRepository assignmentRepository;
+	private RBACAssignmentRepository assignmentRepository;
 	
 	/**
 	 * Gives all the assignments.

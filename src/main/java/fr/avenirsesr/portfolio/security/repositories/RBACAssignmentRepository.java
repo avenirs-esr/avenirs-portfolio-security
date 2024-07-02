@@ -10,7 +10,7 @@ import fr.avenirsesr.portfolio.security.models.Principal;
 /**
  * Repository for Role.JpaRepository<Customer>, JpaSpecificationExecutor
  */
-public interface AssignmentRepository extends CrudRepository<RBACAssignment, Long>, JpaSpecificationExecutor<RBACAssignment>  {
+public interface RBACAssignmentRepository extends CrudRepository<RBACAssignment, Long>, JpaSpecificationExecutor<RBACAssignment>  {
 	List<RBACAssignment> findByPrincipal(Principal principal);
 
 }

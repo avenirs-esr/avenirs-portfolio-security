@@ -18,10 +18,10 @@ import jakarta.transaction.Transactional;
 @ActiveProfiles("test")
 @Sql(scripts = "classpath:test-fixtures.sql")
 @Transactional
-class AssignmentServiceTest {
+class RBACAssignmentServiceTest {
 
 	@Autowired 
-	private AssignmentService assignmentService;
+	private RBACAssignmentService assignmentService;
 	
 	/** Number of assignments in fixtures. */
 	private final static int ALL_ASSIGNMENTS_SIZE=4;
