@@ -1,4 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ public class RBACRoleService {
 	 * Gives all the roles.
 	 * @return All the roles.
 	 */
-	public Iterable<RBACRole> getAllRoles() {
+	public List<RBACRole> getAllRoles() {
 		LOGGER.trace("getAllRoles");
 		return this.roleRepository.findAll();
 	}

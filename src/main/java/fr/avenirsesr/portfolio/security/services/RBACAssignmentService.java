@@ -1,4 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ public class RBACAssignmentService {
 	 * Gives all the assignments.
 	 * @return All assignments.
 	 */
-	public Iterable<RBACAssignment> getAllAssignments() {
+	public List<RBACAssignment> getAllAssignments() {
 		LOGGER.trace("getAllAssignments");
 		return this.assignmentRepository.findAll();
 	}
@@ -35,7 +37,7 @@ public class RBACAssignmentService {
 	 * @param id The id of the principal.
 	 * @return The assignments for the principal.
 	 */
-	public Iterable<RBACAssignment> getAllAssignmentsByPredicate(Specification<RBACAssignment> specification) {
+	public List<RBACAssignment> getAllAssignmentsByPredicate(Specification<RBACAssignment> specification) {
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("getAllAssignmentsByPredicate, specification: " + specification);
 		}

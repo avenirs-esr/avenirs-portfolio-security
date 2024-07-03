@@ -1,4 +1,5 @@
 package fr.avenirsesr.portfolio.security.services;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public class RBACActionService {
 	 * Gives all the actions.
 	 * @return All the action.
 	 */
-	public Iterable<RBACAction> getAllActions() {
+	public List<RBACAction> getAllActions() {
 		LOGGER.trace("getAllActions");
 		return this.actionRepository.findAll();
 	}
