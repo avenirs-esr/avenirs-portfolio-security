@@ -49,6 +49,6 @@ public class RBACAction {
 			inverseJoinColumns = @JoinColumn(name="id_permission")
 			
 	)
-	private List<RBACPermission> premissions = new ArrayList<>();
+	private List<RBACPermission> permissions = new ArrayList<>();
 
 }

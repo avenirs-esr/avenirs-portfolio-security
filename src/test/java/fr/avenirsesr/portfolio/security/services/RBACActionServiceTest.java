@@ -39,7 +39,7 @@ class RBACActionServiceTest {
 		assertNotNull(action);
 		assertEquals(SHARE_READ_RESOURCE_NAME, action.getName());
 		
-		List<RBACPermission> permissions = action.getPremissions();
+		List<RBACPermission> permissions = action.getPermissions();
 		
 		assertEquals(SHARE_READ_RESOURCE_PERMS_COUNT, permissions.size());
 		
