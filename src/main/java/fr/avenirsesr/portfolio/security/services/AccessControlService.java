@@ -47,14 +47,15 @@ public class AccessControlService {
 	 * @return True if the principal has access to the resource.
 	 */
 	boolean hasAccess(Principal principal, RBACAction action, RBACResource resource) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("hasAccess, principal: " + principal);
-			LOGGER.trace("hasAccess, action: " + action);
-			LOGGER.trace("hasAccess, resource: " + resource);
-		}
+		LOGGER.trace("hasAccess, principal: {}", principal);
+		LOGGER.trace("hasAccess, action: {}",  action);
+		LOGGER.trace("hasAccess, resource: {}", resource);
+		
 		List<RBACPermission> requiredPermissions = this.fetchPermissions(action.getName());
 		if (requiredPermissions != null) {
-	//		Iterable<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsByPredicate(RBACAssignmentSpecification.assignmentHasPrincipalWithLogin(principal.getLogin()))
+			final List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsByPredicate(RBACAssignmentSpecification.filterByPrincipal(principal.getLogin()));
+			LOGGER.trace("hasAccess, principalAssignments: {}", principalAssignments);
+			
 			
 		}
 		return false;

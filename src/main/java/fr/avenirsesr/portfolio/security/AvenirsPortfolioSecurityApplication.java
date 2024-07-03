@@ -53,7 +53,7 @@ public class AvenirsPortfolioSecurityApplication   implements CommandLineRunner 
 //			Assignment assignement = new Assignment(r,p,s, c);
 //			
 //			assignement =	assignmentService.createAssignment(assignement);
-			LOGGER.trace("run, after query");
+			
 //			assignmentService.getAllAssignments().forEach(a-> LOGGER.debug("Assignment:  " + a));
 			
 		}

@@ -1,11 +1,11 @@
 package fr.avenirsesr.portfolio.security.repositories;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import fr.avenirsesr.portfolio.security.models.Principal;
 
 /**
  * Repository for Principal.
  */
-public interface PrincipalRepository extends CrudRepository<Principal, Long>  {
+public interface PrincipalRepository extends JpaRepository<Principal, Long>  {
 
 }

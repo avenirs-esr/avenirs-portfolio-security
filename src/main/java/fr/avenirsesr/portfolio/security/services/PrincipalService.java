@@ -1,4 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class PrincipalService {
 	 * Gives all the principals.
 	 * @return An iterable over all principals.
 	 */
-	public Iterable<Principal> getAllPrincipals() {
+	public List<Principal> getAllPrincipals() {
 		LOGGER.trace("getAllPrincipals");
 		return this.principalRepository.findAll();
 	}

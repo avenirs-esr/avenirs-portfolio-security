@@ -11,7 +11,7 @@ import jakarta.persistence.criteria.Root;
 
 public interface RBACAssignmentSpecification  {
 	
-	public static Specification<RBACAssignment> assignmentHasPrincipalWithLogin(String login) {
+	public static Specification<RBACAssignment> filterByPrincipal(String login) {
 		return (Root<RBACAssignment> root, CriteriaQuery<?> query,  CriteriaBuilder criteriaBuilder) -> {
 			return criteriaBuilder.equal(root.get(RBACAssignment_.principal).get(Principal_.login), login);
 		};	
