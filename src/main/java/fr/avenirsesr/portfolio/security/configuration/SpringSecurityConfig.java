@@ -38,11 +38,11 @@ public class SpringSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> { 
-		LOGGER.info("filterChain, Configuring Spring security");
-		LOGGER.info("filterChain, Permit All for:")	;	
-		LOGGER.info("filterChain, roles: " + roles);	
-		LOGGER.info("filterChain, oidcCallback: " + oidcCallback);	
-		LOGGER.info("filterChain, oidcRedirect: " + oidcRedirect);	
+		LOGGER.debug("filterChain, Configuring Spring security");
+		LOGGER.debug("filterChain, Permit All for:")	;	
+		LOGGER.debug("filterChain, Permit All for roles: {}", roles);	
+		LOGGER.debug("filterChain, Permit All for oidcCallback: {}", oidcCallback);	
+		LOGGER.debug("filterChain, Permit All for oidcRedirect: {}", oidcRedirect);	
 		auth.requestMatchers(roles).permitAll();
 		auth.requestMatchers(oidcCallback).permitAll();
 		auth.requestMatchers(oidcRedirect).permitAll();
