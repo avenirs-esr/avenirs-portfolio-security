@@ -44,7 +44,6 @@ class RBACActionServiceTest {
 		assertEquals(SHARE_READ_RESOURCE_PERMS_COUNT, permissions.size());
 		
 		
-		System.out.println("action " + action);
 	}
 
 

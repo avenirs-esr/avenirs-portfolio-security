@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.creation.SuspendMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import fr.avenirsesr.portfolio.security.models.RBACAssignment;
+import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
@@ -27,15 +29,19 @@ class RBACAssignmentServiceTest {
 	private final static int ALL_ASSIGNMENTS_SIZE=4;
 	
 
-	
-
-	 @Transactional
 	@Test
 	void testGetAllAssignments() {
-		Iterable<RBACAssignment> assignmentsIt = assignmentService.getAllAssignments();
-		List<RBACAssignment> assignments = new ArrayList<>();
-		assignmentsIt.forEach(assignments::add);
+		List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+		System.out.println("testGetAllAssignments, assignments: "+assignments);
 		assertEquals(ALL_ASSIGNMENTS_SIZE, assignments.size(), "Total number of assignments");
+	}
+	
+	@Test
+	void testGetAllAssignmentsByPredicate() {
+		Long[] l = new Long[] {(long)1, (long)2, (long)3, (long)4};
+		List<RBACAssignment> assignments = 
+				assignmentService.getAllAssignmentsByPredicate(RBACAssignmentSpecification.filterByPrincipalAndResources("deman", l));
+		System.out.println("testGetAllAssignmentsByPredicate, assignments: " + assignments);
 	}
 
 }
