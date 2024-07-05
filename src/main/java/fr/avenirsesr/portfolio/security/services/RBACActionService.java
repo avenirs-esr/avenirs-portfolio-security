@@ -28,9 +28,9 @@ public class RBACActionService {
 	 * @param actionId The id of the role to retrieve.
 	 * @return The action with id actionId.
 	 */
-	public RBACAction getAction(final Long actionId){
+	public Optional<RBACAction> getAction(final Long actionId){
 		LOGGER.trace("getAction");
-		return this.actionRepository.findById(actionId).get();
+		return this.actionRepository.findById(actionId);
 	}
 	
 	/**

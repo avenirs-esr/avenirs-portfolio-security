@@ -39,6 +39,7 @@ class RBACAssignmentServiceTest {
 	@Test
 	void testGetAllAssignmentsByPredicate() {
 		Long[] l = new Long[] {(long)1, (long)2, (long)3, (long)4};
+		System.out.println("testGetAllAssignments, assignments2 : "+assignmentService.getAllAssignments());
 		List<RBACAssignment> assignments = 
 				assignmentService.getAllAssignmentsByPredicate(RBACAssignmentSpecification.filterByPrincipalAndResources("deman", l));
 		System.out.println("testGetAllAssignmentsByPredicate, assignments: " + assignments);

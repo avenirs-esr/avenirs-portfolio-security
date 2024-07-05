@@ -1,31 +1,31 @@
 
 
-INSERT INTO role (name, description) 
+INSERT INTO role (id, name, description) 
 VALUES 
-('ROLE_GUEST', 'Default role'),
-('ROLE_OWNER', 'Owner of the resource'),
-('ROLE_TEACHER', 'Teacher for training'),
-('ROLE_CONTRIBUTOR', 'Contributor for the resource'),
-('ROLE_PAIR', 'Can give feedback');
+(1, 'ROLE_GUEST', 'Default role'),
+(2, 'ROLE_OWNER', 'Owner of the resource'),
+(3, 'ROLE_TEACHER', 'Teacher for training'),
+(4, 'ROLE_CONTRIBUTOR', 'Contributor for the resource'),
+(5, 'ROLE_PAIR', 'Can give feedback');
 
 
-INSERT INTO permission (name, description) 
+INSERT INTO permission (id, name, description) 
 VALUES
-('PERM_SEE', 'See permission'),
-('PERM_READ', 'Read permission'),
-('PERM_WRITE', 'Write permission'),
-('PERM_COMMENT', 'Comments and feedbacks'),
-('PERM_SHARE', 'Share permission'),
-('PERM_DELETE', 'Delete permission');
+(1, 'PERM_SEE', 'See permission'),
+(2, 'PERM_READ', 'Read permission'),
+(3, 'PERM_WRITE', 'Write permission'),
+(4, 'PERM_COMMENT', 'Comments and feedbacks'),
+(5, 'PERM_SHARE', 'Share permission'),
+(6, 'PERM_DELETE', 'Delete permission');
 
-INSERT INTO action (name, description) 
+INSERT INTO action (id, name, description) 
 VALUES
-('ACT_SHARE_READ_RESOURCE', 'Share a resource readonly'),
-('ACT_SHARE_WRITE_RESOURCE', 'Share a resource read and write'),
-('ACT_DISPLAY', 'Visualize a resource'),
-('ACT_EDIT', 'Edit a resource'),
-('ACT_DO_FEEDBACK', 'Do a feedback'),
-('ACT_DELETE', 'Delete a resource');
+(1, 'ACT_SHARE_READ_RESOURCE', 'Share a resource readonly'),
+(2, 'ACT_SHARE_WRITE_RESOURCE', 'Share a resource read and write'),
+(3, 'ACT_DISPLAY', 'Visualize a resource'),
+(4, 'ACT_EDIT', 'Edit a resource'),
+(5, 'ACT_DO_FEEDBACK', 'Do a feedback'),
+(6, 'ACT_DELETE', 'Delete a resource');
 
 INSERT INTO action_permission (id_action, id_permission) 
 VALUES 
@@ -50,30 +50,30 @@ VALUES
 
 
 
-INSERT INTO resource_type (name, description)
+INSERT INTO resource_type (id, name, description)
 VALUES 
-('PORTFOLIO', 'Resource of type portfolio'),
-('SAE', 'Resource of type SAE');
+(1, 'PORTFOLIO', 'Resource of type portfolio'),
+(2, 'SAE', 'Resource of type SAE');
 
 
 
 
 
-INSERT INTO resource (selector, id_resource_type)
+INSERT INTO resource (id, selector, id_resource_type)
 VALUES 
-('ptf_0000', (SELECT id FROM resource_type WHERE resource_type.name = 'PORTFOLIO')),
-('ptf_0001', (SELECT id FROM resource_type WHERE resource_type.name = 'PORTFOLIO')),
-('sae_0000', (SELECT id FROM resource_type WHERE resource_type.name = 'SAE')),
-('sae_0001', (SELECT id FROM resource_type WHERE resource_type.name = 'SAE'));
+(1, 'ptf_0000', (SELECT id FROM resource_type WHERE resource_type.name = 'PORTFOLIO')),
+(2, 'ptf_0001', (SELECT id FROM resource_type WHERE resource_type.name = 'PORTFOLIO')),
+(3, 'sae_0000', (SELECT id FROM resource_type WHERE resource_type.name = 'SAE')),
+(4, 'sae_0001', (SELECT id FROM resource_type WHERE resource_type.name = 'SAE'));
 
 
 
-INSERT INTO scope (name)
+INSERT INTO scope (id, name)
 VALUES 
-('scope_00000'),
-('scope_00001'),
-('scope_00002'),
-('scope_00003');
+(1, 'scope_00000'),
+(2, 'scope_00001'),
+(3, 'scope_00002'),
+(4, 'scope_00003');
 
 
 INSERT INTO scope_resource (id_scope, id_resource)
