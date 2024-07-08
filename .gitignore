@@ -69,3 +69,6 @@ oidc-settings.json
 
 # Local Spring boot settings
 src/main/resources/env.properties
+
+*.nogit
+*.no-git
