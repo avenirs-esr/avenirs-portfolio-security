@@ -33,20 +33,20 @@ class AccessControlServiceTest {
 	
 	@Test
 	void testOwnerAccess() {
-		//assertTrue(accessControlService.hasAccess(USER_1, ACTION_SHARE_READ_ID, RESOURCE_ID_1));
-		//assertTrue(accessControlService.hasAccess(USER_1, ACTION_SHARE_WRITE_ID, RESOURCE_ID_1));
-		//assertTrue(accessControlService.hasAccess(USER_1, ACTION_DISPLAY_ID, RESOURCE_ID_1));
-		//assertTrue(accessControlService.hasAccess(USER_1, ACTION_EDIT_ID, RESOURCE_ID_1));
-		//assertTrue(accessControlService.hasAccess(USER_1, ACTION_DO_FEEDBACK_ID, RESOURCE_ID_1));
+		assertTrue(accessControlService.hasAccess(USER_1, ACTION_SHARE_READ_ID, RESOURCE_ID_1));
+		assertTrue(accessControlService.hasAccess(USER_1, ACTION_SHARE_WRITE_ID, RESOURCE_ID_1));
+		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DISPLAY_ID, RESOURCE_ID_1));
+		assertTrue(accessControlService.hasAccess(USER_1, ACTION_EDIT_ID, RESOURCE_ID_1));
+		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DO_FEEDBACK_ID, RESOURCE_ID_1));
 		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DELETE_ID, RESOURCE_ID_1));
 	}
 	
 	
-	@Test
-	void testCanShareWriteOnItsResourceAccess() {
-		boolean granted = accessControlService.hasAccess(USER_1, ACTION_SHARE_WRITE_ID, RESOURCE_ID_1);
-		assertTrue(granted);
-	}
+//	@Test
+//	void testCanShareWriteOnItsResourceAccess() {
+//		boolean granted = accessControlService.hasAccess(USER_1, ACTION_SHARE_WRITE_ID, RESOURCE_ID_1);
+//		assertTrue(granted);
+//	}
 	
 	
 
