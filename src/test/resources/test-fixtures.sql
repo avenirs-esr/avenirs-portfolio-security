@@ -33,7 +33,7 @@ VALUES
 ((SELECT id FROM action WHERE action.name = 'ACT_SHARE_WRITE_RESOURCE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SHARE')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DISPLAY'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM action WHERE action.name = 'ACT_EDIT'), (SELECT id FROM permission WHERE permission.name = 'PERM_WRITE')),
-((SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), (SELECT id FROM permission WHERE permission.name = 'PERM_WRITE')),
+((SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), (SELECT id FROM permission WHERE permission.name = 'PERM_COMMENT')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DELETE'), (SELECT id FROM permission WHERE permission.name = 'PERM_DELETE'));
 
 
@@ -43,11 +43,11 @@ VALUES
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_WRITE')),
-((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_DELETE')),
+((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_COMMENT')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_SHARE')),
+((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_DELETE')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_PAIR'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_PAIR'), (SELECT id FROM permission WHERE permission.name = 'PERM_COMMENT')),
-((SELECT id FROM role WHERE role.name = 'ROLE_CONTRIBUTOR'), (SELECT id FROM permission WHERE permission.name = 'PERM_WRITE'));
 ((SELECT id FROM role WHERE role.name = 'ROLE_CONTRIBUTOR'), (SELECT id FROM permission WHERE permission.name = 'PERM_WRITE'));
 
 
@@ -83,7 +83,7 @@ INSERT INTO scope_resource (id_scope, id_resource)
 VALUES 
 ((SELECT id FROM scope WHERE name = 'scope_00000'), (SELECT id FROM resource WHERE selector = 'ptf_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_00001'), (SELECT id FROM resource WHERE selector = 'ptf_0001')),
-((SELECT id FROM scope WHERE name = 'scope_00002'), (SELECT id FROM resource WHERE selector = 'sae_0001')),
+((SELECT id FROM scope WHERE name = 'scope_00002'), (SELECT id FROM resource WHERE selector = 'sae_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_00003'), (SELECT id FROM resource WHERE selector = 'ptf_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_00003'), (SELECT id FROM resource WHERE selector = 'ptf_0001'));
 
