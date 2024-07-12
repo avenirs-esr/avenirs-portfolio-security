@@ -103,7 +103,8 @@ INSERT INTO principal (login)
 VALUES 
 ('gribonvald'),
 ('deman'),
-('dugat');
+('dugat'),
+('patterson');
 
 
 INSERT INTO context (name, description)
