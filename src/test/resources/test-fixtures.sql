@@ -41,7 +41,7 @@ VALUES
 ((SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), (SELECT id FROM permission WHERE permission.name = 'PERM_COMMENT')),
-((SELECT id FROM action WHERE action.name = 'ACT_DELETE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE'));
+((SELECT id FROM action WHERE action.name = 'ACT_DELETE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DELETE'), (SELECT id FROM permission WHERE permission.name = 'PERM_DELETE'));
 
 
