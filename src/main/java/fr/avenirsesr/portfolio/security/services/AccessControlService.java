@@ -99,7 +99,7 @@ public class AccessControlService {
 	private List<RBACPermission> fetchPermissions(String actionName){
 		if (actionName != null && !this.permissionsByActionName.containsKey(actionName)) {
 			
-		RBACAction action = this.actionService.getAction(actionName).orElse(null);
+		RBACAction action = this.actionService.getActionByName(actionName).orElse(null);
 		List<RBACPermission> permissions = action== null ? null : action.getPermissions();
 		permissionsByActionName.put(actionName, permissions);
 		}
@@ -114,7 +114,7 @@ public class AccessControlService {
 	 */
 	private List<RBACPermission> fetchPermissions(Long actionId){
 		
-		Optional<RBACAction> action = this.actionService.getAction(actionId);
+		Optional<RBACAction> action = this.actionService.getActionById(actionId);
 		
 		String actionName  = action.isEmpty() ? "" : action.get().getName();
 		return fetchPermissions(actionName);

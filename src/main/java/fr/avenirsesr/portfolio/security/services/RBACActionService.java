@@ -28,7 +28,7 @@ public class RBACActionService {
 	 * @param actionId The id of the role to retrieve.
 	 * @return The action with id actionId.
 	 */
-	public Optional<RBACAction> getAction(final Long actionId){
+	public Optional<RBACAction> getActionById(final Long actionId){
 		LOGGER.trace("getAction");
 		return this.actionRepository.findById(actionId);
 	}
@@ -38,7 +38,7 @@ public class RBACActionService {
 	 * @param name The name of the action to retrieve.
 	 * @return The action if found (Optional).
 	 */
-	public Optional<RBACAction> getAction(final String name) {
+	public Optional<RBACAction> getActionByName(final String name) {
 		return this.actionRepository.findByName(name);
 	}
 	
