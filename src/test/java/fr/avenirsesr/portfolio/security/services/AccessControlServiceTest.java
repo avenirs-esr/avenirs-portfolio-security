@@ -24,6 +24,7 @@ class AccessControlServiceTest {
 	private final Long  ACTION_DO_FEEDBACK_ID=5L;
 	private final Long  ACTION_DELETE_ID=6L;
 	private final Long RESOURCE_ID_1 = 1L;
+	private final Long RESOURCE_ID_2 = 3L;
 	
 	@Autowired 
 	private AccessControlService accessControlService;
@@ -31,22 +32,23 @@ class AccessControlServiceTest {
 	
 	
 	
-	@Test
-	void testOwnerAccess() {
-		assertTrue(accessControlService.hasAccess(USER_1, ACTION_SHARE_READ_ID, RESOURCE_ID_1));
-		assertTrue(accessControlService.hasAccess(USER_1, ACTION_SHARE_WRITE_ID, RESOURCE_ID_1));
-		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DISPLAY_ID, RESOURCE_ID_1));
-		assertTrue(accessControlService.hasAccess(USER_1, ACTION_EDIT_ID, RESOURCE_ID_1));
-		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DO_FEEDBACK_ID, RESOURCE_ID_1));
-		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DELETE_ID, RESOURCE_ID_1));
-	}
-	
-	
 //	@Test
-//	void testCanShareWriteOnItsResourceAccess() {
-//		boolean granted = accessControlService.hasAccess(USER_1, ACTION_SHARE_WRITE_ID, RESOURCE_ID_1);
-//		assertTrue(granted);
+//	void testOwnerAccess() {
+//		assertTrue(accessControlService.hasAccess(USER_1, ACTION_SHARE_READ_ID, RESOURCE_ID_1));
+//		assertTrue(accessControlService.hasAccess(USER_1, ACTION_SHARE_WRITE_ID, RESOURCE_ID_1));
+//		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DISPLAY_ID, RESOURCE_ID_1));
+//		assertTrue(accessControlService.hasAccess(USER_1, ACTION_EDIT_ID, RESOURCE_ID_1));
+//		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DO_FEEDBACK_ID, RESOURCE_ID_1));
+//		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DELETE_ID, RESOURCE_ID_1));
 //	}
+	
+	
+	@Test
+	void testPairAccess() {
+		assertTrue(accessControlService.hasAccess(USER_1, ACTION_DO_FEEDBACK_ID, RESOURCE_ID_2));
+		assertFalse(accessControlService.hasAccess(USER_1, ACTION_EDIT_ID, RESOURCE_ID_2));
+		
+	}
 	
 	
 
