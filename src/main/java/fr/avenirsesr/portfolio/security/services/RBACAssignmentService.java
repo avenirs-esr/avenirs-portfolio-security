@@ -77,7 +77,4 @@ public class RBACAssignmentService {
 		}
 		this.assignmentRepository.deleteById(assignmentId);
 	}
-		
-	
-	
 }
