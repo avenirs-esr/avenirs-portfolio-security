@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,15 @@ public class PrincipalService {
 	public List<Principal> getAllPrincipals() {
 		LOGGER.trace("getAllPrincipals");
 		return this.principalRepository.findAll();
+	}
+	
+	/**
+	 * Gives a Principal associated to a login.
+	 * @return The principal.
+	 */
+	public Optional<Principal> getPrincipalByLogin(String login) {
+		LOGGER.trace("getPrincipalByLogin, login: {}", login);
+		return this.principalRepository.findByLogin(login);
 	}
 
 }
