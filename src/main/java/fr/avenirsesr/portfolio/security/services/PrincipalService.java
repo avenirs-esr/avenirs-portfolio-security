@@ -25,46 +25,11 @@ public class PrincipalService {
 	
 	/**
 	 * Gives all the principals.
-	 * @return An iterable over all principals.
+	 * @return All the principals.
 	 */
 	public List<Principal> getAllPrincipals() {
 		LOGGER.trace("getAllPrincipals");
 		return this.principalRepository.findAll();
 	}
-	
-//	/**
-//	 * Creates a role.
-//	 * @param role The role to create.
-//	 * @return The new created role.
-//	 */
-//	public Role createRole(Role role) {
-//		return this.roleRepository.save(role);
-//	}
-	
-	/**
-	 * Updates a role.
-	 * @param role The role to update.
-	 * @return The updated role.
-	 */
-//	public Role  updateRole(Role role) {
-//		
-//		Role storedRole = this.roleRepository.findById(role.getId()).get();
-//		
-//		if (storedRole != null && ! storedRole.equals(role)) {
-//				storedRole.setName(role.getName());
-//				storedRole.setDescription(role.getDescription());
-//				return this.roleRepository.save(storedRole);
-//		}
-//		return storedRole;
-//	}
-	
-	/**
-	 * Deletes a role
-	 * @param id The id of the role to delete.
-	 */
-//	public void deleteRole(Long id) {
-//		this.roleRepository.deleteById(id);
-//	}
-	
-	
+
 }
