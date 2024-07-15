@@ -1,8 +1,6 @@
 package fr.avenirsesr.portfolio.security.repositories;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +13,10 @@ import fr.avenirsesr.portfolio.security.models.RBACResource;
 import fr.avenirsesr.portfolio.security.models.RBACResource_;
 import fr.avenirsesr.portfolio.security.models.RBACScope;
 import fr.avenirsesr.portfolio.security.models.RBACScope_;
-import fr.avenirsesr.portfolio.security.services.RBACActionService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 
 /**
  * Assignment specification for Assignment model. Used to make queries based on
