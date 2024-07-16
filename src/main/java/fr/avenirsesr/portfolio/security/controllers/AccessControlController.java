@@ -8,40 +8,61 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
+import fr.avenirsesr.portfolio.security.models.RBACAction;
+import fr.avenirsesr.portfolio.security.models.RBACActionRoute;
+import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecification;
 import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 
 @RestController
 public class AccessControlController {
-	
+
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccessControlController.class);
-	
-	/** Authentication service used to retrieve the user informations.*/
+
+	/** Authentication service used to retrieve the user informations. */
 	@Autowired
-	private AuthenticationService authenticationService; 
-	
-	
+	private AuthenticationService authenticationService;
+
+	/** Action route service. */
+	@Autowired
+	private RBACActionRouteService actionRouteService;
+
 	/** Access control service. */
 	@Autowired
 	private AccessControlService accessControlService;
-	
+
 	@GetMapping("${avenirs.accessControl}")
-	public Boolean hasAccess(@RequestHeader(value="x-authorization") String token, String uri, String method) {
+	public Boolean hasAccess(@RequestHeader(value = "x-authorization") String token, String uri, String method) {
 		LOGGER.trace("hasAccess, token: {} ", token);
 		LOGGER.trace("hasAccess, uri: {} ", uri);
 		LOGGER.trace("hasAccess, method: {} ", method);
-		
-		OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
-		LOGGER.trace("hasAccess, introspectResponse: " + introspectResponse);
-		
-		if (introspectResponse != null  && introspectResponse .isActive()) {
-			String uid = introspectResponse.getUniqueSecurityName();
-			LOGGER.trace("getRoles, uid: " + uid);
+
+		RBACActionRoute actionRoute = actionRouteService
+				.getActionRouteByPredicate(RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
+		LOGGER.trace("hasAccess, actionRoute: {} ", actionRoute);
+
+		if (actionRoute != null) {
+
+			RBACAction action = actionRoute.getAction();
+			LOGGER.trace("hasAccess, action: {}", action);
+
+			OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
+			LOGGER.trace("hasAccess, introspectResponse: {}", introspectResponse);
+
+			if (introspectResponse != null && introspectResponse.isActive()) {
+				String login = introspectResponse.getUniqueSecurityName();
+				LOGGER.trace("hasAccess, login: {}", login);
+
+				boolean granted = accessControlService.hasAccess(login, action.getId(), 1L);
+				LOGGER.trace("hasAccess, granted: {}", granted);
+
+				return granted;
+			}
 		}
-		
-		
-		return  false;
+
+		return false;
 	}
-	
+
 }

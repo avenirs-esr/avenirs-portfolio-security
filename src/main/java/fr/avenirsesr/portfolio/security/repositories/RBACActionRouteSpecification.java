@@ -1,5 +1,7 @@
 package fr.avenirsesr.portfolio.security.repositories;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 
 import fr.avenirsesr.portfolio.security.models.Principal_;
@@ -29,7 +31,11 @@ public interface RBACActionRouteSpecification  {
 	 */
 
 	public static Specification<RBACActionRoute> filterByURIAndMethod(String uri, String method) {
+		final Logger LOGGER = LoggerFactory.getLogger(RBACActionRouteSpecification.class);
 		return (Root<RBACActionRoute> root, CriteriaQuery<?> query,  CriteriaBuilder criteriaBuilder) -> {
+			LOGGER.trace("filterByURIAndMethod, uri: {}", uri);
+			LOGGER.trace("filterByURIAndMethod, method: {}", method);
+			
 			return criteriaBuilder.and(
 					criteriaBuilder.equal(root.get(RBACActionRoute_.uri), uri),
 					criteriaBuilder.equal(root.get(RBACActionRoute_.method), method)
