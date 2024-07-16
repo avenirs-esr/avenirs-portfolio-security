@@ -26,7 +26,7 @@ public class RBACResource {
 	/** Selector for one or several resources.*/
 	private String selector;
 	
-	/** Type associated to the rseource. */
+	/** Type associated to the resource. */
 	@ManyToOne()
 	@JoinColumn(name="id_resource_type")
 	private RBACResourceType resourceType;
