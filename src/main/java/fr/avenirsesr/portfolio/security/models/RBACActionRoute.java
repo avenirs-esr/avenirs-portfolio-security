@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 /**
- * Represents the association between an http route (URI + http method) and an RBAC Action.
+ * Represents the association between an HTTP route (URI + HTTP method) and an RBAC Action.
  */
 @Data
 @Entity

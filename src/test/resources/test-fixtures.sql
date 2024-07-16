@@ -36,8 +36,8 @@ VALUES
 (5, (SELECT id FROM action WHERE action.name = 'ACT_DISPLAY'), '/', 'get'),
 (6, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'post'),
 (7, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'put'),
-(8, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/edit', 'post'),
-(9, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/edit', 'put'),
+(8, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'post'),
+(9, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'put'),
 (10, (SELECT id FROM action WHERE action.name = 'ACT_DELETE'), '/delete', 'delete');
 
 
