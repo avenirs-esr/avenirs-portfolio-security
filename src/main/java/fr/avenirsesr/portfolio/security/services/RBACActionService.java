@@ -5,9 +5,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.models.RBACAction;
+import fr.avenirsesr.portfolio.security.models.RBACScope;
 import fr.avenirsesr.portfolio.security.repositories.RBACActionRepository;
 
 
@@ -50,6 +52,19 @@ public class RBACActionService {
 		LOGGER.trace("getAllActions");
 		return this.actionRepository.findAll();
 	}
+	
+	/**
+	 * Gives all the actions associated to a predicate.
+	 * 
+	 * @param specification The specification of the predicate.
+	 * @return The actions that respect the predicate.
+	 */
+		public List<RBACAction> getAllActionsByPredicate(Specification<RBACAction> specification) {
+		
+		LOGGER.trace("getAllActionsByPredicate, specification: {}" + specification);
+		return actionRepository.findAll(specification);
+	}
+	
 	
 		
 }

@@ -27,6 +27,21 @@ VALUES
 (5, 'ACT_DO_FEEDBACK', 'Do a feedback'),
 (6, 'ACT_DELETE', 'Delete a resource');
 
+INSERT INTO action_route (id, id_action, uri, method) 
+VALUES
+(1, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), '/share', 'post'),
+(2, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), '/share', 'put'),
+(3, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_WRITE_RESOURCE'), '/share', 'post'),
+(4, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_WRITE_RESOURCE'), '/share', 'put'),
+(5, (SELECT id FROM action WHERE action.name = 'ACT_DISPLAY'), '/', 'get'),
+(6, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'post'),
+(7, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'put'),
+(8, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/edit', 'post'),
+(9, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/edit', 'put'),
+(10, (SELECT id FROM action WHERE action.name = 'ACT_DELETE'), '/delete', 'delete');
+
+
+
 INSERT INTO action_permission (id_action, id_permission) 
 VALUES 
 ((SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SHARE')),

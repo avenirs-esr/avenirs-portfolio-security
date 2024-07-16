@@ -59,6 +59,20 @@ CREATE TABLE action(
 );
 ALTER TABLE action OWNER TO avenirs_security_admin_role;
 
+CREATE TYPE http_method AS ENUM ('get', 'post', 'put', 'delete');
+CREATE TABLE action_route(
+	id serial,
+	id_action INTEGER NOT NULL,
+	uri VARCHAR(255) NOT NULL,
+	method HTTP_METHOD,
+	description VARCHAR(255),
+	
+	CONSTRAINT action_route_pk PRIMARY KEY(id)
+);
+ALTER TABLE action_route ADD CONSTRAINT action_route_id_action_type_fk FOREIGN KEY(id_action)
+REFERENCES action(id) MATCH FULL
+ON DELETE CASCADE NOT DEFERRABLE;
+ALTER TABLE action_route OWNER TO avenirs_security_admin_role;
 
 CREATE TABLE resource_type(
 	id serial,

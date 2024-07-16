@@ -25,10 +25,10 @@ public class RBACScopeService {
 	private RBACScopeRepository scopeRepository;
 	
 	/**
-	 * Gives all the scopes associated to a principal.
+	 * Gives all the scopes associated to a predicate.
 	 * 
-	 * @param id The id of the principal.
-	 * @return The scopes for the principal.
+	 * @param specification The specification of the predicate.
+	 * @return The scopes.
 	 */
 	public List<RBACScope> getAllScopesByPredicate(Specification<RBACScope> specification) {
 		
