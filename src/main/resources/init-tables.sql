@@ -72,7 +72,10 @@ CREATE TABLE action_route(
 ALTER TABLE action_route ADD CONSTRAINT action_route_id_action_type_fk FOREIGN KEY(id_action)
 REFERENCES action(id) MATCH FULL
 ON DELETE CASCADE NOT DEFERRABLE;
+
 ALTER TABLE action_route OWNER TO avenirs_security_admin_role;
+
+ALTER TABLE action_route ADD UNIQUE (uri, method);
 
 CREATE TABLE resource_type(
 	id serial,
