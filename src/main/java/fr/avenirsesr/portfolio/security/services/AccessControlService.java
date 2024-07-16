@@ -51,7 +51,7 @@ public class AccessControlService {
 	 * @param resource  The accessed resource.
 	 * @return True if the principal has access to the resource.
 	 */
-	boolean hasAccess(Principal principal, RBACAction action, RBACResource resource) {
+	public boolean hasAccess(Principal principal, RBACAction action, RBACResource resource) {
 		LOGGER.trace("hasAccess, principal: {}", principal);
 		LOGGER.trace("hasAccess, action: {}", action);
 		LOGGER.trace("hasAccess, resource: {}", resource);
@@ -68,7 +68,7 @@ public class AccessControlService {
 	 * @param resourceId The id of the accessed resource.
 	 * @return True if the principal has access to the resource.
 	 */
-	boolean hasAccess(String login, Long actionId, Long resourceId) {
+	public boolean hasAccess(String login, Long actionId, Long resourceId) {
 		LOGGER.trace("hasAccess, login: {}", login);
 		LOGGER.trace("hasAccess, actionId: {}", actionId);
 		LOGGER.trace("hasAccess, resourceId: {}", resourceId);
@@ -97,7 +97,8 @@ public class AccessControlService {
 		LOGGER.trace("hasAccess, requiredPermissions: {}", requiredPermissions);
 		return checkGrantedPermissions(requiredPermissions, login, resourceId);
 	}
-
+	
+	
 	/**
 	 * Checks the granted permission for a user regarding the required ones.
 	 * @param requiredPermissions The required permissions.
