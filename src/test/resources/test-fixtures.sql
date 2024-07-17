@@ -31,7 +31,7 @@ INSERT INTO action_route (id, id_action, uri, method)
 VALUES
 (1, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), '/share', 'post'),
 (2, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), '/share', 'put'),
-(5, (SELECT id FROM action WHERE action.name = 'ACT_DISPLAY'), '/', 'get'),
+(5, (SELECT id FROM action WHERE action.name = 'ACT_DISPLAY'), '/display', 'get'),
 (6, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'post'),
 (7, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'put'),
 (8, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'post'),

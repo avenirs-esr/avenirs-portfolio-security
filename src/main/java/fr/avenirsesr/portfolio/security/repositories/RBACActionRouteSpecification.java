@@ -4,14 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 
-import fr.avenirsesr.portfolio.security.models.Principal_;
 import fr.avenirsesr.portfolio.security.models.RBACActionRoute;
 import fr.avenirsesr.portfolio.security.models.RBACActionRoute_;
-import fr.avenirsesr.portfolio.security.models.RBACAction_;
-import fr.avenirsesr.portfolio.security.models.RBACAssignment_;
-import fr.avenirsesr.portfolio.security.models.RBACResource_;
-import fr.avenirsesr.portfolio.security.models.RBACScope;
-import fr.avenirsesr.portfolio.security.models.RBACScope_;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
