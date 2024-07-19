@@ -27,7 +27,6 @@ class RBACScopeServiceTest {
 	
 	private final static String[] EXPECTED_SCOPES_RES1 = {"scope_0000", "scope_0003"};
 	private final static String[] EXPECTED_SCOPES_RES3 = {"scope_0002"};
-	private final static String[] EXPECTED_SCOPES_RES4 = {};
 	private final static String[] EXPECTED_SCOPES_RES1_RES3 = {"scope_0000",  "scope_0002", "scope_0003"};
 	private final static String[] EXPECTED_SCOPES_RES_ALL = {"scope_0000",  "scope_0001",  "scope_0002", "scope_0003"};
 	
