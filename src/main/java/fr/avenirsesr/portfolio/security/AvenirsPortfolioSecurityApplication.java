@@ -25,7 +25,7 @@ public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {
 	@Transactional
 	@Override
 	public void run(String... args) throws Exception {
-		LOGGER.info("AvenirsPortfolioStorageApplication running");
+		LOGGER.info("AvenirsPortfolioSecurityApplication running");
 	}
 
 }
