@@ -1,5 +1,3 @@
-
-
 INSERT INTO role (id, name, description) 
 VALUES 
 (1, 'ROLE_GUEST', 'Default role'),
@@ -36,7 +34,7 @@ VALUES
 (7, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'put'),
 (8, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'post'),
 (9, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'put'),
-(11, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/ac', 'get'),
+(11, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'get'),
 (10, (SELECT id FROM action WHERE action.name = 'ACT_DELETE'), '/delete', 'delete');
 
 
