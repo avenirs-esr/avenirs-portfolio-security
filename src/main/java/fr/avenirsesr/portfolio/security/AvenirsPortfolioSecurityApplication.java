@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional;
  */
 @SpringBootApplication
 public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {
-
+	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(AvenirsPortfolioSecurityApplication.class);
 
@@ -27,5 +27,4 @@ public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		LOGGER.info("AvenirsPortfolioSecurityApplication running");
 	}
-
 }
