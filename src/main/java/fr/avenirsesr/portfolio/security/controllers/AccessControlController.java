@@ -45,7 +45,9 @@ public class AccessControlController {
 		LOGGER.trace("hasAccess, method: {} ", method);
 		LOGGER.trace("hasAccess, resourceId: {} ", resourceId);
 
-		AccessControlResponse response = new AccessControlResponse().setToken(token).setResourceId(resourceId)
+		AccessControlResponse response = new AccessControlResponse()
+				.setToken(token)
+				.setResourceId(resourceId)
 				.setUri(uri).setMethod(method);
 		if (StringUtils.hasLength(uri) && StringUtils.hasLength(method)) {
 			RBACActionRoute actionRoute = actionRouteService.getActionRouteByPredicate(
