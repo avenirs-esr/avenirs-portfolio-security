@@ -3,12 +3,20 @@
  */
 package fr.avenirsesr.portfolio.security.models;
 
+
+import java.time.LocalDateTime;
+
+
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -52,5 +60,9 @@ public class RBACAssignment {
 	@ManyToOne
 	@JoinColumn(name="id_context", referencedColumnName = "id")
 	private RBACContext context;
+	
+	/** Date of the assignment. */
+	@Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
+	private LocalDateTime timestamp;
 
 }
