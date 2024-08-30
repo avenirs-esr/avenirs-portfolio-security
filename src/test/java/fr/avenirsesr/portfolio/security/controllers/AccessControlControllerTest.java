@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.avenirsesr.portfolio.security.models.AccessControlResponse;
+import fr.avenirsesr.portfolio.security.services.RBACAssignmentService;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -27,7 +29,9 @@ import jakarta.transaction.Transactional;
 @Sql(scripts = "classpath:test-fixtures.sql")
 @Transactional
 class AccessControlControllerTest {
-
+	@Autowired
+	RBACAssignmentService srv;
+	
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -55,22 +59,26 @@ class AccessControlControllerTest {
 	void testHasAccessWithoutMethod() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/access-control").contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON).header("x-authorization", "accesstokenvalue").param("uri", "/foo"))
+				.accept(MediaType.APPLICATION_JSON).header("x-authorization", "accesstokenvalue").param("uri", "/feedback"))
 				.andDo(print()).andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void testHasAccessNotGranted() throws Exception {
-
+		
+		String token = "invalid token";
 		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/access-control")
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-				.header("x-authorization", "accesstokenvalue").param("uri", "/ac").param("method", "get"))
+				.header("x-authorization", token)
+				.param("uri", "/feedback")
+				.param("method", "get")
+				.param("resource", "1"))
 				.andDo(print()).andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
 
-		boolean granted = objectMapper.readValue(result.getResponse().getContentAsString(), Boolean.class);
-		assertFalse(granted);
+		AccessControlResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessControlResponse.class);
+		assertFalse(response.isGranted());
 	}
 
 }
