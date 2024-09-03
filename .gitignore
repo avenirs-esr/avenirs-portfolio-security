@@ -72,3 +72,6 @@ src/main/resources/env.properties
 
 *.nogit
 *.no-git
+
+# Liquibase
+liquibase-keyring.gpg
