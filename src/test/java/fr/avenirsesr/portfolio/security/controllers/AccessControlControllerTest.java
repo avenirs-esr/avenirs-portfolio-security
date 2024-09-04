@@ -26,7 +26,7 @@ import jakarta.transaction.Transactional;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Sql(scripts = "classpath:test-fixtures.sql")
+@Sql(scripts="classpath:db/test-fixtures.sql")
 @Transactional
 class AccessControlControllerTest {
 	@Autowired

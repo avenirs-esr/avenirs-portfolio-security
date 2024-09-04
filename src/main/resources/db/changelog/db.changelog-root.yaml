@@ -1,12 +1,11 @@
 databaseChangeLog:
-
    - changeSet:
        id: "principal"
        author: Deman
        comment: Mock table for users  
        changes:
         - createTable:
-           tableName: principal_test
+           tableName: principal
            columns:
            - column:
                name: id
@@ -21,14 +20,14 @@ databaseChangeLog:
                constraints:
                    nullable:  false
         - createIndex:
-            tableName: principal_test
+            tableName: principal
             column:
                 name: login
         - sql:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE principal_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE principal OWNER TO avenirs_security_admin_role
            stripComments:  true
        
        
@@ -38,7 +37,7 @@ databaseChangeLog:
        comment: RBAC system - Role table
        changes:        
         - createTable:
-           tableName: role_test
+           tableName: role
            columns:
            - column:
                name: id
@@ -62,7 +61,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE role_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE role OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -72,7 +71,7 @@ databaseChangeLog:
        comment: RBAC system - Permission table
        changes:        
         - createTable:
-           tableName: permission_test
+           tableName: permission
            columns:
            - column:
                name: id
@@ -96,7 +95,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE permission_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE permission OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -106,7 +105,7 @@ databaseChangeLog:
        comment: RBAC system - Action table
        changes:        
         - createTable:
-           tableName: action_test
+           tableName: action
            columns:
            - column:
                name: id
@@ -130,7 +129,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE action_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE action OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -140,7 +139,7 @@ databaseChangeLog:
        comment: RBAC system - Action / Route mapping table
        changes:        
         - createTable:
-           tableName: action_route_test
+           tableName: action_route
            columns:
            - column:
                name: id
@@ -154,8 +153,8 @@ databaseChangeLog:
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: action_route_id_action_test_fk 
-                   referencedTableName: action_test
+                   foreignKeyName: action_route_id_action_fk 
+                   referencedTableName: action
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false
@@ -172,17 +171,15 @@ databaseChangeLog:
            - column:
                name: description
                type: VARCHAR(255)
-               constraints:
-                   nullable:  false           
         - addUniqueConstraint:
-           tableName: action_route_test
+           tableName: action_route
            columnNames: uri, method
            constraintName: action_route_uri_method_unique_cstr
         - sql:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE action_route_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE action_route OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -192,7 +189,7 @@ databaseChangeLog:
        comment: RBAC system - Resource type table
        changes:        
         - createTable:
-           tableName: resource_type_test
+           tableName: resource_type
            columns:
            - column:
                name: id
@@ -216,7 +213,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE resource_type_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE resource_type OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -226,7 +223,7 @@ databaseChangeLog:
        comment: RBAC system - Resource table
        changes:        
         - createTable:
-           tableName: resource_test
+           tableName: resource
            columns:
            - column:
                name: id
@@ -246,8 +243,8 @@ databaseChangeLog:
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: resource_id_resource_type_test_fk 
-                   referencedTableName: resource_type_test
+                   foreignKeyName: resource_id_resource_type_fk 
+                   referencedTableName: resource_type
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false        
@@ -255,7 +252,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE resource_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE resource OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -265,7 +262,7 @@ databaseChangeLog:
        comment: RBAC system - Scope table
        changes:        
         - createTable:
-           tableName: scope_test
+           tableName: scope
            columns:
            - column:
                name: id
@@ -284,7 +281,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE scope_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE scope OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -294,22 +291,25 @@ databaseChangeLog:
        comment: RBAC system - Scope / Resource relation
        changes:        
         - createTable:
-           tableName: scope_resource_test
+           tableName: scope_resource
            columns:
            - column:
-               name: id
+               name: id_scope
                type: BIGSERIAL
-               autoIncrement: true
                constraints:
-                   primaryKey:  true
-                   nullable:  false                
+                   nullable:  false
+                   foreignKeyName: scope_resource_id_scope_fk 
+                   referencedTableName: scope
+                   referencedColumnNames: id
+                   onDelete: CASCADE
+                   deferrable: false               
            - column:
                name: id_resource
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: scope_id_resource_test_fk 
-                   referencedTableName: resource_test
+                   foreignKeyName: scope_resource_id_resource_fk 
+                   referencedTableName: resource
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false        
@@ -317,7 +317,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE scope_resource_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE scope_resource OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -327,7 +327,7 @@ databaseChangeLog:
        comment: RBAC system - Context table
        changes:        
         - createTable:
-           tableName: context_test
+           tableName: context
            columns:
            - column:
                name: id
@@ -357,7 +357,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE context_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE context OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -367,15 +367,15 @@ databaseChangeLog:
        comment: RBAC system - Action / Permission relation
        changes:        
         - createTable:
-           tableName: action_permission_test
+           tableName: action_permission
            columns:             
            - column:
                name: id_action
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: action_permission_id_action_test_fk 
-                   referencedTableName: action_test
+                   foreignKeyName: action_permission_id_action_fk 
+                   referencedTableName: action
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false               
@@ -384,20 +384,20 @@ databaseChangeLog:
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: action_permission_id_permission_test_fk 
-                   referencedTableName: permission_test
+                   foreignKeyName: action_permission_id_permission_fk 
+                   referencedTableName: permission
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false
         - addPrimaryKey:
-           tableName:  action_permission_test
+           tableName:  action_permission
            columnNames: id_action, id_permission    
-           constraintName: action_permission_test_pk  
+           constraintName: action_permission_pk  
         - sql:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE action_permission_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE action_permission OWNER TO avenirs_security_admin_role
            stripComments:  true
 
        
@@ -407,15 +407,15 @@ databaseChangeLog:
        comment: RBAC system - Role / Permission relation
        changes:        
         - createTable:
-           tableName: role_permission_test
+           tableName: role_permission
            columns:             
            - column:
                name: id_role
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: role_permission_id_role_test_fk 
-                   referencedTableName: role_test
+                   foreignKeyName: role_permission_id_role_fk 
+                   referencedTableName: role
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false               
@@ -424,20 +424,20 @@ databaseChangeLog:
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: role_permission_id_permission_test_fk 
-                   referencedTableName: permission_test
+                   foreignKeyName: role_permission_id_permission_fk 
+                   referencedTableName: permission
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false
         - addPrimaryKey:
-           tableName:  role_permission_test
+           tableName:  role_permission
            columnNames: id_role, id_permission    
-           constraintName: role_permission_test_pk  
+           constraintName: role_permission_pk  
         - sql:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE role_permission_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE role_permission OWNER TO avenirs_security_admin_role
            stripComments:  true
 
 
@@ -449,15 +449,15 @@ databaseChangeLog:
        comment: RBAC system - Assignment table
        changes:        
         - createTable:
-           tableName: assignment_test
+           tableName: assignment
            columns:             
            - column:
                name: id_role
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: assignment_id_role_test_fk 
-                   referencedTableName: role_test
+                   foreignKeyName: assignment_id_role_fk 
+                   referencedTableName: role
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false               
@@ -466,8 +466,8 @@ databaseChangeLog:
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: assignment_id_principal_test_fk 
-                   referencedTableName: principal_test
+                   foreignKeyName: assignment_id_principal_fk 
+                   referencedTableName: principal
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false              
@@ -476,8 +476,8 @@ databaseChangeLog:
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: assignment_id_scope_test_fk 
-                   referencedTableName: scope_test
+                   foreignKeyName: assignment_id_scope_fk 
+                   referencedTableName: scope
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false              
@@ -486,20 +486,20 @@ databaseChangeLog:
                type: BIGSERIAL
                constraints:
                    nullable:  false
-                   foreignKeyName: assignment_id_context_test_fk 
-                   referencedTableName: context_test
+                   foreignKeyName: assignment_id_context_fk 
+                   referencedTableName: context
                    referencedColumnNames: id
                    onDelete: CASCADE
                    deferrable: false
         - addPrimaryKey:
-           tableName:  assignment_test
+           tableName:  assignment
            columnNames: id_role, id_principal, id_scope, id_context    
-           constraintName: assignment_test_pk  
+           constraintName: assignment_pk  
         - sql:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE assignment_test OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE assignment OWNER TO avenirs_security_admin_role
            stripComments:  true
 
 
