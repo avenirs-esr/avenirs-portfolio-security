@@ -38,6 +38,5 @@ public class AccessControlResponse {
 	
 	/** HTTP method. */
 	private String method;
-	
-		
+			
 }

@@ -80,5 +80,6 @@ class AccessControlControllerTest {
 		AccessControlResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessControlResponse.class);
 		assertFalse(response.isGranted());
 	}
+	
 
 }

@@ -3,10 +3,17 @@
  */
 package fr.avenirsesr.portfolio.security.services;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Base64;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +21,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import fr.avenirsesr.portfolio.security.configuration.OIDCConfiguration;
+import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
+import fr.avenirsesr.portfolio.security.models.OIDCIdToken;
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
 
@@ -149,10 +159,37 @@ public class AuthenticationService {
 				.header("Authorization", basicAutentication()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON).retrieve().body(OIDCIntrospectResponse.class);
 
-		LOGGER.warn("introspect, introspectResponse: " + introspectResponse);
+		LOGGER.debug("introspect, introspectResponse: " + introspectResponse);
 
 		return introspectResponse;
 	}
+	
+	 public OIDCAccessTokenResponse getAccessToken(String login, String password) throws Exception {
+		 try {
+	        String query = "https://avenirs-apache/cas/oidc/accessToken?grant_type=password" +
+	        		"&username=" + login +
+	 	            "&password=" + password +
+	 	            "&client_id=OIDCClientId"+
+	 	            "&client_secret=OIDCsecret2" +
+	 	            "&scope=openid profile email" ;
+	       
+	        
+	        OIDCAccessTokenResponse response = restClient.post().uri(query)
+	      			.retrieve().body(OIDCAccessTokenResponse.class);
+	        LOGGER.trace("getAccessToken response: {}", response);
+	        LOGGER.trace("getAccessToken raw idToken: {}", response.getIdToken());
+	        
+	        OIDCIdToken idToken = new OIDCIdToken(response.getIdToken());
+	        
+	        LOGGER.trace("getAccessToken idToken: {}", idToken);
+	        
+	        return response;
+	        
+		 } catch(HttpClientErrorException e) {
+			LOGGER.error("getAccessToken, error while retrieving access token for {}: {}", login, + e.getStatusCode().value());
+			 return new OIDCAccessTokenResponse().setError(e);
+		 }
+	    }
 
 	/**
 	 * Gives the header for a basic authentication based on the client id and client
