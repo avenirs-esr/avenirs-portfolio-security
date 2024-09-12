@@ -20,7 +20,7 @@ public class OIDCAccessTokenResponse {
 	
 	/** Id token value */
 	@JsonProperty("id_token")
-	private String idToken;
+	private OIDCIdToken idToken;
 		
 	/** Access token type (e.g. "Bearer") */
 	@JsonProperty("token_type")
@@ -33,8 +33,6 @@ public class OIDCAccessTokenResponse {
 	/** Scope requested (e.g.: "openid")*/
 	private String scope;
 	
-	/** Error if the query is not successful. */
-	private Exception error;
 	
 
 }

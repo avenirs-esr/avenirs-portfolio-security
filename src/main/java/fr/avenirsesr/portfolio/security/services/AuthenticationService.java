@@ -3,17 +3,11 @@
  */
 package fr.avenirsesr.portfolio.security.services;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Base64;
+import java.util.Optional;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +20,9 @@ import org.springframework.web.client.RestClient;
 
 import fr.avenirsesr.portfolio.security.configuration.OIDCConfiguration;
 import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
-import fr.avenirsesr.portfolio.security.models.OIDCIdToken;
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
+import io.jsonwebtoken.Claims;
 
 /**
  * Authentication service. Interact with theOIDC provider and generates URL
@@ -50,6 +44,10 @@ public class AuthenticationService {
 	/** Template to generate the OIDC authorization URL. */
 	@Value("${avenirs.authentication.oidc.authorise.template.url}")
 	private String oidcAuthorizeTemplate;
+	
+	/** Template to generate the Access Token URL. */
+	@Value("${avenirs.authentication.oidc.token.template.url}")
+	private String oidcAccessTokenTemplate;
 
 	@Value("${avenirs.authentication.oidc.provider.introspect.url}")
 	private String oidcProviderIntrospectURL;
@@ -61,8 +59,12 @@ public class AuthenticationService {
 	/** Basic authentication header for the interaction with the OIDC provider. */
 	private String basicAuthenticationHeader;
 
+	/** Profile end point. */
 	@Value("${avenirs.authentication.oidc.provider.profile.url}")
 	private String oidcProviderProfileURL;
+	
+	@Autowired
+	private JWTService jwtService; 
 
 	/**
 	 * Generates the OIDC Authorize URL.
@@ -82,6 +84,23 @@ public class AuthenticationService {
 		return oidcAuthorizeURL;
 	}
 
+	/**
+	 * Generates the OIDC Access Token URL.
+	 * @param login The user login.
+	 * @param password The user password.
+	 * @return The authorize URL.
+	 * @throws IOException
+	 */
+	protected String generateAccessTokenURL(String login, String password) throws IOException {
+		String oidcAccessTokenURL = oidcAccessTokenTemplate.replaceAll("%CLIENT_ID%", oidcConfiguration.getClientId())
+				.replaceAll("%CLIENT_SECRET%", oidcConfiguration.getClientSecret())
+				.replaceAll("%LOGIN%", login)
+				.replaceAll("%PASSWORD%", password);
+		LOGGER.debug("generateAccessTokenURL, oidcAccessTokenURL: " + oidcAccessTokenURL);
+		return oidcAccessTokenURL;
+	}
+
+	
 	/**
 	 * Generates the OIDC Authorize URL.
 	 * 
@@ -164,30 +183,36 @@ public class AuthenticationService {
 		return introspectResponse;
 	}
 	
-	 public OIDCAccessTokenResponse getAccessToken(String login, String password) throws Exception {
+	
+	/**
+	 * Generates an access token
+	      
+	 * @param login The user login.
+	 * @param password The user password.
+	 * @return An Optional of OIDCAccessTokenResponse
+	 * @throws Exception
+	 */
+	 public Optional<OIDCAccessTokenResponse> getAccessToken(String login, String password) throws Exception {
 		 try {
-	        String query = "https://avenirs-apache/cas/oidc/accessToken?grant_type=password" +
-	        		"&username=" + login +
-	 	            "&password=" + password +
-	 	            "&client_id=OIDCClientId"+
-	 	            "&client_secret=OIDCsecret2" +
-	 	            "&scope=openid profile email" ;
-	       
-	        
-	        OIDCAccessTokenResponse response = restClient.post().uri(query)
+
+			 
+	       String query = generateAccessTokenURL(login, password);
+	       OIDCAccessTokenResponse response = restClient.post().uri(query)
 	      			.retrieve().body(OIDCAccessTokenResponse.class);
-	        LOGGER.trace("getAccessToken response: {}", response);
-	        LOGGER.trace("getAccessToken raw idToken: {}", response.getIdToken());
 	        
-	        OIDCIdToken idToken = new OIDCIdToken(response.getIdToken());
+	        final Optional<Claims> claims = this.jwtService.parseAndCheckSignature(response);
+	        if (claims.isEmpty()) {
+	        	LOGGER.error("Invalid access token response: {}", response);
+	        	return Optional.empty();
+	        	
+	        }
 	        
-	        LOGGER.trace("getAccessToken idToken: {}", idToken);
-	        
-	        return response;
+	        LOGGER.trace("Claims: {}", claims.get());
+	        return Optional.of(response);
 	        
 		 } catch(HttpClientErrorException e) {
 			LOGGER.error("getAccessToken, error while retrieving access token for {}: {}", login, + e.getStatusCode().value());
-			 return new OIDCAccessTokenResponse().setError(e);
+			 return Optional.empty();
 		 }
 	    }
 
