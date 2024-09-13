@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import fr.avenirsesr.portfolio.security.services.AccessTokenService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 
 @SpringBootTest

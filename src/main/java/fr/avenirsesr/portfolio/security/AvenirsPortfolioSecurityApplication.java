@@ -6,12 +6,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+
 import jakarta.transaction.Transactional;
 
 /**
  * Avenirs Portfolio security module.
  */
 @SpringBootApplication
+@EnableEncryptableProperties
 public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {
 	
 	/** Logger */

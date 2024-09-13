@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-
-import fr.avenirsesr.portfolio.security.configuration.OIDCConfiguration;
 import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
@@ -36,10 +34,6 @@ public class AuthenticationService {
 
 	/** Rest client to interact with OIDC provider. */
 	private RestClient restClient = RestClient.create();
-
-	/** OIDC settings */
-	@Autowired
-	private OIDCConfiguration oidcConfiguration;
 
 	/** Template to generate the OIDC authorization URL. */
 	@Value("${avenirs.authentication.oidc.authorise.template.url}")
@@ -63,6 +57,12 @@ public class AuthenticationService {
 	@Value("${avenirs.authentication.oidc.provider.profile.url}")
 	private String oidcProviderProfileURL;
 	
+	@Value("${avenirs.authentication.oidc.clientId}")
+	private String clientId;
+
+	@Value("${avenirs.authentication.oidc.clientSecret}")
+	private String clientSecret;
+	
 	@Autowired
 	private JWTService jwtService; 
 
@@ -77,8 +77,8 @@ public class AuthenticationService {
 	public String generateAuthorizeURL(String host, String code) throws IOException {
 
 		String oidcAuthorizeURL = oidcAuthorizeTemplate.replaceAll("%HOST%", host).replaceAll("%CODE%", code)
-				.replaceAll("%CLIENT_ID%", oidcConfiguration.getClientId())
-				.replaceAll("%CLIENT_SECRET%", oidcConfiguration.getClientSecret());
+				.replaceAll("%CLIENT_ID%", clientId)
+				.replaceAll("%CLIENT_SECRET%", clientSecret);
 		LOGGER.debug("generateAuthorizeURL, code: " + code);
 		LOGGER.debug("generateAuthorizeURL, oidcAuthorizeURL: " + oidcAuthorizeURL);
 		return oidcAuthorizeURL;
@@ -92,12 +92,13 @@ public class AuthenticationService {
 	 * @throws IOException
 	 */
 	protected String generateAccessTokenURL(String login, String password) throws IOException {
-		String oidcAccessTokenURL = oidcAccessTokenTemplate.replaceAll("%CLIENT_ID%", oidcConfiguration.getClientId())
-				.replaceAll("%CLIENT_SECRET%", oidcConfiguration.getClientSecret())
+		String oidcAccessTokenURL = oidcAccessTokenTemplate.replaceAll("%CLIENT_ID%", clientId)
+				.replaceAll("%CLIENT_SECRET%", clientSecret)
 				.replaceAll("%LOGIN%", login)
 				.replaceAll("%PASSWORD%", password);
 		LOGGER.debug("generateAccessTokenURL, oidcAccessTokenURL: " + oidcAccessTokenURL);
-		return oidcAccessTokenURL;
+		
+return oidcAccessTokenURL;
 	}
 
 	
@@ -226,7 +227,7 @@ public class AuthenticationService {
 		if (basicAuthenticationHeader == null) {
 
 			LOGGER.trace("basicAutentication generating authentication header. " );
-			final String auth = oidcConfiguration.getClientId() + ":" + oidcConfiguration.getClientSecret();
+			final String auth = clientId + ":" + clientSecret;
 
 			final byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(Charset.forName("US-ASCII")));
 			basicAuthenticationHeader = "Basic " + new String(encodedAuth);
