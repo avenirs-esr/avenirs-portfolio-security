@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+
 import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
@@ -65,7 +66,8 @@ public class AuthenticationService {
 	
 	@Autowired
 	private JWTService jwtService; 
-
+	
+	
 	/**
 	 * Generates the OIDC Authorize URL.
 	 * 

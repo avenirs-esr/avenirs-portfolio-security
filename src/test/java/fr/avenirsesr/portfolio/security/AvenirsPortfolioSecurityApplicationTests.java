@@ -16,7 +16,7 @@ class AvenirsPortfolioSecurityApplicationTests {
 	@Test
 	void testAccessToken() throws Exception {
 		authenticationService.getAccessToken("deman", "Azerty123");
-		//authenticationService.introspectAccessToken(null)
+		
 	}
 
 }
