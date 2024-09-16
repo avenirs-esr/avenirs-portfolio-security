@@ -56,8 +56,10 @@ public interface RBACAssignmentSpecification {
 			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope);
 			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources);
 
-			return criteriaBuilder.and(filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),
-					joinResource.get(RBACResource_.id).in((Object[]) resourceIds));
+			return criteriaBuilder.and(
+			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),
+			    joinResource.get(RBACResource_.id).in((Object[]) resourceIds)
+			);
 		};
 	}
 }

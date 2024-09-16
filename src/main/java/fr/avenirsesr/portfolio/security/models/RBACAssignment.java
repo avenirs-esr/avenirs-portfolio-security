@@ -18,13 +18,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+
 /**
- * Assignment in the RBAC system.
- * An assignment links:
- * - an user (principal)
- * - a role, linked to one or many permissions.
- * - a scope which is liked to on or many resources.
- * - a context which determine additional information on the assignment, for instance a period of validity. 
+ * <h1>RBACAssignment</h1>
+ * <p>
+ * <b>Description:</b> represents an assignment in the RBAC system<br/>  
+ * An assignment links:<br/>
+ * <ul>
+ * <li> an user (principal)</li>
+ * <li> a role, linked to one or many permissions.</li>
+ * <li> a scope which is liked to on or many resources.</li>
+ * <li> a context which determine additional information on the assignment, for instance a period of validity.</li> 
+ * </ul> 
+ * </p>
+ * 
+ * <h2>Version:</h2>
+ * 1.0
+ * 
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 16 Sept 2024
  */
 @Data
 @AllArgsConstructor
