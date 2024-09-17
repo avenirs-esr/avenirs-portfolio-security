@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: "16"
+      author: Deman
+      comment: Association context/structures  
+      changes:
+        - createTable:
+           tableName: context_structure
+           columns:             
+           - column:
+               name: id_context
+               type: BIGSERIAL
+               constraints:
+                   nullable:  false
+                   foreignKeyName: context_structure_id_context_fk 
+                   referencedTableName: context
+                   referencedColumnNames: id
+                   onDelete: CASCADE
+                   deferrable: false               
+           - column:
+               name: id_structure
+               type: BIGSERIAL
+               constraints:
+                   nullable:  false
+                   foreignKeyName: context_structure_id_structure_fk 
+                   referencedTableName: structure
+                   referencedColumnNames: id
+                   onDelete: CASCADE
+                   deferrable: false
+        - addPrimaryKey:
+           tableName:  context_structure
+           columnNames: id_context, id_structure    
+           constraintName: context_structure_pk  
+        - sql:
+           dbms:  'postgresql'
+           endDelimiter:  \nGO
+           splitStatements:  true
+           sql:  ALTER TABLE context_structure OWNER TO avenirs_security_admin_role
+           stripComments:  true
+       

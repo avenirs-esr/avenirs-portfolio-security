@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/001-create-tables.yaml
+  - include:
+      file: db/changelog/002-add-column-assignment-timestamp.yaml
+  - include:
+      file: db/changelog/003-add-table-stucture.yaml
+  - include:
+      file: db/changelog/004-add-table-context_structure.yaml
+  - include:
+      file: db/changelog/005-add-table-principal_structure.yaml
+  

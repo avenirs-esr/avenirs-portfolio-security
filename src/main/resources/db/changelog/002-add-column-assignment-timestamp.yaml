@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: "14"
+      author: Deman
+      changes:
+        - addColumn:
+            tableName: assignment
+            columns:
+              - column:
+                  name: timestamp
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP

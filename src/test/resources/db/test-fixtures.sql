@@ -1,3 +1,25 @@
+INSERT INTO principal (id, login)
+VALUES 
+(1, 'gribonvald'),
+(2, 'deman'),
+(3, 'dugat'),
+(4, 'patterson');
+
+INSERT INTO structure (id, name)
+VALUES 
+(0, 'ANY'),
+(1, 'RECIA'),
+(2, 'Université de Toulon'),
+(3, 'AMU'),
+(4, 'MIT');
+
+INSERT INTO principal_structure (id_principal, id_structure)
+VALUES 
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4);
+
 INSERT INTO role (id, name, description) 
 VALUES 
 (1, 'ROLE_GUEST', 'Default role'),
@@ -110,14 +132,6 @@ VALUES
 ((SELECT id FROM scope WHERE name = 'scope_0002'), (SELECT id FROM resource WHERE selector = 'sae_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_0003'), (SELECT id FROM resource WHERE selector = 'ptf_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_0003'), (SELECT id FROM resource WHERE selector = 'ptf_0001'));
-
-
-INSERT INTO principal (login)
-VALUES 
-('gribonvald'),
-('deman'),
-('dugat'),
-('patterson');
 
 
 INSERT INTO context (name, description)
