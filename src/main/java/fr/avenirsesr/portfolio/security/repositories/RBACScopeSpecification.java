@@ -14,38 +14,15 @@ import jakarta.persistence.criteria.Root;
  * Used to make queries based on predicates.
  */
 public interface RBACScopeSpecification  {
-	
-
-	
-	
+		
 	/**
-	 * Specification to generate predicate to select the assignments associated to a principal and a list of resources.
-	 * @param login The login of the principal.
-	 * @param resourceIds The id of the resources.
-	 * @return The assignments for the principal and the resources.
+	 * Specification to generate predicate to select the RBACScope associated to a list of resource ids.
+	 * @param resourceIds The resource ids.
+	 * @return The specification of RBACScope.
 	 */
-
 	public static Specification<RBACScope> filterByResources(Long...resourceIds) {
 		return (Root<RBACScope> root, CriteriaQuery<?> query,  CriteriaBuilder criteriaBuilder) -> {
-			
-//			List<Predicate> predicates = new ArrayList<>();
-//			for(Long resourceId : resourceIds) {
-//				predicates.add(criteriaBuilder.equal(root.join(RBACScope_.resources).get(RBACResource_.id), resourceId));
-//          
-//			}
 			return root.join(RBACScope_.resources).get(RBACResource_.id).in((Object[]) resourceIds);
-			//return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-			
 		};	
-//		return (Root<RBACScope> root, CriteriaQuery<?> query,  CriteriaBuilder criteriaBuilder) -> {
-//			
-//			List<Predicate> predicates = new ArrayList<>();
-//			for(Long resourceId : resourceIds) {
-//				predicates.add(criteriaBuilder.equal(root.join(RBACScope_.resources).get(RBACResource_.id), resourceId));
-//				
-//			}
-//			return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-//			
-//		};	
 	}
 }

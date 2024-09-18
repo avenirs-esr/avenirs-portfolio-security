@@ -85,7 +85,7 @@ public class JWTService {
 	/**
 	 * Extracts the modulus and exponent corresponding to a key id from a JWKS response.
 	 * @param jwksResponse The JWKS .
-	 * @param kid The key id of the key associated to the modulus & exponent.
+	 * @param kid The key id of the key associated to the modulus &amp; exponent.
 	 * @return An Optional of ModulusAndExponent.
 	 */
 	protected Optional<ModulusAndExponent> extractModulusAndExponent(String jwksResponse, String kid) {

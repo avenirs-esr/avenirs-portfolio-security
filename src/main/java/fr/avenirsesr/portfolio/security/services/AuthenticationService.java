@@ -74,7 +74,7 @@ public class AuthenticationService {
 	 * @param host The host associated to the OIDC provider.
 	 * @param code The code provided by the OIDC provider.
 	 * @return The authorize URL.
-	 * @throws IOException
+	 * @throws IOException If an input or output exception occurs.
 	 */
 	public String generateAuthorizeURL(String host, String code) throws IOException {
 
@@ -91,7 +91,7 @@ public class AuthenticationService {
 	 * @param login The user login.
 	 * @param password The user password.
 	 * @return The authorize URL.
-	 * @throws IOException
+	 * @throws IOException If an input or output exception occurs.
 	 */
 	protected String generateAccessTokenURL(String login, String password) throws IOException {
 		String oidcAccessTokenURL = oidcAccessTokenTemplate.replaceAll("%CLIENT_ID%", clientId)
@@ -109,7 +109,7 @@ return oidcAccessTokenURL;
 	 * 
 	 * @param host The host associated to the OIDC provider.
 	 * @return The service URL.
-	 * @throws IOException
+	 * @throws IOException If an input or output exception occurs.
 	 */
 	public String generateServiceURL(String host) throws IOException {
 
@@ -123,7 +123,7 @@ return oidcAccessTokenURL;
 	 * 
 	 * @param token The access token used to retrieve the user profile.
 	 * @return The profile URL
-	 * @throws IOException
+	 * @throws IOException If an input or output exception occurs.
 	 */
 	public String generateProfileURL(String token) {
 
@@ -137,7 +137,7 @@ return oidcAccessTokenURL;
 	 * 
 	 * @param token The access token used to retrieve the user profile.
 	 * @return The introspect URL
-	 * @throws IOException
+	 * @throws IOException If an input or output exception occurs.
 	 */
 	public String generateIntrospectURL(String token) {
 
@@ -150,9 +150,8 @@ return oidcAccessTokenURL;
 	 * Access token introspection end point.
 	 * 
 	 * @param token    The token to introspect.
-	 * @param response The servlet response (used to redirect)
 	 * @return The Profile response of the OIDC Provider.
-	 * @throws IOException
+	 * @throws IOException  If an input or output exception occurs.
 	 */
 	public OIDCProfileResponse profile(@RequestHeader(value = "x-authorization") String token) throws IOException {
 
@@ -193,7 +192,7 @@ return oidcAccessTokenURL;
 	 * @param login The user login.
 	 * @param password The user password.
 	 * @return An Optional of OIDCAccessTokenResponse
-	 * @throws Exception
+	 * @throws Exception If an input or output exception occurs.
 	 */
 	 public Optional<OIDCAccessTokenResponse> getAccessToken(String login, String password) throws Exception {
 		 try {

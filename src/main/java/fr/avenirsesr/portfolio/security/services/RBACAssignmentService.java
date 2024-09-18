@@ -34,8 +34,8 @@ public class RBACAssignmentService {
 	/**
 	 * Gives all the assignments associated to a principal.
 	 * 
-	 * @param id The id of the principal.
-	 * @return The assignments for the principal.
+	 * @param specification The specification used to retrieve the assignments.
+	 * @return The assignments associated to the specification.
 	 */
 	public List<RBACAssignment> getAllAssignmentsByPredicate(Specification<RBACAssignment> specification) {
 		if (LOGGER.isTraceEnabled()) {

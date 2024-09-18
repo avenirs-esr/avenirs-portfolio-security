@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Sql(scripts="classpath:db/test-fixtures.sql")
+@Sql(scripts="classpath:db/test-fixtures-commons.sql")
 @Transactional
 class AvenirsPortfolioSecurityApplicationTests {
 	@Autowired

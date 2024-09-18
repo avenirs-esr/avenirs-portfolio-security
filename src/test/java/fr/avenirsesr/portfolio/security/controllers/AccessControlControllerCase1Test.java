@@ -23,12 +23,33 @@ import fr.avenirsesr.portfolio.security.models.AccessControlResponse;
 import fr.avenirsesr.portfolio.security.services.RBACAssignmentService;
 import jakarta.transaction.Transactional;
 
+
+/**
+ * 
+ * <h1>AccessControlControllerCase1Test</h1>
+ * <p>
+ * Description:  test case 1. User deman is owner of resource ptf_0000 (portfolio)
+ * </p>
+ * For more details {@link https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-set/#cas-de-test-1}
+ * 
+ * <h2>Version:</h2>
+ * 1.0
+ * 
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 18 Sept 2024
+ */
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Sql(scripts="classpath:db/test-fixtures.sql")
+@Sql(scripts={
+		"classpath:db/test-fixtures-commons.sql",
+		"classpath:db/test-fixtures-rbac-case1.sql"
+})
 @Transactional
-class AccessControlControllerTest {
+class AccessControlControllerCase1Test {
 	@Autowired
 	RBACAssignmentService srv;
 	

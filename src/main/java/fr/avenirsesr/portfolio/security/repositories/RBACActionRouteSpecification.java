@@ -17,12 +17,10 @@ import jakarta.persistence.criteria.Root;
 public interface RBACActionRouteSpecification {
 
     /**
-     * Specification to generate predicate to select the assignments associated to a
-     * principal and a list of resources.
-     * 
-     * @param login       The login of the principal.
-     * @param resourceIds The id of the resources.
-     * @return The assignments for the principal and the resources.
+     * Specification to generate predicate to select the action associated to an uri and a method (http).
+     * @param uri  The uri used to retrieve the action.
+     * @param method The HTTP method used to retrieve the action.
+     * @return An instance of RBACActionRoute specification.
      */
 
     public static Specification<RBACActionRoute> filterByURIAndMethod(String uri, String method) {

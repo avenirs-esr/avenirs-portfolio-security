@@ -137,7 +137,6 @@
 			<plugin>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-maven-plugin</artifactId>
-				<version>4.15.0</version>
 				<configuration>
 					<changeLogFile>
 						src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
@@ -165,6 +164,18 @@
 
 				</configuration>
 
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<source>21</source> <!-- Assure-toi que la source est bien
+					configurée -->
+					<doclint>none</doclint> <!-- Désactive certaines
+					vérifications strictes -->
+					<additionalparam>-Xdoclint:all,-missing</additionalparam> <!--
+					Gère les nouvelles fonctionnalités Javadoc -->
+				</configuration>
 			</plugin>
 
 

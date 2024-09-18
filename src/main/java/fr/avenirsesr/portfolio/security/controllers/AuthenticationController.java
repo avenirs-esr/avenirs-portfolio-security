@@ -38,7 +38,7 @@ public class AuthenticationController {
 	 * @param forwardHost The header used to retrieve the current host. This is used to determine the end point from the current request. 
 	 * @param response The response instance used to redirect to the authorize end point.
 	 * @param code The session code used to issue an access token.
-	 * @throws IOException
+	 * @throws IOException If an input or output exception occurs.
 	 */
 	@GetMapping("${avenirs.authentication.oidc.callback}")
 	public void oidcCallback(@RequestHeader(value="x-forwarded-host") Optional<String> forwardHost,
@@ -50,11 +50,13 @@ public class AuthenticationController {
 		
 	/**
 	 * Performs the redirection after the access token is retrieved.
-	 * @param forwardHost Header to determine the host.
+	 *
+	 * @param host     The header used to determine the host.
 	 * @param response The servlet response instance, used to perform a redirection.
-	 * @throws IOException
+	 * @throws IOException If an input or output exception occurs.
 	 */
 	@GetMapping("${avenirs.authentication.oidc.callback.redirect}")
+	
 	public void redirect(@RequestHeader(value="x-forwarded-host") Optional<String> host,
 			HttpServletResponse response) throws IOException{
 		LOGGER.trace("redirect");
@@ -65,7 +67,7 @@ public class AuthenticationController {
 	 * Access token introspection end point. 
 	 * @param token The token to introspect.
 	 * @return The response of the OIDC provider.
-	 * @throws IOException
+	 * @throws IOException  If an input or output exception occurs.
 	 */
 	@PostMapping("${avenirs.authentication.oidc.callback.profile}")
 	public OIDCProfileResponse profile(@RequestHeader(value="x-authorization") String token) throws IOException{

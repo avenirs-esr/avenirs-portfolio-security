@@ -18,7 +18,7 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Sql(scripts = "classpath:db/test-fixtures.sql")
+@Sql(scripts = "classpath:db/test-fixtures-commons.sql")
 @Transactional
 class PrincipalServiceTest {
 	
