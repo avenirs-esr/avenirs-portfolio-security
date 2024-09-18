@@ -5,13 +5,13 @@ VALUES
 (3, 'dugat'),
 (4, 'patterson');
 
-INSERT INTO structure (id, name)
+INSERT INTO structure (id, name, description)
 VALUES 
-(0, 'ANY'),
-(1, 'RECIA'),
-(2, 'Université de Toulon'),
-(3, 'AMU'),
-(4, 'MIT');
+(0, 'ANY', 'Toutes les structures'),
+(1, 'RECIA', 'Groupement d''Intérêt Public Région Centre Interactive'),
+(2, 'Univ. Toulon', 'Université de Toulon'),
+(3, 'AMU', 'Université d''Aix-Marseille'),
+(4, 'MIT', 'Massachusetts Institute of Technology');
 
 INSERT INTO principal_structure (id_principal, id_structure)
 VALUES 
@@ -31,12 +31,11 @@ VALUES
 
 INSERT INTO permission (id, name, description) 
 VALUES
-(1, 'PERM_SEE', 'See permission'),
-(2, 'PERM_READ', 'Read permission'),
-(3, 'PERM_WRITE', 'Write permission'),
-(4, 'PERM_COMMENT', 'Comments and feedbacks'),
-(5, 'PERM_SHARE', 'Share permission'),
-(6, 'PERM_DELETE', 'Delete permission');
+(1, 'PERM_READ', 'Read permission'),
+(2, 'PERM_WRITE', 'Write permission'),
+(3, 'PERM_COMMENT', 'Comments and feedbacks'),
+(4, 'PERM_SHARE', 'Share permission'),
+(5, 'PERM_DELETE', 'Delete permission');
 
 INSERT INTO action (id, name, description) 
 VALUES
@@ -49,33 +48,29 @@ VALUES
 
 INSERT INTO action_route (id, id_action, uri, method) 
 VALUES
-(1, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), '/share', 'post'),
-(2, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), '/share', 'put'),
+(1, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), '/share/read', 'post'),
+(2, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), '/share/read', 'put'),
+(3, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_WRITE_RESOURCE'), '/share/write', 'post'),
+(4, (SELECT id FROM action WHERE action.name = 'ACT_SHARE_WRITE_RESOURCE'), '/share/write', 'put'),
 (5, (SELECT id FROM action WHERE action.name = 'ACT_DISPLAY'), '/display', 'get'),
 (6, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'post'),
 (7, (SELECT id FROM action WHERE action.name = 'ACT_EDIT'), '/edit', 'put'),
 (8, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'post'),
 (9, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'put'),
-(11, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'get'),
-(10, (SELECT id FROM action WHERE action.name = 'ACT_DELETE'), '/delete', 'delete');
+(10, (SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), '/feedback', 'get'),
+(11, (SELECT id FROM action WHERE action.name = 'ACT_DELETE'), '/delete', 'delete');
 
 
 
 INSERT INTO action_permission (id_action, id_permission) 
 VALUES 
 ((SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SHARE')),
-((SELECT id FROM action WHERE action.name = 'ACT_SHARE_READ_RESOURCE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM action WHERE action.name = 'ACT_SHARE_WRITE_RESOURCE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SHARE')),
-((SELECT id FROM action WHERE action.name = 'ACT_SHARE_WRITE_RESOURCE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
-((SELECT id FROM action WHERE action.name = 'ACT_DISPLAY'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DISPLAY'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
-((SELECT id FROM action WHERE action.name = 'ACT_EDIT'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM action WHERE action.name = 'ACT_EDIT'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM action WHERE action.name = 'ACT_EDIT'), (SELECT id FROM permission WHERE permission.name = 'PERM_WRITE')),
-((SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DO_FEEDBACK'), (SELECT id FROM permission WHERE permission.name = 'PERM_COMMENT')),
-((SELECT id FROM action WHERE action.name = 'ACT_DELETE'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DELETE'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM action WHERE action.name = 'ACT_DELETE'), (SELECT id FROM permission WHERE permission.name = 'PERM_DELETE'));
 
@@ -83,16 +78,13 @@ VALUES
 
 INSERT INTO role_permission (id_role, id_permission) 
 VALUES 
-((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_WRITE')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_COMMENT')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_SHARE')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE permission.name = 'PERM_DELETE')),
-((SELECT id FROM role WHERE role.name = 'ROLE_PAIR'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_PAIR'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_PAIR'), (SELECT id FROM permission WHERE permission.name = 'PERM_COMMENT')),
-((SELECT id FROM role WHERE role.name = 'ROLE_CONTRIBUTOR'), (SELECT id FROM permission WHERE permission.name = 'PERM_SEE')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_CONTRIBUTOR'), (SELECT id FROM permission WHERE permission.name = 'PERM_READ')),
 ((SELECT id FROM role WHERE role.name = 'ROLE_CONTRIBUTOR'), (SELECT id FROM permission WHERE permission.name = 'PERM_WRITE'));
 
@@ -134,16 +126,18 @@ VALUES
 ((SELECT id FROM scope WHERE name = 'scope_0003'), (SELECT id FROM resource WHERE selector = 'ptf_0001'));
 
 
-INSERT INTO context (name, description)
-VALUES ('empty', 'Default empty context');
+INSERT INTO context (id, validity_start, validity_end)
+VALUES 
+(0, null, null),
+(1, to_timestamp('01/09/2024', 'DD/MM/YYYY'), to_timestamp('31/08/2025', 'DD/MM/YYYY'));
 
 
 INSERT INTO assignment (id_role, id_principal, id_scope, id_context)
 VALUES 
-((SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM principal WHERE login = 'deman'), (SELECT id FROM scope WHERE name = 'scope_0000'), (SELECT id FROM context WHERE name = 'empty')),
-((SELECT id FROM role WHERE name = 'ROLE_PAIR'), (SELECT id FROM principal WHERE login = 'deman'), (SELECT id FROM scope WHERE name = 'scope_0002'), (SELECT id FROM context WHERE name = 'empty')),
-((SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM principal WHERE login = 'gribonvald'), (SELECT id FROM scope WHERE name = 'scope_0001'), (SELECT id FROM context WHERE name = 'empty')),
-((SELECT id FROM role WHERE name = 'ROLE_PAIR'), (SELECT id FROM principal WHERE login = 'dugat'), (SELECT id FROM scope WHERE name = 'scope_0002'), (SELECT id FROM context WHERE name = 'empty'));
+((SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM principal WHERE login = 'deman'), (SELECT id FROM scope WHERE name = 'scope_0000'), 1),
+((SELECT id FROM role WHERE name = 'ROLE_PAIR'), (SELECT id FROM principal WHERE login = 'deman'), (SELECT id FROM scope WHERE name = 'scope_0002'), 0),
+((SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM principal WHERE login = 'gribonvald'), (SELECT id FROM scope WHERE name = 'scope_0001'), 0),
+((SELECT id FROM role WHERE name = 'ROLE_PAIR'), (SELECT id FROM principal WHERE login = 'dugat'), (SELECT id FROM scope WHERE name = 'scope_0002'), 0);
 
 
 

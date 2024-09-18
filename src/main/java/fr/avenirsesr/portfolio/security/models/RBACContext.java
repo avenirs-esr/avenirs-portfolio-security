@@ -1,5 +1,8 @@
 package fr.avenirsesr.portfolio.security.models;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,9 +24,11 @@ public class RBACContext {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	/** Name associated to the context.*/
-	private String name;
-	
-	/** Description of the context. */
-	private String description;
+	/** Start of  validity. */
+	@Column(columnDefinition="TIMESTAMP")
+	private LocalDateTime validity_start;
+
+	/** End of the validity. */
+	@Column(columnDefinition="TIMESTAMP")
+	private LocalDateTime validity_end;
 }

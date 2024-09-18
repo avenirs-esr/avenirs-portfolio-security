@@ -337,21 +337,10 @@ databaseChangeLog:
                    primaryKey:  true
                    nullable:  false                   
            - column:
-               name: name
-               type: VARCHAR(80)
-               constraints:
-                   nullable:  false
-                   unique: true
-           - column:
-               name: description
-               type: VARCHAR(255)
-               constraints:
-                   nullable:  false
-           - column:
-               name: validityStart
+               name: validity_start
                type: datetime
            - column:
-               name: validityEnd
+               name: validity_end
                type: datetime
         - sql:
            dbms:  'postgresql'
