@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "avenirs.rbac.case1.user",
+      "type": "java.lang.String",
+      "description": "User property for RBAC case 1."
+    },
+    {
+      "name": "avenirs.rbac.case1.password",
+      "type": "java.lang.String",
+      "description": "Password property for RBAC case 1."
+    }
+  ]
+}
