@@ -3,6 +3,8 @@ package fr.avenirsesr.portfolio.security.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -36,23 +38,20 @@ public class AccessControlController {
 	@Autowired
 	private AccessControlService accessControlService;
 
-	@GetMapping("${avenirs.accessControl}")
-	public AccessControlResponse hasAccess(@RequestHeader(value = "x-authorization") String token,
+	@GetMapping("${avenirs.access.control}")
+	public ResponseEntity<AccessControlResponse> hasAccess(@RequestHeader(value = "x-authorization") String token,
 			@RequestParam String uri, @RequestParam String method,
-			@RequestParam(required = false, name = "resource") Long resourceId) {
+			@RequestParam(required = false, name = "resourceId") Long resourceId) {
 		LOGGER.trace("hasAccess, token: {} ", token);
 		LOGGER.trace("hasAccess, uri: {} ", uri);
 		LOGGER.trace("hasAccess, method: {} ", method);
 		LOGGER.trace("hasAccess, resourceId: {} ", resourceId);
 
-		AccessControlResponse response = new AccessControlResponse()
-				.setToken(token)
-				.setResourceId(resourceId)
+		AccessControlResponse response = new AccessControlResponse().setToken(token).setResourceId(resourceId)
 				.setUri(uri).setMethod(method);
 		if (StringUtils.hasLength(uri) && StringUtils.hasLength(method)) {
 			RBACActionRoute actionRoute = actionRouteService.getActionRouteByPredicate(
-					RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())
-				).orElse(null);
+					RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
 			LOGGER.trace("hasAccess, actionRoute: {} ", actionRoute);
 
 			if (actionRoute != null) {
@@ -72,12 +71,13 @@ public class AccessControlController {
 					LOGGER.trace("hasAccess, granted: {}", granted);
 
 					response.setGranted(granted);
+					return response.isGranted() ? ResponseEntity.ok(response)
+							: ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
 				}
 			}
 		}
 		LOGGER.trace("hasAccess, response: {}", response);
-
-		return response;
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 	}
 
 }

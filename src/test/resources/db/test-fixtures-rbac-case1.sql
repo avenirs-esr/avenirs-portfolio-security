@@ -6,7 +6,7 @@ VALUES
 
 INSERT INTO assignment (id_role, id_principal, id_scope, id_context)
 VALUES 
-((SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM principal WHERE login = 'deman'), (SELECT id FROM scope WHERE name = 'scope_0000'), 1),
+((SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM principal WHERE login = 'deman'), (SELECT id FROM scope WHERE name = 'scope_0000'), 1);
 
 
 

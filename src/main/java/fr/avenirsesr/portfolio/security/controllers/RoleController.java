@@ -20,7 +20,7 @@ public class RoleController {
 	@Autowired
 	private AuthenticationService authenticationService; 
 	
-	@GetMapping("${avenirs.accessControl.roles}")
+	@GetMapping("${avenirs.access.control.roles}")
 	public String getRoles(@RequestHeader(value="x-authorization") String token) {
 		LOGGER.trace("getRoles, token: " + token);
 		

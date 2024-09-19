@@ -1,7 +1,10 @@
 package fr.avenirsesr.portfolio.security.models;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -32,6 +35,9 @@ public class OIDCAccessTokenResponse {
 	
 	/** Scope requested (e.g.: "openid")*/
 	private String scope;
+	
+	/** Claims of the access token. */
+	private  Map<String, Object> claims;
 	
 	
 

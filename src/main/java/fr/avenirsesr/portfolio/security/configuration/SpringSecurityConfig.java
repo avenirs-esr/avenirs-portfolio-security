@@ -23,7 +23,7 @@ public class SpringSecurityConfig {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpringSecurityConfig.class);
 	
-	@Value("${avenirs.accessControl.roles}")
+	@Value("${avenirs.access.control.roles}")
 	private String roles;
 
 	/** OIDC callback URI.*/

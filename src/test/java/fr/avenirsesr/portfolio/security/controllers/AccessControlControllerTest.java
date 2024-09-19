@@ -26,11 +26,9 @@ import jakarta.transaction.Transactional;
 
 /**
  * 
- * <h1>AccessControlControllerCase1Test</h1>
+ * <h1>AccessControlControllerTest</h1>
  * <p>
- * Description:  test case 1. User deman is owner of resource ptf_0000 (portfolio)
- * </p>
- * For more details {@link https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-set/#cas-de-test-1}
+ * Description: general test case, bad header, missing token, etc. See specific tests are located in specific test files.
  * 
  * <h2>Version:</h2>
  * 1.0
@@ -44,12 +42,9 @@ import jakarta.transaction.Transactional;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Sql(scripts={
-		"classpath:db/test-fixtures-commons.sql",
-		"classpath:db/test-fixtures-rbac-case1.sql"
-})
+@Sql(scripts="classpath:db/test-fixtures-commons.sql")
 @Transactional
-class AccessControlControllerCase1Test {
+class AccessControlControllerTest {
 	@Autowired
 	RBACAssignmentService srv;
 	

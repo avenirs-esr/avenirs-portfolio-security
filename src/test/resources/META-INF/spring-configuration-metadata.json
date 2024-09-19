@@ -9,6 +9,41 @@
       "name": "avenirs.rbac.case1.password",
       "type": "java.lang.String",
       "description": "Password property for RBAC case 1."
+    },
+    {
+      "name": "avenirs.rbac.case1.granted.resource.id",
+      "type": "java.lang.Long",
+      "description": "Resource id property for RBAC case 1."
+    }, 
+    {
+      "name": "avenirs.rbac.case1.ungranted.resource.id",
+      "type": "java.lang.Long",
+      "description": "Resource id property for RBAC case 1."
+    },
+    {
+      "name": "avenirs.rbac.case2.user",
+      "type": "java.lang.String",
+      "description": "User property for RBAC case 2."
+    },
+    {
+      "name": "avenirs.rbac.case2.password",
+      "type": "java.lang.String",
+      "description": "Password property for RBAC case 2."
+    },
+    {
+      "name": "avenirs.rbac.case2.granted.resource.id",
+      "type": "java.lang.Long",
+      "description": "Resource id property for RBAC case 2."
+    },
+    {
+      "name": "avenirs.rbac.unprivileged.user",
+      "type": "java.lang.String",
+      "description": "Unprivileged user property for for all RBAC tests."
+    },
+    {
+      "name": "avenirs.rbac.unprivileged.password",
+      "type": "java.lang.String",
+      "description": "Unprivileged password property for for all RBAC tests."
     }
   ]
 }

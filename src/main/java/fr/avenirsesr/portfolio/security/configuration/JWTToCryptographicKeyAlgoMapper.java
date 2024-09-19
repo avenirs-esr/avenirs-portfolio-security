@@ -30,9 +30,9 @@ public class JWTToCryptographicKeyAlgoMapper{
     	if (jwtAlgo == null) {
     		return Optional.empty();
     	}
-    	final String key = jwtAlgo.toUpperCase();
+    	final String key = jwtAlgo.toLowerCase();
     	
-    	return mapping.containsKey(key)? Optional.of(mapping.get(jwtAlgo.toUpperCase())): Optional.empty();
+    	return mapping.containsKey(key)? Optional.of(mapping.get(key)): Optional.empty();
     }
 
 }

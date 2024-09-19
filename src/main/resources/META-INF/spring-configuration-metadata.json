@@ -124,7 +124,37 @@
       "name": "avenirs.jwt.alg.mapping.eddsa",
       "type": "java.lang.String",
       "description": "Avenirs JWT algorithm mamapping for algorithm EdDSA "
-    }     
+    },  
+    {
+      "name": "avenirs.access.control.share.read",
+      "type": "java.lang.String",
+      "description": "Avenirs Access control share read end point "
+    },  
+    {
+      "name": "avenirs.access.control.share.write",
+      "type": "java.lang.String",
+      "description": "Avenirs Access control share write end point "
+    },  
+    {
+      "name": "avenirs.access.control.display",
+      "type": "java.lang.String",
+      "description": "Avenirs Access control display end point "
+    },  
+    {
+      "name": "avenirs.access.control.edit",
+      "type": "java.lang.String",
+      "description": "Avenirs Access control edit end point "
+    },  
+    {
+      "name": "avenirs.access.control.feedback",
+      "type": "java.lang.String",
+      "description": "Avenirs Access control feedback end point "
+    } ,  
+    {
+      "name": "avenirs.access.control.delete",
+      "type": "java.lang.String",
+      "description": "Avenirs Access control delete end point "
+    }       
   ]
 }
 

@@ -6,6 +6,7 @@ package fr.avenirsesr.portfolio.security.services;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class AuthenticationService {
 	/** Template to generate the OIDC authorization URL. */
 	@Value("${avenirs.authentication.oidc.authorise.template.url}")
 	private String oidcAuthorizeTemplate;
-	
+
 	/** Template to generate the Access Token URL. */
 	@Value("${avenirs.authentication.oidc.token.template.url}")
 	private String oidcAccessTokenTemplate;
@@ -57,17 +58,16 @@ public class AuthenticationService {
 	/** Profile end point. */
 	@Value("${avenirs.authentication.oidc.provider.profile.url}")
 	private String oidcProviderProfileURL;
-	
-	@Value("${avenirs.authentication.oidc.clientId}")
+
+	@Value("${avenirs.authentication.oidc.client.id}")
 	private String clientId;
 
-	@Value("${avenirs.authentication.oidc.clientSecret}")
+	@Value("${avenirs.authentication.oidc.client.secret}")
 	private String clientSecret;
-	
+
 	@Autowired
-	private JWTService jwtService; 
-	
-	
+	private JWTService jwtService;
+
 	/**
 	 * Generates the OIDC Authorize URL.
 	 * 
@@ -79,8 +79,7 @@ public class AuthenticationService {
 	public String generateAuthorizeURL(String host, String code) throws IOException {
 
 		String oidcAuthorizeURL = oidcAuthorizeTemplate.replaceAll("%HOST%", host).replaceAll("%CODE%", code)
-				.replaceAll("%CLIENT_ID%", clientId)
-				.replaceAll("%CLIENT_SECRET%", clientSecret);
+				.replaceAll("%CLIENT_ID%", clientId).replaceAll("%CLIENT_SECRET%", clientSecret);
 		LOGGER.debug("generateAuthorizeURL, code: " + code);
 		LOGGER.debug("generateAuthorizeURL, oidcAuthorizeURL: " + oidcAuthorizeURL);
 		return oidcAuthorizeURL;
@@ -88,22 +87,20 @@ public class AuthenticationService {
 
 	/**
 	 * Generates the OIDC Access Token URL.
-	 * @param login The user login.
+	 * 
+	 * @param login    The user login.
 	 * @param password The user password.
 	 * @return The authorize URL.
 	 * @throws IOException If an input or output exception occurs.
 	 */
 	protected String generateAccessTokenURL(String login, String password) throws IOException {
 		String oidcAccessTokenURL = oidcAccessTokenTemplate.replaceAll("%CLIENT_ID%", clientId)
-				.replaceAll("%CLIENT_SECRET%", clientSecret)
-				.replaceAll("%LOGIN%", login)
+				.replaceAll("%CLIENT_SECRET%", clientSecret).replaceAll("%LOGIN%", login)
 				.replaceAll("%PASSWORD%", password);
 		LOGGER.debug("generateAccessTokenURL, oidcAccessTokenURL: " + oidcAccessTokenURL);
-		
-return oidcAccessTokenURL;
+		return oidcAccessTokenURL;
 	}
 
-	
 	/**
 	 * Generates the OIDC Authorize URL.
 	 * 
@@ -149,14 +146,14 @@ return oidcAccessTokenURL;
 	/**
 	 * Access token introspection end point.
 	 * 
-	 * @param token    The token to introspect.
+	 * @param token The token to introspect.
 	 * @return The Profile response of the OIDC Provider.
-	 * @throws IOException  If an input or output exception occurs.
+	 * @throws IOException If an input or output exception occurs.
 	 */
 	public OIDCProfileResponse profile(@RequestHeader(value = "x-authorization") String token) throws IOException {
 
 		LOGGER.trace("profile");
-		
+
 		OIDCProfileResponse profileResponse = restClient.post().uri(generateProfileURL(token))
 				.header("Authorization", basicAutentication()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON).retrieve().body(OIDCProfileResponse.class);
@@ -175,7 +172,7 @@ return oidcAccessTokenURL;
 	public OIDCIntrospectResponse introspectAccessToken(String token) {
 
 		LOGGER.debug("introspectAccessToken");
-		
+
 		OIDCIntrospectResponse introspectResponse = restClient.post().uri(generateIntrospectURL(token))
 				.header("Authorization", basicAutentication()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON).retrieve().body(OIDCIntrospectResponse.class);
@@ -184,39 +181,41 @@ return oidcAccessTokenURL;
 
 		return introspectResponse;
 	}
-	
-	
+
 	/**
 	 * Generates an access token
-	      
-	 * @param login The user login.
+	 * 
+	 * @param login    The user login.
 	 * @param password The user password.
 	 * @return An Optional of OIDCAccessTokenResponse
 	 * @throws Exception If an input or output exception occurs.
 	 */
-	 public Optional<OIDCAccessTokenResponse> getAccessToken(String login, String password) throws Exception {
-		 try {
+	public Optional<OIDCAccessTokenResponse> getAccessToken(String login, String password) throws Exception {
+		try {
 
-			 
-	       String query = generateAccessTokenURL(login, password);
-	       OIDCAccessTokenResponse response = restClient.post().uri(query)
-	      			.retrieve().body(OIDCAccessTokenResponse.class);
-	        
-	        final Optional<Claims> claims = this.jwtService.parseAndCheckSignature(response);
-	        if (claims.isEmpty()) {
-	        	LOGGER.error("Invalid access token response: {}", response);
-	        	return Optional.empty();
-	        	
-	        }
-	        
-	        LOGGER.trace("Claims: {}", claims.get());
-	        return Optional.of(response);
-	        
-		 } catch(HttpClientErrorException e) {
-			LOGGER.error("getAccessToken, error while retrieving access token for {}: {}", login, + e.getStatusCode().value());
-			 return Optional.empty();
-		 }
-	    }
+			String query = generateAccessTokenURL(login, password);
+			OIDCAccessTokenResponse response = restClient.post().uri(query).retrieve()
+					.body(OIDCAccessTokenResponse.class);
+
+			if (response == null) {
+				return Optional.empty();
+			}
+
+			final Optional<Claims> claims = this.jwtService.parseAndCheckSignature(response);
+			if (claims.isEmpty()) {
+				LOGGER.error("Invalid access token response: {}", response);
+				return Optional.empty();
+			}
+			
+			LOGGER.trace("Claims: {}", claims.get());
+			response.setClaims(new HashMap<>(claims.get()));
+			return Optional.of(response);
+		} catch (HttpClientErrorException e) {
+			LOGGER.error("getAccessToken, error while retrieving access token for {}: {}", login,
+					+e.getStatusCode().value());
+			return Optional.empty();
+		}
+	}
 
 	/**
 	 * Gives the header for a basic authentication based on the client id and client
@@ -227,7 +226,7 @@ return oidcAccessTokenURL;
 	public String basicAutentication() {
 		if (basicAuthenticationHeader == null) {
 
-			LOGGER.trace("basicAutentication generating authentication header. " );
+			LOGGER.trace("basicAutentication generating authentication header. ");
 			final String auth = clientId + ":" + clientSecret;
 
 			final byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(Charset.forName("US-ASCII")));
