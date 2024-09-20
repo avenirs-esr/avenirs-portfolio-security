@@ -6,6 +6,9 @@ on:
       - main
 
 jobs:
+  call-postgres-service:
+    uses: ./.github/workflows/postgres.yaml
+    
   build:
     runs-on: ubuntu-latest
 
