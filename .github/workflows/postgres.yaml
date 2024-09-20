@@ -28,5 +28,5 @@ jobs:
         env:
           PGPASSWORD: pgpassword
         run: |
-            psql -h localhost -U ${{ secrets.POSTGRES_USER }} -d mydatabase -p 65432 -f src/test/resources/db/init-test-db.sql
+            psql -h localhost -U pgpassword -d avenirs_access_control -p 65432 -f src/test/resources/db/init-test-db.sql
 
