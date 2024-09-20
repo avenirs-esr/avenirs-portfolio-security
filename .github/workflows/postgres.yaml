@@ -26,7 +26,7 @@ jobs:
 
       - name: Run SQL initialization script
         env:
-          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          PGPASSWORD: pgpassword
         run: |
             psql -h localhost -U ${{ secrets.POSTGRES_USER }} -d mydatabase -p 65432 -f src/test/resources/db/init-test-db.sql
 
