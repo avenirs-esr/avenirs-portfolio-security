@@ -12,7 +12,7 @@ jobs:
         ports:
           - 65432:5432
         env:
-          POSTGRES_USER: pguser
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: pgpassword
           POSTGRES_DB: avenirs_access_control
         options: >-
