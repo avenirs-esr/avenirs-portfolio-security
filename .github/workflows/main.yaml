@@ -20,7 +20,7 @@ jobs:
         java-version: '21'
 
     - name: Build project and generate reports
-      run: mvn clean verify
+      run: mvn clean verify -X
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
