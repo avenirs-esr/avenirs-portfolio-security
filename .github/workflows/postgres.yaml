@@ -24,6 +24,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Debug Secrets
+        run: |
+            echo "POSTGRES_USER is set: ${POSTGRES_USER:+'YES'}"
+            echo "POSTGRES_PASSWORD is set: ${POSTGRES_PASSWORD:+'YES'}"
+            echo "POSTGRES_DB is set: ${POSTGRES_DB:+'YES'}"
+        env:
+            POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
       - name: Run SQL initialization script
         env:
           PGPASSWORD: pgpassword
