@@ -1,6 +1,5 @@
 package fr.avenirsesr.portfolio.security.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,13 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.avenirsesr.portfolio.security.models.AccessControlResponse;
 import fr.avenirsesr.portfolio.security.services.RBACAssignmentService;
 import jakarta.transaction.Transactional;
 
@@ -51,9 +47,6 @@ class AccessControlControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
-
 	@Test
 	void testHasAccessWithoutHeader() throws Exception {
 
@@ -83,18 +76,16 @@ class AccessControlControllerTest {
 	void testHasAccessNotGranted() throws Exception {
 		
 		String token = "invalid token";
-		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/access-control")
+		mockMvc.perform(MockMvcRequestBuilders.get("/access-control")
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", token)
 				.param("uri", "/feedback")
 				.param("method", "get")
 				.param("resource", "1"))
-				.andDo(print()).andExpect(status().isOk());
+				.andDo(print()).andExpect(status().isForbidden());
 
-		MvcResult result = resultActions.andReturn();
-
-		AccessControlResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessControlResponse.class);
-		assertFalse(response.isGranted());
+		
+		
 	}
 	
 

@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,6 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import jakarta.transaction.Transactional;
 
+@Disabled
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

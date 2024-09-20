@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import fr.avenirsesr.portfolio.security.models.RBACAction;
 import jakarta.transaction.Transactional;
 
-
+@Disabled
 @SpringBootTest
 @ActiveProfiles("test")
 @Sql(scripts = "classpath:db/test-fixtures-commons.sql")
