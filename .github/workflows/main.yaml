@@ -54,7 +54,7 @@ jobs:
           echo "Waiting for PostgreSQL to be ready..."
           echo "POSTGRES_PASSWORD is set but masked for security"
           for i in {1..4}; do
-            if PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\q"; then
+            if psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\q"; then
               echo "PostgreSQL is ready."
               break
             fi
@@ -65,7 +65,7 @@ jobs:
       - name: Inject SQL File into Database
         run: |
           echo "Injecting init-test-db.sql into PostgreSQL..."
-          PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f src/test/resources/db/init-test-db.sql
+          psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f src/test/resources/db/init-test-db.sql
 
       - name: Verify PostgreSQL Setup
         run: |
