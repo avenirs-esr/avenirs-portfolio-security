@@ -11,6 +11,7 @@ jobs:
     
   build:
     runs-on: ubuntu-latest
+    environment: avenirs_ci 
     env:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
