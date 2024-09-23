@@ -32,10 +32,11 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+         
         ports:
           - 65432:5432
         options: >-
-          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }}"
+          --health-cmd "pg_isready"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -57,7 +58,6 @@ jobs:
           done
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
       - name: Inject SQL File into Database
@@ -66,7 +66,6 @@ jobs:
           PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f src/test/resources/db/init-test-db.sql
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
       - name: Verify PostgreSQL Setup
@@ -75,5 +74,4 @@ jobs:
           PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\l"
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
