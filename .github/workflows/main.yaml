@@ -6,7 +6,6 @@ on:
       - main
 
 jobs:
-  # Job pour vérifier si les secrets sont valorisés
   debug-secrets:
     runs-on: ubuntu-latest
 
@@ -24,32 +23,22 @@ jobs:
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
 
-  # Job pour configurer une base de données PostgreSQL
   setup-postgres:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
+    steps:
+      - name: Start PostgreSQL
+        uses: docker://postgres:latest
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }}" 
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+        with:
+          ports: 65432:5432
 
       - name: Verify PostgreSQL Setup
         run: |
-          echo "Testing PostgreSQL connection..."
-          PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\l"
+          echo "Testing PostgreSQL connection on port 65432..."
+          PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\l"
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
