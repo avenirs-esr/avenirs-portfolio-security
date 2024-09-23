@@ -28,6 +28,7 @@ jobs:
     env:  # Définir les variables d'environnement globalement pour tout le job
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
     services:
       postgres:
@@ -69,4 +70,4 @@ jobs:
       - name: Verify PostgreSQL Setup
         run: |
           echo "Testing PostgreSQL connection on port 65432..."
-          PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\l"
+          psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\l"
