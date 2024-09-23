@@ -48,7 +48,8 @@ jobs:
       - name: Wait for PostgreSQL to be ready
         run: |
           echo "Waiting for PostgreSQL to be ready..."
-          for i in {1..30}; do
+          echo "POSTGRES_PASSWORD ${POSTGRES_PASSWORD}"
+          for i in {1..4}; do
             if PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\q"; then
               echo "PostgreSQL is ready."
               break
