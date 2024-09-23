@@ -1,4 +1,4 @@
-name: Deploy Javadoc and JaCoCo Report
+name: Debug POSTGRES_USER Secret
 
 on:
   push:
@@ -6,45 +6,21 @@ on:
       - main
 
 jobs:
-  call-postgres-service:
-    uses: ./.github/workflows/postgres.yaml
-    
-  build:
+  debug-secrets:
     runs-on: ubuntu-latest
-    environment: avenirs_ci 
-    
-    permissions:
-      contents: read
-      id-token: write  # Parfois nécessaire pour certains jobs
-      packages: read
-      issues: write 
-    env:
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+    environment:
+      name: avenirs_ci  
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      
-    - name: Debug Secrets from main
-      run: |
-            echo "POSTGRES_USER is set: ${POSTGRES_USER:+'YES'}"
-            echo "POSTGRES_PASSWORD is set: ${POSTGRES_PASSWORD:+'YES'}"
-            echo "POSTGRES_DB is set: ${POSTGRES_DB:+'YES'}"
-     
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '21'
-
-    - name: Build project and generate reports
-      run: mvn clean verify -X
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./target/site
+      - name: Debug POSTGRES_USER Secret
+        run: |
+          if [ -z "${POSTGRES_USER}" ]; then
+            echo "POSTGRES_USER is not set"
+          else
+            echo "POSTGRES_USER is set: ${POSTGRES_USER}"
+          fi
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
