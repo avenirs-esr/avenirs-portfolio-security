@@ -12,6 +12,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: avenirs_ci 
+    
+    permissions:
+      contents: read
+      id-token: write  # Parfois nécessaire pour certains jobs
+      packages: read
+      issues: write 
     env:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
