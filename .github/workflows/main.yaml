@@ -8,19 +8,17 @@ on:
 jobs:
   debug-secrets:
     runs-on: ubuntu-latest
-    environment:
-      name: avenirs_ci  
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Debug POSTGRES_USER Secret
+      - name: Check if POSTGRES_USER Secret is Set
         run: |
           if [ -z "${POSTGRES_USER}" ]; then
-            echo "POSTGRES_USER is not set"
+            echo "POSTGRES_USER is not set or empty."
           else
-            echo "POSTGRES_USER is set: ${POSTGRES_USER}"
+            echo "POSTGRES_USER is set and masked for security."
           fi
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
