@@ -28,6 +28,10 @@ jobs:
     services:
       postgres:
         image: postgres:latest
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
         ports:
           - 65432:5432
         options: >-
@@ -66,17 +70,4 @@ jobs:
       - name: Inject SQL File into Database
         run: |
           echo "Injecting init-test-db.sql into PostgreSQL..."
-          PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f src/test/resources/db/init-test-db.sql
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-
-      - name: Verify PostgreSQL Setup
-        run: |
-          echo "Testing PostgreSQL connection on port 65432..."
-          PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\l"
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -
