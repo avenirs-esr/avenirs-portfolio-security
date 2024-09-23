@@ -29,9 +29,10 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: test_db
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_HOST_AUTH_METHOD: trust  # Bypass les mots de passe pour les tests (utiliser uniquement en environnement sécurisé)
         ports:
           - 65432:5432
         options: >-
@@ -44,18 +45,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set Environment Variables
-        run: echo "Setting environment variables for PostgreSQL"
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-
       - name: Wait for PostgreSQL to be ready
         run: |
           echo "Waiting for PostgreSQL to be ready..."
           for i in {1..30}; do
-            if PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\q"; then
+            if psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\q"; then
               echo "PostgreSQL is ready."
               break
             fi
@@ -64,10 +58,20 @@ jobs:
           done
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
       - name: Inject SQL File into Database
         run: |
           echo "Injecting init-test-db.sql into PostgreSQL..."
-          PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -p 65432 -U ${POSTGRES_USER} -
+          psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f src/test/resources/db/init-test-db.sql
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
+      - name: Verify PostgreSQL Setup
+        run: |
+          echo "Testing PostgreSQL connection on port 65432..."
+          psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\l"
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
