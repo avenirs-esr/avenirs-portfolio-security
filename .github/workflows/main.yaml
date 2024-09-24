@@ -42,7 +42,7 @@ jobs:
         options: >-
           --env LDAP_TLS_VERIFY_CLIENT=never
           --env LDAP_LOG_LEVEL=256
-          --volume ${{ github.workspace }}/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif:ro
+          --volume ${{ github.workspace }}/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
 
     steps:
       - name: Checkout repository
