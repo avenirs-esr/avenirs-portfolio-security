@@ -5,11 +5,6 @@ on: [workflow_call]
 jobs:
   setup-postgres:
     runs-on: ubuntu-latest
-    env:
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
     services:
       postgres:
         image: postgres:latest
@@ -33,13 +28,13 @@ jobs:
           echo "PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
 
-      
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Wait for PostgreSQL to be ready
         run: |
           echo "Waiting for PostgreSQL to be ready..."
+          echo "POSTGRES_USER ${POSTGRES_USER}"
           for i in {1..4}; do
             if psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\q"; then
               echo "PostgreSQL is ready."
