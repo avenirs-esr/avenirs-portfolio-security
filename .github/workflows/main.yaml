@@ -35,6 +35,7 @@ jobs:
           LDAP_DOMAIN: "ldap-dev.avenirs-esr.fr"
           LDAP_ADMIN_PASSWORD: ${{ secrets.LDAP_ADMIN_PASSWORD }}
           LDAP_BASE_DN: ${{secrets.LDAP_BASE_DN}}
+          LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
         ports:
           - 389:389
           - 636:636
