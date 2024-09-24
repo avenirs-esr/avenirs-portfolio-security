@@ -75,14 +75,12 @@ jobs:
           run: |
             echo "Displaying CAS startup logs..."
             docker logs avenirs-cas
-            shell: bash
-
+           
         - name: Test CAS Accessibility Inside Container
           run: |
            echo "Testing CAS accessibility inside the container..."
            docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
-          shell: bash
-     
+          
         - name: Run Tests
           uses: ./.github/actions/run-tests
 
