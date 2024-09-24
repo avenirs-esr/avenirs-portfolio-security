@@ -1,0 +1,24 @@
+name: "Setup PostgreSQL"
+description: "Initializes PostgreSQL environment"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        for i in {1..4}; do
+          if psql -h localhost -p 65432 -U $POSTGRES_USER -d $POSTGRES_DB -c "\q"; then
+            echo "PostgreSQL is ready."
+            break
+          fi
+          echo "PostgreSQL is not ready yet... retrying in 5 seconds."
+          sleep 5
+        done
+      shell: bash 
+
+    - name: Initialize Database
+      run: |
+        echo "Injecting init-test-db.sql into PostgreSQL..."
+        psql -h localhost -p 65432 -U $POSTGRES_USER -d $POSTGRES_DB -f src/test/resources/db/init-test-db.sql
+      shell: bash  
