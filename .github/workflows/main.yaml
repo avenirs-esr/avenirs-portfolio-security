@@ -69,6 +69,15 @@ jobs:
 
         - name: Setup PostgreSQL
           uses: ./.github/actions/setup-postgres
+       
+        - name: Test CAS Accessibility Inside Container
+          run: |
+           echo "Testing CAS accessibility inside the container..."
+           docker ps  # Affiche les conteneurs en cours d'exécution
+           CONTAINER_ID=$(docker ps --filter ancestor=apereo/cas:6.6.15.2 --format "{{.ID}}")
+           echo "CAS Container ID: $CONTAINER_ID"
+           docker exec -it $CONTAINER_ID curl -v -k https://localhost:8443/cas/login
+          shell: bash
      
         - name: Run Tests
           uses: ./.github/actions/run-tests
