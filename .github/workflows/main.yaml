@@ -70,7 +70,10 @@ jobs:
 
         - name: Setup PostgreSQL
           uses: ./.github/actions/setup-postgres
-       
+        
+        - name: Wait for CAS to Start
+          run: sleep 60
+        
         - name: Display CAS Startup Logs
           run: |
             echo "Displaying CAS startup logs..."
