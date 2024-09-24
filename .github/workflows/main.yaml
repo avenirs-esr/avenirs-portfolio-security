@@ -47,6 +47,7 @@ jobs:
       cas:
         image: apereo/cas:6.6.15.2
         ports:
+          - 443:8443
           - 8080:8080
         options: >-
           --add-host avenirs-apache:127.0.0.1  
