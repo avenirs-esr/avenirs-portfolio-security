@@ -70,6 +70,10 @@ jobs:
 
         - name: Setup PostgreSQL
           uses: ./.github/actions/setup-postgres
+          
+        - name: check keystore
+          run: |
+            docker exec avenirs-cas ls -l /etc/cas/thekeystore.jks
         
         - name: Wait for CAS to Start
           run: sleep 60
