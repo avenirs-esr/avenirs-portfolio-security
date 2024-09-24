@@ -33,11 +33,6 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Debuging
-        run: |
-            echo "DEBUGGING"
-            echo "POSTGRES_USER $POSTGRES_USER"
-            echo "PU $PU"
       - name: Checkout repository
         uses: actions/checkout@v3
 
