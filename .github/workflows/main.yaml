@@ -51,7 +51,7 @@ jobs:
             sudo chmod -R u+rwX .github/ldap || true
             sudo rm -rf .github/ldap || true
         - name: Checkout repository
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4
           with:
            clean: true
 
