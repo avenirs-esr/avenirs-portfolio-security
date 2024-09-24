@@ -5,22 +5,25 @@ on:
     secrets:
       POSTGRES_USER:
         required: true
+      POSTGRES_PASSWORD:
+        required: true
+      POSTGRES_DB:
+        required: true
 jobs:
   setup-postgres:
     runs-on: ubuntu-latest
     env: 
-      POSTGRES_USER: pguser
-      POSTGRES_PASSWORD: pgpassword
-      PGPASSWORD: pgpassword
-      POSTGRES_DB: avenirs_access_control
-      PU: ${{secrets.POSTGRES_USER}}
+      POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+      POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+      PGPASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+      POSTGRES_DB: ${{secrets.POSTGRES_DB}}
     services:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: pguser
-          POSTGRES_PASSWORD: pgpassword
-          POSTGRES_DB: avenirs_access_control
+          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
         ports:
           - 65432:5432
         options: >-
