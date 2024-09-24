@@ -57,13 +57,14 @@ jobs:
     steps:
         - name: Fix Permissions on LDAP AND CAS Directories
           run: |
-            sudo chown -R $(id -u):$(id -g) .github/ldap || true
-            sudo chmod -R u+rwX .github/ldap || true
-            sudo chown -R $(id -u):$(id -g) .github/cas || true
-            sudo chmod -R u+rwX .github/cas || true
+            sudo chown -R $USER:$USER .github/ldap || true
+            sudo chmod -R u+rwX,g+rwX,o+rwX .github/ldap || true
+            sudo chown -R $USER:$USER .github/cas || true
+            sudo chmod -R u+rwX,g+rwX,o+rwX .github/cas || true
         - name: Checkout repository
           uses: actions/checkout@v4
-         
+          with:
+           clean: true
 
         - name: Setup PostgreSQL
           uses: ./.github/actions/setup-postgres
