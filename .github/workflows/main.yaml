@@ -44,6 +44,14 @@ jobs:
           --env LDAP_LOG_LEVEL=256
           --volume ${{ github.workspace }}/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
 
+      cas:
+        image: apereo/cas:6.6
+        ports:
+          - 8080:8080
+        options: >-
+          --add-host avenirs-apache:127.0.0.1  
+          --volume ${{ github.workspace }}/.github/cas:/etc/cas:rw
+
     steps:
         - name: Fix Permissions on LDAP Directory
           run: |
