@@ -45,14 +45,19 @@ jobs:
           --volume ${{ github.workspace }}/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
+        - name: Fix Permissions on LDAP Directory
+          run: |
+            sudo chown -R $USER:$USER .github/ldap || true
+            sudo chmod -R u+rwX .github/ldap || true
+            sudo rm -rf .github/ldap || true
+        - name: Checkout repository
+          uses: actions/checkout@v3
+          with:
            clean: true
 
-      - name: Setup PostgreSQL
-        uses: ./.github/actions/setup-postgres
+        - name: Setup PostgreSQL
+          uses: ./.github/actions/setup-postgres
      
-      - name: Run Tests
-        uses: ./.github/actions/run-tests
+        - name: Run Tests
+          uses: ./.github/actions/run-tests
 
