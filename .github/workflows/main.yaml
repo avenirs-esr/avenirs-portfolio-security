@@ -47,6 +47,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+           clean: true
 
       - name: Setup PostgreSQL
         uses: ./.github/actions/setup-postgres
