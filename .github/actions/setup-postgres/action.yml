@@ -19,6 +19,8 @@ runs:
 
     - name: Initialize Database
       run: |
+        echo "Injecting init-db.sql into PostgreSQL..."
+        psql -h localhost -p 65432 -U $POSTGRES_USER -d $POSTGRES_DB -f src/main/resources/db/init-db.sql
         echo "Injecting init-test-db.sql into PostgreSQL..."
         psql -h localhost -p 65432 -U $POSTGRES_USER -d $POSTGRES_DB -f src/test/resources/db/init-test-db.sql
       shell: bash  
