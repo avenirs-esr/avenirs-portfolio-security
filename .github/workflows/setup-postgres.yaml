@@ -15,9 +15,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: pguser
+          POSTGRES_PASSWORD: pgpassword
+          POSTGRES_DB: avenirs_access_control
         ports:
           - 65432:5432
         options: >-
