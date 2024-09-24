@@ -7,4 +7,4 @@ on:
 
 jobs:
   call-setup-postgres:
-    uses: ./.github/workflows/includes/setup-postgres.yml
+    uses: ./.github/workflows/setup-postgres.yml
