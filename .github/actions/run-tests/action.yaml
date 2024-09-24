@@ -12,5 +12,5 @@ runs:
 
     - name: Build and Test
       run: |
-        ./mvnw javadoc:javadoc -DskipTests
+        ./mvnw clean compile javadoc:javadoc -DskipTests
       shell: bash 
