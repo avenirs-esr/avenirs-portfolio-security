@@ -76,7 +76,7 @@ jobs:
            docker ps  # Affiche les conteneurs en cours d'exécution
            CONTAINER_ID=$(docker ps --filter ancestor=apereo/cas:6.6.15.2 --format "{{.ID}}")
            echo "CAS Container ID: $CONTAINER_ID"
-           docker exec -it $CONTAINER_ID curl -v -k https://localhost:8443/cas/login
+           docker exec $CONTAINER_ID curl -v -k https://localhost:8443/cas/login
           shell: bash
      
         - name: Run Tests
