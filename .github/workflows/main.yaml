@@ -73,7 +73,7 @@ jobs:
           
         - name: check keystore
           run: |
-            docker exec avenirs-cas ls -l /etc/cas/thekeystore.jks
+            docker exec avenirs-cas ls -l /etc/cas/
         
         - name: Wait for CAS to Start
           run: sleep 60
