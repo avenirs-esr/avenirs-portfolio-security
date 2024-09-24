@@ -26,5 +26,5 @@ runs:
 
     - name: Build and Test
       run: |
-        ./mvnw clean compile javadoc:javadoc -DskipTests
+        ./mvnw clean compile javadoc:javadoc test jacoco:report
       shell: bash 
