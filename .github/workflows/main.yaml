@@ -45,7 +45,7 @@ jobs:
           --volume ${{ github.workspace }}/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
 
       cas:
-        image: apereo/cas:6.6
+        image: apereo/cas:6.6.15.2
         ports:
           - 8080:8080
         options: >-
