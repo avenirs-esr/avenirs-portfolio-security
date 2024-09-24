@@ -1,17 +1,33 @@
 name: Setup PostgreSQL
 
-on: [workflow_call]
+on:
+  workflow_call:
+    inputs:
+      postgres_user:
+        required: true
+        type: string
+      postgres_password:
+        required: true
+        type: string
+      postgres_db:
+        required: true
+        type: string
 
 jobs:
   setup-postgres:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: ${{ inputs.postgres_user }}
+      POSTGRES_PASSWORD: ${{ inputs.postgres_password }}
+      POSTGRES_DB: ${{ inputs.postgres_db }}
+      PGPASSWORD: ${{ inputs.postgres_password }}
     services:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ inputs.postgres_user }}
+          POSTGRES_PASSWORD: ${{ inputs.postgres_password }}
+          POSTGRES_DB: ${{ inputs.postgres_db }}
         ports:
           - 65432:5432
         options: >-
@@ -21,20 +37,12 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Set environment variables
-        run: |
-          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
-          echo "PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
-          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Wait for PostgreSQL to be ready
         run: |
           echo "Waiting for PostgreSQL to be ready..."
-          echo "POSTGRES_USER ${POSTGRES_USER}"
           for i in {1..4}; do
             if psql -h localhost -p 65432 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "\q"; then
               echo "PostgreSQL is ready."

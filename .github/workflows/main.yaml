@@ -1,4 +1,4 @@
-name: Main Avenirsworkflow
+name: Main Workflow
 
 on:
   push:
@@ -7,4 +7,8 @@ on:
 
 jobs:
   call-setup-postgres:
-    uses: ./.github/workflows/setup-postgres.yaml
+    uses: ./.github/workflows/setup-postgres.yml
+    with:
+      postgres_user: ${{ secrets.POSTGRES_USER }}
+      postgres_password: ${{ secrets.POSTGRES_PASSWORD }}
+      postgres_db: ${{ secrets.POSTGRES_DB }}
