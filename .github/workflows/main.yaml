@@ -28,6 +28,19 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      openldap:
+        image: osixia/openldap:latest
+        env:
+          LDAP_ORGANISATION: "avenirs-esr.fr"
+          LDAP_DOMAIN: "ldap-dev.avenirs-esr.fr"
+          LDAP_ADMIN_PASSWORD: ${{ secrets.LDAP_ADMIN_PASSWORD }}
+          LDAP_BASE_DN: ${{secrets.LDAP_BASE_DN}}
+        ports:
+          - 389:389
+          - 636:636
+        options: >-
+          --env LDAP_TLS_VERIFY_CLIENT=never
+          --env LDAP_LOG_LEVEL=256
 
     steps:
       - name: Checkout repository
