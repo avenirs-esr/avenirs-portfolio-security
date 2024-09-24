@@ -1,0 +1,32 @@
+name: Setup spring project
+
+on:
+  workflow_call:
+    secrets:
+      JASYPT_ENCRYPTOR_PASSWORD:
+        required: true
+     
+jobs:    
+    build:
+      runs-on: ubuntu-latest
+      environment: avenirs_ci 
+      
+    
+      steps:
+       - name: Checkout repository
+         uses: actions/checkout@v3
+      
+       - name: Set up JDK 21
+         uses: actions/setup-java@v3
+         with:
+            distribution: 'temurin'
+            java-version: '21'
+
+       - name: Build project and generate reports
+         run: mvn clean verify -X
+       - name: Deploy to GitHub Pages
+         uses: peaceiris/actions-gh-pages@v3
+         with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./target/site
+            
