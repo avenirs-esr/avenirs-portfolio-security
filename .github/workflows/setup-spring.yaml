@@ -9,9 +9,9 @@ on:
 jobs:    
     build:
       runs-on: ubuntu-latest
-      environment: avenirs_ci 
-      
-    
+      env: 
+        JASYPT_ENCRYPTOR_PASSWORD: ${{secrets.JASYPT_ENCRYPTOR_PASSWORD}}
+
       steps:
        - name: Checkout repository
          uses: actions/checkout@v3
