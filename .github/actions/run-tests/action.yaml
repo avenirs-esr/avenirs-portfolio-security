@@ -9,6 +9,11 @@ runs:
       with:
             distribution: 'temurin'
             java-version: '21'
+    
+    - name: Add avenirs-apache to /etc/hosts
+      run: |
+        echo "127.0.0.1 avenirs-apache" | sudo tee -a /etc/hosts
+      shell: bash
             
     - name: Generate env.properties to Ignore SSL Verification
       run: |
