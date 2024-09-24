@@ -13,6 +13,7 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
     services:
       postgres:
         image: postgres:latest
@@ -34,4 +35,7 @@ jobs:
 
       - name: Setup PostgreSQL
         uses: ./.github/actions/setup-postgres
+     
+      - name: Run Tests
+        uses: ./.github/actions/run-tests
 
