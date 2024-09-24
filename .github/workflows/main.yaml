@@ -8,3 +8,5 @@ on:
 jobs:
   call-setup-postgres:
     uses: ./.github/workflows/setup-postgres.yaml
+    secrets:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
