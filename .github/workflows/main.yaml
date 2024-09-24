@@ -74,13 +74,13 @@ jobs:
         - name: Display CAS Startup Logs
           run: |
             echo "Displaying CAS startup logs..."
-            docker logs avenirs-cas  # Utilise le nom spécifié pour afficher les logs
+            docker logs avenirs-cas
             shell: bash
 
         - name: Test CAS Accessibility Inside Container
           run: |
            echo "Testing CAS accessibility inside the container..."
-           docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login  # Utilise le nom spécifié
+           docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
           shell: bash
      
         - name: Run Tests
