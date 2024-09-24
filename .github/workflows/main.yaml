@@ -50,6 +50,7 @@ jobs:
           - 443:8443
           - 8080:8080
         options: >-
+          --name avenirs-cas
           --add-host avenirs-apache:127.0.0.1  
           --volume ${{ github.workspace }}/.github/cas:/etc/cas:rw
 
@@ -70,13 +71,16 @@ jobs:
         - name: Setup PostgreSQL
           uses: ./.github/actions/setup-postgres
        
+        - name: Display CAS Startup Logs
+          run: |
+            echo "Displaying CAS startup logs..."
+            docker logs avenirs-cas  # Utilise le nom spécifié pour afficher les logs
+            shell: bash
+
         - name: Test CAS Accessibility Inside Container
           run: |
            echo "Testing CAS accessibility inside the container..."
-           docker ps  # Affiche les conteneurs en cours d'exécution
-           CONTAINER_ID=$(docker ps --filter ancestor=apereo/cas:6.6.15.2 --format "{{.ID}}")
-           echo "CAS Container ID: $CONTAINER_ID"
-           docker exec $CONTAINER_ID curl -v -k https://localhost:8443/cas/login
+           docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login  # Utilise le nom spécifié
           shell: bash
      
         - name: Run Tests
