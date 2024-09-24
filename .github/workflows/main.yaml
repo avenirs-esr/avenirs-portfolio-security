@@ -7,7 +7,7 @@ on:
 
 jobs:
   call-setup-postgres:
-    uses: ./.github/workflows/setup-postgres.yml
+    uses: ./.github/workflows/setup-postgres.yaml
     with:
       postgres_user: ${{ secrets.POSTGRES_USER }}
       postgres_password: ${{ secrets.POSTGRES_PASSWORD }}
