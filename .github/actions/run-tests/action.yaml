@@ -9,6 +9,15 @@ runs:
       with:
             distribution: 'temurin'
             java-version: '21'
+            
+    - name: Generate env.properties to Ignore SSL Verification
+      run: |
+        echo "spring.security.oauth2.client.registration.custom-client-provider.provider.ssl-verification=false" > src/main/resources/env.properties
+        echo "spring.ssl.ignore=true" >> src/main/resources/env.properties
+        echo "spring.cloud.openfeign.ssl.skip-ssl-validation=true" >> src/main/resources/env.properties
+        echo "server.ssl.enabled=false" >> src/main/resources/env.properties
+      shell: bash
+
 
     - name: Build and Test
       run: |
