@@ -91,7 +91,7 @@ jobs:
         run: docker logs avenirs-openldap
         
       - name: Check Docker containers
-        run: docker ps 
+        run: docker ps -a
         
       - name: Test CAS Accessibility Inside Container
         run: docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
