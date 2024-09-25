@@ -27,62 +27,31 @@ jobs:
         ports:
           - 65432:5432
 
-      openldap:
-        image: osixia/openldap:latest
-        env:
-          LDAP_ORGANISATION: "avenirs-esr.fr"
-          LDAP_DOMAIN: "ldap-dev.avenirs-esr.fr"
-          LDAP_ADMIN_PASSWORD: ${{ secrets.LDAP_ADMIN_PASSWORD }}
-          LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
-          LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
-        ports:
-          - 389:389
-          - 636:636
-        options: >-
-          --env LDAP_TLS_VERIFY_CLIENT=never
-          --env LDAP_LOG_LEVEL=256
-          --volume /tmp/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
-
-      cas:
-        image: apereo/cas:6.6.15.2
-        ports:
-          - 443:8443
-          - 8080:8080
-        options: >-
-          --name avenirs-cas
-          --add-host avenirs-apache:127.0.0.1
-          --volume /tmp/cas:/etc/cas:rw
-
     steps:
-      - name: Stop CAS and OpenLDAP Services
-        run: |
-          docker stop avenirs-cas || true
-          docker stop openldap || true
-
-      - name: Remove Volumes
-        run: |
-          docker volume rm $(docker volume ls -qf dangling=true) || true
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup PostgreSQL
         uses: ./.github/actions/setup-postgres
 
-      - name: Copy CAS and LDAP Directories to /tmp
+      - name: Copy CAS and LDAP Files to /tmp
         run: |
-          sudo rm -Rf /tmp/cas
-          sudo rm -Rf /tmp/ldap
-          sudo cp -rp .github/cas /tmp/
-          sudo cp -rp .github/ldap /tmp/
+          sudo cp -r --preserve=all .github/cas/* /tmp/
+          sudo cp -r --preserve=all .github/ldap/* /tmp/
 
-      - name: Restart CAS Service with Redefined Volumes
+      - name: Pull CAS Image
+        run: docker pull apereo/cas:6.6.15.2
+
+      - name: Pull OpenLDAP Image
+        run: docker pull osixia/openldap:latest
+
+      - name: Start CAS Container
         run: |
           docker run -d --name avenirs-cas --add-host avenirs-apache:127.0.0.1 \
-          -v /tmp/cas:/etc/cas:rw \
+          -v /tmp:/etc/cas:rw \
           -p 443:8443 -p 8080:8080 apereo/cas:6.6.15.2
 
-      - name: Restart OpenLDAP Service
+      - name: Start OpenLDAP Container
         run: |
           docker run -d --name openldap \
           -e LDAP_ORGANISATION="avenirs-esr.fr" \
@@ -93,7 +62,7 @@ jobs:
           -p 389:389 -p 636:636 \
           --env LDAP_TLS_VERIFY_CLIENT=never \
           --env LDAP_LOG_LEVEL=256 \
-          --volume /tmp/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro \
+          --volume /tmp/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro \
           osixia/openldap:latest
 
       - name: Wait for CAS to Start
