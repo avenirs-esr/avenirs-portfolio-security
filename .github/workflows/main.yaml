@@ -79,7 +79,7 @@ jobs:
           echo "CAS is not ready yet... retrying in 5 seconds. Current status: $STATUS"
           sleep 5
          done
-        shell: bash
+        
 
       - name: Display CAS Startup Logs
         run: docker logs avenirs-cas
