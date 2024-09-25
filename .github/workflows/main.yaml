@@ -78,6 +78,10 @@ jobs:
 
       - name: Test CAS Accessibility Outside Container
         run: curl -v -k https://localhost:443/cas/login
+      
+      - name: Test LDAP
+        run: ldapsearch -x -H ldap://localhost:389 -D "cn=admin,dc=ldap-dev,dc=avenirs-esr,dc=fr" -w admin -b "dc=ldap-dev,dc=avenirs-esr,dc=fr" "(uid=*)"
+
 
       - name: Run Tests
         uses: ./.github/actions/run-tests
