@@ -16,6 +16,8 @@ jobs:
       JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
       LDAP_ADMIN_PASSWORD: ${{ secrets.LDAP_ADMIN_PASSWORD }}
       LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      
 
     services:
       postgres:

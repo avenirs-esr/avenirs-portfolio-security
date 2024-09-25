@@ -39,6 +39,6 @@ runs:
 
     - name: Build and Test
       run: |
-         export MAVEN_OPTS="-Djavax.net.ssl.trustStore=$GITHUB_WORKSPACE/.github/cas/thekeystore.jks -Djavax.net.ssl.trustStorePassword=${{ secrets.KEYSTORE_PASSWORD }}"
+         export MAVEN_OPTS="-Djavax.net.ssl.trustStore=$GITHUB_WORKSPACE/.github/cas/thekeystore.jks -Djavax.net.ssl.trustStorePassword=$KEYSTORE_PASSWORD"
          ./mvnw clean compile javadoc:javadoc test jacoco:report
       shell: bash 
