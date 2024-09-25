@@ -88,7 +88,7 @@ jobs:
 
 
       - name: Display OpenLDAP Startup Logs
-        run: docker logs openldap
+        run: docker logs avenirs-openldap
         
       - name: Check Docker containers
         run: docker ps 
