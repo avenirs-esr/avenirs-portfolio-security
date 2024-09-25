@@ -55,7 +55,7 @@ jobs:
 
       - name: Start OpenLDAP Container
         run: |
-          docker run -d --name openldap \
+          docker run -d --name avenirs-openldap \
           -e LDAP_ORGANISATION="avenirs-esr.fr" \
           -e LDAP_DOMAIN="ldap-dev.avenirs-esr.fr" \
           -e LDAP_ADMIN_PASSWORD=$LDAP_ADMIN_PASSWORD \
@@ -86,6 +86,13 @@ jobs:
       - name: Display CAS Startup Logs
         run: docker logs avenirs-cas
 
+
+      - name: Display OpenLDAP Startup Logs
+        run: docker logs openldap
+        
+      - name: Check Docker containers
+        run: docker ps 
+        
       - name: Test CAS Accessibility Inside Container
         run: docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
 
@@ -95,8 +102,11 @@ jobs:
       - name: Install LDAP Utilities
         run: |
           sudo apt-get update && sudo apt-get install -y ldap-utils
-          
-      - name: Test LDAP Connection
+      
+      - name: Test LDAP Connection Inside container
+        run: docker exec -it avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "cn=admin,dc=ldap-dev,dc=avenirs-esr,dc=fr" -w admin -b "dc=ldap-dev,dc=avenirs-esr,dc=fr" "(uid=*)"  
+      
+      - name: Test LDAP Connection Outside container
         run: |
           ldapsearch -x -H ldap://localhost:389 -D "cn=admin,dc=ldap-dev,dc=avenirs-esr,dc=fr" -w admin -b "dc=ldap-dev,dc=avenirs-esr,dc=fr" "(uid=paterson)"
 
