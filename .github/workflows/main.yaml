@@ -64,7 +64,7 @@ jobs:
           -p 389:389 -p 636:636 \
           --env LDAP_TLS_VERIFY_CLIENT=never \
           --env LDAP_LOG_LEVEL=256 \
-          --volume /tmp/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro \
+          --volume /tmp/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:rw \
           osixia/openldap:latest
 
       - name: Wait for CAS to be ready
