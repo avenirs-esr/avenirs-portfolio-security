@@ -39,7 +39,7 @@ runs:
 
     - name: Import Certificate into JVM TrustStore
       run: |
-          keytool -exportcert -alias avenirs-apache -keystore /tmp/cas/thekeystore.jks -file /tmp/avenirs-apache.crt -storepass changeit
+          keytool -exportcert -alias avenirs-apache -keystore .github/cas/thekeystore.jks -file /tmp/avenirs-apache.crt -storepass changeit
           keytool -printcert -file /tmp/avenirs-apache.crt
           sudo keytool -importcert -file /tmp/avenirs-apache.crt -alias avenirs-apache -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit -noprompt
 
