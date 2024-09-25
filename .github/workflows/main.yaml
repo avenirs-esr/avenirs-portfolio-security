@@ -49,7 +49,7 @@ jobs:
 
       - name: Start CAS Container
         run: |
-          docker run -d --name avenirs-cas --add-host avenirs-apache:127.0.0.1 \
+          docker run -d --name avenirs-cas  \
           -v /tmp:/etc/cas:rw \
           -p 443:8443 -p 8080:8080 apereo/cas:6.6.15.2
 

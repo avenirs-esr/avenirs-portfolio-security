@@ -21,6 +21,7 @@ runs:
         echo "spring.ssl.ignore=true" >> src/main/resources/env.properties
         echo "spring.cloud.openfeign.ssl.skip-ssl-validation=true" >> src/main/resources/env.properties
         echo "server.ssl.enabled=false" >> src/main/resources/env.properties
+        echo "avenirs.authentication.oidc.provider=localhost" >> src/main/resources/env.properties
       shell: bash
 
     - name: Wait for CAS to be ready
