@@ -41,7 +41,7 @@ jobs:
         options: >-
           --env LDAP_TLS_VERIFY_CLIENT=never
           --env LDAP_LOG_LEVEL=256
-          --volume .github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
+          --volume $GITHUB_WORKSPACE/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
 
       cas:
         image: apereo/cas:6.6.15.2
@@ -51,7 +51,7 @@ jobs:
         options: >-
           --name avenirs-cas
           --add-host avenirs-apache:127.0.0.1
-          --volume .github/cas:/etc/cas:rw
+          --volume $GITHUB_WORKSPACE/.github/cas:/etc/cas:rw
 
     steps:
       - name: Checkout repository
