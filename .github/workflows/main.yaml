@@ -1,4 +1,4 @@
-name: Deploy services, generates Javadoc and JaCoCo Report
+name: Main Workflow
 
 on:
   push:
@@ -41,7 +41,7 @@ jobs:
         options: >-
           --env LDAP_TLS_VERIFY_CLIENT=never
           --env LDAP_LOG_LEVEL=256
-          --volume $GITHUB_WORKSPACE/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
+          --volume /tmp/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
 
       cas:
         image: apereo/cas:6.6.15.2
@@ -51,36 +51,34 @@ jobs:
         options: >-
           --name avenirs-cas
           --add-host avenirs-apache:127.0.0.1
-          --volume $GITHUB_WORKSPACE/.github/cas:/etc/cas:rw
+          --volume /tmp/cas:/etc/cas:rw
 
     steps:
+      - name: Stop CAS and OpenLDAP Services
+        run: |
+          docker stop avenirs-cas || true
+          docker stop openldap || true
+
+      - name: Remove Volumes
+        run: |
+          docker volume rm $(docker volume ls -qf dangling=true) || true
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Verify Directories
-        run: |
-          ls -l .github/cas
-          ls -l .github/ldap
+      - name: Setup PostgreSQL
+        uses: ./.github/actions/setup-postgres
 
-      - name: Stop Services
+      - name: Copy CAS and LDAP Directories to /tmp
         run: |
-          docker stop avenirs-cas || true
-          docker stop postgres || true
-          docker stop openldap || true
+          cp -r .github/cas /tmp/cas
+          cp -r .github/ldap /tmp/ldap
 
       - name: Restart CAS Service with Redefined Volumes
         run: |
           docker run -d --name avenirs-cas --add-host avenirs-apache:127.0.0.1 \
-          -v $GITHUB_WORKSPACE/.github/cas:/etc/cas:rw \
+          -v /tmp/cas:/etc/cas:rw \
           -p 443:8443 -p 8080:8080 apereo/cas:6.6.15.2
-
-      - name: Restart PostgreSQL Service
-        run: |
-          docker run -d --name postgres \
-          -e POSTGRES_USER=$POSTGRES_USER \
-          -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-          -e POSTGRES_DB=$POSTGRES_DB \
-          -p 65432:5432 postgres:latest
 
       - name: Restart OpenLDAP Service
         run: |
@@ -93,7 +91,7 @@ jobs:
           -p 389:389 -p 636:636 \
           --env LDAP_TLS_VERIFY_CLIENT=never \
           --env LDAP_LOG_LEVEL=256 \
-          --volume $GITHUB_WORKSPACE/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro \
+          --volume /tmp/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro \
           osixia/openldap:latest
 
       - name: Wait for CAS to Start
