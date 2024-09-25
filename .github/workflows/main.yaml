@@ -40,6 +40,8 @@ jobs:
         run: |
           sudo cp -r --preserve=all .github/cas/* /tmp/
           sudo cp -r --preserve=all .github/ldap/* /tmp/
+          sudo chown -R 911:911 /tmp/openldap-fixtures.ldif
+          sudo chmod -R 644 /tmp/openldap-fixtures.ldif
 
       - name: Pull CAS Image
         run: docker pull apereo/cas:6.6.15.2
