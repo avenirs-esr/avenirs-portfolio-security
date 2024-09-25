@@ -74,6 +74,7 @@ jobs:
 
       - name: Inject LDIF into LDAP
         run: |
+            sleep 20
             docker exec avenirs-openldap ldapadd -x -D "cn=admin,${LDAP_BASE_DN}" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
 
       - name: Wait for CAS to be ready
@@ -97,6 +98,7 @@ jobs:
 
 
       - name: Display OpenLDAP Startup Logs
+        if: always()
         run: docker logs avenirs-openldap
         
       - name: Check Docker containers
