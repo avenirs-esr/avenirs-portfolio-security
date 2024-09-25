@@ -104,7 +104,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y ldap-utils
       
       - name: Test LDAP Connection Inside container
-        run: docker exec -it avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "cn=admin,dc=ldap-dev,dc=avenirs-esr,dc=fr" -w admin -b "dc=ldap-dev,dc=avenirs-esr,dc=fr" "(uid=*)"  
+        run: docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "cn=admin,dc=ldap-dev,dc=avenirs-esr,dc=fr" -w admin -b "dc=ldap-dev,dc=avenirs-esr,dc=fr" "(uid=*)"  
       
       - name: Test LDAP Connection Outside container
         run: |
