@@ -10,11 +10,7 @@ runs:
             distribution: 'temurin'
             java-version: '21'
     
-    - name: Add avenirs-apache to /etc/hosts
-      run: |
-        echo "127.0.0.1 avenirs-apache" | sudo tee -a /etc/hosts
-      shell: bash
-            
+           
     - name: Generate env.properties to Ignore SSL Verification
       run: |
         echo "spring.security.oauth2.client.registration.custom-client-provider.provider.ssl-verification=false" > src/main/resources/env.properties
@@ -22,13 +18,15 @@ runs:
         echo "spring.cloud.openfeign.ssl.skip-ssl-validation=true" >> src/main/resources/env.properties
         echo "server.ssl.enabled=false" >> src/main/resources/env.properties
         echo "avenirs.authentication.oidc.provider=localhost" >> src/main/resources/env.properties
+        
+        cat src/main/resources/env.properties
       shell: bash
 
     - name: Wait for CAS to be ready
       run: |
         echo "Waiting for CAS to be ready..."
         for i in {1..10}; do
-          STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" https://avenirs-apache/cas/login)
+          STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" https://localhost/cas/login)
           if [ "$STATUS" -eq 200 ]; then
             echo "CAS is ready."
             break
@@ -40,9 +38,9 @@ runs:
 
     - name: Import Certificate into JVM TrustStore
       run: |
-          keytool -printcert -rfc -sslserver avenirs-apache:443 > /tmp/avenirs-apache.crt
-          keytool -printcert -file /tmp/avenirs-apache.crt
-          sudo keytool -importcert -file /tmp/avenirs-apache.crt -alias avenirs-apache -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit -noprompt
+          keytool -printcert -rfc -sslserver localhost:443 > /tmp/localhost.crt
+          keytool -printcert -file /tmp/localhost.crt
+          sudo keytool -importcert -file /tmp/localhost.crt -alias localhost -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit -noprompt
 
       shell: bash
 
