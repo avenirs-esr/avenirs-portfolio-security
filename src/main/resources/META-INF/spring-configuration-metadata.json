@@ -16,6 +16,11 @@
       "description": "Avenirs access control role end point"
     },
      {
+      "name": "avenirs.authentication.oidc.provider",
+      "type": "java.lang.String",
+      "description": "Avenirs OIDC provider"
+    },
+    {
       "name": "avenirs.authentication.oidc.callback",
       "type": "java.lang.String",
       "description": "Avenirs OIDC call back"
