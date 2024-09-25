@@ -71,6 +71,8 @@ jobs:
 
       - name: Copy CAS and LDAP Directories to /tmp
         run: |
+          sudo rm -Rf /tmp/cas
+          sudo rm -Rf /tmp/ldap
           sudo cp -rp .github/cas /tmp/
           sudo cp -rp .github/ldap /tmp/
 
