@@ -66,8 +66,15 @@ jobs:
           -p 389:389 -p 636:636 \
           --env LDAP_TLS_VERIFY_CLIENT=never \
           --env LDAP_LOG_LEVEL=256 \
-          --volume /tmp/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:rw \
           osixia/openldap:latest
+
+      - name: Copy LDIF File to Container
+        run: |
+            docker cp /tmp/openldap-fixtures.ldif avenirs-openldap:/tmp/openldap-fixtures.ldif
+
+      - name: Inject LDIF into LDAP
+        run: |
+            docker exec avenirs-openldap ldapadd -x -D "cn=admin,${LDAP_BASE_DN}" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
 
       - name: Wait for CAS to be ready
         run: |
