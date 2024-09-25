@@ -74,7 +74,7 @@ jobs:
         run: docker logs avenirs-cas
 
       - name: Test CAS Accessibility Inside Container
-        run: docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
+        run: docker exec avenirs-cas curl -v -k https://localhost/cas/login
 
       - name: Run Tests
         uses: ./.github/actions/run-tests
