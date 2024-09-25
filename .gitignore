@@ -75,3 +75,6 @@ src/main/resources/env.properties
 
 # Liquibase
 liquibase-keyring.gpg
+
+# Swap file
+*.swp
