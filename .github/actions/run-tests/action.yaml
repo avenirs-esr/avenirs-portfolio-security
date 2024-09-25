@@ -22,20 +22,6 @@ runs:
         cat src/main/resources/env.properties
       shell: bash
 
-    - name: Wait for CAS to be ready
-      run: |
-        echo "Waiting for CAS to be ready..."
-        for i in {1..10}; do
-          STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" https://localhost/cas/login)
-          if [ "$STATUS" -eq 200 ]; then
-            echo "CAS is ready."
-            break
-          fi
-          echo "CAS is not ready yet... retrying in 5 seconds. Current status: $STATUS"
-          sleep 5
-        done
-      shell: bash
-
     - name: Import Certificate into JVM TrustStore
       run: |
           keytool -printcert -rfc -sslserver localhost:443 > /tmp/localhost.crt
