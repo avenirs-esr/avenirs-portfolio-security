@@ -1,10 +1,3 @@
-name: Main Workflow
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   setup-and-test:
     runs-on: ubuntu-latest
@@ -14,6 +7,9 @@ jobs:
       PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
+      LDAP_ADMIN_PASSWORD: ${{ secrets.LDAP_ADMIN_PASSWORD }}
+      LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
+
     services:
       postgres:
         image: postgres:latest
@@ -23,18 +19,14 @@ jobs:
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 65432:5432
-        options: >-
-          --health-cmd "pg_isready"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+
       openldap:
         image: osixia/openldap:latest
         env:
           LDAP_ORGANISATION: "avenirs-esr.fr"
           LDAP_DOMAIN: "ldap-dev.avenirs-esr.fr"
           LDAP_ADMIN_PASSWORD: ${{ secrets.LDAP_ADMIN_PASSWORD }}
-          LDAP_BASE_DN: ${{secrets.LDAP_BASE_DN}}
+          LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
           LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
         ports:
           - 389:389
@@ -42,7 +34,7 @@ jobs:
         options: >-
           --env LDAP_TLS_VERIFY_CLIENT=never
           --env LDAP_LOG_LEVEL=256
-          --volume ${{ github.workspace }}/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
+          --volume .github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro
 
       cas:
         image: apereo/cas:6.6.15.2
@@ -51,40 +43,60 @@ jobs:
           - 8080:8080
         options: >-
           --name avenirs-cas
-          --add-host avenirs-apache:127.0.0.1  
-          --volume ${{ github.workspace }}/.github/cas:/etc/cas:rw
+          --add-host avenirs-apache:127.0.0.1
+          --volume .github/cas:/etc/cas:rw
 
     steps:
-        - name: Fix Permissions on LDAP AND CAS Directories
-          run: |
-            sudo chown -R $USER:$USER .github/ldap || true
-            sudo chmod -R u+rwX,g+rwX,o+rwX .github/ldap || true
-            sudo chown -R $USER:$USER .github/cas || true
-            sudo chmod -R u+rwX,g+rwX,o+rwX .github/cas || true
-        
-        - name: Checkout repository
-          uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Setup PostgreSQL
-          uses: ./.github/actions/setup-postgres
-          
-        - name: check keystore
-          run: |
-            docker exec avenirs-cas ls -l /etc/cas/
-        
-        - name: Wait for CAS to Start
-          run: sleep 60
-        
-        - name: Display CAS Startup Logs
-          run: |
-            echo "Displaying CAS startup logs..."
-            docker logs avenirs-cas
-           
-        - name: Test CAS Accessibility Inside Container
-          run: |
-           echo "Testing CAS accessibility inside the container..."
-           docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
-          
-        - name: Run Tests
-          uses: ./.github/actions/run-tests
+      - name: Verify Directories
+        run: |
+          ls -l .github/cas
+          ls -l .github/ldap
 
+      - name: Stop Services
+        run: |
+          docker stop avenirs-cas || true
+          docker stop postgres || true
+          docker stop openldap || true
+
+      - name: Restart CAS Service with Redefined Volumes
+        run: |
+          docker run -d --name avenirs-cas --add-host avenirs-apache:127.0.0.1 \
+          -v $GITHUB_WORKSPACE/.github/cas:/etc/cas:rw \
+          -p 443:8443 -p 8080:8080 apereo/cas:6.6.15.2
+
+      - name: Restart PostgreSQL Service
+        run: |
+          docker run -d --name postgres \
+          -e POSTGRES_USER=$POSTGRES_USER \
+          -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+          -e POSTGRES_DB=$POSTGRES_DB \
+          -p 65432:5432 postgres:latest
+
+      - name: Restart OpenLDAP Service
+        run: |
+          docker run -d --name openldap \
+          -e LDAP_ORGANISATION="avenirs-esr.fr" \
+          -e LDAP_DOMAIN="ldap-dev.avenirs-esr.fr" \
+          -e LDAP_ADMIN_PASSWORD=$LDAP_ADMIN_PASSWORD \
+          -e LDAP_BASE_DN=$LDAP_BASE_DN \
+          -e LDAP_REMOVE_CONFIG_AFTER_SETUP="false" \
+          -p 389:389 -p 636:636 \
+          --env LDAP_TLS_VERIFY_CLIENT=never \
+          --env LDAP_LOG_LEVEL=256 \
+          --volume $GITHUB_WORKSPACE/.github/ldap/openldap-fixtures.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/my-custom.ldif:ro \
+          osixia/openldap:latest
+
+      - name: Wait for CAS to Start
+        run: sleep 60
+
+      - name: Display CAS Startup Logs
+        run: docker logs avenirs-cas
+
+      - name: Test CAS Accessibility Inside Container
+        run: docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
+
+      - name: Run Tests
+        uses: ./.github/actions/run-tests
