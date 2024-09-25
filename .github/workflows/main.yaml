@@ -71,8 +71,8 @@ jobs:
 
       - name: Copy CAS and LDAP Directories to /tmp
         run: |
-          cp -r .github/cas /tmp/
-          cp -r .github/ldap /tmp/
+          sudo cp -rp .github/cas /tmp/
+          sudo cp -rp .github/ldap /tmp/
 
       - name: Restart CAS Service with Redefined Volumes
         run: |
