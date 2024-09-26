@@ -125,7 +125,7 @@ jobs:
 
       - name: Run Tests
         uses: ./.github/actions/run-tests
-        if: false
+        if: true
         
       - name: Display cas logs after tests
         if: always()  
