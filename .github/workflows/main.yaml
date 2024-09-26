@@ -49,9 +49,10 @@ jobs:
           cd cas-overlay-template
           git checkout remotes/origin/6.6
       
-      - name: Replace build.gradle
+      - name: Replace build.gradle and modified 
         run: |
           cp .github/cas/build.gradle cas-overlay-template/build.gradle
+          cp .github/cas/Dockerfile cas-overlay-template/Dockerfile
       
       - name: Copy and replace etc directory
         run: |
