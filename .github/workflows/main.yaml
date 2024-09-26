@@ -38,9 +38,9 @@ jobs:
         uses: ./.github/actions/setup-postgres
 
       - name: Copy CAS Files to /tmp
-        if: false
+        if: true
         run: |
-          sudo cp -r --preserve=all .github/cas/ /tmp/
+          sudo cp -r  .github/cas/ /tmp/
           
 
       - name: Pull CAS Image
@@ -52,7 +52,7 @@ jobs:
       - name: Start CAS Container
         run: |
           docker run -d --name avenirs-cas  \
-          -v .github/cas:/etc/cas:rw \
+          -v /tmp/cas:/etc/cas:rw \
           -p 443:8443 -p 8080:8080 apereo/cas:6.6.15.2
 
       - name: Start OpenLDAP Container
