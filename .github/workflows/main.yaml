@@ -37,7 +37,8 @@ jobs:
       - name: Setup PostgreSQL
         uses: ./.github/actions/setup-postgres
       
-      
+      - name: Create Docker network
+        run: docker network create avenirs-network
 
       - name: Pull OpenLDAP Image
         run: docker pull osixia/openldap:latest
@@ -95,10 +96,7 @@ jobs:
       - name: Build Docker image
         working-directory: cas-overlay-template
         run: docker build -t avenirs-cas-custom:6.6.15.2 .
-        
-      - name: Create Docker network
-        run: docker network create avenirs-network
-
+   
       - name: Start CAS Container
         run: |
           docker run -d --name avenirs-cas --network avenirs-network avenirs-cas-custom:6.6.15.2
