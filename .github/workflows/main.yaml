@@ -107,7 +107,7 @@ jobs:
             echo "CAS is ready."
             break
           fi
-          echo "CAS is not ready yet... retrying in 5 seconds. Current status: $STATUS"
+          echo "CAS is not ready yet... retrying in 10 seconds. Current status: $STATUS"
           sleep 10
          done
         
