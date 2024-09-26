@@ -1,5 +1,10 @@
 name: "Publish javadoc and Jacoco reports"
 description: "Publish the javadoc and coverage rports to gh pages"
+inputs:
+  github_token:
+    description: "GitHub Token"
+    required: true
+
 
 runs:
   using: "composite"
