@@ -170,4 +170,6 @@ jobs:
           
       - name: Publish reports
         uses: ./.github/actions/publish-to-gh-pages
+        with:
+          github_token: $GITHUB_TOKEN 
         if: true
