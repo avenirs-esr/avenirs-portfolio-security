@@ -96,7 +96,14 @@ jobs:
 
       - name: Display CAS Startup Logs
         run: docker logs avenirs-cas
+      
+      - name: Display CAS .well-known
+        run: curl -k https://localhost/cas/oidc/.well-known
 
+      - name: Temporary Break Point
+        run: |
+            echo "Stopping workflow at this point temporarily."
+            exit 1 
 
       - name: Display OpenLDAP Startup Logs
         if: always()
