@@ -7,7 +7,7 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
 <Configuration monitorInterval="60" packages="org.apereo.cas.logging">
     <Properties>
         <Property name="baseDir">/var/log</Property>
-        <Property name="cas.log.level">trace</Property>
+        <Property name="cas.log.level">warn</Property>
         <Property name="spring.webflow.log.level">warn</Property>
         <Property name="spring.security.log.level">info</Property>
         <Property name="spring.cloud.log.level">warn</Property>
@@ -24,18 +24,21 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         <Property name="log.stacktraceappender">casStackTraceFile</Property>
         <Property name="log.include.location">false</Property>
         <Property name="org.apereo.cas.oidc.log.level">trace</Property>
+        <Property name="org.apereo.cas.services.log.level">trace</Property>
+        <Property name="org.apereo.cas.web.log.level">trace</Property>
+        <Property name="org.apereo.cas.web.flow.log.level">trace</Property>
     </Properties>
     <Appenders>
         <Null name="null" />
 
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;}%n" alwaysWriteExceptions="${sys:log.console.stacktraces}"/>
+            <PatternLayout pattern="%d %p [%c] - %m%n" alwaysWriteExceptions="${sys:log.console.stacktraces}"/>
         </Console>
 
         <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
                      filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz"
                      immediateFlush="false">
-            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}"
+            <PatternLayout pattern="%d %p [%c] - %m%n"
                            alwaysWriteExceptions="${sys:log.file.stacktraces}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -52,7 +55,7 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         <RollingFile name="oidcfile" fileName="${baseDir}/oidc.log" append="true"
                      filePattern="${baseDir}/oidc-%d{yyyy-MM-dd-HH}-%i.log.gz"
                      immediateFlush="false">
-            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}"
+            <PatternLayout pattern="%d %p [%c] - %m%n"
                            alwaysWriteExceptions="${sys:log.file.stacktraces}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -70,7 +73,7 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         <RollingFile name="stacktracefile" fileName="${baseDir}/cas_stacktrace.log" append="true"
                      filePattern="${baseDir}/cas_stacktrace-%d{yyyy-MM-dd-HH}-%i.log.gz"
                      immediateFlush="false">
-            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
+            <PatternLayout pattern="%d %p [%c] - %m%n" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -87,7 +90,7 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         <RollingFile name="auditlogfile" fileName="${baseDir}/cas_audit.log" append="true"
                      filePattern="${baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log.gz"
                      immediateFlush="false">
-            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
+            <PatternLayout pattern="%d %p [%c] - %m%n" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -127,6 +130,18 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         <Logger name="org.apereo.cas.web.CasWebApplication" level="${sys:cas.log.level}"/>
         
         <Logger name="org.apereo.cas.oidc" level="${sys:org.apereo.cas.oidc.log.level}" >
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="oidcFile"/>
+        </Logger>
+         <Logger name="org.apereo.cas.services" level="${sys:org.apereo.cas.services.log.level}" >
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="oidcFile"/>
+        </Logger>
+        <Logger name="org.apereo.cas.web" level="${sys:org.apereo.cas.web.log.level}" >
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="oidcFile"/>
+        </Logger>
+        <Logger name="org.apereo.cas.web.flow" level="${sys:org.apereo.cas.web.flow.log.level}" >
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="oidcFile"/>
         </Logger>
