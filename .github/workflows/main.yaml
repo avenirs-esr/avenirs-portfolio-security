@@ -54,7 +54,7 @@ jobs:
           docker run -d --name avenirs-cas  \
           -v /tmp/cas:/etc/cas:rw \
           -e CAS_MODULES=oidc \
-          -p 443:8443 -p 8080:8080\ 
+          -p 443:8443 -p 8080:8080 \ 
           apereo/cas:6.6.15.2
 
       - name: Start OpenLDAP Container
