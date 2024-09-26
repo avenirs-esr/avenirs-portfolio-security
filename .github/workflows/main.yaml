@@ -36,6 +36,36 @@ jobs:
 
       - name: Setup PostgreSQL
         uses: ./.github/actions/setup-postgres
+      
+      
+
+      - name: Pull OpenLDAP Image
+        run: docker pull osixia/openldap:latest
+        
+        
+      - name: Start OpenLDAP Container
+        run: |
+          docker run -d --name avenirs-openldap \
+          --network avenirs-network \
+          -e LDAP_ORGANISATION="avenirs-esr.fr" \
+          -e LDAP_DOMAIN="ldap-dev.avenirs-esr.fr" \
+          -e LDAP_ADMIN_PASSWORD=$LDAP_ADMIN_PASSWORD \
+          -e LDAP_BASE_DN=$LDAP_BASE_DN \
+          -e LDAP_REMOVE_CONFIG_AFTER_SETUP="false" \
+          -p 389:389 -p 636:636 \
+          --env LDAP_TLS_VERIFY_CLIENT=never \
+          --env LDAP_LOG_LEVEL=256 \
+          osixia/openldap:latest
+
+      - name: Copy LDIF File to Container
+        run: |
+            docker cp .github/ldap/openldap-fixtures.ldif avenirs-openldap:/tmp/openldap-fixtures.ldif
+
+      - name: Inject LDIF into LDAP
+        run: |
+            sleep 20
+            docker exec avenirs-openldap ldapadd -x -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
+
 
       - name: Copy CAS Files to /tmp
         if: true
@@ -65,36 +95,14 @@ jobs:
       - name: Build Docker image
         working-directory: cas-overlay-template
         run: docker build -t avenirs-cas-custom:6.6.15.2 .
-
-      - name: Pull OpenLDAP Image
-        run: docker pull osixia/openldap:latest
+        
+      - name: Create Docker network
+        run: docker network create avenirs-network
 
       - name: Start CAS Container
         run: |
-          docker run -d --name avenirs-cas avenirs-cas-custom:6.6.15.2
+          docker run -d --name avenirs-cas --network avenirs-network avenirs-cas-custom:6.6.15.2
 
-
-      - name: Start OpenLDAP Container
-        run: |
-          docker run -d --name avenirs-openldap \
-          -e LDAP_ORGANISATION="avenirs-esr.fr" \
-          -e LDAP_DOMAIN="ldap-dev.avenirs-esr.fr" \
-          -e LDAP_ADMIN_PASSWORD=$LDAP_ADMIN_PASSWORD \
-          -e LDAP_BASE_DN=$LDAP_BASE_DN \
-          -e LDAP_REMOVE_CONFIG_AFTER_SETUP="false" \
-          -p 389:389 -p 636:636 \
-          --env LDAP_TLS_VERIFY_CLIENT=never \
-          --env LDAP_LOG_LEVEL=256 \
-          osixia/openldap:latest
-
-      - name: Copy LDIF File to Container
-        run: |
-            docker cp .github/ldap/openldap-fixtures.ldif avenirs-openldap:/tmp/openldap-fixtures.ldif
-
-      - name: Inject LDIF into LDAP
-        run: |
-            sleep 20
-            docker exec avenirs-openldap ldapadd -x -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
 
       - name: Wait for CAS to be ready
         run: |
