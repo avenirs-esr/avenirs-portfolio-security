@@ -39,8 +39,8 @@ jobs:
 
       - name: Copy CAS and LDAP Files to /tmp
         run: |
-          sudo cp -r --preserve=all .github/cas/* /tmp/
-          sudo cp -r --preserve=all .github/ldap/* /tmp/
+          sudo cp -r --preserve=all .github/cas/ /tmp/
+          sudo cp -r --preserve=all .github/ldap/ /tmp/
           sudo chown -R 911:911 /tmp/openldap-fixtures.ldif
           sudo chmod -R 644 /tmp/openldap-fixtures.ldif
 
