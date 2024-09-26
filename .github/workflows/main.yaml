@@ -168,3 +168,7 @@ jobs:
         if: false  
         run: |
           docker logs avenirs-cas
+          
+      - name: Publish reports
+        uses: ./.github/actions/run-tests
+        if: true
