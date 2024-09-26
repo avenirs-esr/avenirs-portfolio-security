@@ -40,21 +40,36 @@ jobs:
       - name: Copy CAS Files to /tmp
         if: true
         run: |
-          sudo cp -r .github/cas/ /tmp/
+          sudo cp -r .github/cas/etc/cas /tmp/
           
 
-      - name: Pull CAS Image
-        run: docker pull apereo/cas:6.6.15.2
+      - name: Clone CAS overlay template
+        run: |
+          git clone https://github.com/apereo/cas-overlay-template.git
+          cd cas-overlay-template
+          git checkout 6.6.15.2
+      
+      - name: Replace build.gradle and Dockerfile
+        run: |
+          cp .github/cas/build.gradle cas-overlay-template/build.gradle
+          cp .github/cas/Dockerfile cas-overlay-template/Dockerfile
+      
+      - name: Build CAS
+        working-directory: cas-overlay-template
+        run: ./gradlew build
+
+      - name: Build Docker image
+        working-directory: cas-overlay-template
+        run: docker build -t avenirs-cas-custom:6.6.15.2 .
 
       - name: Pull OpenLDAP Image
         run: docker pull osixia/openldap:latest
 
       - name: Start CAS Container
         run: |
-          docker run -d --name avenirs-cas \
-            -v /tmp/cas:/etc/cas:rw \
-            -e CAS_MODULES=oidc \
-            -p 443:8443 -p 8080:8080 apereo/cas:6.6.15.2
+          docker run -d -v /tmp/cas:/etc/cas/services \
+          --name avenirs-cas \
+          avenirs-cas-custom:6.6.15.2
 
 
       - name: Start OpenLDAP Container
