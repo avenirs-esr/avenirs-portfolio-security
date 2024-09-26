@@ -133,41 +133,38 @@ jobs:
         if: true
         run: curl -k https://localhost/cas/oidc/.well-known/openid-configuration
 
-      - name: Temporary Break Point
-        run: |
-            echo "Stopping workflow at this point temporarily."
-            exit 1 
-
-      - name: Display OpenLDAP Startup Logs
-        if: always()
-        run: docker logs avenirs-openldap
         
-      - name: Check Docker containers
+      - name: (DEBUG) Check Docker containers
+        if : false
         run: docker ps -a
         
-      - name: Test CAS Accessibility Inside Container
+      - name: (DEBUG) Test CAS Accessibility Inside Container
+        if : false
         run: docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
 
-      - name: Test CAS Accessibility Outside Container
+      - name: (DEBUG) Test CAS Accessibility Outside Container
+        if : false
         run: curl -v -k https://localhost:443/cas/login
       
-      - name: Install LDAP Utilities
+      - name:  (DEBUG) Install LDAP Utilities
+        if : false
         run: |
           sudo apt-get update && sudo apt-get install -y ldap-utils
       
-      - name: Test LDAP Connection Inside container
+      - name: (DEBUG) Test LDAP Connection Inside container
+        if : false
         run: docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN "(uid=*)"  
       
-      - name: Test LDAP Connection Outside container
+      - name: (DEBUG) Test LDAP Connection Outside container
+        if: false
         run: |
           ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN "(uid=*)"
-
 
       - name: Run Tests
         uses: ./.github/actions/run-tests
         if: true
         
-      - name: Display cas logs after tests
-        if: always()  
+      - name: (DEBUG) Display cas logs after tests
+        if: false  
         run: |
           docker logs avenirs-cas
