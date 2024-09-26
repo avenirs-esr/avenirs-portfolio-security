@@ -47,7 +47,7 @@ jobs:
         run: |
           git clone https://github.com/apereo/cas-overlay-template.git
           cd cas-overlay-template
-          git checkout 6.6.15.2
+          git checkout remotes/origin/6.6
       
       - name: Replace build.gradle and Dockerfile
         run: |
