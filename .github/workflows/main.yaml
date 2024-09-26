@@ -121,19 +121,18 @@ jobs:
          done
         
 
-      - name: Display CAS Startup Logs
+      - name: (DEBUG) Display CAS Startup Logs
         if: false
         run: docker logs avenirs-cas
       
-      - name: Display /etc/cas content
-        if: true
+      - name: (DEBUG) Display /etc/cas content
+        if: false
         run: docker exec avenirs-cas ls -lR /etc/cas
       
-      - name: Display CAS .well-known
-        if: true
+      - name: (DEBUG) Display CAS .well-known
+        if: false
         run: curl -k https://localhost/cas/oidc/.well-known/openid-configuration
 
-        
       - name: (DEBUG) Check Docker containers
         if : false
         run: docker ps -a
