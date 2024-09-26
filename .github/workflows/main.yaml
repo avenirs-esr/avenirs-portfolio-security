@@ -18,7 +18,7 @@ jobs:
       LDAP_ADMIN: ${{ secrets.LDAP_ADMIN }}
       LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     services:
       postgres:

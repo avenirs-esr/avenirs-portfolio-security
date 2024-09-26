@@ -5,8 +5,6 @@ runs:
   using: "composite"
   steps:       
     - name: Publish Javadoc and Jacoco Report to GitHub Pages
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
           # Create a directory to store the Javadoc and Jacoco reports
           mkdir -p output
