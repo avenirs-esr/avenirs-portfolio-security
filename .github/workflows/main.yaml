@@ -170,5 +170,5 @@ jobs:
           docker logs avenirs-cas
           
       - name: Publish reports
-        uses: ./.github/actions/run-tests
+        uses: ./.github/actions/publish-to-gh-pages
         if: true
