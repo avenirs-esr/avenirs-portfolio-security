@@ -100,7 +100,7 @@ jobs:
       
       - name: Display /etc/cas content
         if: true
-        run: docker exec avenirs-cas ls -l /etc/cas
+        run: docker exec avenirs-cas ls -lr /etc/cas
       
       - name: Display CAS .well-known
         if: true
