@@ -99,7 +99,10 @@ jobs:
    
       - name: Start CAS Container
         run: |
-          docker run -d --name avenirs-cas --network avenirs-network avenirs-cas-custom:6.6.15.2
+          docker run -d --name avenirs-cas \
+          --network avenirs-network \
+          -p 443:8443 -p 8080:8080 \
+          avenirs-cas-custom:6.6.15.2
 
 
       - name: Wait for CAS to be ready
