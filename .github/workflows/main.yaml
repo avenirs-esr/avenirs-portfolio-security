@@ -52,8 +52,7 @@ jobs:
       - name: Replace build.gradle and Dockerfile
         run: |
           cp .github/cas/build.gradle cas-overlay-template/build.gradle
-          cp .github/cas/Dockerfile cas-overlay-template/Dockerfile
-      
+         
       - name: Build CAS
         working-directory: cas-overlay-template
         run: ./gradlew build
