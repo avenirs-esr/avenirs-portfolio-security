@@ -15,6 +15,7 @@ jobs:
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
       LDAP_ADMIN_PASSWORD: ${{ secrets.LDAP_ADMIN_PASSWORD }}
+      LDAP_ADMIN: ${{ secrets.LDAP_ADMIN }}
       LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       
@@ -75,7 +76,7 @@ jobs:
       - name: Inject LDIF into LDAP
         run: |
             sleep 20
-            docker exec avenirs-openldap ldapadd -x -D "cn=admin,${LDAP_BASE_DN}" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
+            docker exec avenirs-openldap ldapadd -x -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
 
       - name: Wait for CAS to be ready
         run: |
@@ -115,11 +116,11 @@ jobs:
           sudo apt-get update && sudo apt-get install -y ldap-utils
       
       - name: Test LDAP Connection Inside container
-        run: docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "cn=admin,dc=ldap-dev,dc=avenirs-esr,dc=fr" -w admin -b "dc=ldap-dev,dc=avenirs-esr,dc=fr" "(uid=*)"  
+        run: docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN "(uid=*)"  
       
       - name: Test LDAP Connection Outside container
         run: |
-          ldapsearch -x -H ldap://localhost:389 -D "cn=admin,dc=ldap-dev,dc=avenirs-esr,dc=fr" -w admin -b "dc=ldap-dev,dc=avenirs-esr,dc=fr" "(uid=paterson)"
+          ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN "(uid=*)"
 
 
       - name: Run Tests
