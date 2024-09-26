@@ -49,10 +49,14 @@ jobs:
           cd cas-overlay-template
           git checkout remotes/origin/6.6
       
-      - name: Replace build.gradle and Dockerfile
+      - name: Replace build.gradle
         run: |
           cp .github/cas/build.gradle cas-overlay-template/build.gradle
-         
+      
+      - name: Copy and replace etc directory
+        run: |
+          cp -r .github/cas/etc/* cas-overlay-template/etc/
+          
       - name: Build CAS
         working-directory: cas-overlay-template
         run: ./gradlew build
@@ -66,9 +70,7 @@ jobs:
 
       - name: Start CAS Container
         run: |
-          docker run -d -v /tmp/cas:/etc/cas/services \
-          --name avenirs-cas \
-          avenirs-cas-custom:6.6.15.2
+          docker run -d --name avenirs-cas avenirs-cas-custom:6.6.15.2
 
 
       - name: Start OpenLDAP Container
