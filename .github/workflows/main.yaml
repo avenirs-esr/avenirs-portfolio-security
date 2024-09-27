@@ -33,80 +33,14 @@ jobs:
       - name: Setup OpenLDAP
         uses: ./.github/actions/setup-openldap
 
-     
-
-      
-      - name: Clone CAS overlay template
-        run: |
-          git clone https://github.com/apereo/cas-overlay-template.git
-          cd cas-overlay-template
-          git checkout remotes/origin/6.6
-      
-      - name: Replace build.gradle and modified 
-        run: |
-          cp .github/cas/build.gradle cas-overlay-template/build.gradle
-          cp .github/cas/Dockerfile cas-overlay-template/Dockerfile
-      
-      - name: Copy and replace etc directory
-        run: |
-          cp -r .github/cas/etc/* cas-overlay-template/etc/
+      - name: Setup CAS
+        uses: ./.github/actions/setup-cas
           
-      - name: Build CAS
-        working-directory: cas-overlay-template
-        run: ./gradlew build
-
-      - name: Build Docker image
-        working-directory: cas-overlay-template
-        run: docker build -t avenirs-cas-custom:6.6.15.2 .
-   
-      - name: Start CAS Container
-        run: |
-          docker run -d --name avenirs-cas \
-          --network avenirs-network \
-          -p 443:8443 -p 8080:8080 \
-          avenirs-cas-custom:6.6.15.2
-
-
-      - name: Wait for CAS to be ready
-        run: |
-         echo "Waiting for CAS to be ready..."
-         sleep 20
-         set +e
-         for i in {1..10}; do
-          STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" https://localhost/cas/login)
-          if [ "$STATUS" -eq 200 ]; then
-            echo "CAS is ready."
-            break
-          fi
-          echo "CAS is not ready yet... retrying in 10 seconds. Current status: $STATUS"
-          sleep 10
-         done
-        
-
-      - name: (DEBUG) Display CAS Startup Logs
-        if: false
-        run: docker logs avenirs-cas
-      
-      - name: (DEBUG) Display /etc/cas content
-        if: false
-        run: docker exec avenirs-cas ls -lR /etc/cas
-      
-      - name: (DEBUG) Display CAS .well-known
-        if: false
-        run: curl -k https://localhost/cas/oidc/.well-known/openid-configuration
-
       - name: (DEBUG) Check Docker containers
         if : false
         run: docker ps -a
         
-      - name: (DEBUG) Test CAS Accessibility Inside Container
-        if : false
-        run: docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
-
-      - name: (DEBUG) Test CAS Accessibility Outside Container
-        if : false
-        run: curl -v -k https://localhost:443/cas/login
-   
+  
       - name: Run Tests
         uses: ./.github/actions/run-tests
         if: true
@@ -117,6 +51,7 @@ jobs:
           docker logs avenirs-cas
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
+        if: false
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_dir: ./target/site
