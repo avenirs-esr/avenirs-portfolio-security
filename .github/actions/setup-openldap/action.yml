@@ -15,6 +15,7 @@ runs:
     - name: Load OpenLDAP Image from Cache
       run: |
         if [ -f /tmp/.docker-cache-openldap/openldap.tar ]; then
+          echo "Loading OpenLDAP image from cache..."
           docker load -i /tmp/.docker-cache-openldap/openldap.tar
           echo "OpenLDAP image loaded from cache."
         else
@@ -22,14 +23,29 @@ runs:
         fi
       shell: bash
 
-    - name: Pull OpenLDAP Image if Not Cached
+    - name: Check for Updates or Missing OpenLDAP Image
       run: |
-        if ! docker image inspect osixia/openldap:latest > /dev/null 2>&1; then
+        LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' osixia/openldap:latest 2>/dev/null || echo "none")
+        REMOTE_DIGEST=$(docker manifest inspect osixia/openldap:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
+        echo "Local Digest: $LOCAL_DIGEST"
+        echo "Remote Digest: $REMOTE_DIGEST"
+        if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
+          echo "Pulling updated OpenLDAP Docker image..."
           docker pull osixia/openldap:latest
           docker save osixia/openldap:latest -o /tmp/.docker-cache-openldap/openldap.tar
           echo "OpenLDAP image pulled and saved to cache."
         else
-          echo "OpenLDAP image already loaded from cache."
+          echo "OpenLDAP image is up-to-date and loaded from cache."
+        fi
+      shell: bash
+
+    - name: Verify Image Loaded from Cache
+      run: |
+        if docker image inspect osixia/openldap:latest > /dev/null 2>&1; then
+          echo "OpenLDAP image successfully loaded from cache and available as 'osixia/openldap:latest'."
+        else
+          echo "OpenLDAP image not found after loading. Check the load step."
+          exit 1
         fi
       shell: bash
 
