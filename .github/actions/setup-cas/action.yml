@@ -12,6 +12,12 @@ runs:
         restore-keys: |
           docker-cas-
 
+    - name: Ensure Cache Directory Exists
+      run: |
+        mkdir -p /tmp/.docker-cache-cas
+        echo "Cache directory ensured: /tmp/.docker-cache-cas"
+      shell: bash
+
     - name: Verify Cache Restoration
       run: |
         if [ -d /tmp/.docker-cache-cas ]; then
