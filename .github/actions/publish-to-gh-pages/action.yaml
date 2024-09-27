@@ -1,33 +1,22 @@
-name: "Publish javadoc and Jacoco reports"
-description: "Publish the javadoc and coverage reports to gh pages"
+name: "Publish Javadoc and Jacoco Reports"
+description: "Publish the Javadoc and coverage reports to GitHub Pages using peaceiris/actions-gh-pages@v4"
 
 inputs:
   github_token:
     description: "GitHub Token"
     required: true
+  publish_dir:
+    description: "Directory to publish"
+    required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Publish Javadoc and Jacoco Report to GitHub Pages
-      env:
-        GITHUB_TOKEN: ${{ inputs.github_token }}
-      run: |
-        mkdir -p output
-        cp -r target/site/apidocs output/javadoc
-        cp -r target/site/jacoco output/jacoco
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-
-        git clone --branch=gh-pages https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} gh-pages
-        cd gh-pages
-
-        rm -rf javadoc jacoco
-        cp -r ../output/javadoc .
-        cp -r ../output/jacoco .
-
-        git add .
-        git commit -m "Update Javadoc and Jacoco reports"
-        git push origin gh-pages
-      shell: bash
+    - name: Publish Javadoc and Jacoco Reports to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ inputs.github_token }}
+        publish_dir: ${{ inputs.publish_dir }}
