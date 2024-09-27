@@ -8,9 +8,9 @@ runs:
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-cas
-        key: ${{ runner.os }}-docker-cas-${{ hashFiles('cas-overlay-template/Dockerfile') }}
+        key: docker-cas-cache
         restore-keys: |
-          ${{ runner.os }}-docker-cas-
+          docker-cas-
 
     - name: Verify Cache Restoration
       run: |
