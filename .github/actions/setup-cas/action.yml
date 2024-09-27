@@ -4,29 +4,41 @@ description: "Builds and starts the CAS environment"
 runs:
   using: "composite"
   steps:
-    - name: Clone, Prepare and Build CAS Overlay Template
+    - name: Cache Docker Images for CAS
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.docker-cache-cas
+        key: ${{ runner.os }}-docker-cas-${{ hashFiles('cas-overlay-template/Dockerfile') }}
+        restore-keys: |
+          ${{ runner.os }}-docker-cas-
+
+    - name: Check if CAS Docker Image Exists
+      id: check-image
       run: |
-        # Cloner le dépôt CAS overlay template
+        export DOCKER_CONFIG=/tmp/.docker-cache-cas
+        if docker image inspect avenirs-cas-custom:6.6.15.2 > /dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_ENV
+        else
+          echo "exists=false" >> $GITHUB_ENV
+        fi
+      shell: bash
+
+    - name: Build Docker image if not cached
+      if: ${{ env.exists == 'false' }}
+      run: |
+        export DOCKER_CONFIG=/tmp/.docker-cache-cas
         git clone https://github.com/apereo/cas-overlay-template.git
         cd cas-overlay-template
         git checkout remotes/origin/6.6
-        
-        # Copier les fichiers nécessaires dans le dépôt cloné
         cp ../.github/cas/build.gradle build.gradle
         cp ../.github/cas/Dockerfile Dockerfile
         cp -r ../.github/cas/etc/* etc/
-        
-        # Construire CAS
-        ./gradlew build
-      shell: bash
-
-    - name: Build Docker image
-      working-directory: cas-overlay-template
-      run: docker build -t avenirs-cas-custom:6.6.15.2 .
+        docker build -t avenirs-cas-custom:6.6.15.2 .
       shell: bash
 
     - name: Start CAS Container
       run: |
+        export DOCKER_CONFIG=/tmp/.docker-cache-cas
         docker run -d --name avenirs-cas \
         --network avenirs-network \
         -p 443:8443 -p 8080:8080 \
@@ -59,17 +71,17 @@ runs:
       run: docker exec avenirs-cas ls -lR /etc/cas
       shell: bash
         
-    - name: (DEBUG) Display CAS .well-known
+    - name: (DEBUG) Display CAS OIDC config
       if: ${{ false }}
       run: curl -k https://localhost/cas/oidc/.well-known/openid-configuration
       shell: bash
       
     - name: (DEBUG) Test CAS Accessibility Inside Container
-      if : ${{ false }}
+      if: ${{ false }}
       run: docker exec avenirs-cas curl -v -k https://localhost:8443/cas/login
       shell: bash
     
     - name: (DEBUG) Test CAS Accessibility Outside Container
-      if : ${{ false }}
+      if: ${{ false }}
       run: curl -v -k https://localhost:443/cas/login
       shell: bash
