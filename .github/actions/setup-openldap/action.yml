@@ -4,17 +4,17 @@ description: "Initializes OpenLDAP environment"
 runs:
   using: "composite"
   steps:
-    - name: Cache Docker Images
+    - name: Cache Docker Images for OpenLDAP
       uses: actions/cache@v4
       with:
-        path: /tmp/.docker-cache
-        key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+        path: /tmp/.docker-cache-openldap
+        key: ${{ runner.os }}-docker-openldap-${{ hashFiles('**/Dockerfile') }}
         restore-keys: |
-          ${{ runner.os }}-docker-
+          ${{ runner.os }}-docker-openldap-
 
     - name: Pull OpenLDAP Image
       run: |
-        export DOCKER_CONFIG=/tmp/.docker-cache
+        export DOCKER_CONFIG=/tmp/.docker-cache-openldap
         docker pull osixia/openldap:latest
       shell: bash
 
@@ -54,21 +54,3 @@ runs:
       run: |
         docker exec avenirs-openldap ldapadd -x -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
       shell: bash
-    
-    - name: (DEBUG) Install LDAP Utilities
-      if: ${{ false }}
-      run: |
-          sudo apt-get update && sudo apt-get install -y ldap-utils
-      shell: bash
-      
-    - name: (DEBUG) Test LDAP Connection Inside container
-      if: ${{ false }}
-      run: |
-          docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN "(uid=*)"
-      shell: bash  
-      
-    - name: (DEBUG) Test LDAP Connection Outside container
-      if: ${{ false }}
-      run: |
-          ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN "(uid=*)"
-      shell: bash  
