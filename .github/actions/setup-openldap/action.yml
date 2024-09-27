@@ -12,6 +12,12 @@ runs:
         restore-keys: |
           docker-openldap-
 
+    - name: Ensure Cache Directory Exists
+      run: |
+        mkdir -p /tmp/.docker-cache-openldap
+        echo "Cache directory ensured: /tmp/.docker-cache-openldap"
+      shell: bash
+
     - name: Load OpenLDAP Image from Cache
       run: |
         if [ -f /tmp/.docker-cache-openldap/openldap.tar ]; then
