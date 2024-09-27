@@ -20,8 +20,6 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,42 +30,12 @@ jobs:
       - name: Setup PostgreSQL
         uses: ./.github/actions/setup-postgres
       
+      - name: Setup OpenLDAP
+        uses: ./.github/actions/setup-openldap
+
      
 
-      - name: Pull OpenLDAP Image
-        run: docker pull osixia/openldap:latest
-        
-        
-      - name: Start OpenLDAP Container
-        run: |
-          docker run -d --name avenirs-openldap \
-          --network avenirs-network \
-          -e LDAP_ORGANISATION="avenirs-esr.fr" \
-          -e LDAP_DOMAIN="ldap-dev.avenirs-esr.fr" \
-          -e LDAP_ADMIN_PASSWORD=$LDAP_ADMIN_PASSWORD \
-          -e LDAP_BASE_DN=$LDAP_BASE_DN \
-          -e LDAP_REMOVE_CONFIG_AFTER_SETUP="false" \
-          -p 389:389 -p 636:636 \
-          --env LDAP_TLS_VERIFY_CLIENT=never \
-          --env LDAP_LOG_LEVEL=256 \
-          osixia/openldap:latest
-
-      - name: Copy LDIF File to Container
-        run: |
-            docker cp .github/ldap/openldap-fixtures.ldif avenirs-openldap:/tmp/openldap-fixtures.ldif
-
-      - name: Inject LDIF into LDAP
-        run: |
-            sleep 20
-            docker exec avenirs-openldap ldapadd -x -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
-
-
-      - name: (TO REMOVE if cas container is built) Copy CAS Files to /tmp
-        if: false
-        run: |
-          sudo cp -r .github/cas/etc/cas /tmp/
-          
-
+      
       - name: Clone CAS overlay template
         run: |
           git clone https://github.com/apereo/cas-overlay-template.git
