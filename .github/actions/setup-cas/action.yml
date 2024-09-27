@@ -12,6 +12,16 @@ runs:
         restore-keys: |
           ${{ runner.os }}-docker-cas-
 
+    - name: Verify Cache Restoration
+      run: |
+        if [ -d /tmp/.docker-cache-cas ]; then
+          echo "Cache directory exists: /tmp/.docker-cache-cas"
+          ls -alh /tmp/.docker-cache-cas
+        else
+          echo "Cache directory not found."
+        fi
+      shell: bash
+
     - name: Load Docker Images from Cache
       run: |
         export DOCKER_CONFIG=/tmp/.docker-cache-cas
@@ -52,6 +62,8 @@ runs:
       run: |
         export DOCKER_CONFIG=/tmp/.docker-cache-cas
         docker --config $DOCKER_CONFIG save avenirs-cas-custom:6.6.15.2 -o /tmp/.docker-cache-cas/avenirs-cas-custom.tar
+        echo "Docker image saved to cache."
+        ls -alh /tmp/.docker-cache-cas
       shell: bash
 
     - name: Start CAS Container
