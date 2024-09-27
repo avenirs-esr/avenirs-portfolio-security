@@ -15,6 +15,7 @@ runs:
     - name: Check if CAS Docker Image Exists
       id: check-image
       run: |
+        export DOCKER_CONFIG=/tmp/.docker-cache-cas
         if docker image inspect avenirs-cas-custom:6.6.15.2 > /dev/null 2>&1; then
           echo "Docker inspect: Valid image found"
           echo "exists=true" >> $GITHUB_ENV
