@@ -12,8 +12,23 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    - name: Check GITHUB_TOKEN
+      run: |
+        if [ -z "${{ inputs.github_token }}" ]; then
+          echo "Error: GITHUB_TOKEN is not set."
+          exit 1
+        else
+          echo "GITHUB_TOKEN is set."
+          echo "Token snippet: ${${{ inputs.github_token }}:0:4}..." 
+        fi
+      shell: bash
+
+    - name: Test GitHub API Access with Token
+      run: |
+        curl -H "Authorization: token ${{ inputs.github_token }}" \
+             -H "Accept: application/vnd.github.v3+json" \
+             https://api.github.com/user/repos
+      shell: bash
 
     - name: Publish Javadoc and Jacoco Reports to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4

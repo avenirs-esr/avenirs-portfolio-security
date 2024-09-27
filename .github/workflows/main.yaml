@@ -33,6 +33,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Setup Docker cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.docker-cache
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
 
       - name: Setup PostgreSQL
         uses: ./.github/actions/setup-postgres
