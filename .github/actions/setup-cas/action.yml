@@ -12,15 +12,24 @@ runs:
         restore-keys: |
           ${{ runner.os }}-docker-cas-
 
+    - name: Load Docker Images from Cache
+      run: |
+        export DOCKER_CONFIG=/tmp/.docker-cache-cas
+        if [ -f /tmp/.docker-cache-cas/avenirs-cas-custom.tar ]; then
+          docker --config $DOCKER_CONFIG load -i /tmp/.docker-cache-cas/avenirs-cas-custom.tar
+          echo "Docker image loaded from cache."
+        else
+          echo "No cached Docker image found to load."
+        fi
+      shell: bash
+
     - name: Check if CAS Docker Image Exists
       id: check-image
       run: |
         export DOCKER_CONFIG=/tmp/.docker-cache-cas
         if docker --config $DOCKER_CONFIG image inspect avenirs-cas-custom:6.6.15.2 > /dev/null 2>&1; then
-          echo "Docker inspect: Valid image found"
           echo "exists=true" >> $GITHUB_ENV
         else
-          echo "Docker inspect: Valid image not found"
           echo "exists=false" >> $GITHUB_ENV
         fi
       shell: bash
