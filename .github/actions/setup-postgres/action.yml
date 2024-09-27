@@ -1,5 +1,5 @@
 name: "Setup PostgreSQL"
-description: "Initializes PostgreSQL"
+description: "Initializes PostgreSQL environment"
 
 runs:
   using: "composite"
@@ -8,15 +8,35 @@ runs:
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-postgres
-        key: ${{ runner.os }}-docker-postgres-${{ hashFiles('**/Dockerfile') }}
+        key: docker-postgres-cache
         restore-keys: |
-          ${{ runner.os }}-docker-postgres-
+          docker-postgres-
 
-    - name: Pull PostgreSQL Image
+    - name: Load PostgreSQL Image from Cache
       run: |
-        export DOCKER_CONFIG=/tmp/.docker-cache-postgres
-        echo "Pulling PostgreSQL Docker image..."
-        docker pull postgres:latest
+        if [ -f /tmp/.docker-cache-postgres/postgres.tar ]; then
+          echo "Loading PostgreSQL image from cache..."
+          docker load -i /tmp/.docker-cache-postgres/postgres.tar
+          echo "PostgreSQL image loaded from cache."
+        else
+          echo "No cached PostgreSQL image found."
+        fi
+      shell: bash
+
+    - name: Check for Updates or Missing PostgreSQL Image
+      run: |
+        LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' postgres:latest 2>/dev/null || echo "none")
+        REMOTE_DIGEST=$(docker manifest inspect postgres:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
+        echo "Local Digest: $LOCAL_DIGEST"
+        echo "Remote Digest: $REMOTE_DIGEST"
+        if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
+          echo "Pulling updated PostgreSQL Docker image..."
+          docker pull postgres:latest
+          docker save postgres:latest -o /tmp/.docker-cache-postgres/postgres.tar
+          echo "PostgreSQL image pulled and saved to cache."
+        else
+          echo "PostgreSQL image is up-to-date and loaded from cache."
+        fi
       shell: bash
 
     - name: Start PostgreSQL Container
@@ -46,8 +66,8 @@ runs:
 
     - name: Copy SQL Files to Container
       run: |
-       docker cp src/main/resources/db/init-db.sql avenirs-postgres:/tmp/init-db.sql
-       docker cp src/test/resources/db/init-test-db.sql avenirs-postgres:/tmp/init-test-db.sql
+        docker cp src/main/resources/db/init-db.sql avenirs-postgres:/tmp/init-db.sql
+        docker cp src/test/resources/db/init-test-db.sql avenirs-postgres:/tmp/init-test-db.sql
       shell: bash
 
     - name: Initialize Database
