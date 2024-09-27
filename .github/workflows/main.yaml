@@ -106,21 +106,7 @@ jobs:
       - name: (DEBUG) Test CAS Accessibility Outside Container
         if : false
         run: curl -v -k https://localhost:443/cas/login
-      
-      - name:  (DEBUG) Install LDAP Utilities
-        if : false
-        run: |
-          sudo apt-get update && sudo apt-get install -y ldap-utils
-      
-      - name: (DEBUG) Test LDAP Connection Inside container
-        if : false
-        run: docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN "(uid=*)"  
-      
-      - name: (DEBUG) Test LDAP Connection Outside container
-        if: false
-        run: |
-          ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN "(uid=*)"
-
+   
       - name: Run Tests
         uses: ./.github/actions/run-tests
         if: true
