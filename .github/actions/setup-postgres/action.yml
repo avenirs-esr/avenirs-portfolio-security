@@ -1,14 +1,32 @@
 name: "Setup PostgreSQL"
-description: "Initializes PostgreSQL environment"
+description: "Initializes PostgreSQL"
 
 runs:
   using: "composite"
   steps:
+    - name: Pull PostgreSQL Image
+      run: |
+        echo "Pulling PostgreSQL Docker image..."
+        docker pull postgres:latest
+      shell: bash
+
+    - name: Start PostgreSQL Container
+      run: |
+        echo "Starting PostgreSQL Docker container..."
+        docker run -d --name avenirs-postgres \
+          --network avenirs-network \
+          -e POSTGRES_USER=$POSTGRES_USER \
+          -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+          -e POSTGRES_DB=$POSTGRES_DB \
+          -p 65432:5432 \
+          postgres:latest
+      shell: bash
+
     - name: Wait for PostgreSQL to be ready
       run: |
         echo "Waiting for PostgreSQL to be ready..."
         for i in {1..4}; do
-          if psql -h localhost -p 65432 -U $POSTGRES_USER -d $POSTGRES_DB -c "\q"; then
+          if docker exec avenirs-postgres pg_isready -U $POSTGRES_USER -h localhost -p 5432; then
             echo "PostgreSQL is ready."
             break
           fi
@@ -20,7 +38,7 @@ runs:
     - name: Initialize Database
       run: |
         echo "Injecting init-db.sql into PostgreSQL..."
-        psql -h localhost -p 65432 -U $POSTGRES_USER -d $POSTGRES_DB -f src/main/resources/db/init-db.sql
+        docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /src/main/resources/db/init-db.sql
         echo "Injecting init-test-db.sql into PostgreSQL..."
-        psql -h localhost -p 65432 -U $POSTGRES_USER -d $POSTGRES_DB -f src/test/resources/db/init-test-db.sql
-      shell: bash  
+        docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /src/test/resources/db/init-test-db.sql
+      shell: bash
