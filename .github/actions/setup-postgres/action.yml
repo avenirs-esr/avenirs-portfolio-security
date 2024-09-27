@@ -4,8 +4,17 @@ description: "Initializes PostgreSQL"
 runs:
   using: "composite"
   steps:
+    - name: Cache Docker Images for PostgreSQL
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.docker-cache-postgres
+        key: ${{ runner.os }}-docker-postgres-${{ hashFiles('**/Dockerfile') }}
+        restore-keys: |
+          ${{ runner.os }}-docker-postgres-
+
     - name: Pull PostgreSQL Image
       run: |
+        export DOCKER_CONFIG=/tmp/.docker-cache-postgres
         echo "Pulling PostgreSQL Docker image..."
         docker pull postgres:latest
       shell: bash
@@ -46,4 +55,3 @@ runs:
         docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /tmp/init-db.sql
         docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /tmp/init-test-db.sql
       shell: bash
-
