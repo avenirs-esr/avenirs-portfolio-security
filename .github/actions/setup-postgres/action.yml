@@ -12,6 +12,12 @@ runs:
         restore-keys: |
           docker-postgres-
 
+    - name: Ensure Cache Directory Exists
+      run: |
+        mkdir -p /tmp/.docker-cache-postgres
+        echo "Cache directory ensured: /tmp/.docker-cache-postgres"
+      shell: bash
+
     - name: Load PostgreSQL Image from Cache
       run: |
         if [ -f /tmp/.docker-cache-postgres/postgres.tar ]; then
