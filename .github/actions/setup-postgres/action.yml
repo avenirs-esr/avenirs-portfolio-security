@@ -35,10 +35,15 @@ runs:
         done
       shell: bash 
 
+    - name: Copy SQL Files to Container
+      run: |
+       docker cp src/main/resources/db/init-db.sql avenirs-postgres:/tmp/init-db.sql
+       docker cp src/test/resources/db/init-test-db.sql avenirs-postgres:/tmp/init-test-db.sql
+      shell: bash
+
     - name: Initialize Database
       run: |
-        echo "Injecting init-db.sql into PostgreSQL..."
-        docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /src/main/resources/db/init-db.sql
-        echo "Injecting init-test-db.sql into PostgreSQL..."
-        docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /src/test/resources/db/init-test-db.sql
+        docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /tmp/init-db.sql
+        docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /tmp/init-test-db.sql
       shell: bash
+
