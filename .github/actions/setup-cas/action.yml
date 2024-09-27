@@ -4,15 +4,19 @@ description: "Builds and starts the CAS environment"
 runs:
   using: "composite"
   steps:
-    - name: Clone and build CAS overlay template
+    - name: Clone, Prepare and Build CAS Overlay Template
       run: |
+        # Cloner le dépôt CAS overlay template
         git clone https://github.com/apereo/cas-overlay-template.git
         cd cas-overlay-template
         git checkout remotes/origin/6.6
-        cp .github/cas/build.gradle cas-overlay-template/build.gradle
-        cp .github/cas/Dockerfile cas-overlay-template/Dockerfile
-        cp -r .github/cas/etc/* cas-overlay-template/etc/
-        cd cas-overlay-template
+        
+        # Copier les fichiers nécessaires dans le dépôt cloné
+        cp ../.github/cas/build.gradle build.gradle
+        cp ../.github/cas/Dockerfile Dockerfile
+        cp -r ../.github/cas/etc/* etc/
+        
+        # Construire CAS
         ./gradlew build
       shell: bash
 
