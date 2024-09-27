@@ -8,14 +8,29 @@ runs:
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-openldap
-        key: ${{ runner.os }}-docker-openldap-${{ hashFiles('**/Dockerfile') }}
+        key: docker-openldap-cache
         restore-keys: |
-          ${{ runner.os }}-docker-openldap-
+          docker-openldap-
 
-    - name: Pull OpenLDAP Image
+    - name: Load OpenLDAP Image from Cache
       run: |
-        export DOCKER_CONFIG=/tmp/.docker-cache-openldap
-        docker pull osixia/openldap:latest
+        if [ -f /tmp/.docker-cache-openldap/openldap.tar ]; then
+          docker load -i /tmp/.docker-cache-openldap/openldap.tar
+          echo "OpenLDAP image loaded from cache."
+        else
+          echo "No cached OpenLDAP image found."
+        fi
+      shell: bash
+
+    - name: Pull OpenLDAP Image if Not Cached
+      run: |
+        if ! docker image inspect osixia/openldap:latest > /dev/null 2>&1; then
+          docker pull osixia/openldap:latest
+          docker save osixia/openldap:latest -o /tmp/.docker-cache-openldap/openldap.tar
+          echo "OpenLDAP image pulled and saved to cache."
+        else
+          echo "OpenLDAP image already loaded from cache."
+        fi
       shell: bash
 
     - name: Start OpenLDAP Container
