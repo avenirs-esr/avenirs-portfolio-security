@@ -27,9 +27,21 @@ runs:
       run: docker cp .github/ldap/openldap-fixtures.ldif avenirs-openldap:/tmp/openldap-fixtures.ldif
       shell: bash
 
+    - name: Wait for OpenLDAP to be ready
+      run: |
+        echo "Waiting for OpenLDAP to be ready..."
+        for i in {1..10}; do
+          if docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -b $LDAP_BASE_DN -s base "(objectclass=*)" > /dev/null 2>&1; then
+            echo "OpenLDAP is ready."
+            break
+          fi
+          echo "OpenLDAP is not ready yet... retrying in 5 seconds."
+          sleep 5
+        done
+      shell: bash
+
     - name: Inject LDIF into LDAP
       run: |
-        sleep 20
         docker exec avenirs-openldap ldapadd -x -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
       shell: bash
     
