@@ -19,7 +19,7 @@ runs:
           exit 1
         else
           echo "GITHUB_TOKEN is set."
-          echo "Token snippet: ${${{ inputs.github_token }}:0:4}..." 
+          echo "Token snippet: ${{ inputs.github_token }}" 
         fi
       shell: bash
 

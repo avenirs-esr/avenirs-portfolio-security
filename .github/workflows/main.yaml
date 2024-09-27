@@ -77,8 +77,8 @@ jobs:
             docker exec avenirs-openldap ldapadd -x -D "$LDAP_ADMIN" -w $LDAP_ADMIN_PASSWORD -f /tmp/openldap-fixtures.ldif
 
 
-      - name: Copy CAS Files to /tmp
-        if: true
+      - name: (TO REMOVE if cas container is built) Copy CAS Files to /tmp
+        if: false
         run: |
           sudo cp -r .github/cas/etc/cas /tmp/
           
