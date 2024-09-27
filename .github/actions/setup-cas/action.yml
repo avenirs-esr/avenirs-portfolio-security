@@ -16,7 +16,7 @@ runs:
       id: check-image
       run: |
         export DOCKER_CONFIG=/tmp/.docker-cache-cas
-        if docker image inspect avenirs-cas-custom:6.6.15.2 > /dev/null 2>&1; then
+        if docker --config $DOCKER_CONFIG image inspect avenirs-cas-custom:6.6.15.2 > /dev/null 2>&1; then
           echo "Docker inspect: Valid image found"
           echo "exists=true" >> $GITHUB_ENV
         else
@@ -35,13 +35,20 @@ runs:
         cp ../.github/cas/build.gradle build.gradle
         cp ../.github/cas/Dockerfile Dockerfile
         cp -r ../.github/cas/etc/* etc/
-        docker build -t avenirs-cas-custom:6.6.15.2 .
+        docker --config $DOCKER_CONFIG build -t avenirs-cas-custom:6.6.15.2 .
+      shell: bash
+
+    - name: Save Docker image to Cache
+      if: ${{ env.exists == 'false' }}
+      run: |
+        export DOCKER_CONFIG=/tmp/.docker-cache-cas
+        docker --config $DOCKER_CONFIG save avenirs-cas-custom:6.6.15.2 -o /tmp/.docker-cache-cas/avenirs-cas-custom.tar
       shell: bash
 
     - name: Start CAS Container
       run: |
         export DOCKER_CONFIG=/tmp/.docker-cache-cas
-        docker run -d --name avenirs-cas \
+        docker --config $DOCKER_CONFIG run -d --name avenirs-cas \
         --network avenirs-network \
         -p 443:8443 -p 8080:8080 \
         avenirs-cas-custom:6.6.15.2
