@@ -26,11 +26,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         
+      - name: Create Docker network
+        run: docker network create avenirs-network
+        
       - name: Setup PostgreSQL
         uses: ./.github/actions/setup-postgres
       
-      - name: Create Docker network
-        run: docker network create avenirs-network
+     
 
       - name: Pull OpenLDAP Image
         run: docker pull osixia/openldap:latest
