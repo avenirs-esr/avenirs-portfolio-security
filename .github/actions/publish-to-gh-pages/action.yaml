@@ -23,13 +23,7 @@ runs:
         fi
       shell: bash
 
-    - name: Test GitHub API Access with Token
-      run: |
-        curl -H "Authorization: token ${{ inputs.github_token }}" \
-             -H "Accept: application/vnd.github.v3+json" \
-             https://api.github.com/user/repos
-      shell: bash
-
+    
     - name: Publish Javadoc and Jacoco Reports to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
