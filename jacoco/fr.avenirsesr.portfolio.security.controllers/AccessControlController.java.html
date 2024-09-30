@@ -62,7 +62,7 @@ import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 <span class="fc" id="L62">				OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
 <span class="fc" id="L63">				LOGGER.trace(&quot;hasAccess, introspectResponse: {}&quot;, introspectResponse);</span>
 
-<span class="pc bpc" id="L65" title="2 of 4 branches missed.">				if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
+<span class="pc bpc" id="L65" title="1 of 4 branches missed.">				if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
 <span class="fc" id="L66">					String login = introspectResponse.getUniqueSecurityName();</span>
 <span class="fc" id="L67">					LOGGER.trace(&quot;hasAccess, login: {}&quot;, login);</span>
 <span class="fc" id="L68">					response.setLogin(login);</span>
@@ -76,8 +76,8 @@ import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 				}
 			}
 		}
-<span class="nc" id="L79">		LOGGER.trace(&quot;hasAccess, response: {}&quot;, response);</span>
-<span class="nc" id="L80">		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+<span class="fc" id="L79">		LOGGER.trace(&quot;hasAccess, response: {}&quot;, response);</span>
+<span class="fc" id="L80">		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
 	}
 
 }
