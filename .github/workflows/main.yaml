@@ -51,7 +51,7 @@ jobs:
           docker logs avenirs-cas
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
-        if: true
+        if: false
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_dir: ./target/site
@@ -61,4 +61,4 @@ jobs:
         with:
           github_token: $GITHUB_TOKEN
           publish_dir: ./target/site
-        if: false
+        if: true
