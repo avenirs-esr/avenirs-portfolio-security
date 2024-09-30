@@ -18,8 +18,6 @@ jobs:
       LDAP_ADMIN: ${{ secrets.LDAP_ADMIN }}
       LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,13 +47,7 @@ jobs:
         if: false  
         run: |
           docker logs avenirs-cas
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        if: false
-        with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./target/site
-                
+       
       - name: Publish reports
         uses: ./.github/actions/publish-to-gh-pages
         with:
