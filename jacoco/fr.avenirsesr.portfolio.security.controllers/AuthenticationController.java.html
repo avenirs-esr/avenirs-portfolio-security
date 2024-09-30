@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.controllers</a> &gt; <span class="el_source">AuthenticationController.java</span></div><h1>AuthenticationController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.controllers;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
+import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
+import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import jakarta.servlet.http.HttpServletResponse;
+
+/**
+ * Authentication Controller.
+ * Interact with an OIDC provider, Apereo CAS for instance.
+ * Can retrieve/Validate/introspect an access token.
+ */
+@RestController
+<span class="fc" id="L28">public class AuthenticationController {</span>
+	/** Logger */
+<span class="fc" id="L30">	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);</span>
+	
+	/** Authentication service. */
+	@Autowired 
+	private AuthenticationService authenticationService;
+	
+	/**
+	 * Callback after OIDC authentication.
+	 * @param forwardHost The header used to retrieve the current host. This is used to determine the end point from the current request. 
+	 * @param response The response instance used to redirect to the authorize end point.
+	 * @param code The session code used to issue an access token.
+	 * @throws IOException If an input or output exception occurs.
+	 */
+	@GetMapping(&quot;${avenirs.authentication.oidc.callback}&quot;)
+	public void oidcCallback(@RequestHeader(value=&quot;x-forwarded-host&quot;) Optional&lt;String&gt; forwardHost,
+			HttpServletResponse response,
+			@RequestParam Optional&lt;String&gt; code) throws IOException {
+<span class="nc" id="L47">		LOGGER.trace(&quot;oidcCallback&quot;);</span>
+<span class="nc" id="L48">		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost.orElse(&quot;localhost&quot;), code.orElse(&quot;NO_PROVIDED_CODE&quot;)));</span>
+<span class="nc" id="L49">	}</span>
+		
+	/**
+	 * Performs the redirection after the access token is retrieved.
+	 *
+	 * @param host     The header used to determine the host.
+	 * @param response The servlet response instance, used to perform a redirection.
+	 * @throws IOException If an input or output exception occurs.
+	 */
+	@GetMapping(&quot;${avenirs.authentication.oidc.callback.redirect}&quot;)
+	
+	public void redirect(@RequestHeader(value=&quot;x-forwarded-host&quot;) Optional&lt;String&gt; host,
+			HttpServletResponse response) throws IOException{
+<span class="nc" id="L62">		LOGGER.trace(&quot;redirect&quot;);</span>
+<span class="nc" id="L63">		response.sendRedirect(this.authenticationService.generateServiceURL(host.orElse(&quot;localhost&quot;)));</span>
+<span class="nc" id="L64">	}</span>
+	
+	/**
+	 * Access token introspection end point. 
+	 * @param token The token to introspect.
+	 * @return The response of the OIDC provider.
+	 * @throws IOException  If an input or output exception occurs.
+	 */
+	@PostMapping(&quot;${avenirs.authentication.oidc.callback.profile}&quot;)
+	public OIDCProfileResponse profile(@RequestHeader(value=&quot;x-authorization&quot;) String token) throws IOException{
+<span class="nc" id="L74">		OIDCIntrospectResponse introspectResponse = this.authenticationService.introspectAccessToken(token);</span>
+		
+<span class="nc bnc" id="L76" title="All 4 branches missed.">		if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
+<span class="nc" id="L77">			OIDCProfileResponse profileResponse = this.authenticationService.profile(token);</span>
+<span class="nc" id="L78">				profileResponse.setActive(true);</span>
+<span class="nc" id="L79">				return profileResponse;</span>
+		}
+<span class="nc" id="L81">		throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
+	}
+		
+	/**
+	 * Access token introspection end point. 
+	 * @param token The token to introspect.
+	 * @return The OIDC Provider response.
+	 * @throws IOException
+	 */
+	@PostMapping(&quot;${avenirs.authentication.oidc.callback.introspect}&quot;)
+	public OIDCIntrospectResponse introspect(@RequestHeader(value=&quot;x-authorization&quot;) String token) throws IOException{
+<span class="nc" id="L92">		return this.authenticationService.introspectAccessToken(token);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

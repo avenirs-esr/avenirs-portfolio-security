@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpringSecurityConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.configuration</a> &gt; <span class="el_source">SpringSecurityConfig.java</span></div><h1>SpringSecurityConfig.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package fr.avenirsesr.portfolio.security.configuration;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+
+/**
+ * Configuration for spring security.
+ */
+@Configuration
+@EnableWebSecurity
+<span class="fc" id="L22">public class SpringSecurityConfig {</span>
+	/** Logger */
+<span class="fc" id="L24">	private static final Logger LOGGER = LoggerFactory.getLogger(SpringSecurityConfig.class);</span>
+	
+	@Value(&quot;${avenirs.access.control.roles}&quot;)
+	private String roles;
+
+	/** OIDC callback URI.*/
+	@Value(&quot;${avenirs.authentication.oidc.callback}&quot;)
+	private String oidcCallback;
+	
+	/** OIDC callback redirect URI.*/
+	@Value(&quot;${avenirs.authentication.oidc.callback.redirect}&quot;)
+	private String oidcRedirect;
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+<span class="fc" id="L39">		return httpSecurity.csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L40">				.authorizeHttpRequests(auth -&gt; { </span>
+<span class="fc" id="L41">		LOGGER.debug(&quot;filterChain, Configuring Spring security&quot;);</span>
+<span class="fc" id="L42">		LOGGER.debug(&quot;filterChain, Permit All for:&quot;)	;	</span>
+<span class="fc" id="L43">		LOGGER.debug(&quot;filterChain, Permit All for roles: {}&quot;, roles);	</span>
+<span class="fc" id="L44">		LOGGER.debug(&quot;filterChain, Permit All for oidcCallback: {}&quot;, oidcCallback);	</span>
+<span class="fc" id="L45">		LOGGER.debug(&quot;filterChain, Permit All for oidcRedirect: {}&quot;, oidcRedirect);	</span>
+<span class="fc" id="L46">		auth.requestMatchers(roles).permitAll();</span>
+<span class="fc" id="L47">		auth.requestMatchers(oidcCallback).permitAll();</span>
+<span class="fc" id="L48">		auth.requestMatchers(oidcRedirect).permitAll();</span>
+<span class="fc" id="L49">		auth.anyRequest().permitAll();</span>
+//		auth.anyRequest().authenticated();
+<span class="fc" id="L51">		}).formLogin(Customizer.withDefaults()).build();</span>
+	}
+    
+//    @Bean
+//    UserDetailsService users() {
+//    	UserDetails user = User.builder()
+//    			.username(&quot;deman&quot;)
+//    			.password(passwordEncoder().encode(&quot;user&quot;))
+//    			.roles(&quot;USER&quot;)
+//    			.build();
+//    	UserDetails admin = User.builder()
+//    			.username(&quot;admin&quot;)
+//    			.password(passwordEncoder().encode(&quot;admin&quot;))
+//    			.roles(&quot;USER&quot;, &quot;ADMIN&quot;)
+//    			.build();
+//    	
+//    	return new InMemoryUserDetailsManager(user, admin);
+//    }
+    
+//    @Bean
+//    BCryptPasswordEncoder passwordEncoder() {
+//    	return new BCryptPasswordEncoder();
+//    }
+    
+//    @Bean
+//    AuthenticationManager authenticaionManager(HttpSecurity httpSecurity, BCryptPasswordEncoder bCryptPasswordEndoder) 
+//    throws Exception {
+//    	AuthenticationManagerBuilder authenticationManagerBuilder =  httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+//    	authenticationManagerBuilder
+//    		.userDetailsService(userDetailsService)
+//    		.passwordEncoder(bCryptPasswordEndoder);
+//    	return authenticationManagerBuilder.build();
+//    }
+}
+
+
+
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
