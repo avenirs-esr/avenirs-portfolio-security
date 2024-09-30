@@ -38,7 +38,6 @@ import jakarta.transaction.Transactional;
  * <h2>Since:</h2>
  * 18 Sept 2024
  */
-@Disabled
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
