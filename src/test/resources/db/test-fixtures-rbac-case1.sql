@@ -4,6 +4,13 @@ VALUES
 (1, to_timestamp('01/09/2024', 'DD/MM/YYYY'),null);
 
 
+INSERT INTO context_structure (id_context, id_structure)
+VALUES
+(1, (SELECT id FROM structure WHERE structure.name = 'ANY'));
+
+
+
+
 INSERT INTO assignment (id_role, id_principal, id_scope, id_context)
 VALUES 
 ((SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM principal WHERE login = 'deman'), (SELECT id FROM scope WHERE name = 'scope_0000'), 1);
