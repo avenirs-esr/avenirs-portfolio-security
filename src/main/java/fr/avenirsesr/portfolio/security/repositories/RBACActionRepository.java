@@ -7,10 +7,28 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import fr.avenirsesr.portfolio.security.models.RBACAction;
 
 /**
- * Repository for RBACAction.
+ * 
+ * <h1>RBACActionRepository</h1>
+ * <p>
+ * Description:  Repository for the RBACAction objects.
+ * </p>
+ * 
+ * <h2>Version:</h2>
+ * 1.0
+ * 
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 1 Oct 2024
  */
 public interface RBACActionRepository extends JpaRepository<RBACAction, Long>, JpaSpecificationExecutor<RBACAction>   {
 	
+  /**
+   * Find an action by its name.
+   * @param name The name of the action to retrieve.
+   * @return An Optional of RBACAction.
+   */
 	Optional<RBACAction> findByName(String name);
 
 }

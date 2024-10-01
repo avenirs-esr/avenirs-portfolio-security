@@ -38,9 +38,7 @@ public class RBACAssignmentService {
 	 * @return The assignments associated to the specification.
 	 */
 	public List<RBACAssignment> getAllAssignmentsByPredicate(Specification<RBACAssignment> specification) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("getAllAssignmentsByPredicate, specification: " + specification);
-		}
+		LOGGER.trace("getAllAssignmentsByPredicate, specification: {}", specification);
 		return assignmentRepository.findAll(specification);
 	}
 	
@@ -50,9 +48,7 @@ public class RBACAssignmentService {
 	 * @return The saved assignment.
 	 */
 	public RBACAssignment createAssignment(RBACAssignment assignment) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("createAssignment, assignment: " + assignment);
-		}
+		LOGGER.trace("createAssignment, assignment: {}", assignment);
 		return this.assignmentRepository.save(assignment);
 	}
 	
@@ -61,9 +57,7 @@ public class RBACAssignmentService {
 	 * @param assignment The assignment to delete.
 	 */
 	public void deleteAssignment(RBACAssignment assignment) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("deleteAssignment, assignment: " + assignment);
-		}
+		LOGGER.trace("deleteAssignment, assignment: {}", assignment);
 		this.assignmentRepository.delete(assignment);
 	}
 	
@@ -72,9 +66,7 @@ public class RBACAssignmentService {
 	 * @param assignmentId The id of the assignment to delete.
 	 */
 	public void deleteAssignmentById(Long assignmentId) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("deleteAssignment, assignmentId: " + assignmentId);
-		}
+		LOGGER.trace("deleteAssignment, assignmentId: {}", assignmentId);
 		this.assignmentRepository.deleteById(assignmentId);
 	}
 }
