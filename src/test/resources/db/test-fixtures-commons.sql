@@ -94,7 +94,7 @@ VALUES
 INSERT INTO resource_type (id, name, description)
 VALUES 
 (1, 'PORTFOLIO', 'Resource of type portfolio'),
-(2, 'SAE', 'Resource of type SAE');
+(2, 'MES', 'Resource of type MES');
 
 
 
@@ -104,8 +104,8 @@ INSERT INTO resource (id, selector, id_resource_type)
 VALUES 
 (1, 'ptf_0000', (SELECT id FROM resource_type WHERE resource_type.name = 'PORTFOLIO')),
 (2, 'ptf_0001', (SELECT id FROM resource_type WHERE resource_type.name = 'PORTFOLIO')),
-(3, 'sae_0000', (SELECT id FROM resource_type WHERE resource_type.name = 'SAE')),
-(4, 'sae_0001', (SELECT id FROM resource_type WHERE resource_type.name = 'SAE'));
+(3, 'mes_0000', (SELECT id FROM resource_type WHERE resource_type.name = 'MES')),
+(4, 'mes_0001', (SELECT id FROM resource_type WHERE resource_type.name = 'MES'));
 
 
 
@@ -121,7 +121,7 @@ INSERT INTO scope_resource (id_scope, id_resource)
 VALUES 
 ((SELECT id FROM scope WHERE name = 'scope_0000'), (SELECT id FROM resource WHERE selector = 'ptf_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_0001'), (SELECT id FROM resource WHERE selector = 'ptf_0001')),
-((SELECT id FROM scope WHERE name = 'scope_0002'), (SELECT id FROM resource WHERE selector = 'sae_0000')),
+((SELECT id FROM scope WHERE name = 'scope_0002'), (SELECT id FROM resource WHERE selector = 'mes_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_0003'), (SELECT id FROM resource WHERE selector = 'ptf_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_0003'), (SELECT id FROM resource WHERE selector = 'ptf_0001'));
 
