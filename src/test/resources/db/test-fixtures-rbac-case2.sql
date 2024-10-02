@@ -4,10 +4,6 @@ VALUES
 (2, to_timestamp('01/04/2025', 'DD/MM/YYYY'),to_timestamp('15/04/2025', 'DD/MM/YYYY'));
 
 
-INSERT INTO context_structure (id_context, id_structure)
-VALUES
-(2, SELECT id FROM structure WHERE structure.name = 'ANY'));
-
 
 INSERT INTO assignment (id_role, id_principal, id_scope, id_context)
 VALUES 

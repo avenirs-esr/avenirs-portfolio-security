@@ -4,10 +4,6 @@ VALUES
 (1, to_timestamp('01/09/2024', 'DD/MM/YYYY'),null);
 
 
-INSERT INTO context_structure (id_context, id_structure)
-VALUES
-(1, (SELECT id FROM structure WHERE structure.name = 'ANY'));
-
 
 
 

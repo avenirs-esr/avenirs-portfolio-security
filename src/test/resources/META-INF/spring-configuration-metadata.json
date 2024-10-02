@@ -36,6 +36,21 @@
       "description": "Resource id property for RBAC case 2."
     },
     {
+      "name": "avenirs.rbac.case2.ungranted.resource.id",
+      "type": "java.lang.Long",
+      "description": "Resource id property for RBAC case 2."
+    },
+    {
+      "name": "avenirs.rbac.case2.application.context.validity.start",
+      "type": "java.lang.String",
+      "description": "Validity start in the application context"
+    },
+    {
+      "name": "avenirs.rbac.case2.application.context.validity.end",
+      "type": "java.lang.String",
+      "description": "Validity end in the application context"
+    },
+    {
       "name": "avenirs.rbac.unprivileged.user",
       "type": "java.lang.String",
       "description": "Unprivileged user property for for all RBAC tests."
