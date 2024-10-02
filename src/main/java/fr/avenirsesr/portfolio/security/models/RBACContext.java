@@ -15,13 +15,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Context in the RBAC system.
  * A context is used to limit an assignment with a period of validity and an establishment.
  */
 @Data
+@Accessors(chain=true)
 @Entity
 @Table(name="context")
 public class RBACContext {
@@ -33,11 +36,15 @@ public class RBACContext {
 	
 	/** Start of  validity. */
 	@Column(columnDefinition="TIMESTAMP")
-	private LocalDateTime validity_start;
+	private LocalDateTime validityStart;
 
 	/** End of the validity. */
 	@Column(columnDefinition="TIMESTAMP")
-	private LocalDateTime validity_end;
+	private LocalDateTime validityEnd;
+	
+	/** Effective date. */
+	@Transient
+	private LocalDateTime effectiveDate = LocalDateTime.now(); 
 	
 	/** Structures associated to the context. */
     @ManyToMany(
