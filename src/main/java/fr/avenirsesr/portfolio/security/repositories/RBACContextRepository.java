@@ -7,7 +7,7 @@ import fr.avenirsesr.portfolio.security.models.RBACContext;
  * 
  * <h1>RBACContextRepository</h1>
  * <p>
- * Description:  Repository for the RBACContext used a application context (restriction on assignments).
+ * Description:  Repository for the RBACContext used as application context (restriction on assignments).
  * 
  * </p>
  * 
