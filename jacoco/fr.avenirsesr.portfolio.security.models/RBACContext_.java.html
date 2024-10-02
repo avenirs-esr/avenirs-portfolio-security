@@ -2,23 +2,30 @@
 
 import jakarta.annotation.Generated;
 import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
 import java.time.LocalDateTime;
 
 @StaticMetamodel(RBACContext.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L11">public abstract class RBACContext_ {</span>
+<span class="nc" id="L12">public abstract class RBACContext_ {</span>
 
-	public static final String VALIDITY_START = &quot;validity_start&quot;;
+	public static final String VALIDITY_END = &quot;validityEnd&quot;;
+	public static final String STRUCTURES = &quot;structures&quot;;
 	public static final String ID = &quot;id&quot;;
-	public static final String VALIDITY_END = &quot;validity_end&quot;;
+	public static final String VALIDITY_START = &quot;validityStart&quot;;
 
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.models.RBACContext#validity_start
+	 * @see fr.avenirsesr.portfolio.security.models.RBACContext#validityEnd
 	 **/
-	public static volatile SingularAttribute&lt;RBACContext, LocalDateTime&gt; validity_start;
+	public static volatile SingularAttribute&lt;RBACContext, LocalDateTime&gt; validityEnd;
+	
+	/**
+	 * @see fr.avenirsesr.portfolio.security.models.RBACContext#structures
+	 **/
+	public static volatile ListAttribute&lt;RBACContext, Structure&gt; structures;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.models.RBACContext#id
@@ -26,14 +33,14 @@ import java.time.LocalDateTime;
 	public static volatile SingularAttribute&lt;RBACContext, Long&gt; id;
 	
 	/**
+	 * @see fr.avenirsesr.portfolio.security.models.RBACContext#validityStart
+	 **/
+	public static volatile SingularAttribute&lt;RBACContext, LocalDateTime&gt; validityStart;
+	
+	/**
 	 * @see fr.avenirsesr.portfolio.security.models.RBACContext
 	 **/
 	public static volatile EntityType&lt;RBACContext&gt; class_;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.security.models.RBACContext#validity_end
-	 **/
-	public static volatile SingularAttribute&lt;RBACContext, LocalDateTime&gt; validity_end;
 
 }
 

@@ -2,16 +2,23 @@
 
 import jakarta.annotation.Generated;
 import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
 
 @StaticMetamodel(Principal.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L10">public abstract class Principal_ {</span>
+<span class="nc" id="L11">public abstract class Principal_ {</span>
 
+	public static final String STRUCTURES = &quot;structures&quot;;
 	public static final String ID = &quot;id&quot;;
 	public static final String LOGIN = &quot;login&quot;;
 
+	
+	/**
+	 * @see fr.avenirsesr.portfolio.security.models.Principal#structures
+	 **/
+	public static volatile ListAttribute&lt;Principal, Structure&gt; structures;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.models.Principal#id
