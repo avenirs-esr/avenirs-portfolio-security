@@ -5,7 +5,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACContext
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,PrincipalService,16,7,0,0,4,2,2,2,2,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACActionService,17,20,0,0,4,5,2,4,2,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACAssignmentService,35,16,0,0,10,4,4,3,4,3
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AuthenticationService,114,168,2,4,24,33,6,8,4,7
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AuthenticationService,113,166,2,4,24,33,6,8,4,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,JWTService,104,225,11,13,40,48,11,8,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACRoleService,82,7,10,0,19,2,10,2,5,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AccessControlService,74,264,12,18,17,60,12,16,2,11
