@@ -76,12 +76,12 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <scope>provided</scope>
+            <version>4.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <scope>provided</scope>
+            <version>4.0.5</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -130,6 +130,7 @@
             <artifactId>jasypt-spring-boot-starter</artifactId>
             <version>3.0.4</version>
         </dependency>
+
 
     </dependencies>
 
