@@ -75,7 +75,6 @@ public class AuthenticationController {
 		
 		if (introspectResponse != null && introspectResponse.isActive()) {
 			OIDCProfileResponse profileResponse = this.authenticationService.profile(token);
-				profileResponse.setActive(true);
 				return profileResponse;
 		}
 		throw new ResponseStatusException(HttpStatus.FORBIDDEN);
