@@ -33,7 +33,9 @@ jobs:
 
       - name: Setup CAS
         uses: ./.github/actions/setup-cas
-          
+        with:
+          rebuild: true
+
       - name: (DEBUG) Check Docker containers
         if : false
         run: docker ps -a
