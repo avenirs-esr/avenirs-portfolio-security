@@ -154,12 +154,13 @@
       "name": "avenirs.access.control.feedback",
       "type": "java.lang.String",
       "description": "Avenirs Access control feedback end point."
-    } ,
+    },
     {
       "name": "avenirs.access.control.delete",
       "type": "java.lang.String",
       "description": "Avenirs Access control delete end point."
     }
+
   ]
 }
 
