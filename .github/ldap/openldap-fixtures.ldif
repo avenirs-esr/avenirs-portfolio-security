@@ -19,6 +19,7 @@ uid: paterson
 gecos:  PATERSON Joel
 givenName: joel
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:paterson@univ.fr
 
 dn: uid=paterson1,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -35,6 +36,7 @@ uid: paterson1
 gecos:  PATERSON Sandrine
 givenName: sandrine
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:paterson1@univ.fr
 
 dn: uid=cuevas,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -51,6 +53,7 @@ uid: cuevas
 gecos:  CUEVAS Candice
 givenName: candice
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:cuevas@univ.fr
 
 dn: uid=kramer,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -67,6 +70,7 @@ uid: kramer
 gecos:  KRAMER Ameera
 givenName: ameera
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:kramer@univ.fr
 
 dn: uid=cervantes,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -83,6 +87,7 @@ uid: cervantes
 gecos:  CERVANTES Camilla
 givenName: camilla
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:cervantes@univ.fr
 
 dn: uid=terrell,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -99,6 +104,7 @@ uid: terrell
 gecos:  TERRELL Sarah
 givenName: sarah
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:terrell@univ.fr
 
 dn: uid=rollins,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -115,6 +121,7 @@ uid: rollins
 gecos:  ROLLINS Leighton
 givenName: leighton
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:rollins@univ.fr
 
 dn: uid=allison,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -131,6 +138,7 @@ uid: allison
 gecos:  ALLISON Charlotte
 givenName: charlotte
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:allison@univ.fr
 
 dn: uid=deman,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -147,6 +155,7 @@ uid: deman
 gecos:  DEMAN Arnaud
 givenName: arnaud
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:deman@univ.fr
 
 dn: uid=gribonvald,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
@@ -163,4 +172,5 @@ uid: gribonvald
 gecos:  GRIBONVALD Julien
 givenName: julien
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:gribonvald@univ.fr
 
