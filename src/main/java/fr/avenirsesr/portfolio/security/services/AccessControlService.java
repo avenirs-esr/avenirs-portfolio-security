@@ -4,16 +4,10 @@
 package fr.avenirsesr.portfolio.security.services;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -28,14 +22,25 @@ import fr.avenirsesr.portfolio.security.models.Structure;
 import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification;
 
 /**
- * Access Control Service
+ * <h1>AccessControlService</h1>
+ * <p>
+ * <b>Description:</b> AccessControlService is used to check if a resource can be accessed by a principal.
+ * It is an RBAC: Role Based Access Control.
+ * </p>
+ *
+ * <h2>Version:</h2>
+ * 1.0
+ *
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 04/10/2024
  */
+@Slf4j
 @Service
 public class AccessControlService {
-
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccessControlService.class);
-
+	
 	/** Action service */
 	@Autowired
 	RBACActionService actionService;
@@ -45,7 +50,7 @@ public class AccessControlService {
 	RBACAssignmentService assignmentService;
 
 	/** Cache for the permissions. */
-	private Map<String, List<RBACPermission>> permissionsByActionName = new HashMap<>();
+	private final Map<String, List<RBACPermission>> permissionsByActionName = new HashMap<>();
 
 	/**
 	 * Checks that a principal has access to a resource to perform an action,
@@ -57,9 +62,9 @@ public class AccessControlService {
 	 * @return True if the principal has access to the resource.
 	 */
 	public boolean hasAccess(Principal principal, RBACAction action, RBACResource resource) {
-		LOGGER.trace("hasAccess, principal: {}", principal);
-		LOGGER.trace("hasAccess, action: {}", action);
-		LOGGER.trace("hasAccess, resource: {}", resource);
+		log.trace("hasAccess, principal: {}", principal);
+		log.trace("hasAccess, action: {}", action);
+		log.trace("hasAccess, resource: {}", resource);
 
 		return hasAccess(principal.getLogin(), action.getId(), resource.getId());
 	}
@@ -74,12 +79,12 @@ public class AccessControlService {
 	 * @return True if the principal has access to the resource.
 	 */
 	public boolean hasAccess(String login, Long actionId, Long resourceId) {
-		LOGGER.trace("hasAccess, login: {}", login);
-		LOGGER.trace("hasAccess, actionId: {}", actionId);
-		LOGGER.trace("hasAccess, resourceId: {}", resourceId);
+		log.trace("hasAccess, login: {}", login);
+		log.trace("hasAccess, actionId: {}", actionId);
+		log.trace("hasAccess, resourceId: {}", resourceId);
 
 		List<RBACPermission> requiredPermissions = this.fetchPermissions(actionId);
-		LOGGER.trace("hasAccess, requiredPermissions: {}", requiredPermissions);
+		log.trace("hasAccess, requiredPermissions: {}", requiredPermissions);
 
 		return checkGrantedPermissions(requiredPermissions, login, resourceId);
 	}
@@ -94,12 +99,12 @@ public class AccessControlService {
 	 * @return True if the principal has access to the resource.
 	 */
 	boolean hasAccess(String login, String actionName, Long resourceId) {
-		LOGGER.trace("hasAccess, login: {}", login);
-		LOGGER.trace("hasAccess, actionName: {}", actionName);
-		LOGGER.trace("hasAccess, resourceId: {}", resourceId);
+		log.trace("hasAccess, login: {}", login);
+		log.trace("hasAccess, actionName: {}", actionName);
+		log.trace("hasAccess, resourceId: {}", resourceId);
 
 		List<RBACPermission> requiredPermissions = this.fetchPermissions(actionName);
-		LOGGER.trace("hasAccess, requiredPermissions: {}", requiredPermissions);
+		log.trace("hasAccess, requiredPermissions: {}", requiredPermissions);
 		return checkGrantedPermissions(requiredPermissions, login, resourceId);
 	}
 	
@@ -112,22 +117,22 @@ public class AccessControlService {
 	 * @return True if the permissions granted to the user for the resource contains all the required permissions.
 	 */
 	private boolean checkGrantedPermissions(List<RBACPermission> requiredPermissions, String login, Long resourceId) {
-		if (requiredPermissions != null && requiredPermissions.size() > 0) {
+		if (requiredPermissions != null && requiredPermissions.isEmpty()) {
 
 			List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsByPredicate(
 					RBACAssignmentSpecification.filterByPrincipalAndResources(login, resourceId));
-			LOGGER.trace("hasAccess, principalAssignments: {}", principalAssignments);
+			log.trace("hasAccess, principalAssignments: {}", principalAssignments);
 			
 			List<RBACAssignment> validAssignment = filterByApplicationContext(principalAssignments);
-			LOGGER.trace("hasAccess, validAssignment: {}", validAssignment);
+			log.trace("hasAccess, validAssignment: {}", validAssignment);
 
-			List<RBACPermission> principalPermissions = validAssignment.stream().map(a -> {
+			HashSet<RBACPermission> principalPermissions = validAssignment.stream().map(a -> {
 				return a.getRole().getPermissions();
-			}).flatMap(Collection::stream).collect(Collectors.toList());
-			LOGGER.trace("hasAccess, principalPermissions: {}", principalPermissions);
+			}).flatMap(Collection::stream).collect(Collectors.toCollection(HashSet::new));
+			log.trace("hasAccess, principalPermissions: {}", principalPermissions);
 
 			boolean accessGranted = principalPermissions.containsAll(requiredPermissions);
-			LOGGER.trace("hasAccess, accessGranted: {}", accessGranted);
+			log.trace("hasAccess, accessGranted: {}", accessGranted);
 
 			return accessGranted;
 		}
@@ -135,12 +140,12 @@ public class AccessControlService {
 	}
 	
 	private List<RBACAssignment> filterByApplicationContext(List<RBACAssignment> principalAssignments) {
-	  LOGGER.trace("filterByApplicationContext, principalAssignments: {}", principalAssignments);
+	  log.trace("filterByApplicationContext, principalAssignments: {}", principalAssignments);
 	  
 	  if (CollectionUtils.isEmpty(principalAssignments)) {
 	    return new ArrayList<RBACAssignment>();
 	  }
-	    Principal principal = principalAssignments.get(0).getPrincipal();
+	    Principal principal = principalAssignments.getFirst().getPrincipal();
 	    RBACContext executionContext = createExecutionContext(principal);
 	    return principalAssignments.stream()
 	        .filter(a -> checkExecutionContext(a.getContext(), executionContext))
@@ -157,42 +162,42 @@ public class AccessControlService {
 	}
 	
 	private boolean checkExecutionContext(RBACContext applicationContext, RBACContext executionContext) {
-	  LOGGER.trace("checkExecutionContext, applicationContext: {}", applicationContext);
-	  LOGGER.trace("checkExecutionContext, executionContext: {}", executionContext);
+	  log.trace("checkExecutionContext, applicationContext: {}", applicationContext);
+	  log.trace("checkExecutionContext, executionContext: {}", executionContext);
       
 	  if (applicationContext != null) {
 	    LocalDateTime validityStart = applicationContext.getValidityStart();
 	    LocalDateTime validityEnd= applicationContext.getValidityEnd();
 	    
-	    LOGGER.trace("checkExecutionContext, validityStart: {}", validityStart);
-	    LOGGER.trace("checkExecutionContext, validityEnd: {}", validityEnd);
-	    LOGGER.trace("checkExecutionContext, executionContext.getEffectiveDate(): {}", executionContext.getEffectiveDate());
+	    log.trace("checkExecutionContext, validityStart: {}", validityStart);
+	    log.trace("checkExecutionContext, validityEnd: {}", validityEnd);
+	    log.trace("checkExecutionContext, executionContext.getEffectiveDate(): {}", executionContext.getEffectiveDate());
 	    
 	    if (validityStart != null && executionContext.getEffectiveDate().isBefore(validityStart)) {
-	      LOGGER.trace("checkExecutionContext, validityStart not respected");
+	      log.trace("checkExecutionContext, validityStart not respected");
 	        return false;
 	    }
 	    
 	    if (validityEnd != null && executionContext.getEffectiveDate().isAfter(validityEnd)) {
-	      LOGGER.trace("checkExecutionContext, validityEnd not respected");
+	      log.trace("checkExecutionContext, validityEnd not respected");
             return false;
           }
-	  List<Structure> exContextStructures = executionContext.getStructures();
-	  List<Structure> appContextStructures = applicationContext.getStructures();
-	  LOGGER.trace("checkExecutionContext, exContextStructures: {}", exContextStructures);
-	  LOGGER.trace("checkExecutionContext, appContextStructures: {}", appContextStructures);
+	  Set<Structure> exContextStructures = executionContext.getStructures();
+	  Set<Structure> appContextStructures = applicationContext.getStructures();
+	  log.trace("checkExecutionContext, exContextStructures: {}", exContextStructures);
+	  log.trace("checkExecutionContext, appContextStructures: {}", appContextStructures);
 	  
 	  if (CollectionUtils.isEmpty(appContextStructures)) {
-	    LOGGER.trace("checkExecutionContext, no structure in application context");
+	    log.trace("checkExecutionContext, no structure in application context");
 	    return true;
 	  }
 	  
 	  if (CollectionUtils.isEmpty(exContextStructures) || !exContextStructures.containsAll(appContextStructures)) {
-	    LOGGER.trace("checkExecutionContext, structures of application context not respected");
+	    log.trace("checkExecutionContext, structures of application context not respected");
 	    return false;
 	  }
 	  
-	  LOGGER.trace("checkExecutionContext, structures of application context respected");
+	  log.trace("checkExecutionContext, structures of application context respected");
 	  return true;
 	  }
 	  

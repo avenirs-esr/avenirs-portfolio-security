@@ -1,8 +1,8 @@
 package fr.avenirsesr.portfolio.security.models;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -60,5 +60,5 @@ public class RBACContext {
             inverseJoinColumns = @JoinColumn(name="id_structure")
             
     )
-    private List<Structure> structures = new ArrayList<>();
+    private Set<Structure> structures = new HashSet<>();
 }
