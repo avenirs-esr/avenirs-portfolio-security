@@ -3,163 +3,163 @@
     {
       "name": "avenirs.apim.base.uri",
       "type": "java.lang.String",
-      "description": "Avenirs base APIM URI"
+      "description": "Avenirs base APIM URI."
     },
     {
       "name": "avenirs.access.control",
       "type": "java.lang.String",
-      "description": "Avenirs access control end point"
+      "description": "Avenirs access control end point."
     },
     {
       "name": "avenirs.access.control.roles",
       "type": "java.lang.String",
-      "description": "Avenirs access control role end point"
+      "description": "Avenirs access control role end point."
     },
-     {
+    {
       "name": "avenirs.authentication.oidc.provider",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC provider"
+      "description": "Avenirs OIDC provider."
     },
     {
       "name": "avenirs.authentication.oidc.callback",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC call back"
+      "description": "Avenirs OIDC call back."
     },
     {
       "name": "avenirs.authentication.oidc.callback.redirect",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC call back redirect"
+      "description": "Avenirs OIDC call back redirect."
     },
     {
       "name": "avenirs.authentication.service.template",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC service template"
+      "description": "Avenirs OIDC service template."
     },
-     {
+    {
       "name": "avenirs.authentication.oidc.callback.introspect",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC introspect end point"
+      "description": "Description for avenirs.authentication.oidc.callback.introspect."
     },
     {
       "name": "avenirs.authentication.oidc.provider.introspect.url",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC introspect URL"
-    },  
+      "description": "Avenirs OIDC introspect URL."
+    },
     {
       "name": "avenirs.authentication.oidc.provider.jwks.url",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC JWKS URL"
-    },  
+      "description": "Avenirs OIDC JWKS URL."
+    },
     {
       "name": "avenirs.authentication.oidc.callback.profile",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC profile callback end point"
-    }, 
+      "description": "Avenirs OIDC profile callback end point."
+    },
     {
       "name": "avenirs.authentication.oidc.provider.profile.url",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC profile URL"
-    },   
-     {
+      "description": "Avenirs OIDC profile URL."
+    },
+    {
       "name": "avenirs.authentication.oidc.authorise.template.url",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC authorize template URL"
-    },  
-     {
+      "description": "Avenirs OIDC authorize template URL."
+    },
+    {
       "name": "avenirs.authentication.oidc.token.template.url",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC token template URL"
-    },  
-     {
+      "description": "Avenirs OIDC token template URL."
+    },
+    {
       "name": "avenirs.authentication.oidc.client.id",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC client id"
-    },  
+      "description": "Avenirs OIDC client id."
+    },
     {
       "name": "avenirs.authentication.oidc.client.secret",
       "type": "java.lang.String",
-      "description": "Avenirs OIDC client secret"
-    },  
+      "description": "Avenirs OIDC client secret."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.rs256",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm RS256 "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm RS256."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.rs384",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm RS384 "
+      "description": "Avenirs JWT algorithm mapping for algorithm RS384."
     },
     {
       "name": "avenirs.jwt.alg.mapping.rs512",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm RS512 "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm RS512."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.ps256",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm PS256 "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm PS256."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.ps384",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm PS384 "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm PS384."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.ps512",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm PS512 "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm PS512."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.es256",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm ES256 "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm ES256."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.es384",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm ES384 "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm ES384."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.es512",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm ES512 "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm ES512."
+    },
     {
       "name": "avenirs.jwt.alg.mapping.eddsa",
       "type": "java.lang.String",
-      "description": "Avenirs JWT algorithm mamapping for algorithm EdDSA "
-    },  
+      "description": "Avenirs JWT algorithm mapping for algorithm EdDSA."
+    },
     {
       "name": "avenirs.access.control.share.read",
       "type": "java.lang.String",
-      "description": "Avenirs Access control share read end point "
-    },  
+      "description": "Avenirs Access control share read end point."
+    },
     {
       "name": "avenirs.access.control.share.write",
       "type": "java.lang.String",
-      "description": "Avenirs Access control share write end point "
-    },  
+      "description": "Avenirs Access control share write end point."
+    },
     {
       "name": "avenirs.access.control.display",
       "type": "java.lang.String",
-      "description": "Avenirs Access control display end point "
-    },  
+      "description": "Avenirs Access control display end point."
+    },
     {
       "name": "avenirs.access.control.edit",
       "type": "java.lang.String",
-      "description": "Avenirs Access control edit end point "
-    },  
+      "description": "Avenirs Access control edit end point."
+    },
     {
       "name": "avenirs.access.control.feedback",
       "type": "java.lang.String",
-      "description": "Avenirs Access control feedback end point "
-    } ,  
+      "description": "Avenirs Access control feedback end point."
+    } ,
     {
       "name": "avenirs.access.control.delete",
       "type": "java.lang.String",
-      "description": "Avenirs Access control delete end point "
-    }       
+      "description": "Avenirs Access control delete end point."
+    }
   ]
 }
 
