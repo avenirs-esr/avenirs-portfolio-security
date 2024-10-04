@@ -8,8 +8,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -24,15 +23,24 @@ import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
 import io.jsonwebtoken.Claims;
 
 /**
- * Authentication service. Interact with theOIDC provider and generates URL
- * associated to OIDC end points.
+ * <h1>AuthenticationService</h1>
+ * <p>
+ * <b>Description:</b> Interacts with OIDC Provider to retrieve or check access token (JWT)
+ * </p>
+ *
+ * <h2>Version:</h2>
+ * 1.0.0
+ *
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 04/10/2024
  */
+@Slf4j
 @Service
 public class AuthenticationService {
-
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
-
+	
 	/** Rest client to interact with OIDC provider. */
 	private final RestClient restClient = RestClient.create();
 
@@ -78,8 +86,8 @@ public class AuthenticationService {
 
 		String oidcAuthorizeURL = oidcAuthorizeTemplate.replaceAll("%HOST%", host).replaceAll("%CODE%", code)
 				.replaceAll("%CLIENT_ID%", clientId).replaceAll("%CLIENT_SECRET%", clientSecret);
-		LOGGER.debug("generateAuthorizeURL, code: {}", code);
-		LOGGER.debug("generateAuthorizeURL, oidcAuthorizeURL: {}", oidcAuthorizeURL);
+		log.debug("generateAuthorizeURL, code: {}", code);
+		log.debug("generateAuthorizeURL, oidcAuthorizeURL: {}", oidcAuthorizeURL);
 		return oidcAuthorizeURL;
 	}
 
@@ -94,7 +102,7 @@ public class AuthenticationService {
 		String oidcAccessTokenURL = oidcAccessTokenTemplate.replaceAll("%CLIENT_ID%", clientId)
 				.replaceAll("%CLIENT_SECRET%", clientSecret).replaceAll("%LOGIN%", login)
 				.replaceAll("%PASSWORD%", password);
-		LOGGER.debug("generateAccessTokenURL, oidcAccessTokenURL: {}", oidcAccessTokenURL);
+		log.debug("generateAccessTokenURL, oidcAccessTokenURL: {}", oidcAccessTokenURL);
 		return oidcAccessTokenURL;
 	}
 
@@ -107,7 +115,7 @@ public class AuthenticationService {
 	public String generateServiceURL(String host) {
 
 		String serviceURL = serviceTemplate.replaceAll("%HOST%", host);
-		LOGGER.debug("generateServiceURL, serviceURL: {}", serviceURL);
+		log.debug("generateServiceURL, serviceURL: {}", serviceURL);
 		return serviceURL;
 	}
 
@@ -120,7 +128,7 @@ public class AuthenticationService {
 	public String generateProfileURL(String token) {
 
 		String profileURL = oidcProviderProfileURL + "?token=" + token;
-		LOGGER.debug("generateProfileURL, profileURL: {}", profileURL);
+		log.debug("generateProfileURL, profileURL: {}", profileURL);
 		return profileURL;
 	}
 
@@ -133,7 +141,7 @@ public class AuthenticationService {
 	public String generateIntrospectURL(String token) {
 
 		String introspectURL = oidcProviderIntrospectURL + "?token=" + token;
-		LOGGER.trace("generateIntrospectURL, introspectURL: {}", introspectURL);
+		log.trace("generateIntrospectURL, introspectURL: {}", introspectURL);
 		return introspectURL;
 	}
 
@@ -145,13 +153,13 @@ public class AuthenticationService {
 	 */
 	public OIDCProfileResponse profile(@RequestHeader(value = "x-authorization") String token) {
 
-		LOGGER.trace("profile");
+		log.trace("profile");
 
 		OIDCProfileResponse profileResponse = restClient.post().uri(generateProfileURL(token))
 				.header("Authorization", basicAuthentication()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON).retrieve().body(OIDCProfileResponse.class);
 
-		LOGGER.warn("profile, profileResponse: {}", profileResponse);
+		log.warn("profile, profileResponse: {}", profileResponse);
 
 		return profileResponse;
 	}
@@ -164,13 +172,13 @@ public class AuthenticationService {
 	 */
 	public OIDCIntrospectResponse introspectAccessToken(String token) {
 
-		LOGGER.debug("introspectAccessToken");
+		log.debug("introspectAccessToken");
 
 		OIDCIntrospectResponse introspectResponse = restClient.post().uri(generateIntrospectURL(token))
 				.header("Authorization", basicAuthentication()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON).retrieve().body(OIDCIntrospectResponse.class);
 
-		LOGGER.debug("introspect, introspectResponse: {}", introspectResponse);
+		log.debug("introspect, introspectResponse: {}", introspectResponse);
 
 		return introspectResponse;
 	}
@@ -195,15 +203,15 @@ public class AuthenticationService {
 
 			final Optional<Claims> claims = this.jwtService.parseAndCheckSignature(response);
 			if (claims.isEmpty()) {
-				LOGGER.error("Invalid access token response: {}", response);
+				log.error("Invalid access token response: {}", response);
 				return Optional.empty();
 			}
 			
-			LOGGER.trace("Claims: {}", claims.get());
+			log.trace("Claims: {}", claims.get());
 			response.setClaims(new HashMap<>(claims.get()));
 			return Optional.of(response);
 		} catch (HttpClientErrorException e) {
-			LOGGER.error("getAccessToken, error while retrieving access token for {}: {}", login,
+			log.error("getAccessToken, error while retrieving access token for {}: {}", login,
 					+e.getStatusCode().value());
 			return Optional.empty();
 		}
@@ -218,13 +226,13 @@ public class AuthenticationService {
 	public String basicAuthentication() {
 		if (basicAuthenticationHeader == null) {
 
-			LOGGER.trace("basicAuthentication generating authentication header. ");
+			log.trace("basicAuthentication generating authentication header. ");
 			final String auth = clientId + ":" + clientSecret;
 
 			final byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.US_ASCII));
 			basicAuthenticationHeader = "Basic " + new String(encodedAuth);
 		}
-		LOGGER.trace("basicAuthentication, basicAuthenticationHeader: {}", basicAuthenticationHeader);
+		log.trace("basicAuthentication, basicAuthenticationHeader: {}", basicAuthenticationHeader);
 		return basicAuthenticationHeader;
 	}
 
