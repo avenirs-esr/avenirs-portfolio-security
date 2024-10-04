@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,16 +32,19 @@ import jakarta.transaction.Transactional;
 
 
 /**
- * 
+ *
  * <h1>AccessControlControllerCase2Test</h1>
  * <p>
  * Description:  test case 2. User gribonvald is pair for a resource of type sae.
  * </p>
- * For more details {@link https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case2/}
- * 
+ * For more details
+ * <a href="https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case2/">
+ *     https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case2/
+ * </a>
+ *
  * <h2>Version:</h2>
- * 1.0
- * 
+ * 1.0.0
+ *
  * <h2>Author:</h2>
  * Arnaud Deman
  *
@@ -65,11 +67,11 @@ class AccessControlControllerCase2Test {
 	@Value("${avenirs.rbac.case2.password}")
 	private String password;
 	
-	@Value("${avenirs.rbac.case2.granted.resource.id}")
-	private String grantedResourceId;
+	@Value("${avenirs.rbac.case2.authorized.resource.id}")
+	private String authorizedResourceId;
 
-    @Value("${avenirs.rbac.case2.ungranted.resource.id}")
-    private String ungrantedResourceId;
+    @Value("${avenirs.rbac.case2.unauthorized.resource.id}")
+    private String unauthorizedResourceId;
 	
 	@Value("${avenirs.access.control}")
 	private String accessControlEndPoint;
@@ -126,7 +128,7 @@ class AccessControlControllerCase2Test {
 	}
 	
 	@Test
-	void testPairCanDisplayGrantedResourceOnValidityStartDate() throws Exception {
+	void testPairCanDisplayAuthorizedResourceOnValidityStartDate() throws Exception {
 	  doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -140,14 +142,14 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlDisplayEndPoint)
 				.param("method", HttpMethod.GET.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-    void testPairCannotDisplayGrantedResourceBeforeValidityStartDate() throws Exception {
+    void testPairCannotDisplayAuthorizedResourceBeforeValidityStartDate() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -161,14 +163,14 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlDisplayEndPoint)
                 .param("method", HttpMethod.GET.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
     }
 	
 	@Test
-    void testPairCanDisplayGrantedResourceOnEffectiveDateInValidityRange() throws Exception {
+    void testPairCanDisplayAuthorizedResourceOnEffectiveDateInValidityRange() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -182,7 +184,7 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlDisplayEndPoint)
                 .param("method", HttpMethod.GET.name()))//.andDo(print())
                 .andExpect(status().is2xxSuccessful());
@@ -190,7 +192,7 @@ class AccessControlControllerCase2Test {
 	
 
     @Test
-    void testPairCannotDisplayUngrantedResourceOnEffectiveDateInValidityRange() throws Exception {
+    void testPairCannotDisplayUnauthorizedResourceOnEffectiveDateInValidityRange() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -203,14 +205,14 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", ungrantedResourceId)
+                .param("resourceId", unauthorizedResourceId)
                 .param("uri", accessControlDisplayEndPoint)
                 .param("method", HttpMethod.GET.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
     }
     
 	@Test
-    void testPairCanDisplayGrantedResourceOnValidityEndDate() throws Exception {
+    void testPairCanDisplayAuthorizedResourceOnValidityEndDate() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -224,14 +226,14 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlDisplayEndPoint)
                 .param("method", HttpMethod.GET.name()))//.andDo(print())
                 .andExpect(status().is2xxSuccessful());
     }
 	
 	@Test
-    void testPairCannotDisplayGrantedResourceAfterValidityEndDate() throws Exception {
+    void testPairCannotDisplayAuthorizedResourceAfterValidityEndDate() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -245,14 +247,14 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlDisplayEndPoint)
                 .param("method", HttpMethod.GET.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
     }
 	
 	@Test
-	void testPairCanFeedbackGrantedResourceOnValidityStartDate() throws Exception {
+	void testPairCanFeedbackAuthorizedResourceOnValidityStartDate() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -266,7 +268,7 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlFeedbackEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
@@ -275,14 +277,14 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlFeedbackEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-	void testPairCanFeedbackGrantedResourceOnEffectiveDateInValidityRange() throws Exception {
+	void testPairCanFeedbackAuthorizedResourceOnEffectiveDateInValidityRange() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -294,7 +296,7 @@ class AccessControlControllerCase2Test {
 	      .contentType(MediaType.APPLICATION_JSON)
 	      .accept(MediaType.APPLICATION_JSON)
 	      .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-	      .param("resourceId", grantedResourceId)
+	      .param("resourceId", authorizedResourceId)
 	      .param("uri", accessControlFeedbackEndPoint)
 	      .param("method", HttpMethod.POST.name()))//.andDo(print())
 	  .andExpect(status().is2xxSuccessful());
@@ -303,14 +305,14 @@ class AccessControlControllerCase2Test {
 	      .contentType(MediaType.APPLICATION_JSON)
 	      .accept(MediaType.APPLICATION_JSON)
 	      .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-	      .param("resourceId", grantedResourceId)
+	      .param("resourceId", authorizedResourceId)
 	      .param("uri", accessControlFeedbackEndPoint)
 	      .param("method", HttpMethod.PUT.name()))//.andDo(print())
 	  .andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-    void testPairCannotFeedbackUngrantedResourceOnEffectiveDateInValidityRange() throws Exception {
+    void testPairCannotFeedbackUnauthorizedResourceOnEffectiveDateInValidityRange() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -322,7 +324,7 @@ class AccessControlControllerCase2Test {
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON)
           .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-          .param("resourceId", ungrantedResourceId)
+          .param("resourceId", unauthorizedResourceId)
           .param("uri", accessControlFeedbackEndPoint)
           .param("method", HttpMethod.POST.name()))//.andDo(print())
       .andExpect(status().isForbidden());
@@ -331,7 +333,7 @@ class AccessControlControllerCase2Test {
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON)
           .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-          .param("resourceId", ungrantedResourceId)
+          .param("resourceId", unauthorizedResourceId)
           .param("uri", accessControlFeedbackEndPoint)
           .param("method", HttpMethod.PUT.name()))//.andDo(print())
       .andExpect(status().isForbidden());
@@ -339,7 +341,7 @@ class AccessControlControllerCase2Test {
     
 
     @Test
-    void testPairCannotFeedbackGrantedResourceBeforeValidityStartDate() throws Exception {
+    void testPairCannotFeedbackAuthorizedResourceBeforeValidityStartDate() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -353,7 +355,7 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlFeedbackEndPoint)
                 .param("method", HttpMethod.POST.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
@@ -362,14 +364,14 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlFeedbackEndPoint)
                 .param("method", HttpMethod.PUT.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
     }
     
     @Test
-    void testPairCanFeedbackGrantedResourceOnValidityEndDate() throws Exception {
+    void testPairCanFeedbackAuthorizedResourceOnValidityEndDate() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -383,7 +385,7 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlFeedbackEndPoint)
                 .param("method", HttpMethod.POST.name()))//.andDo(print())
                 .andExpect(status().is2xxSuccessful());
@@ -392,7 +394,7 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlFeedbackEndPoint)
                 .param("method", HttpMethod.PUT.name()))//.andDo(print())
                 .andExpect(status().is2xxSuccessful());
@@ -400,7 +402,7 @@ class AccessControlControllerCase2Test {
     
 
     @Test
-    void testPairCannotFeedbackGrantedResourceAfterValidityEndDate() throws Exception {
+    void testPairCannotFeedbackAuthorizedResourceAfterValidityEndDate() throws Exception {
       doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
         return new RBACContext()
@@ -414,7 +416,7 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlFeedbackEndPoint)
                 .param("method", HttpMethod.POST.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
@@ -423,7 +425,7 @@ class AccessControlControllerCase2Test {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-                .param("resourceId", grantedResourceId)
+                .param("resourceId", authorizedResourceId)
                 .param("uri", accessControlFeedbackEndPoint)
                 .param("method", HttpMethod.PUT.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
@@ -432,7 +434,7 @@ class AccessControlControllerCase2Test {
 	
 	
 	@Test
-	void testPairCannotDoAnythingElseOnGrantedResource() throws Exception {
+	void testPairCannotDoAnythingElseOnAuthorizedResource() throws Exception {
 	  
 	  doAnswer(invocation -> {
         Principal principal = invocation.getArgument(0);
@@ -446,7 +448,7 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareReadEndPoint)
 				.param("method", HttpMethod.POST.name()))
 				.andExpect(status().isForbidden());
@@ -455,7 +457,7 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareReadEndPoint)
 				.param("method", HttpMethod.PUT.name()))
 				.andExpect(status().isForbidden());
@@ -464,7 +466,7 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.POST.name()))
 				.andExpect(status().isForbidden());
@@ -473,7 +475,7 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.PUT.name()))
 				.andExpect(status().isForbidden());
@@ -482,7 +484,7 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlEditEndPoint)
 				.param("method", HttpMethod.POST.name()))
 				.andExpect(status().isForbidden());
@@ -491,7 +493,7 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlEditEndPoint)
 				.param("method", HttpMethod.PUT.name()))
 				.andExpect(status().isForbidden());
@@ -500,7 +502,7 @@ class AccessControlControllerCase2Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlDeleteEndPoint)
 				.param("method", HttpMethod.DELETE.name()))
 				.andExpect(status().isForbidden());

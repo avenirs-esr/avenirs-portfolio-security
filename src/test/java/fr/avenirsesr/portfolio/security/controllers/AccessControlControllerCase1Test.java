@@ -29,7 +29,7 @@ import jakarta.transaction.Transactional;
  * For more details
  * <a href="https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case1/">
  *     	https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case1/
- * </a>}
+ * </a>
  *
  * <h2>Version:</h2>
  * 1.0.0
@@ -56,11 +56,11 @@ class AccessControlControllerCase1Test {
 	@Value("${avenirs.rbac.case1.password}")
 	private String password;
 	
-	@Value("${avenirs.rbac.case1.granted.resource.id}")
-	private String grantedResourceId;
+	@Value("${avenirs.rbac.case1.authorized.resource.id}")
+	private String authorizedResourceId;
 	
-	@Value("${avenirs.rbac.case1.not.granted.resource.id}")
-	private String notGrantedResourceId;
+	@Value("${avenirs.rbac.case1.unauthorized.resource.id}")
+	private String unauthorizedResourceId;
 	
 	@Value("${avenirs.rbac.unprivileged.user}")
 	private String unprivilegedUser;
@@ -96,13 +96,13 @@ class AccessControlControllerCase1Test {
 	private AccessTokenHelper accessTokenHelper;
 	
 	@Test
-	void testOwnerCanShareReadGrantedResource() throws Exception {
+	void testOwnerCanShareReadAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareReadEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
@@ -111,20 +111,20 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareReadEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-	void testOwnerCannotShareReadNotGrantedResource() throws Exception {
+	void testOwnerCannotShareReadUnauthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlShareReadEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -133,14 +133,14 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlShareReadEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 	}
 	
 	@Test
-	void testUnprivilegedCannotShareReadGrantedResource() throws Exception {
+	void testUnprivilegedCannotShareReadAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -160,13 +160,13 @@ class AccessControlControllerCase1Test {
 	}
 	
 	@Test
-	void testOwnerCanShareWriteGrantedResource() throws Exception {
+	void testOwnerCanShareWriteAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
@@ -175,20 +175,20 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-	void testOwnerCannotShareWriteNotGrantedResource() throws Exception {
+	void testOwnerCannotShareWriteUnauthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -197,20 +197,20 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 	}
 	
 	@Test
-	void testUnprivilegedCannotShareWriteGrantedResource() throws Exception {
+	void testUnprivilegedCannotShareWriteAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -219,7 +219,7 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -227,52 +227,52 @@ class AccessControlControllerCase1Test {
 	}
 	
 	@Test
-	void testOwnerCanDisplayGrantedResource() throws Exception {
+	void testOwnerCanDisplayAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlDisplayEndPoint)
 				.param("method", HttpMethod.GET.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-	void testOwnerCannotDisplayNotGrantedResource() throws Exception {
+	void testOwnerCannotDisplayUnauthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlDisplayEndPoint)
 				.param("method", HttpMethod.GET.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 	}
 	
 	@Test
-	void testUnprivilegedCannotDisplayGrantedResource() throws Exception {
+	void testUnprivilegedCannotDisplayAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlDisplayEndPoint)
 				.param("method", HttpMethod.GET.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 	}
 		
 	@Test
-	void testOwnerCanEditGrantedResource() throws Exception {
+	void testOwnerCanEditAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlEditEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
@@ -281,20 +281,20 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlEditEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-	void testOwnerCannotEditNotGrantedResource() throws Exception {
+	void testOwnerCannotEditUnauthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlEditEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -303,20 +303,20 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlEditEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 	}
 	
 	@Test
-	void testUnprivilegedCannotEditGrantedResource() throws Exception {
+	void testUnprivilegedCannotEditAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlEditEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -325,7 +325,7 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlEditEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -334,13 +334,13 @@ class AccessControlControllerCase1Test {
 	
 	
 	@Test
-	void testOwnerCanFeedbackGrantedResource() throws Exception {
+	void testOwnerCanFeedbackAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlFeedbackEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
@@ -349,20 +349,20 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlFeedbackEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-	void testOwnerCannotFeedbackNotGrantedResource() throws Exception {
+	void testOwnerCannotFeedbackUnauthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlFeedbackEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -371,20 +371,20 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-				.param("resourceId", notGrantedResourceId)
+				.param("resourceId", unauthorizedResourceId)
 				.param("uri", accessControlFeedbackEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 	}
 	
 	@Test
-	void testUnprivilegedCannotFeedbackGrantedResource() throws Exception {
+	void testUnprivilegedCannotFeedbackAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlFeedbackEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -393,7 +393,7 @@ class AccessControlControllerCase1Test {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
-				.param("resourceId", grantedResourceId)
+				.param("resourceId", authorizedResourceId)
 				.param("uri", accessControlFeedbackEndPoint)
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
@@ -401,26 +401,26 @@ class AccessControlControllerCase1Test {
 	}
 
 	@Test
-	void testOwnerCanDeleteGrantedResource() throws Exception {
+	void testOwnerCanDeleteAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON)
 						.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-						.param("resourceId", grantedResourceId)
+						.param("resourceId", authorizedResourceId)
 						.param("uri", accessControlDeleteEndPoint)
 						.param("method", HttpMethod.DELETE.name()))
 				.andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
-	void testOwnerCannotDeleteNotGrantedResource() throws Exception {
+	void testOwnerCannotDeleteUnauthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON)
 						.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
-						.param("resourceId", notGrantedResourceId)
+						.param("resourceId", unauthorizedResourceId)
 						.param("uri", accessControlDeleteEndPoint)
 						.param("method", HttpMethod.DELETE.name()))
 				.andExpect(status().isForbidden());
@@ -428,13 +428,13 @@ class AccessControlControllerCase1Test {
 	}
 
 	@Test
-	void testUnprivilegedCannotDeleteGrantedResource() throws Exception {
+	void testUnprivilegedCannotDeleteAuthorizedResource() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON)
 						.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
-						.param("resourceId", grantedResourceId)
+						.param("resourceId", authorizedResourceId)
 						.param("uri", accessControlDeleteEndPoint)
 						.param("method", HttpMethod.DELETE.name()))//.andDo(print())
 				.andExpect(status().isForbidden());

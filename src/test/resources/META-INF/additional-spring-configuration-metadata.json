@@ -11,12 +11,12 @@
       "description": "Password property for RBAC case 1."
     },
     {
-      "name": "avenirs.rbac.case1.granted.resource.id",
+      "name": "avenirs.rbac.case1.authorized.resource.id",
       "type": "java.lang.Long",
       "description": "Resource id property for RBAC case 1."
     }, 
     {
-      "name": "avenirs.rbac.case1.not.granted.resource.id",
+      "name": "avenirs.rbac.case1.unauthorized.resource.id",
       "type": "java.lang.Long",
       "description": "Resource id property for RBAC case 1."
     },
@@ -31,12 +31,12 @@
       "description": "Password property for RBAC case 2."
     },
     {
-      "name": "avenirs.rbac.case2.granted.resource.id",
+      "name": "avenirs.rbac.case2.authorized.resource.id",
       "type": "java.lang.Long",
       "description": "Resource id property for RBAC case 2."
     },
     {
-      "name": "avenirs.rbac.case2.ungranted.resource.id",
+      "name": "avenirs.rbac.case2.unauthorized.resource.id",
       "type": "java.lang.Long",
       "description": "Resource id property for RBAC case 2."
     },
