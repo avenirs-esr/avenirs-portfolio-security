@@ -84,9 +84,9 @@ public class AuthenticationService {
 	 */
 	public String generateAuthorizeURL(String host, String code) {
 
-		String oidcAuthorizeURL = oidcAuthorizeTemplate.replaceAll("%HOST%", host).replaceAll("%CODE%", code)
-				.replaceAll("%CLIENT_ID%", clientId).replaceAll("%CLIENT_SECRET%", clientSecret);
-		log.debug("generateAuthorizeURL, code: {}", code);
+		String oidcAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, code);
+		log.trace("generateAuthorizeURL, host: {}", host);
+		log.trace("generateAuthorizeURL, code: {}", code);
 		log.debug("generateAuthorizeURL, oidcAuthorizeURL: {}", oidcAuthorizeURL);
 		return oidcAuthorizeURL;
 	}
@@ -99,10 +99,11 @@ public class AuthenticationService {
 	 * @return The authorize URL.
 	  */
 	protected String generateAccessTokenURL(String login, String password) {
-		String oidcAccessTokenURL = oidcAccessTokenTemplate.replaceAll("%CLIENT_ID%", clientId)
-				.replaceAll("%CLIENT_SECRET%", clientSecret).replaceAll("%LOGIN%", login)
-				.replaceAll("%PASSWORD%", password);
-		log.debug("generateAccessTokenURL, oidcAccessTokenURL: {}", oidcAccessTokenURL);
+		String oidcAccessTokenURL = String.format(oidcAccessTokenTemplate, login, password);
+		String maskedPassword = "*".repeat(password.length());
+		String maskedOIDCAccessTokenURL = String.format(oidcAccessTokenTemplate, login, maskedPassword);
+
+		log.debug("generateAccessTokenURL, maskedOIDCAccessTokenURL: {}", maskedOIDCAccessTokenURL);
 		return oidcAccessTokenURL;
 	}
 
@@ -114,7 +115,7 @@ public class AuthenticationService {
 	  */
 	public String generateServiceURL(String host) {
 
-		String serviceURL = serviceTemplate.replaceAll("%HOST%", host);
+		String serviceURL = String.format(serviceTemplate, host);
 		log.debug("generateServiceURL, serviceURL: {}", serviceURL);
 		return serviceURL;
 	}
