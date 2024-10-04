@@ -23,61 +23,72 @@ import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 @RestController
 public class AccessControlController {
 
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccessControlController.class);
+    /**
+     * Logger
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccessControlController.class);
 
-	/** Authentication service used to retrieve the user informations. */
-	@Autowired
-	private AuthenticationService authenticationService;
+    /**
+     * Authentication service used to retrieve the user information.
+     */
+    @Autowired
+    private AuthenticationService authenticationService;
 
-	/** Action route service. */
-	@Autowired
-	private RBACActionRouteService actionRouteService;
+    /**
+     * Action route service.
+     */
+    @Autowired
+    private RBACActionRouteService actionRouteService;
 
-	/** Access control service. */
-	@Autowired
-	private AccessControlService accessControlService;
+    /**
+     * Access control service.
+     */
+    @Autowired
+    private AccessControlService accessControlService;
 
-	@GetMapping("${avenirs.access.control}")
-	public ResponseEntity<AccessControlResponse> hasAccess(@RequestHeader(value = "x-authorization") String token,
-			@RequestParam String uri, @RequestParam String method,
-			@RequestParam(required = false, name = "resourceId") Long resourceId) {
-		LOGGER.trace("hasAccess, token: {} ", token);
-		LOGGER.trace("hasAccess, uri: {} ", uri);
-		LOGGER.trace("hasAccess, method: {} ", method);
-		LOGGER.trace("hasAccess, resourceId: {} ", resourceId);
+    @GetMapping("${avenirs.access.control}")
+    public ResponseEntity<AccessControlResponse> hasAccess(@RequestHeader(value = "x-authorization") String token,
+                                                           @RequestParam String uri, @RequestParam String method,
+                                                           @RequestParam(required = false, name = "resourceId") Long resourceId) {
+        LOGGER.trace("hasAccess, token: {} ", token);
+        LOGGER.trace("hasAccess, uri: {} ", uri);
+        LOGGER.trace("hasAccess, method: {} ", method);
+        LOGGER.trace("hasAccess, resourceId: {} ", resourceId);
 
-		AccessControlResponse response = new AccessControlResponse().setToken(token).setResourceId(resourceId)
-				.setUri(uri).setMethod(method);
-		if (StringUtils.hasLength(uri) && StringUtils.hasLength(method)) {
-			RBACActionRoute actionRoute = actionRouteService.getActionRouteByPredicate(
-					RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
-			LOGGER.trace("hasAccess, actionRoute: {} ", actionRoute);
+        AccessControlResponse response = new AccessControlResponse()
+                .setToken(token)
+                .setResourceId(resourceId)
+                .setUri(uri)
+                .setMethod(method);
+        if (StringUtils.hasLength(uri) && StringUtils.hasLength(method)) {
+            RBACActionRoute actionRoute = actionRouteService.getActionRouteByPredicate(
+                    RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
+            LOGGER.trace("hasAccess, actionRoute: {} ", actionRoute);
 
-			if (actionRoute != null) {
+            if (actionRoute != null) {
 
-				RBACAction action = actionRoute.getAction();
-				LOGGER.trace("hasAccess, action: {}", action);
-				response.setActionName(action.getName());
-				OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
-				LOGGER.trace("hasAccess, introspectResponse: {}", introspectResponse);
+                RBACAction action = actionRoute.getAction();
+                LOGGER.trace("hasAccess, action: {}", action);
+                response.setActionName(action.getName());
+                OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
+                LOGGER.trace("hasAccess, introspectResponse: {}", introspectResponse);
 
-				if (introspectResponse != null && introspectResponse.isActive()) {
-					String login = introspectResponse.getUniqueSecurityName();
-					LOGGER.trace("hasAccess, login: {}", login);
-					response.setLogin(login);
+                if (introspectResponse != null && introspectResponse.isActive()) {
+                    String login = introspectResponse.getUniqueSecurityName();
+                    LOGGER.trace("hasAccess, login: {}", login);
+                    response.setLogin(login);
 
-					boolean granted = accessControlService.hasAccess(login, action.getId(), resourceId);
-					LOGGER.trace("hasAccess, granted: {}", granted);
+                    boolean granted = accessControlService.hasAccess(login, action.getId(), resourceId);
+                    LOGGER.trace("hasAccess, granted: {}", granted);
 
-					response.setGranted(granted);
-					return response.isGranted() ? ResponseEntity.ok(response)
-							: ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-				}
-			}
-		}
-		LOGGER.trace("hasAccess, response: {}", response);
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-	}
+                    response.setGranted(granted);
+                    return response.isGranted() ? ResponseEntity.ok(response)
+                            : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+                }
+            }
+        }
+        LOGGER.trace("hasAccess, response: {}", response);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+    }
 
 }

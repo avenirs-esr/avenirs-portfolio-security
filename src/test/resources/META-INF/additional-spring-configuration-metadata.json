@@ -16,7 +16,7 @@
       "description": "Resource id property for RBAC case 1."
     }, 
     {
-      "name": "avenirs.rbac.case1.ungranted.resource.id",
+      "name": "avenirs.rbac.case1.not.granted.resource.id",
       "type": "java.lang.Long",
       "description": "Resource id property for RBAC case 1."
     },

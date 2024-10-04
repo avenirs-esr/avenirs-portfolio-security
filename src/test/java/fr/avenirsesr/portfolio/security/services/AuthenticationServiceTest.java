@@ -1,11 +1,8 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import org.assertj.core.error.ActualIsNotEmpty;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * <h1>AuthenticationServiceTest</h1>

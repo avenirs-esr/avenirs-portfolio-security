@@ -117,7 +117,7 @@ public class AccessControlService {
 	 * @return True if the permissions granted to the user for the resource contains all the required permissions.
 	 */
 	private boolean checkGrantedPermissions(List<RBACPermission> requiredPermissions, String login, Long resourceId) {
-		if (requiredPermissions != null && requiredPermissions.isEmpty()) {
+		if (requiredPermissions != null && !requiredPermissions.isEmpty()) {
 
 			List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsByPredicate(
 					RBACAssignmentSpecification.filterByPrincipalAndResources(login, resourceId));
