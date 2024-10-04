@@ -8,7 +8,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-cas
-        key: docker-cas-cache
+        key: docker-cas-cache-2024-10-04
         restore-keys: |
           docker-cas-
 
