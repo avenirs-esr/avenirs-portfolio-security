@@ -170,7 +170,7 @@ class AccessControlControllerCase1Test {
 				.param("uri", accessControlShareWriteEndPoint)
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
-		
+
 		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
@@ -398,5 +398,46 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.PUT.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 				
+	}
+
+	@Test
+	void testOwnerCanDeleteGrantedResource() throws Exception {
+
+		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
+						.param("resourceId", grantedResourceId)
+						.param("uri", accessControlDeleteEndPoint)
+						.param("method", HttpMethod.DELETE.name()))
+				.andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	void testOwnerCannotDeleteNotGrantedResource() throws Exception {
+
+		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.header("x-authorization", accessTokenHelper.provideAccessToken(user, password))
+						.param("resourceId", notGrantedResourceId)
+						.param("uri", accessControlDeleteEndPoint)
+						.param("method", HttpMethod.DELETE.name()))
+				.andExpect(status().isForbidden());
+
+	}
+
+	@Test
+	void testUnprivilegedCannotDeleteGrantedResource() throws Exception {
+
+		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUser, unprivilegedPassword))
+						.param("resourceId", grantedResourceId)
+						.param("uri", accessControlDeleteEndPoint)
+						.param("method", HttpMethod.DELETE.name()))//.andDo(print())
+				.andExpect(status().isForbidden());
+
 	}
 }
