@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
@@ -18,6 +19,7 @@ import lombok.experimental.Accessors;
 public class OIDCAccessTokenResponse {
 	
 	/** Access token value */
+	@ToString.Exclude
 	@JsonProperty("access_token")
 	private String accessToken;
 	
@@ -38,7 +40,11 @@ public class OIDCAccessTokenResponse {
 	
 	/** Claims of the access token. */
 	private  Map<String, Object> claims;
-	
+
+	@ToString.Include(name = "accessToken")
+	public String getMaskedAccessToken() {
+		return accessToken != null ? "****"  : null;
+	}
 	
 
 }
