@@ -100,10 +100,12 @@ public class AuthenticationService {
 	  */
 	protected String generateAccessTokenURL(String login, String password) {
 		String oidcAccessTokenURL = String.format(oidcAccessTokenTemplate, login, password);
-		String maskedPassword = "*".repeat(password.length());
-		String maskedOIDCAccessTokenURL = String.format(oidcAccessTokenTemplate, login, maskedPassword);
 
-		log.debug("generateAccessTokenURL, maskedOIDCAccessTokenURL: {}", maskedOIDCAccessTokenURL);
+		if (log.isDebugEnabled()) {
+			String maskedPassword = "*".repeat(password.length());
+			String maskedOIDCAccessTokenURL = String.format(oidcAccessTokenTemplate, login, maskedPassword);
+			log.debug("generateAccessTokenURL, maskedOIDCAccessTokenURL: {}", maskedOIDCAccessTokenURL);
+		}
 		return oidcAccessTokenURL;
 	}
 
@@ -128,8 +130,11 @@ public class AuthenticationService {
 	 */
 	public String generateProfileURL(String token) {
 
-		String profileURL = oidcProviderProfileURL + "?token=" + token;
-		log.debug("generateProfileURL, profileURL: {}", profileURL);
+		String profileURL = String.format(oidcProviderProfileURL, token);
+		if (log.isDebugEnabled()) {
+			String maskedProfileURL = String.format(oidcProviderProfileURL, token.substring(0, 4) + "****" + token.substring(token.length() - 4));
+			log.debug("generateProfileURL, maskedProfileURL: {}", maskedProfileURL);
+		}
 		return profileURL;
 	}
 
@@ -141,18 +146,23 @@ public class AuthenticationService {
 	 */
 	public String generateIntrospectURL(String token) {
 
-		String introspectURL = oidcProviderIntrospectURL + "?token=" + token;
+		String introspectURL = String.format(oidcProviderIntrospectURL, token);
+		if (log.isDebugEnabled()) {
+			String maskedIntrospectURL = String.format(oidcProviderIntrospectURL, token.substring(0, 4) + "****" + token.substring(token.length() - 4));
+			log.debug("generateProfileURL, maskedIntrospectURL: {}", maskedIntrospectURL);
+		}
+
 		log.trace("generateIntrospectURL, introspectURL: {}", introspectURL);
 		return introspectURL;
 	}
 
 	/**
-	 * Access token introspection end point.
+	 * Gets the profile associated to an access token.
 	 * 
-	 * @param token The token to introspect.
+	 * @param token The token granted to the user for which the profile has to be retrieved.
 	 * @return The Profile response of the OIDC Provider.
 	 */
-	public OIDCProfileResponse profile(@RequestHeader(value = "x-authorization") String token) {
+	public OIDCProfileResponse profile(String token) {
 
 		log.trace("profile");
 
@@ -160,7 +170,7 @@ public class AuthenticationService {
 				.header("Authorization", basicAuthentication()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON).retrieve().body(OIDCProfileResponse.class);
 
-		log.warn("profile, profileResponse: {}", profileResponse);
+		log.debug("profile, profileResponse: {}", profileResponse);
 
 		return profileResponse;
 	}
