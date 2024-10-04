@@ -23,62 +23,73 @@ import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 @RestController
 <span class="fc" id="L24">public class AccessControlController {</span>
 
-	/** Logger */
-<span class="fc" id="L27">	private static final Logger LOGGER = LoggerFactory.getLogger(AccessControlController.class);</span>
+    /**
+     * Logger
+     */
+<span class="fc" id="L29">    private static final Logger LOGGER = LoggerFactory.getLogger(AccessControlController.class);</span>
 
-	/** Authentication service used to retrieve the user informations. */
-	@Autowired
-	private AuthenticationService authenticationService;
+    /**
+     * Authentication service used to retrieve the user information.
+     */
+    @Autowired
+    private AuthenticationService authenticationService;
 
-	/** Action route service. */
-	@Autowired
-	private RBACActionRouteService actionRouteService;
+    /**
+     * Action route service.
+     */
+    @Autowired
+    private RBACActionRouteService actionRouteService;
 
-	/** Access control service. */
-	@Autowired
-	private AccessControlService accessControlService;
+    /**
+     * Access control service.
+     */
+    @Autowired
+    private AccessControlService accessControlService;
 
-	@GetMapping(&quot;${avenirs.access.control}&quot;)
-	public ResponseEntity&lt;AccessControlResponse&gt; hasAccess(@RequestHeader(value = &quot;x-authorization&quot;) String token,
-			@RequestParam String uri, @RequestParam String method,
-			@RequestParam(required = false, name = &quot;resourceId&quot;) Long resourceId) {
-<span class="fc" id="L45">		LOGGER.trace(&quot;hasAccess, token: {} &quot;, token);</span>
-<span class="fc" id="L46">		LOGGER.trace(&quot;hasAccess, uri: {} &quot;, uri);</span>
-<span class="fc" id="L47">		LOGGER.trace(&quot;hasAccess, method: {} &quot;, method);</span>
-<span class="fc" id="L48">		LOGGER.trace(&quot;hasAccess, resourceId: {} &quot;, resourceId);</span>
+    @GetMapping(&quot;${avenirs.access.control}&quot;)
+    public ResponseEntity&lt;AccessControlResponse&gt; hasAccess(@RequestHeader(value = &quot;x-authorization&quot;) String token,
+                                                           @RequestParam String uri, @RequestParam String method,
+                                                           @RequestParam(required = false, name = &quot;resourceId&quot;) Long resourceId) {
+<span class="fc" id="L53">        LOGGER.trace(&quot;hasAccess, token: {} &quot;, token);</span>
+<span class="fc" id="L54">        LOGGER.trace(&quot;hasAccess, uri: {} &quot;, uri);</span>
+<span class="fc" id="L55">        LOGGER.trace(&quot;hasAccess, method: {} &quot;, method);</span>
+<span class="fc" id="L56">        LOGGER.trace(&quot;hasAccess, resourceId: {} &quot;, resourceId);</span>
 
-<span class="fc" id="L50">		AccessControlResponse response = new AccessControlResponse().setToken(token).setResourceId(resourceId)</span>
-<span class="fc" id="L51">				.setUri(uri).setMethod(method);</span>
-<span class="pc bpc" id="L52" title="2 of 4 branches missed.">		if (StringUtils.hasLength(uri) &amp;&amp; StringUtils.hasLength(method)) {</span>
-<span class="fc" id="L53">			RBACActionRoute actionRoute = actionRouteService.getActionRouteByPredicate(</span>
-<span class="fc" id="L54">					RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);</span>
-<span class="fc" id="L55">			LOGGER.trace(&quot;hasAccess, actionRoute: {} &quot;, actionRoute);</span>
+<span class="fc" id="L58">        AccessControlResponse response = new AccessControlResponse()</span>
+<span class="fc" id="L59">                .setToken(token)</span>
+<span class="fc" id="L60">                .setResourceId(resourceId)</span>
+<span class="fc" id="L61">                .setUri(uri)</span>
+<span class="fc" id="L62">                .setMethod(method);</span>
+<span class="pc bpc" id="L63" title="2 of 4 branches missed.">        if (StringUtils.hasLength(uri) &amp;&amp; StringUtils.hasLength(method)) {</span>
+<span class="fc" id="L64">            RBACActionRoute actionRoute = actionRouteService.getActionRouteByPredicate(</span>
+<span class="fc" id="L65">                    RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);</span>
+<span class="fc" id="L66">            LOGGER.trace(&quot;hasAccess, actionRoute: {} &quot;, actionRoute);</span>
 
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">			if (actionRoute != null) {</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            if (actionRoute != null) {</span>
 
-<span class="fc" id="L59">				RBACAction action = actionRoute.getAction();</span>
-<span class="fc" id="L60">				LOGGER.trace(&quot;hasAccess, action: {}&quot;, action);</span>
-<span class="fc" id="L61">				response.setActionName(action.getName());</span>
-<span class="fc" id="L62">				OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
-<span class="fc" id="L63">				LOGGER.trace(&quot;hasAccess, introspectResponse: {}&quot;, introspectResponse);</span>
+<span class="fc" id="L70">                RBACAction action = actionRoute.getAction();</span>
+<span class="fc" id="L71">                LOGGER.trace(&quot;hasAccess, action: {}&quot;, action);</span>
+<span class="fc" id="L72">                response.setActionName(action.getName());</span>
+<span class="fc" id="L73">                OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
+<span class="fc" id="L74">                LOGGER.trace(&quot;hasAccess, introspectResponse: {}&quot;, introspectResponse);</span>
 
-<span class="pc bpc" id="L65" title="1 of 4 branches missed.">				if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
-<span class="fc" id="L66">					String login = introspectResponse.getUniqueSecurityName();</span>
-<span class="fc" id="L67">					LOGGER.trace(&quot;hasAccess, login: {}&quot;, login);</span>
-<span class="fc" id="L68">					response.setLogin(login);</span>
+<span class="pc bpc" id="L76" title="1 of 4 branches missed.">                if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
+<span class="fc" id="L77">                    String login = introspectResponse.getUniqueSecurityName();</span>
+<span class="fc" id="L78">                    LOGGER.trace(&quot;hasAccess, login: {}&quot;, login);</span>
+<span class="fc" id="L79">                    response.setLogin(login);</span>
 
-<span class="fc" id="L70">					boolean granted = accessControlService.hasAccess(login, action.getId(), resourceId);</span>
-<span class="fc" id="L71">					LOGGER.trace(&quot;hasAccess, granted: {}&quot;, granted);</span>
+<span class="fc" id="L81">                    boolean granted = accessControlService.hasAccess(login, action.getId(), resourceId);</span>
+<span class="fc" id="L82">                    LOGGER.trace(&quot;hasAccess, granted: {}&quot;, granted);</span>
 
-<span class="fc" id="L73">					response.setGranted(granted);</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">					return response.isGranted() ? ResponseEntity.ok(response)</span>
-<span class="fc" id="L75">							: ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
-				}
-			}
-		}
-<span class="fc" id="L79">		LOGGER.trace(&quot;hasAccess, response: {}&quot;, response);</span>
-<span class="fc" id="L80">		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
-	}
+<span class="fc" id="L84">                    response.setGranted(granted);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                    return response.isGranted() ? ResponseEntity.ok(response)</span>
+<span class="fc" id="L86">                            : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
+                }
+            }
+        }
+<span class="fc" id="L90">        LOGGER.trace(&quot;hasAccess, response: {}&quot;, response);</span>
+<span class="fc" id="L91">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
