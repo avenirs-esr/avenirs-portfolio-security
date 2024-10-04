@@ -166,9 +166,13 @@ public class AuthenticationService {
 
 		log.trace("profile");
 
-		OIDCProfileResponse profileResponse = restClient.post().uri(generateProfileURL(token))
-				.header("Authorization", basicAuthentication()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON).retrieve().body(OIDCProfileResponse.class);
+OIDCProfileResponse profileResponse = restClient.post()
+				.uri(generateProfileURL(token))
+				.header("Authorization", basicAuthentication())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.retrieve()
+				.body(OIDCProfileResponse.class);
 
 		log.debug("profile, profileResponse: {}", profileResponse);
 
@@ -234,7 +238,7 @@ public class AuthenticationService {
 	 * 
 	 * @return The basic authentication header.
 	 */
-	public String basicAuthentication() {
+	private String basicAuthentication() {
 		if (basicAuthenticationHeader == null) {
 
 			log.trace("basicAuthentication generating authentication header. ");
