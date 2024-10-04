@@ -75,10 +75,9 @@ import jakarta.servlet.http.HttpServletResponse;
 		
 <span class="nc bnc" id="L76" title="All 4 branches missed.">		if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
 <span class="nc" id="L77">			OIDCProfileResponse profileResponse = this.authenticationService.profile(token);</span>
-<span class="nc" id="L78">				profileResponse.setActive(true);</span>
-<span class="nc" id="L79">				return profileResponse;</span>
+<span class="nc" id="L78">				return profileResponse;</span>
 		}
-<span class="nc" id="L81">		throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
+<span class="nc" id="L80">		throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
 	}
 		
 	/**
@@ -89,7 +88,7 @@ import jakarta.servlet.http.HttpServletResponse;
 	 */
 	@PostMapping(&quot;${avenirs.authentication.oidc.callback.introspect}&quot;)
 	public OIDCIntrospectResponse introspect(@RequestHeader(value=&quot;x-authorization&quot;) String token) throws IOException{
-<span class="nc" id="L92">		return this.authenticationService.introspectAccessToken(token);</span>
+<span class="nc" id="L91">		return this.authenticationService.introspectAccessToken(token);</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

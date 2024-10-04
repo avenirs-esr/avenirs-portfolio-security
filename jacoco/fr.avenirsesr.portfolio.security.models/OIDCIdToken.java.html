@@ -2,6 +2,7 @@
 
 import java.util.Base64;
 
+import lombok.ToString;
 import org.springframework.util.StringUtils;
 
 import lombok.Data;
@@ -11,23 +12,38 @@ import lombok.experimental.Accessors;
 @Accessors(chain=true)
 public class OIDCIdToken {
 	private String header;
+	@ToString.Exclude
 	private String payload;
+	@ToString.Exclude
 	private String signature;
+
+	@ToString.Exclude
 	private String rawIdToken;
 	
-<span class="fc" id="L18">	public OIDCIdToken(String rawIdToken) {</span>
-<span class="fc" id="L19">		this.rawIdToken = rawIdToken;</span>
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">		if (StringUtils.hasLength(rawIdToken)) {</span>
-<span class="fc" id="L21">			String[]tokens = rawIdToken.split(&quot;\\.&quot;);</span>
-<span class="fc" id="L22">			this.header = decodeToken(tokens[0]);</span>
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">			this.payload = tokens.length &gt; 0 ? decodeToken(tokens[1]) : &quot;&quot;;</span>
-<span class="pc bpc" id="L24" title="1 of 2 branches missed.">			this.signature = tokens.length == 3 ?tokens[2] : &quot;&quot;;</span>
+<span class="fc" id="L23">	public OIDCIdToken(String rawIdToken) {</span>
+<span class="fc" id="L24">		this.rawIdToken = rawIdToken;</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">		if (StringUtils.hasLength(rawIdToken)) {</span>
+<span class="fc" id="L26">			String[]tokens = rawIdToken.split(&quot;\\.&quot;);</span>
+<span class="fc" id="L27">			this.header = decodeToken(tokens[0]);</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">			this.payload = tokens.length &gt; 1 ? decodeToken(tokens[1]) : &quot;&quot;;</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">			this.signature = tokens.length == 3 ?tokens[2] : &quot;&quot;;</span>
 		}	
-<span class="fc" id="L26">	}</span>
+<span class="fc" id="L31">	}</span>
 	
 	private String decodeToken(String token) {
-<span class="fc" id="L29">		byte[] decodedBytes = Base64.getDecoder().decode(token);</span>
-<span class="fc" id="L30">		return  new String(decodedBytes);</span>
+<span class="fc" id="L34">		byte[] decodedBytes = Base64.getDecoder().decode(token);</span>
+<span class="fc" id="L35">		return  new String(decodedBytes);</span>
+	}
+
+
+	@ToString.Include(name = &quot;signature&quot;)
+	public String getMaskedSignature() {
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">		return signature != null ? &quot;****&quot;  : null;</span>
+	}
+
+	@ToString.Include(name = &quot;payload&quot;)
+	public String getMaskedPayload() {
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">		return payload != null ? &quot;****&quot;  : null;</span>
 	}
 
 }

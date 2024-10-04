@@ -5,7 +5,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACContext
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,PrincipalService,16,7,0,0,4,2,2,2,2,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACActionService,17,20,0,0,4,5,2,4,2,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACAssignmentService,35,16,0,0,10,4,4,3,4,3
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AuthenticationService,113,166,2,4,24,33,6,8,4,7
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AuthenticationService,8,359,5,7,3,64,5,12,0,11
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,JWTService,104,225,11,13,40,48,11,8,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACRoleService,82,7,10,0,19,2,10,2,5,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AccessControlService,74,264,12,18,17,60,12,16,2,11
@@ -14,14 +14,16 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACResource_
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACActionRoute_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACAssignmentPK,15,3,0,0,6,2,1,1,1,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACAssignment_,3,0,0,0,1,0,1,0,1,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCAccessTokenResponse,1,6,1,1,0,1,1,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,Structure_,3,0,0,0,1,0,1,0,1,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCIntrospectResponse,1,6,1,1,0,1,1,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACPermission_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACRole_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,Principal_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACScope_,3,0,0,0,1,0,1,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCIdToken,2,50,3,3,0,10,3,2,0,2
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCIdToken,4,63,5,5,0,12,5,4,0,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACAction_,3,0,0,0,1,0,1,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCProfileResponse,19,0,0,0,4,0,1,0,1,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCProfileResponse,0,19,0,0,0,4,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACContext_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.repositories,RBACAssignmentSpecification,0,52,0,0,0,11,0,4,0,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.repositories,RBACScopeSpecification,12,0,0,0,2,0,2,0,2,0
@@ -29,7 +31,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.repositories,RBACAct
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.configuration,SpringSecurityConfig,0,81,0,0,0,14,0,4,0,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.configuration,JWTToCryptographicKeyAlgoMapper,3,18,2,2,1,3,2,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security,AvenirsPortfolioSecurityApplication,8,11,0,0,3,4,1,3,1,3
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.controllers,AuthenticationController,60,7,4,0,13,2,6,2,4,2
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.controllers,AuthenticationController,57,7,4,0,12,2,6,2,4,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.controllers,RoleController,29,7,4,0,7,2,3,2,1,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.controllers,AccessControlController,0,133,4,8,0,32,4,5,0,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.controllers,LoginController,4,3,0,0,2,1,2,1,2,1
