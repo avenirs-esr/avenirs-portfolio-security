@@ -1,13 +1,12 @@
 name: "Setup CAS"
 description: "Builds and starts the CAS environment with optional image rebuild"
-
-runs:
-  using: "composite"
-  inputs:
+inputs:
     rebuild:
       description: "Force Docker image rebuild"
       required: false
       default: "false"
+runs:
+  using: "composite"
 
   steps:
     - name: Cache Docker Images for CAS
