@@ -4,6 +4,7 @@ VALUES
 (1, to_timestamp('01/09/2024', 'DD/MM/YYYY'),null);
 
 
+SELECT setval((SELECT pg_get_serial_sequence('context', 'id')), (SELECT MAX(id) FROM context));
 
 
 

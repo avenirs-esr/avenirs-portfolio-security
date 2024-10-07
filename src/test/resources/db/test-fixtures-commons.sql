@@ -4,6 +4,7 @@ VALUES
 (2, 'deman'),
 (3, 'dugat'),
 (4, 'patterson');
+SELECT setval((SELECT pg_get_serial_sequence('principal', 'id')), (SELECT MAX(id) FROM principal));
 
 INSERT INTO structure (id, name, description)
 VALUES 
@@ -12,6 +13,8 @@ VALUES
 (2, 'Univ. Toulon', 'Université de Toulon'),
 (3, 'AMU', 'Université d''Aix-Marseille'),
 (4, 'MIT', 'Massachusetts Institute of Technology');
+
+SELECT setval((SELECT pg_get_serial_sequence('structure', 'id')), (SELECT MAX(id) FROM structure));
 
 INSERT INTO principal_structure (id_principal, id_structure)
 VALUES 
@@ -28,6 +31,7 @@ VALUES
 (4, 'ROLE_CONTRIBUTOR', 'Contributor for the resource'),
 (5, 'ROLE_PAIR', 'Can give feedback');
 
+SELECT setval((SELECT pg_get_serial_sequence('role', 'id')), (SELECT MAX(id) FROM role));
 
 INSERT INTO permission (id, name, description) 
 VALUES
@@ -37,6 +41,8 @@ VALUES
 (4, 'PERM_SHARE', 'Share permission'),
 (5, 'PERM_DELETE', 'Delete permission');
 
+SELECT setval((SELECT pg_get_serial_sequence('permission', 'id')), (SELECT MAX(id) FROM permission));
+
 INSERT INTO action (id, name, description) 
 VALUES
 (1, 'ACT_SHARE_READ_RESOURCE', 'Share a resource readonly'),
@@ -45,6 +51,8 @@ VALUES
 (4, 'ACT_EDIT', 'Edit a resource'),
 (5, 'ACT_DO_FEEDBACK', 'Do a feedback'),
 (6, 'ACT_DELETE', 'Delete a resource');
+
+SELECT setval((SELECT pg_get_serial_sequence('action', 'id')), (SELECT MAX(id) FROM action));
 
 INSERT INTO action_route (id, id_action, uri, method) 
 VALUES
@@ -96,7 +104,7 @@ VALUES
 (1, 'PORTFOLIO', 'Resource of type portfolio'),
 (2, 'MES', 'Resource of type MES');
 
-
+SELECT setval((SELECT pg_get_serial_sequence('resource_type', 'id')), (SELECT MAX(id) FROM resource_type));
 
 
 
@@ -107,7 +115,7 @@ VALUES
 (3, 'mes_0000', (SELECT id FROM resource_type WHERE resource_type.name = 'MES')),
 (4, 'mes_0001', (SELECT id FROM resource_type WHERE resource_type.name = 'MES'));
 
-
+SELECT setval((SELECT pg_get_serial_sequence('resource', 'id')), (SELECT MAX(id) FROM resource));
 
 INSERT INTO scope (id, name)
 VALUES 
@@ -116,6 +124,7 @@ VALUES
 (3, 'scope_0002'),
 (4, 'scope_0003');
 
+SELECT setval((SELECT pg_get_serial_sequence('scope', 'id')), (SELECT MAX(id) FROM structure));
 
 INSERT INTO scope_resource (id_scope, id_resource)
 VALUES 
@@ -124,9 +133,4 @@ VALUES
 ((SELECT id FROM scope WHERE name = 'scope_0002'), (SELECT id FROM resource WHERE selector = 'mes_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_0003'), (SELECT id FROM resource WHERE selector = 'ptf_0000')),
 ((SELECT id FROM scope WHERE name = 'scope_0003'), (SELECT id FROM resource WHERE selector = 'ptf_0001'));
-
-
-INSERT INTO context (id, validity_start, validity_end)
-VALUES 
-(0, null, null);
 
