@@ -6,17 +6,11 @@ package fr.avenirsesr.portfolio.security.models;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import lombok.experimental.Accessors;
 
 
 /**
@@ -42,6 +36,7 @@ import lombok.NoArgsConstructor;
  * 16 Sept 2024
  */
 @Data
+@Accessors(chain=true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -62,18 +57,23 @@ public class RBACAssignment {
 	
 	/** The scope, which determine the resources involved in the assignment. */
 	@Id
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id_scope", referencedColumnName = "id")
 	private RBACScope scope;
 	
 	/** The context, which determines some limits of the assignment. */
 	@Id
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id_context", referencedColumnName = "id")
 	private RBACContext context;
 	
 	/** Date of the assignment. */
 	@Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
 	private LocalDateTime timestamp;
+
+
+	public RBACAssignmentPK getId() {
+		return new RBACAssignmentPK(this.role.getId(), this.principal.getId(), this.scope.getId(), this.context.getId());
+	}
 
 }
