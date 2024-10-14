@@ -275,8 +275,8 @@ databaseChangeLog:
                name: name
                type: VARCHAR(80)
                constraints:
-                   nullable:  false
-                   unique: true    
+                   nullable:  true
+                   unique: false
         - sql:
            dbms:  'postgresql'
            endDelimiter:  \nGO
