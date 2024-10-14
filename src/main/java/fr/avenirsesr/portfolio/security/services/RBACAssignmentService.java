@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
 
+import fr.avenirsesr.portfolio.security.models.RBACAssignmentPK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,10 @@ public class RBACAssignmentService {
 	/**
 	 * Gives all the assignments associated to a principal.
 	 * 
-	 * @param specification The specification used to retrieve the assignments.
-	 * @return The assignments associated to the specification.
+	 * @param specification The specification used to filter the assignments.
+	 * @return The  filtered assignments.
 	 */
-	public List<RBACAssignment> getAllAssignmentsByPredicate(Specification<RBACAssignment> specification) {
+	public List<RBACAssignment> getAllAssignmentsBySpecification(Specification<RBACAssignment> specification) {
 		LOGGER.trace("getAllAssignmentsByPredicate, specification: {}", specification);
 		return assignmentRepository.findAll(specification);
 	}
@@ -60,12 +61,21 @@ public class RBACAssignmentService {
 		LOGGER.trace("deleteAssignment, assignment: {}", assignment);
 		this.assignmentRepository.delete(assignment);
 	}
+
+	/**
+	 * Updates an assignment.
+	 * @param assignment The assignment to update.
+	 */
+	public void updateAssignment(RBACAssignment assignment) {
+		LOGGER.trace("deleteAssignment, assignment: {}", assignment);
+		this.assignmentRepository.save(assignment);
+	}
 	
 	/**
 	 * Deletes an assignment by id.
 	 * @param assignmentId The id of the assignment to delete.
 	 */
-	public void deleteAssignmentById(Long assignmentId) {
+	public void deleteAssignmentById(RBACAssignmentPK assignmentId) {
 		LOGGER.trace("deleteAssignment, assignmentId: {}", assignmentId);
 		this.assignmentRepository.deleteById(assignmentId);
 	}
