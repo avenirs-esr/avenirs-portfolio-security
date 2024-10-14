@@ -26,12 +26,12 @@ public class RBACActionRouteService {
 	/**
 	 * Gives an action route associated to a predicate.
 	 * 
-	 * @param specification The specification of the predicate.
-	 * @return The action route instance.
+	 * @param specification The specification used to filter the ActionRoute instances.
+	 * @return The filtered instances.
 	 */
-	public Optional<RBACActionRoute> getActionRouteByPredicate(Specification<RBACActionRoute> specification) {
+	public Optional<RBACActionRoute> getAllActionRoutesBySpecification(Specification<RBACActionRoute> specification) {
 		
-		LOGGER.trace("getAllScopesByPredicate, specification: {}" + specification);
+		LOGGER.trace("getAllScopesByPredicate, specification: {}", specification);
 		return actionRouteRepository.findOne(specification);
 	}
 		

@@ -27,12 +27,12 @@ public class RBACScopeService {
 	/**
 	 * Gives all the scopes associated to a predicate.
 	 * 
-	 * @param specification The specification of the predicate.
-	 * @return The scopes.
+	 * @param specification The specification used to filter the scopes.
+	 * @return The filtered scopes.
 	 */
-	public List<RBACScope> getAllScopesByPredicate(Specification<RBACScope> specification) {
+	public List<RBACScope> getAllScopesBySpecification(Specification<RBACScope> specification) {
 		
-		LOGGER.trace("getAllScopesByPredicate, specification: {}" + specification);
+		LOGGER.trace("getAllScopesByPredicate, specification: {}", specification);
 		return scopeRepository.findAll(specification);
 	}
 	

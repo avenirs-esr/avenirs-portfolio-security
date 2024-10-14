@@ -119,7 +119,7 @@ public class AccessControlService {
 	private boolean checkGrantedPermissions(List<RBACPermission> requiredPermissions, String login, Long resourceId) {
 		if (requiredPermissions != null && !requiredPermissions.isEmpty()) {
 
-			List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsByPredicate(
+			List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(
 					RBACAssignmentSpecification.filterByPrincipalAndResources(login, resourceId));
 			log.trace("hasAccess, principalAssignments: {}", principalAssignments);
 			

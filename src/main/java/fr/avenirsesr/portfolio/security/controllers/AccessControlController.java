@@ -61,7 +61,7 @@ public class AccessControlController {
                 .setUri(uri)
                 .setMethod(method);
         if (StringUtils.hasLength(uri) && StringUtils.hasLength(method)) {
-            RBACActionRoute actionRoute = actionRouteService.getActionRouteByPredicate(
+            RBACActionRoute actionRoute = actionRouteService.getAllActionRoutesBySpecification(
                     RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
             LOGGER.trace("hasAccess, actionRoute: {} ", actionRoute);
 

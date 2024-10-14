@@ -53,12 +53,12 @@ public class RBACActionService {
 	}
 	
 	/**
-	 * Gives all the actions associated to a predicate.
+	 * Gives all the actions associated to a specification.
 	 * 
-	 * @param specification The specification of the predicate.
-	 * @return The actions that respect the predicate.
+	 * @param specification The specification of the used to filter the actions.
+	 * @return The filtered instances.
 	 */
-		public List<RBACAction> getAllActionsByPredicate(Specification<RBACAction> specification) {
+		public List<RBACAction> getAllActionsBySpecification(Specification<RBACAction> specification) {
 		
 		LOGGER.trace("getAllActionsByPredicate, specification: {}" + specification);
 		return actionRepository.findAll(specification);
