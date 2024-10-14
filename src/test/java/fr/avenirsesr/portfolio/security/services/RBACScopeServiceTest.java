@@ -39,28 +39,28 @@ class RBACScopeServiceTest {
 	
 	@Test
 	void testGetAllScopesByPredicate() {
-		List<RBACScope> actual = scopeService.getAllScopesByPredicate(RBACScopeSpecification.filterByResources(RES1_ID));
+		List<RBACScope> actual = scopeService.getAllScopesBySpecification(RBACScopeSpecification.filterByResources(RES1_ID));
 		assertThat(actual).hasSize(EXPECTED_SCOPES_RES1.length);
 		assertThat(actual.stream().map(s->s.getName())).contains(EXPECTED_SCOPES_RES1);
 		
-		actual = scopeService.getAllScopesByPredicate(RBACScopeSpecification.filterByResources(RES3_ID));
+		actual = scopeService.getAllScopesBySpecification(RBACScopeSpecification.filterByResources(RES3_ID));
 		assertThat(actual).hasSize(EXPECTED_SCOPES_RES3.length);
 		assertThat(actual.stream().map(s->s.getName())).contains(EXPECTED_SCOPES_RES3);
 		
-		actual = scopeService.getAllScopesByPredicate(RBACScopeSpecification.filterByResources(RES4_ID));
+		actual = scopeService.getAllScopesBySpecification(RBACScopeSpecification.filterByResources(RES4_ID));
 		assertThat(actual).isEmpty();
 		
 		
-		actual = scopeService.getAllScopesByPredicate(RBACScopeSpecification.filterByResources(RES1_ID, RES3_ID));
+		actual = scopeService.getAllScopesBySpecification(RBACScopeSpecification.filterByResources(RES1_ID, RES3_ID));
 		assertThat(actual).hasSize(EXPECTED_SCOPES_RES1_RES3.length);
 		assertThat(actual.stream().map(s->s.getName())).contains(EXPECTED_SCOPES_RES1_RES3);
 		
 		// Res4 is not referenced by any scope, so adding it id should not change the result.
-		actual = scopeService.getAllScopesByPredicate(RBACScopeSpecification.filterByResources(RES1_ID, RES4_ID));
+		actual = scopeService.getAllScopesBySpecification(RBACScopeSpecification.filterByResources(RES1_ID, RES4_ID));
 		assertThat(actual).hasSize(EXPECTED_SCOPES_RES1.length);
 		assertThat(actual.stream().map(s->s.getName())).contains(EXPECTED_SCOPES_RES1);
 		
-		actual = scopeService.getAllScopesByPredicate(RBACScopeSpecification.filterByResources(RES1_ID, RES2_ID, RES3_ID,RES4_ID));
+		actual = scopeService.getAllScopesBySpecification(RBACScopeSpecification.filterByResources(RES1_ID, RES2_ID, RES3_ID,RES4_ID));
 		assertThat(actual).hasSize(EXPECTED_SCOPES_RES_ALL.length);
 		assertThat(actual.stream().map(s->s.getName())).contains(EXPECTED_SCOPES_RES_ALL);
 		
