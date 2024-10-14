@@ -119,7 +119,7 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 	private boolean checkGrantedPermissions(List&lt;RBACPermission&gt; requiredPermissions, String login, Long resourceId) {
 <span class="pc bpc" id="L120" title="2 of 4 branches missed.">		if (requiredPermissions != null &amp;&amp; !requiredPermissions.isEmpty()) {</span>
 
-<span class="fc" id="L122">			List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsByPredicate(</span>
+<span class="fc" id="L122">			List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(</span>
 <span class="fc" id="L123">					RBACAssignmentSpecification.filterByPrincipalAndResources(login, resourceId));</span>
 <span class="fc" id="L124">			log.trace(&quot;hasAccess, principalAssignments: {}&quot;, principalAssignments);</span>
 			

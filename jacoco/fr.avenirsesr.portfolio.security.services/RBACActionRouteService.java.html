@@ -26,12 +26,12 @@ import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteRepository;
 	/**
 	 * Gives an action route associated to a predicate.
 	 * 
-	 * @param specification The specification of the predicate.
-	 * @return The action route instance.
+	 * @param specification The specification used to filter the ActionRoute instances.
+	 * @return The filtered instances.
 	 */
-	public Optional&lt;RBACActionRoute&gt; getActionRouteByPredicate(Specification&lt;RBACActionRoute&gt; specification) {
+	public Optional&lt;RBACActionRoute&gt; getAllActionRoutesBySpecification(Specification&lt;RBACActionRoute&gt; specification) {
 		
-<span class="fc" id="L34">		LOGGER.trace(&quot;getAllScopesByPredicate, specification: {}&quot; + specification);</span>
+<span class="fc" id="L34">		LOGGER.trace(&quot;getAllScopesByPredicate, specification: {}&quot;, specification);</span>
 <span class="fc" id="L35">		return actionRouteRepository.findOne(specification);</span>
 	}
 		

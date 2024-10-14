@@ -53,12 +53,12 @@ import fr.avenirsesr.portfolio.security.repositories.RBACActionRepository;
 	}
 	
 	/**
-	 * Gives all the actions associated to a predicate.
+	 * Gives all the actions associated to a specification.
 	 * 
-	 * @param specification The specification of the predicate.
-	 * @return The actions that respect the predicate.
+	 * @param specification The specification of the used to filter the actions.
+	 * @return The filtered instances.
 	 */
-		public List&lt;RBACAction&gt; getAllActionsByPredicate(Specification&lt;RBACAction&gt; specification) {
+		public List&lt;RBACAction&gt; getAllActionsBySpecification(Specification&lt;RBACAction&gt; specification) {
 		
 <span class="nc" id="L63">		LOGGER.trace(&quot;getAllActionsByPredicate, specification: {}&quot; + specification);</span>
 <span class="nc" id="L64">		return actionRepository.findAll(specification);</span>

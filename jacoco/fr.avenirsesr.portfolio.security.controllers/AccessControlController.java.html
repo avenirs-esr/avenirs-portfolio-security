@@ -61,7 +61,7 @@ import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 <span class="fc" id="L61">                .setUri(uri)</span>
 <span class="fc" id="L62">                .setMethod(method);</span>
 <span class="pc bpc" id="L63" title="2 of 4 branches missed.">        if (StringUtils.hasLength(uri) &amp;&amp; StringUtils.hasLength(method)) {</span>
-<span class="fc" id="L64">            RBACActionRoute actionRoute = actionRouteService.getActionRouteByPredicate(</span>
+<span class="fc" id="L64">            RBACActionRoute actionRoute = actionRouteService.getAllActionRoutesBySpecification(</span>
 <span class="fc" id="L65">                    RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);</span>
 <span class="fc" id="L66">            LOGGER.trace(&quot;hasAccess, actionRoute: {} &quot;, actionRoute);</span>
 

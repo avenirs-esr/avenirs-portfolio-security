@@ -1,10 +1,10 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACActionRouteService,0,17,0,0,0,4,0,3,0,3
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACScopeService,10,7,0,0,2,2,1,2,1,2
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACActionRouteService,0,16,0,0,0,4,0,3,0,3
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACScopeService,9,7,0,0,2,2,1,2,1,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACContextService,35,7,0,0,10,2,4,2,4,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,PrincipalService,16,7,0,0,4,2,2,2,2,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACActionService,17,20,0,0,4,5,2,4,2,4
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACAssignmentService,35,16,0,0,10,4,4,3,4,3
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACAssignmentService,0,61,0,0,0,17,0,8,0,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AuthenticationService,8,359,5,7,3,64,5,12,0,11
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,JWTService,104,225,11,13,40,48,11,8,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACRoleService,82,7,10,0,19,2,10,2,5,2
@@ -12,7 +12,6 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AccessContr
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACResourceType_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACResource_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACActionRoute_,3,0,0,0,1,0,1,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACAssignmentPK,15,3,0,0,6,2,1,1,1,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACAssignment_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCAccessTokenResponse,1,6,1,1,0,1,1,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,Structure_,3,0,0,0,1,0,1,0,1,0
@@ -21,6 +20,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACPermissio
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACRole_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,Principal_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACScope_,3,0,0,0,1,0,1,0,1,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACAssignment,0,20,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCIdToken,4,63,5,5,0,12,5,4,0,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACAction_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,OIDCProfileResponse,0,19,0,0,0,4,0,1,0,1

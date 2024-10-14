@@ -36,7 +36,7 @@ import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
 @Service
 <span class="fc" id="L37">public class RBACContextService {</span>
   /** Logger */
-<span class="fc" id="L39">  private static final Logger LOGGER = LoggerFactory.getLogger(RBACAssignmentService.class);</span>
+<span class="fc" id="L39">  private static final Logger LOGGER = LoggerFactory.getLogger(RBACContextService.class);</span>
   
   @Autowired
   private RBACContextRepository contextRepository;
@@ -74,7 +74,7 @@ import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
    * @param contextId The id of the context to delete.
    */
   public void deleteContextById(Long contextId) {
-<span class="nc" id="L77">      LOGGER.trace(&quot;deleteAssignment, contextId: {}&quot; + contextId);</span>
+<span class="nc" id="L77">      LOGGER.trace(&quot;deleteAssignment, contextId: {}&quot;, contextId);</span>
        
       
 <span class="nc" id="L80">       this.contextRepository.deleteById(contextId);</span>

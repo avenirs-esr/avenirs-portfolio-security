@@ -27,12 +27,12 @@ import fr.avenirsesr.portfolio.security.repositories.RBACScopeRepository;
 	/**
 	 * Gives all the scopes associated to a predicate.
 	 * 
-	 * @param specification The specification of the predicate.
-	 * @return The scopes.
+	 * @param specification The specification used to filter the scopes.
+	 * @return The filtered scopes.
 	 */
-	public List&lt;RBACScope&gt; getAllScopesByPredicate(Specification&lt;RBACScope&gt; specification) {
+	public List&lt;RBACScope&gt; getAllScopesBySpecification(Specification&lt;RBACScope&gt; specification) {
 		
-<span class="nc" id="L35">		LOGGER.trace(&quot;getAllScopesByPredicate, specification: {}&quot; + specification);</span>
+<span class="nc" id="L35">		LOGGER.trace(&quot;getAllScopesByPredicate, specification: {}&quot;, specification);</span>
 <span class="nc" id="L36">		return scopeRepository.findAll(specification);</span>
 	}
 	
