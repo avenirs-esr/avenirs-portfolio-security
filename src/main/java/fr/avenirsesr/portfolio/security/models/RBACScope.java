@@ -14,6 +14,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Scope in the RBAC system.
@@ -21,6 +22,7 @@ import lombok.Data;
  */
 @Data
 @Entity
+@Accessors(chain=true)
 @Table(name="scope")
 public class RBACScope {
 	
