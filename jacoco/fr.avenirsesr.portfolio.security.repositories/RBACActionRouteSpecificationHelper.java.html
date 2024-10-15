@@ -28,9 +28,11 @@ import jakarta.persistence.criteria.Root;
 <span class="fc" id="L28">            log.trace(&quot;filterByURIAndMethod, uri: {}&quot;,uri);</span>
 <span class="fc" id="L29">            log.trace(&quot;filterByURIAndMethod, method: {}&quot;,method);</span>
 
-<span class="fc" id="L31">            return criteriaBuilder.and(</span>
-<span class="fc" id="L32">                criteriaBuilder.equal(root.get(RBACActionRoute_.uri),uri),</span>
-<span class="fc" id="L33">                criteriaBuilder.equal(root.get(RBACActionRoute_.method),method)</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            String lcMethod = method == null ? method: method.toLowerCase();</span>
+
+<span class="fc" id="L33">            return criteriaBuilder.and(</span>
+<span class="fc" id="L34">                criteriaBuilder.equal(root.get(RBACActionRoute_.uri),uri),</span>
+<span class="fc" id="L35">                criteriaBuilder.equal(criteriaBuilder.lower(root.get(RBACActionRoute_.method)), lcMethod)</span>
             );
         };
     }
