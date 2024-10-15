@@ -50,22 +50,22 @@ import jakarta.transaction.Transactional;
 @Transactional
 class AccessControlControllerCase1Test {
 
-	@Value("${avenirs.rbac.case1.user}")
+	@Value("${avenirs.test.rbac.case1.user}")
 	private String user;
 	
-	@Value("${avenirs.rbac.case1.password}")
+	@Value("${avenirs.test.rbac.case1.password}")
 	private String password;
 	
-	@Value("${avenirs.rbac.case1.authorized.resource.id}")
+	@Value("${avenirs.test.rbac.case1.authorized.resource.id}")
 	private String authorizedResourceId;
 	
-	@Value("${avenirs.rbac.case1.unauthorized.resource.id}")
+	@Value("${avenirs.test.rbac.case1.unauthorized.resource.id}")
 	private String unauthorizedResourceId;
 	
-	@Value("${avenirs.rbac.unprivileged.user}")
+	@Value("${avenirs.test.rbac.unprivileged.user}")
 	private String unprivilegedUser;
 	
-	@Value("${avenirs.rbac.unprivileged.password}")
+	@Value("${avenirs.test.rbac.unprivileged.password}")
 	private String unprivilegedPassword;
 	
 	@Value("${avenirs.access.control}")

@@ -61,16 +61,16 @@ import jakarta.transaction.Transactional;
 @Transactional
 class AccessControlControllerCase2Test {
 
-	@Value("${avenirs.rbac.case2.user}")
+	@Value("${avenirs.test.rbac.case2.user}")
 	private String user;
 	
-	@Value("${avenirs.rbac.case2.password}")
+	@Value("${avenirs.test.rbac.case2.password}")
 	private String password;
 	
-	@Value("${avenirs.rbac.case2.authorized.resource.id}")
+	@Value("${avenirs.test.rbac.case2.authorized.resource.id}")
 	private String authorizedResourceId;
 
-    @Value("${avenirs.rbac.case2.unauthorized.resource.id}")
+    @Value("${avenirs.test.rbac.case2.unauthorized.resource.id}")
     private String unauthorizedResourceId;
 	
 	@Value("${avenirs.access.control}")
@@ -103,10 +103,10 @@ class AccessControlControllerCase2Test {
 	@SpyBean
 	private AccessControlService accessControlService;
 	
-	@Value("${avenirs.rbac.case2.application.context.validity.start}")
+	@Value("${avenirs.test.rbac.case2.application.context.validity.start}")
 	private String validityStartString;
 	
-	@Value("${avenirs.rbac.case2.application.context.validity.end}")
+	@Value("${avenirs.test.rbac.case2.application.context.validity.end}")
 	private String validityEndString;
 	
 	private LocalDateTime validityStart;
