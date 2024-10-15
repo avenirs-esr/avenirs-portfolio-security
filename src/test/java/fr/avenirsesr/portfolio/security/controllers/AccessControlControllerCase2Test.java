@@ -35,7 +35,7 @@ import jakarta.transaction.Transactional;
  *
  * <h1>AccessControlControllerCase2Test</h1>
  * <p>
- * Description:  test case 2. User gribonvald is pair for a resource of type sae.
+ * Description:  test case 2. User gribonvald is pair for a resource of type MES.
  * </p>
  * For more details
  * <a href="https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case2/">
