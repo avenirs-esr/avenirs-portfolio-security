@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecification;
+import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecificationHelper;
 import jakarta.transaction.Transactional;
 
 @Disabled
@@ -32,12 +32,12 @@ class RBACActionRouteServiceTest {
 
 	@Test
 	void testGetActionRouteByilterByURIAndMethodPredicateF() {
-		var route = actionRouteService.getAllActionRoutesBySpecification(RBACActionRouteSpecification.filterByURIAndMethod(ROUTE_1, METH_1)).get();
+		var route = actionRouteService.getAllActionRoutesBySpecification(RBACActionRouteSpecificationHelper.filterByURIAndMethod(ROUTE_1, METH_1)).get();
 		assertEquals(ROUTE_1, route.getUri());
 		assertEquals(METH_1, route.getMethod());
 		assertEquals(ACTION_NAME_1, route.getAction().getName());
 		
-		route = actionRouteService.getAllActionRoutesBySpecification(RBACActionRouteSpecification.filterByURIAndMethod(ROUTE_2, METH_2)).get();
+		route = actionRouteService.getAllActionRoutesBySpecification(RBACActionRouteSpecificationHelper.filterByURIAndMethod(ROUTE_2, METH_2)).get();
 		assertEquals(ROUTE_2, route.getUri());
 		assertEquals(METH_2, route.getMethod());
 		assertEquals(ACTION_NAME_2, route.getAction().getName());

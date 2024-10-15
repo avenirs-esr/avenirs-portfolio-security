@@ -14,7 +14,7 @@ import fr.avenirsesr.portfolio.security.models.AccessControlResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.models.RBACAction;
 import fr.avenirsesr.portfolio.security.models.RBACActionRoute;
-import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecification;
+import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecificationHelper;
 import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
@@ -58,7 +58,7 @@ public class AccessControlController {
                 .setMethod(method);
         if (StringUtils.hasLength(uri) && StringUtils.hasLength(method)) {
             RBACActionRoute actionRoute = actionRouteService.getAllActionRoutesBySpecification(
-                    RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
+                    RBACActionRouteSpecificationHelper.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
             log.trace("hasAccess, actionRoute: {} ", actionRoute);
 
             if (actionRoute != null) {

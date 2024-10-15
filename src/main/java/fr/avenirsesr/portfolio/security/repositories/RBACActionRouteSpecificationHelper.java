@@ -1,7 +1,6 @@
 package fr.avenirsesr.portfolio.security.repositories;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import fr.avenirsesr.portfolio.security.models.RBACActionRoute;
@@ -14,8 +13,8 @@ import jakarta.persistence.criteria.Root;
  * Assignment specification for ActionRoute model. Used to make queries based on
  * predicates.
  */
-
-public interface RBACActionRouteSpecification {
+@Slf4j
+public abstract class RBACActionRouteSpecificationHelper {
 
     /**
      * Specification to generate predicate to select the action associated to an uri and a method (http).
@@ -25,10 +24,9 @@ public interface RBACActionRouteSpecification {
      */
 
     public static Specification<RBACActionRoute> filterByURIAndMethod(String uri, String method) {
-        final Logger LOGGER = LoggerFactory.getLogger(RBACActionRouteSpecification.class);
         return (Root<RBACActionRoute> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            LOGGER.trace("filterByURIAndMethod, uri: {}",uri);
-            LOGGER.trace("filterByURIAndMethod, method: {}",method);
+            log.trace("filterByURIAndMethod, uri: {}",uri);
+            log.trace("filterByURIAndMethod, method: {}",method);
 
             return criteriaBuilder.and(
                 criteriaBuilder.equal(root.get(RBACActionRoute_.uri),uri),

@@ -25,7 +25,7 @@ import jakarta.persistence.criteria.Root;
  * <h2>Since:</h2>
  * 1 Oct 2024
  */
-public interface RBACScopeSpecification  {
+public abstract class RBACScopeSpecificationHelper {
 		
 	/**
 	 * Specification to filter RBACScope from a list of resource ids.

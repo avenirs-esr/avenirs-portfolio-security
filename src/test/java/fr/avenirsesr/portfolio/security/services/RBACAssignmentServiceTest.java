@@ -237,7 +237,7 @@ void updateAssignment() {
         assertEquals(4, assignmentService.getAllAssignments().size(), "Assignments after inserts");
 
         // Checks assignments for principal 1
-        List<RBACAssignment> fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecification.filterByPrincipal(principalLogin1));
+        List<RBACAssignment> fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(principalLogin1));
         assertEquals(2, fetchedAssignments.size(), "Number of fetched Assignments for principal 1");
         assertThat(fetchedAssignments)
                 .as("Checks that all assignments are for principal1")
@@ -245,7 +245,7 @@ void updateAssignment() {
                 .allMatch(login -> login.equals(principalLogin1));
 
         // Checks assignments for principal 2
-        fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecification.filterByPrincipal(principalLogin2));
+        fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(principalLogin2));
         assertEquals(2, fetchedAssignments.size(), "Number of fetched Assignments for principal 2");
         assertThat(fetchedAssignments)
                 .as("Checks that all assignments are for principal2")
@@ -303,7 +303,7 @@ void updateAssignment() {
        // assertEquals(4, assignmentService.getAllAssignments().size(), "Assignments after inserts");
 
         // Checks assignments for principal 1 and resource 1
-        List<RBACAssignment> fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecification.filterByPrincipalAndResources(principalLogin1, resourceId1));
+        List<RBACAssignment> fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(principalLogin1, resourceId1));
         assertEquals(3, fetchedAssignments.size(), "Number of fetched Assignments for principal 1 and resource 1");
         assertThat(fetchedAssignments)
                 .as("Checks that all assignments are for principal1")
@@ -323,7 +323,7 @@ void updateAssignment() {
 
 
         // Checks assignments for principal 1 and resource 1
-        fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecification.filterByPrincipalAndResources(principalLogin1, resourceId1, resourceId2));
+        fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(principalLogin1, resourceId1, resourceId2));
         assertEquals(4, fetchedAssignments.size(), "Number of fetched Assignments for principal 1 and resource 1 and 2");
         assertThat(fetchedAssignments)
                 .as("Checks that all assignments are for principal1")

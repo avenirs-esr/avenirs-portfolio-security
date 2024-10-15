@@ -2,8 +2,7 @@ package fr.avenirsesr.portfolio.security.repositories;
 
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import fr.avenirsesr.portfolio.security.models.Principal_;
@@ -22,7 +21,8 @@ import jakarta.persistence.criteria.Root;
  * Assignment specification for Assignment model. Used to make queries based on
  * predicates.
  */
-public interface RBACAssignmentSpecification {
+@Slf4j
+public abstract class RBACAssignmentSpecificationHelper {
 
 	/**
 	 * Specification to generate predicate to select the assignments associated to a
@@ -47,11 +47,10 @@ public interface RBACAssignmentSpecification {
 	 */
 
 	public static Specification<RBACAssignment> filterByPrincipalAndResources(String login, Long... resourceIds) {
-		final Logger LOGGER = LoggerFactory.getLogger(RBACAssignmentSpecification.class);
 		return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
 
-			LOGGER.trace("filterByPrincipalAndResources, login: {}", login);
-			LOGGER.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
+			log.trace("filterByPrincipalAndResources, login: {}", login);
+			log.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
 
 			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope);
 			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources);

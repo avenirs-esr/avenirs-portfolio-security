@@ -19,7 +19,7 @@ import fr.avenirsesr.portfolio.security.models.RBACContext;
 import fr.avenirsesr.portfolio.security.models.RBACPermission;
 import fr.avenirsesr.portfolio.security.models.RBACResource;
 import fr.avenirsesr.portfolio.security.models.Structure;
-import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification;
+import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecificationHelper;
 
 /**
  * <h1>AccessControlService</h1>
@@ -120,7 +120,7 @@ public class AccessControlService {
 		if (requiredPermissions != null && !requiredPermissions.isEmpty()) {
 
 			List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(
-					RBACAssignmentSpecification.filterByPrincipalAndResources(login, resourceId));
+					RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(login, resourceId));
 			log.trace("hasAccess, principalAssignments: {}", principalAssignments);
 			
 			List<RBACAssignment> validAssignment = filterByApplicationContext(principalAssignments);
