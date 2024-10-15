@@ -2,8 +2,7 @@
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -15,11 +14,10 @@ import fr.avenirsesr.portfolio.security.repositories.RBACActionRepository;
 /**
  * Action Service
  */
+
+<span class="fc" id="L18">@Slf4j</span>
 @Service
-<span class="fc" id="L19">public class RBACActionService {</span>
-	
-	/** Logger */
-<span class="fc" id="L22">	private static final Logger LOGGER = LoggerFactory.getLogger(RBACActionService.class);</span>
+<span class="fc" id="L20">public class RBACActionService {</span>
 	
 	@Autowired
 	private RBACActionRepository actionRepository;
@@ -30,8 +28,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACActionRepository;
 	 * @return The action with id actionId.
 	 */
 	public Optional&lt;RBACAction&gt; getActionById(final Long actionId){
-<span class="fc" id="L33">		LOGGER.trace(&quot;getAction&quot;);</span>
-<span class="fc" id="L34">		return this.actionRepository.findById(actionId);</span>
+<span class="fc" id="L31">		log.trace(&quot;getAction&quot;);</span>
+<span class="fc" id="L32">		return this.actionRepository.findById(actionId);</span>
 	}
 	
 	/**
@@ -40,7 +38,7 @@ import fr.avenirsesr.portfolio.security.repositories.RBACActionRepository;
 	 * @return The action if found (Optional).
 	 */
 	public Optional&lt;RBACAction&gt; getActionByName(final String name) {
-<span class="fc" id="L43">		return this.actionRepository.findByName(name);</span>
+<span class="fc" id="L41">		return this.actionRepository.findByName(name);</span>
 	}
 	
 	/**
@@ -48,8 +46,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACActionRepository;
 	 * @return All the action.
 	 */
 	public List&lt;RBACAction&gt; getAllActions() {
-<span class="nc" id="L51">		LOGGER.trace(&quot;getAllActions&quot;);</span>
-<span class="nc" id="L52">		return this.actionRepository.findAll();</span>
+<span class="nc" id="L49">		log.trace(&quot;getAllActions&quot;);</span>
+<span class="nc" id="L50">		return this.actionRepository.findAll();</span>
 	}
 	
 	/**
@@ -60,8 +58,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACActionRepository;
 	 */
 		public List&lt;RBACAction&gt; getAllActionsBySpecification(Specification&lt;RBACAction&gt; specification) {
 		
-<span class="nc" id="L63">		LOGGER.trace(&quot;getAllActionsByPredicate, specification: {}&quot; + specification);</span>
-<span class="nc" id="L64">		return actionRepository.findAll(specification);</span>
+<span class="nc" id="L61">		log.trace(&quot;getAllActionsByPredicate, specification: {}&quot; + specification);</span>
+<span class="nc" id="L62">		return actionRepository.findAll(specification);</span>
 	}
 	
 	

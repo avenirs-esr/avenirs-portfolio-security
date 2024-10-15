@@ -2,8 +2,7 @@
 import java.util.List;
 
 import fr.avenirsesr.portfolio.security.models.RBACAssignmentPK;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -13,11 +12,9 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 
 
 
+<span class="fc" id="L15">@Slf4j</span>
 @Service
 <span class="fc" id="L17">public class RBACAssignmentService {</span>
-	
-	/** Logger */
-<span class="fc" id="L20">	private static final Logger LOGGER = LoggerFactory.getLogger(RBACAssignmentService.class);</span>
 	
 	@Autowired
 	private RBACAssignmentRepository assignmentRepository;
@@ -27,8 +24,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 	 * @return All assignments.
 	 */
 	public List&lt;RBACAssignment&gt; getAllAssignments() {
-<span class="fc" id="L30">		LOGGER.trace(&quot;getAllAssignments&quot;);</span>
-<span class="fc" id="L31">		return this.assignmentRepository.findAll();</span>
+<span class="fc" id="L27">		log.trace(&quot;getAllAssignments&quot;);</span>
+<span class="fc" id="L28">		return this.assignmentRepository.findAll();</span>
 	}
 	
 	
@@ -39,8 +36,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 	 * @return The  filtered assignments.
 	 */
 	public List&lt;RBACAssignment&gt; getAllAssignmentsBySpecification(Specification&lt;RBACAssignment&gt; specification) {
-<span class="fc" id="L42">		LOGGER.trace(&quot;getAllAssignmentsByPredicate, specification: {}&quot;, specification);</span>
-<span class="fc" id="L43">		return assignmentRepository.findAll(specification);</span>
+<span class="fc" id="L39">		log.trace(&quot;getAllAssignmentsByPredicate, specification: {}&quot;, specification);</span>
+<span class="fc" id="L40">		return assignmentRepository.findAll(specification);</span>
 	}
 	
 	/**
@@ -49,8 +46,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 	 * @return The saved assignment.
 	 */
 	public RBACAssignment createAssignment(RBACAssignment assignment) {
-<span class="fc" id="L52">		LOGGER.trace(&quot;createAssignment, assignment: {}&quot;, assignment);</span>
-<span class="fc" id="L53">		return this.assignmentRepository.save(assignment);</span>
+<span class="fc" id="L49">		log.trace(&quot;createAssignment, assignment: {}&quot;, assignment);</span>
+<span class="fc" id="L50">		return this.assignmentRepository.save(assignment);</span>
 	}
 	
 	/**
@@ -58,26 +55,26 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 	 * @param assignment The assignment to delete.
 	 */
 	public void deleteAssignment(RBACAssignment assignment) {
-<span class="fc" id="L61">		LOGGER.trace(&quot;deleteAssignment, assignment: {}&quot;, assignment);</span>
-<span class="fc" id="L62">		this.assignmentRepository.delete(assignment);</span>
-<span class="fc" id="L63">	}</span>
+<span class="fc" id="L58">		log.trace(&quot;deleteAssignment, assignment: {}&quot;, assignment);</span>
+<span class="fc" id="L59">		this.assignmentRepository.delete(assignment);</span>
+<span class="fc" id="L60">	}</span>
 
 	/**
 	 * Updates an assignment.
 	 * @param assignment The assignment to update.
 	 */
 	public void updateAssignment(RBACAssignment assignment) {
-<span class="fc" id="L70">		LOGGER.trace(&quot;deleteAssignment, assignment: {}&quot;, assignment);</span>
-<span class="fc" id="L71">		this.assignmentRepository.save(assignment);</span>
-<span class="fc" id="L72">	}</span>
+<span class="fc" id="L67">		log.trace(&quot;deleteAssignment, assignment: {}&quot;, assignment);</span>
+<span class="fc" id="L68">		this.assignmentRepository.save(assignment);</span>
+<span class="fc" id="L69">	}</span>
 	
 	/**
 	 * Deletes an assignment by id.
 	 * @param assignmentId The id of the assignment to delete.
 	 */
 	public void deleteAssignmentById(RBACAssignmentPK assignmentId) {
-<span class="fc" id="L79">		LOGGER.trace(&quot;deleteAssignment, assignmentId: {}&quot;, assignmentId);</span>
-<span class="fc" id="L80">		this.assignmentRepository.deleteById(assignmentId);</span>
-<span class="fc" id="L81">	}</span>
+<span class="fc" id="L76">		log.trace(&quot;deleteAssignment, assignmentId: {}&quot;, assignmentId);</span>
+<span class="fc" id="L77">		this.assignmentRepository.deleteById(assignmentId);</span>
+<span class="fc" id="L78">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

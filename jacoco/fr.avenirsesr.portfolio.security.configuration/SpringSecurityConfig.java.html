@@ -3,8 +3,7 @@
  */
 package fr.avenirsesr.portfolio.security.configuration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +16,12 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * Configuration for spring security.
  */
+
+<span class="fc" id="L20">@Slf4j</span>
 @Configuration
 @EnableWebSecurity
-<span class="fc" id="L22">public class SpringSecurityConfig {</span>
-	/** Logger */
-<span class="fc" id="L24">	private static final Logger LOGGER = LoggerFactory.getLogger(SpringSecurityConfig.class);</span>
-	
+<span class="fc" id="L23">public class SpringSecurityConfig {</span>
+
 	@Value(&quot;${avenirs.access.control.roles}&quot;)
 	private String roles;
 
@@ -36,19 +35,19 @@ import org.springframework.security.web.SecurityFilterChain;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L39">		return httpSecurity.csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L40">				.authorizeHttpRequests(auth -&gt; { </span>
-<span class="fc" id="L41">		LOGGER.debug(&quot;filterChain, Configuring Spring security&quot;);</span>
-<span class="fc" id="L42">		LOGGER.debug(&quot;filterChain, Permit All for:&quot;)	;	</span>
-<span class="fc" id="L43">		LOGGER.debug(&quot;filterChain, Permit All for roles: {}&quot;, roles);	</span>
-<span class="fc" id="L44">		LOGGER.debug(&quot;filterChain, Permit All for oidcCallback: {}&quot;, oidcCallback);	</span>
-<span class="fc" id="L45">		LOGGER.debug(&quot;filterChain, Permit All for oidcRedirect: {}&quot;, oidcRedirect);	</span>
-<span class="fc" id="L46">		auth.requestMatchers(roles).permitAll();</span>
-<span class="fc" id="L47">		auth.requestMatchers(oidcCallback).permitAll();</span>
-<span class="fc" id="L48">		auth.requestMatchers(oidcRedirect).permitAll();</span>
-<span class="fc" id="L49">		auth.anyRequest().permitAll();</span>
+<span class="fc" id="L38">		return httpSecurity.csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L39">				.authorizeHttpRequests(auth -&gt; { </span>
+<span class="fc" id="L40">		log.debug(&quot;filterChain, Configuring Spring security&quot;);</span>
+<span class="fc" id="L41">		log.debug(&quot;filterChain, Permit All for:&quot;)	;	</span>
+<span class="fc" id="L42">		log.debug(&quot;filterChain, Permit All for roles: {}&quot;, roles);	</span>
+<span class="fc" id="L43">		log.debug(&quot;filterChain, Permit All for oidcCallback: {}&quot;, oidcCallback);	</span>
+<span class="fc" id="L44">		log.debug(&quot;filterChain, Permit All for oidcRedirect: {}&quot;, oidcRedirect);	</span>
+<span class="fc" id="L45">		auth.requestMatchers(roles).permitAll();</span>
+<span class="fc" id="L46">		auth.requestMatchers(oidcCallback).permitAll();</span>
+<span class="fc" id="L47">		auth.requestMatchers(oidcRedirect).permitAll();</span>
+<span class="fc" id="L48">		auth.anyRequest().permitAll();</span>
 //		auth.anyRequest().authenticated();
-<span class="fc" id="L51">		}).formLogin(Customizer.withDefaults()).build();</span>
+<span class="fc" id="L50">		}).formLogin(Customizer.withDefaults()).build();</span>
 	}
     
 //    @Bean

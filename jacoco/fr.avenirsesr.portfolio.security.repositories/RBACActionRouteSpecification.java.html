@@ -14,6 +14,7 @@ import jakarta.persistence.criteria.Root;
  * Assignment specification for ActionRoute model. Used to make queries based on
  * predicates.
  */
+
 public interface RBACActionRouteSpecification {
 
     /**
@@ -24,14 +25,14 @@ public interface RBACActionRouteSpecification {
      */
 
     public static Specification&lt;RBACActionRoute&gt; filterByURIAndMethod(String uri, String method) {
-<span class="fc" id="L27">        final Logger LOGGER = LoggerFactory.getLogger(RBACActionRouteSpecification.class);</span>
-<span class="fc" id="L28">        return (Root&lt;RBACActionRoute&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
-<span class="fc" id="L29">            LOGGER.trace(&quot;filterByURIAndMethod, uri: {}&quot;,uri);</span>
-<span class="fc" id="L30">            LOGGER.trace(&quot;filterByURIAndMethod, method: {}&quot;,method);</span>
+<span class="fc" id="L28">        final Logger LOGGER = LoggerFactory.getLogger(RBACActionRouteSpecification.class);</span>
+<span class="fc" id="L29">        return (Root&lt;RBACActionRoute&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
+<span class="fc" id="L30">            LOGGER.trace(&quot;filterByURIAndMethod, uri: {}&quot;,uri);</span>
+<span class="fc" id="L31">            LOGGER.trace(&quot;filterByURIAndMethod, method: {}&quot;,method);</span>
 
-<span class="fc" id="L32">            return criteriaBuilder.and(</span>
-<span class="fc" id="L33">                criteriaBuilder.equal(root.get(RBACActionRoute_.uri),uri),</span>
-<span class="fc" id="L34">                criteriaBuilder.equal(root.get(RBACActionRoute_.method),method)</span>
+<span class="fc" id="L33">            return criteriaBuilder.and(</span>
+<span class="fc" id="L34">                criteriaBuilder.equal(root.get(RBACActionRoute_.uri),uri),</span>
+<span class="fc" id="L35">                criteriaBuilder.equal(root.get(RBACActionRoute_.method),method)</span>
             );
         };
     }

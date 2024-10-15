@@ -2,8 +2,7 @@
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +13,10 @@ import fr.avenirsesr.portfolio.security.repositories.PrincipalRepository;
 /**
  * Service for Principal.
  */
+
+<span class="fc" id="L17">@Slf4j</span>
 @Service
-<span class="fc" id="L18">public class PrincipalService {</span>
-	
-	/** Logger */
-<span class="fc" id="L21">	private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalService.class);</span>
+<span class="fc" id="L19">public class PrincipalService {</span>
 	
 	@Autowired
 	private PrincipalRepository principalRepository;
@@ -29,8 +27,8 @@ import fr.avenirsesr.portfolio.security.repositories.PrincipalRepository;
 	 * @return All the principals.
 	 */
 	public List&lt;Principal&gt; getAllPrincipals() {
-<span class="nc" id="L32">		LOGGER.trace(&quot;getAllPrincipals&quot;);</span>
-<span class="nc" id="L33">		return this.principalRepository.findAll();</span>
+<span class="nc" id="L30">		log.trace(&quot;getAllPrincipals&quot;);</span>
+<span class="nc" id="L31">		return this.principalRepository.findAll();</span>
 	}
 	
 	/**
@@ -38,8 +36,8 @@ import fr.avenirsesr.portfolio.security.repositories.PrincipalRepository;
 	 * @return The principal.
 	 */
 	public Optional&lt;Principal&gt; getPrincipalByLogin(String login) {
-<span class="nc" id="L41">		LOGGER.trace(&quot;getPrincipalByLogin, login: {}&quot;, login);</span>
-<span class="nc" id="L42">		return this.principalRepository.findByLogin(login);</span>
+<span class="nc" id="L39">		log.trace(&quot;getPrincipalByLogin, login: {}&quot;, login);</span>
+<span class="nc" id="L40">		return this.principalRepository.findByLogin(login);</span>
 	}
 
 }

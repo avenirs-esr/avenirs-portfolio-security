@@ -3,17 +3,13 @@
  */
 package fr.avenirsesr.portfolio.security.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.models.RBACContext;
-import fr.avenirsesr.portfolio.security.models.Structure;
 import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
 
 /**
@@ -33,11 +29,11 @@ import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
  * &lt;h2&gt;Since:&lt;/h2&gt;
  * 1 Oct 2024
  */
+
+<span class="fc" id="L33">@Slf4j</span>
 @Service
-<span class="fc" id="L37">public class RBACContextService {</span>
-  /** Logger */
-<span class="fc" id="L39">  private static final Logger LOGGER = LoggerFactory.getLogger(RBACContextService.class);</span>
-  
+<span class="fc" id="L35">public class RBACContextService {</span>
+   
   @Autowired
   private RBACContextRepository contextRepository;
  
@@ -46,8 +42,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
    * @return All contexts.
    */
   public List&lt;RBACContext&gt; getAllContexts() {
-<span class="nc" id="L49">      LOGGER.trace(&quot;getAllContexts&quot;);</span>
-<span class="nc" id="L50">      return this.contextRepository.findAll();</span>
+<span class="nc" id="L45">      log.trace(&quot;getAllContexts&quot;);</span>
+<span class="nc" id="L46">      return this.contextRepository.findAll();</span>
   }
   
   /**
@@ -56,8 +52,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
    * @return The saved context.
    */
   public RBACContext createContext(RBACContext context) {
-<span class="nc" id="L59">      LOGGER.trace(&quot;createContext, context: {}&quot;, context);</span>
-<span class="nc" id="L60">      return this.contextRepository.save(context);</span>
+<span class="nc" id="L55">      log.trace(&quot;createContext, context: {}&quot;, context);</span>
+<span class="nc" id="L56">      return this.contextRepository.save(context);</span>
   }
   
   /**
@@ -65,20 +61,20 @@ import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
    * @param context The context to delete.
    */
   public void deleteAssignment(RBACContext context) {
-<span class="nc" id="L68">      LOGGER.trace(&quot;deleteAssignment, context: {}&quot;, context);</span>
-<span class="nc" id="L69">      this.contextRepository.delete(context);</span>
-<span class="nc" id="L70">  }</span>
+<span class="nc" id="L64">      log.trace(&quot;deleteAssignment, context: {}&quot;, context);</span>
+<span class="nc" id="L65">      this.contextRepository.delete(context);</span>
+<span class="nc" id="L66">  }</span>
   
   /**
    * Deletes a context by id.
    * @param contextId The id of the context to delete.
    */
   public void deleteContextById(Long contextId) {
-<span class="nc" id="L77">      LOGGER.trace(&quot;deleteAssignment, contextId: {}&quot;, contextId);</span>
+<span class="nc" id="L73">      log.trace(&quot;deleteAssignment, contextId: {}&quot;, contextId);</span>
        
       
-<span class="nc" id="L80">       this.contextRepository.deleteById(contextId);</span>
-<span class="nc" id="L81">  }</span>
+<span class="nc" id="L76">       this.contextRepository.deleteById(contextId);</span>
+<span class="nc" id="L77">  }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
