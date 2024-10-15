@@ -27,8 +27,8 @@ import fr.avenirsesr.portfolio.security.repositories.PrincipalRepository;
 	 * @return All the principals.
 	 */
 	public List&lt;Principal&gt; getAllPrincipals() {
-<span class="nc" id="L30">		log.trace(&quot;getAllPrincipals&quot;);</span>
-<span class="nc" id="L31">		return this.principalRepository.findAll();</span>
+<span class="fc" id="L30">		log.trace(&quot;getAllPrincipals&quot;);</span>
+<span class="fc" id="L31">		return this.principalRepository.findAll();</span>
 	}
 	
 	/**
@@ -36,8 +36,8 @@ import fr.avenirsesr.portfolio.security.repositories.PrincipalRepository;
 	 * @return The principal.
 	 */
 	public Optional&lt;Principal&gt; getPrincipalByLogin(String login) {
-<span class="nc" id="L39">		log.trace(&quot;getPrincipalByLogin, login: {}&quot;, login);</span>
-<span class="nc" id="L40">		return this.principalRepository.findByLogin(login);</span>
+<span class="fc" id="L39">		log.trace(&quot;getPrincipalByLogin, login: {}&quot;, login);</span>
+<span class="fc" id="L40">		return this.principalRepository.findByLogin(login);</span>
 	}
 
 }
