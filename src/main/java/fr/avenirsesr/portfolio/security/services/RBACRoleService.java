@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
+import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,19 @@ import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
 
 
 /**
- * Role Service
+ * <h1>RBACRoleService</h1>
+ * <p>
+ * <b>Description:</b> RBAC Role Service.
+ * </p>
+ *
+ * <h2>Version:</h2>
+ * 1.0.0
+ *
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 15/10/2024
  */
 
 @Slf4j
@@ -21,13 +34,23 @@ public class RBACRoleService {
 	private RBACRoleRepository roleRepository;
 	
 	/**
-	 * Gives a specific role.
+	 * Gives a specific role by its id.
 	 * @param roleId The id of the role to retrieve.
-	 * @return The role with id roleId.
+	 * @return The Optional of role with id roleId.
 	 */
-	public RBACRole getRole(final Long roleId){
-		log.trace("getRole");
-		return this.roleRepository.findById(roleId).get();
+	public Optional<RBACRole> getRoleById(final Long roleId){
+		log.trace("getRoleById roleId: {}", roleId);
+		return this.roleRepository.findById(roleId);
+	}
+
+	/**
+	 * Gives a specific role by its name.
+	 * @param roleName The name of the role to retrieve.
+	 * @return The Optional of role with name roleName.
+	 */
+	public Optional<RBACRole> getRoleByName(final String roleName) {
+		log.trace("getRoleByName roleName: {}", roleName);
+		return this.roleRepository.findByName(roleName);
 	}
 	
 	/**
@@ -46,8 +69,8 @@ public class RBACRoleService {
 	 */
 	public RBACRole createRole(RBACRole role) {
 		if (log.isTraceEnabled()) {
-			log.trace("createRole, role: " + role);
-		};
+			log.trace("createRole, role: {}", role);
+		}
 		return this.roleRepository.save(role);
 	}
 	
@@ -58,16 +81,17 @@ public class RBACRoleService {
 	 */
 	public RBACRole  updateRole(RBACRole role) {
 		if (log.isTraceEnabled()) {
-			log.trace("updateRole, role: " + role);
-		};
-		RBACRole storedRole = this.roleRepository.findById(role.getId()).get();
+			log.trace("updateRole, role: {}", role);
+		}
+		Optional<RBACRole> response = this.roleRepository.findById(role.getId());
 		
-		if (storedRole != null && ! storedRole.equals(role)) {
+		if (response.isPresent() && ! response.get().equals(role)) {
+				RBACRole storedRole = response.get();
 				storedRole.setName(role.getName());
 				storedRole.setDescription(role.getDescription());
 				return this.roleRepository.save(storedRole);
 		}
-		return storedRole;
+		return response.orElse(role);
 	}
 	
 	/**
@@ -76,10 +100,8 @@ public class RBACRoleService {
 	 */
 	public void deleteRole(Long roleId) {
 		if (log.isTraceEnabled()) {
-			log.trace("deleteRole, roleId: " + roleId);
-		};
+			log.trace("deleteRole, roleId: {}", roleId);
+		}
 		this.roleRepository.deleteById(roleId);
 	}
-	
-	
 }
