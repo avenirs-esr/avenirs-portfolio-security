@@ -36,22 +36,22 @@ class RBACAssignmentServiceTest {
     @Autowired
     private RBACResourceRepository resourceRepository;
 
-    @Value("${avenirs.test.access.control.service.role.owner.id}")
+    @Value("${avenirs.test.rbac.assignment.service.role.owner.id}")
     private Long roleOwnerId;
 
-    @Value("${avenirs.test.access.control.service.resource.id.1}")
+    @Value("${avenirs.test.rbac.assignment.service.resource.id.1}")
     private Long resourceId1;
 
-    @Value("${avenirs.test.access.control.service.resource.id.2}")
+    @Value("${avenirs.test.rbac.assignment.service.resource.id.2}")
     private Long resourceId2;
 
-    @Value("${avenirs.test.access.control.service.resource.id.3}")
+    @Value("${avenirs.test.rbac.assignment.service.resource.id.3}")
     private Long resourceId3;
 
-    @Value("${avenirs.test.access.control.service.user.login.1}")
+    @Value("${avenirs.test.rbac.assignment.service.user.login.1}")
     private String principalLogin1;
 
-    @Value("${avenirs.test.access.control.service.user.login.2}")
+    @Value("${avenirs.test.rbac.assignment.service.user.login.2}")
     private String principalLogin2;
 
 
