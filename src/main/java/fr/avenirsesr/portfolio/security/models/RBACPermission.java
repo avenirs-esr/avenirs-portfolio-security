@@ -5,7 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -16,6 +18,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain=true)
 @Entity
 @Table(name="permission")
+@NoArgsConstructor
+@AllArgsConstructor
 public class RBACPermission {
 	
 	/** Database id. */
