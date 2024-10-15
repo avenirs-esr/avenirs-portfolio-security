@@ -7,12 +7,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Resources type.
  * The tyoe is used to determine if a resource is a portfolio, a SAE , etc.
  */
 @Data
+@Accessors(chain=true)
 @Entity
 @Table(name="resource_type")
 public class RBACResourceType {

@@ -21,8 +21,8 @@ import lombok.experimental.Accessors;
  * A scope is used to determine the resources involved in a Role assignment.
  */
 @Data
-@Entity
 @Accessors(chain=true)
+@Entity
 @Table(name="scope")
 public class RBACScope {
 	

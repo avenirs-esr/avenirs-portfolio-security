@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * OIDC profile response from the OIDC provider for a given access token.
  */
 @Data
+@Accessors(chain=true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OIDCProfileResponse {
 	

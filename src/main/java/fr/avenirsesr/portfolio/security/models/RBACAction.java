@@ -14,12 +14,14 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Context in the RBAC system.
  * A context is used to limit an assignment with a period of validity and an establishment.
  */
 @Data
+@Accessors(chain=true)
 @Entity
 @Table(name="action")
 public class RBACAction {

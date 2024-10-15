@@ -8,12 +8,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Resources selector.
  * This class is used to determine one or several resources involved in a Role assignment.
  */
 @Data
+@Accessors(chain=true)
 @Entity
 @Table(name="resource")
 public class RBACResource {

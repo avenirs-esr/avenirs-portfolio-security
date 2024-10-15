@@ -14,12 +14,14 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Role in the RBAC system.
  * A role is associated to one or several permissions.
  */
 @Data
+@Accessors(chain=true)
 @Entity
 @Table(name = "role")
 public class RBACRole {

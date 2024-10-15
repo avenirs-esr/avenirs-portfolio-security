@@ -19,12 +19,14 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 
 /**
  * Principal in the RBAC system.
  */
 @Data
+@Accessors(chain=true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

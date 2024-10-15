@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * OIDC introspection response from the OIDC provider for a given access token.
  * Most part of the field in the OIDC provider response are filtered.
  */
 @Data
+@Accessors(chain=true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OIDCIntrospectResponse {
 	

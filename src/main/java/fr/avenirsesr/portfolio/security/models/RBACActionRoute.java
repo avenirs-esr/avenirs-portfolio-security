@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.models;
 
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -17,6 +18,7 @@ import lombok.Data;
  * Represents the association between an HTTP route (URI + HTTP method) and an RBAC Action.
  */
 @Data
+@Accessors(chain=true)
 @Entity
 @Table(name="action_route")
 public class RBACActionRoute {

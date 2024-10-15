@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 
 /**
@@ -30,6 +31,7 @@ import lombok.NoArgsConstructor;
  * 1 Oct 2024
  */
 @Data
+@Accessors(chain=true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

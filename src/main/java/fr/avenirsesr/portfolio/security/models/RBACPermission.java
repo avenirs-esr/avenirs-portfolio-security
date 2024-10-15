@@ -6,12 +6,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Permission.
  * A permission is mainly a label and can be required to perform actions.
  */
 @Data
+@Accessors(chain=true)
 @Entity
 @Table(name="permission")
 public class RBACPermission {
