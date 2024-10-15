@@ -111,16 +111,4 @@ class AccessControlServiceTest {
         assertFalse (accessControlService.hasAccess(principal, feedback, unauthorizedResource), "Feedback access on unauthorized resource.");
 
     }
-
-    @Test
-    void testHasAccess() {
-    }
-
-    @Test
-    void testHasAccess1() {
-    }
-
-    @Test
-    void createExecutionContext() {
-    }
 }
