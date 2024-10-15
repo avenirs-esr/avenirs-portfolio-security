@@ -7,3 +7,4 @@ GRANT ALL PRIVILEGES ON DATABASE avenirs_access_control_test TO avenirs_security
 
 \c avenirs_access_control_test
 CREATE SCHEMA IF NOT EXISTS test AUTHORIZATION avenirs_security_admin_test;
+CREATE EXTENSION IF NOT EXISTS citext;

@@ -165,7 +165,7 @@ databaseChangeLog:
                    nullable:  false
            - column:
                name: method
-               type: VARCHAR(8)
+               type: CITEXT
                constraints:
                    nullable:  false
            - column:
