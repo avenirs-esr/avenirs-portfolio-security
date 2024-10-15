@@ -28,9 +28,11 @@ public abstract class RBACActionRouteSpecificationHelper {
             log.trace("filterByURIAndMethod, uri: {}",uri);
             log.trace("filterByURIAndMethod, method: {}",method);
 
+            String lcMethod = method == null ? method: method.toLowerCase();
+
             return criteriaBuilder.and(
                 criteriaBuilder.equal(root.get(RBACActionRoute_.uri),uri),
-                criteriaBuilder.equal(root.get(RBACActionRoute_.method),method)
+                criteriaBuilder.equal(criteriaBuilder.lower(root.get(RBACActionRoute_.method)), lcMethod)
             );
         };
     }
