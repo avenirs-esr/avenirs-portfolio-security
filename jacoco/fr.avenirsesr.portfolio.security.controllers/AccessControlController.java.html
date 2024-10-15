@@ -14,7 +14,7 @@ import fr.avenirsesr.portfolio.security.models.AccessControlResponse;
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.models.RBACAction;
 import fr.avenirsesr.portfolio.security.models.RBACActionRoute;
-import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecification;
+import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecificationHelper;
 import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
@@ -58,7 +58,7 @@ import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 <span class="fc" id="L58">                .setMethod(method);</span>
 <span class="pc bpc" id="L59" title="2 of 4 branches missed.">        if (StringUtils.hasLength(uri) &amp;&amp; StringUtils.hasLength(method)) {</span>
 <span class="fc" id="L60">            RBACActionRoute actionRoute = actionRouteService.getAllActionRoutesBySpecification(</span>
-<span class="fc" id="L61">                    RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);</span>
+<span class="fc" id="L61">                    RBACActionRouteSpecificationHelper.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);</span>
 <span class="fc" id="L62">            log.trace(&quot;hasAccess, actionRoute: {} &quot;, actionRoute);</span>
 
 <span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (actionRoute != null) {</span>
