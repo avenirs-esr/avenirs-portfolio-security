@@ -1,8 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -14,11 +13,10 @@ import fr.avenirsesr.portfolio.security.repositories.RBACScopeRepository;
 /**
  * Scope Service
  */
+
+@Slf4j
 @Service
 public class RBACScopeService {
-	
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(RBACScopeService.class);
 	
 	/** Scope repository. */
 	@Autowired
@@ -32,7 +30,7 @@ public class RBACScopeService {
 	 */
 	public List<RBACScope> getAllScopesBySpecification(Specification<RBACScope> specification) {
 		
-		LOGGER.trace("getAllScopesByPredicate, specification: {}", specification);
+		log.trace("getAllScopesByPredicate, specification: {}", specification);
 		return scopeRepository.findAll(specification);
 	}
 	

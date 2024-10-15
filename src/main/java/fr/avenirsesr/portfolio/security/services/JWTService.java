@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -35,11 +34,10 @@ import io.jsonwebtoken.security.SignatureException;
  * Service used to checks and parse JWT. 
  * @implNote Only RSA algorithms are supported to generate the public keys.
  */
+
+@Slf4j
 @Service()
 public class JWTService {
-
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
 
 	/** Mapping between jwt and cryptographic key algorithm (e.g. RS256 -> RSA). */
 	@Autowired
@@ -71,13 +69,13 @@ public class JWTService {
 			return extractModulusAndExponent(jwksResponse, kid);
 
 		} catch (RestClientResponseException e) {
-			LOGGER.error(
+			log.error(
 					"fetchModulusAndExponent, unable to fetch Modulus and Exponent. HTTP Status code: {}, response body",
 					e.getStatusCode().value(), e.getResponseBodyAsString());
-			LOGGER.error("Excetion: ", e);
+			log.error("Excetion: ", e);
 
 		} catch (Exception e) {
-			LOGGER.error("Excetion: ", e);
+			log.error("Excetion: ", e);
 		}
 		return Optional.empty();
 	}
@@ -114,7 +112,7 @@ public class JWTService {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.error("extractModulusAndExponent, error", e);
+			log.error("extractModulusAndExponent, error", e);
 		}
 		return Optional.empty();
 	}
@@ -136,17 +134,17 @@ public class JWTService {
 		
 			final Optional<String> keyAlgo = algoMapper.mapJWTToCryptographicKey(alg);
 			if (keyAlgo.isEmpty()) {
-				LOGGER.error("generatePublicKey, unable to map jwt alg {}, from mapping defined in properties", alg);
+				log.error("generatePublicKey, unable to map jwt alg {}, from mapping defined in properties", alg);
 				return Optional.empty();
 			}
 			
 			KeyFactory keyFactory = KeyFactory.getInstance(keyAlgo.get());
 			return Optional.of(keyFactory.generatePublic(rsaPublicKeySpec));
 		} catch (NoSuchAlgorithmException e) {
-			LOGGER.error("generateRSAPublicKey, invalid algorim alg: {}", alg);
-			LOGGER.error("generateRSAPublicKey", e);
+			log.error("generateRSAPublicKey, invalid algorim alg: {}", alg);
+			log.error("generateRSAPublicKey", e);
 		} catch (InvalidKeySpecException e) {
-			LOGGER.error("generateRSAPublicKey", e);
+			log.error("generateRSAPublicKey", e);
 		}
 		return Optional.empty();
 	}
@@ -166,7 +164,7 @@ public class JWTService {
 				String kid = jsonObject.getString("kid");
 
 				if (!StringUtils.hasLength(kid)) {
-					LOGGER.error("getPublicKey, Unable to fetch kid from idToken: {}", idToken);
+					log.error("getPublicKey, Unable to fetch kid from idToken: {}", idToken);
 					return Optional.empty();
 				}
 
@@ -175,7 +173,7 @@ public class JWTService {
 					String alg = jsonObject.getString("alg");
 
 					if (!StringUtils.hasLength(alg)) {
-						LOGGER.error("getPublicKey, Unable to fetch alg from idToken: {}", idToken);
+						log.error("getPublicKey, Unable to fetch alg from idToken: {}", idToken);
 						return Optional.empty();
 					}
 					
@@ -188,7 +186,7 @@ public class JWTService {
 					Optional<PublicKey> publicKey = this.generateRSAPublicKey(alg, modulusAndExponent.get());
 
 					if (publicKey.isEmpty()) {
-						LOGGER.error("getPublicKey, Error while trying to generate public key from kid{}, idToken: {}",
+						log.error("getPublicKey, Error while trying to generate public key from kid{}, idToken: {}",
 								kid, idToken);
 						return Optional.empty();
 					}
@@ -198,9 +196,9 @@ public class JWTService {
 				return Optional.of(this.keysRepository.get(kid));
 
 			} catch (JSONException e) {
-				LOGGER.error("getPublicKey invalid JSON", e);
+				log.error("getPublicKey invalid JSON", e);
 			} catch (Exception e) {
-				LOGGER.error("getPublicKey", e);
+				log.error("getPublicKey", e);
 			}
 		}
 		return Optional.empty();
@@ -219,7 +217,7 @@ public class JWTService {
 		}
 		final Optional<PublicKey> publicKey = getPublicKey(accessTokenResponse.getIdToken());
 		if (publicKey.isEmpty()) {
-			LOGGER.error("Empty public key while trying to fetch claims from accessTokenResponse: {}",
+			log.error("Empty public key while trying to fetch claims from accessTokenResponse: {}",
 					accessTokenResponse);
 			return Optional.empty();
 		}
@@ -233,7 +231,7 @@ public class JWTService {
 
 			return Optional.of(claims);
 		} catch (SignatureException e) {
-			LOGGER.error("Invalid signature of access token in access token response: {}", accessTokenResponse);
+			log.error("Invalid signature of access token in access token response: {}", accessTokenResponse);
 			return Optional.empty();
 		}
 	}

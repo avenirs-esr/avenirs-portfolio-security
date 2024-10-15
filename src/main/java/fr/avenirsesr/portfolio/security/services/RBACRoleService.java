@@ -1,8 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +12,10 @@ import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
 /**
  * Role Service
  */
+
+@Slf4j
 @Service
 public class RBACRoleService {
-	
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(RBACRoleService.class);
 	
 	@Autowired
 	private RBACRoleRepository roleRepository;
@@ -28,7 +26,7 @@ public class RBACRoleService {
 	 * @return The role with id roleId.
 	 */
 	public RBACRole getRole(final Long roleId){
-		LOGGER.trace("getRole");
+		log.trace("getRole");
 		return this.roleRepository.findById(roleId).get();
 	}
 	
@@ -37,7 +35,7 @@ public class RBACRoleService {
 	 * @return All the roles.
 	 */
 	public List<RBACRole> getAllRoles() {
-		LOGGER.trace("getAllRoles");
+		log.trace("getAllRoles");
 		return this.roleRepository.findAll();
 	}
 	
@@ -47,8 +45,8 @@ public class RBACRoleService {
 	 * @return The new created role.
 	 */
 	public RBACRole createRole(RBACRole role) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("createRole, role: " + role);
+		if (log.isTraceEnabled()) {
+			log.trace("createRole, role: " + role);
 		};
 		return this.roleRepository.save(role);
 	}
@@ -59,8 +57,8 @@ public class RBACRoleService {
 	 * @return The updated role.
 	 */
 	public RBACRole  updateRole(RBACRole role) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("updateRole, role: " + role);
+		if (log.isTraceEnabled()) {
+			log.trace("updateRole, role: " + role);
 		};
 		RBACRole storedRole = this.roleRepository.findById(role.getId()).get();
 		
@@ -77,8 +75,8 @@ public class RBACRoleService {
 	 * @param roleId The id of the role to delete.
 	 */
 	public void deleteRole(Long roleId) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("deleteRole, roleId: " + roleId);
+		if (log.isTraceEnabled()) {
+			log.trace("deleteRole, roleId: " + roleId);
 		};
 		this.roleRepository.deleteById(roleId);
 	}

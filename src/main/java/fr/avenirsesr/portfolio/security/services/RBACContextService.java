@@ -3,17 +3,13 @@
  */
 package fr.avenirsesr.portfolio.security.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.models.RBACContext;
-import fr.avenirsesr.portfolio.security.models.Structure;
 import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
 
 /**
@@ -33,11 +29,11 @@ import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
  * <h2>Since:</h2>
  * 1 Oct 2024
  */
+
+@Slf4j
 @Service
 public class RBACContextService {
-  /** Logger */
-  private static final Logger LOGGER = LoggerFactory.getLogger(RBACContextService.class);
-  
+   
   @Autowired
   private RBACContextRepository contextRepository;
  
@@ -46,7 +42,7 @@ public class RBACContextService {
    * @return All contexts.
    */
   public List<RBACContext> getAllContexts() {
-      LOGGER.trace("getAllContexts");
+      log.trace("getAllContexts");
       return this.contextRepository.findAll();
   }
   
@@ -56,7 +52,7 @@ public class RBACContextService {
    * @return The saved context.
    */
   public RBACContext createContext(RBACContext context) {
-      LOGGER.trace("createContext, context: {}", context);
+      log.trace("createContext, context: {}", context);
       return this.contextRepository.save(context);
   }
   
@@ -65,7 +61,7 @@ public class RBACContextService {
    * @param context The context to delete.
    */
   public void deleteAssignment(RBACContext context) {
-      LOGGER.trace("deleteAssignment, context: {}", context);
+      log.trace("deleteAssignment, context: {}", context);
       this.contextRepository.delete(context);
   }
   
@@ -74,7 +70,7 @@ public class RBACContextService {
    * @param contextId The id of the context to delete.
    */
   public void deleteContextById(Long contextId) {
-      LOGGER.trace("deleteAssignment, contextId: {}", contextId);
+      log.trace("deleteAssignment, contextId: {}", contextId);
        
       
        this.contextRepository.deleteById(contextId);

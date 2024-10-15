@@ -2,8 +2,7 @@ package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +13,10 @@ import fr.avenirsesr.portfolio.security.repositories.PrincipalRepository;
 /**
  * Service for Principal.
  */
+
+@Slf4j
 @Service
 public class PrincipalService {
-	
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalService.class);
 	
 	@Autowired
 	private PrincipalRepository principalRepository;
@@ -29,7 +27,7 @@ public class PrincipalService {
 	 * @return All the principals.
 	 */
 	public List<Principal> getAllPrincipals() {
-		LOGGER.trace("getAllPrincipals");
+		log.trace("getAllPrincipals");
 		return this.principalRepository.findAll();
 	}
 	
@@ -38,7 +36,7 @@ public class PrincipalService {
 	 * @return The principal.
 	 */
 	public Optional<Principal> getPrincipalByLogin(String login) {
-		LOGGER.trace("getPrincipalByLogin, login: {}", login);
+		log.trace("getPrincipalByLogin, login: {}", login);
 		return this.principalRepository.findByLogin(login);
 	}
 

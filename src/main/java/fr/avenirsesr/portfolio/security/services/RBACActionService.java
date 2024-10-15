@@ -2,8 +2,7 @@ package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -15,11 +14,10 @@ import fr.avenirsesr.portfolio.security.repositories.RBACActionRepository;
 /**
  * Action Service
  */
+
+@Slf4j
 @Service
 public class RBACActionService {
-	
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(RBACActionService.class);
 	
 	@Autowired
 	private RBACActionRepository actionRepository;
@@ -30,7 +28,7 @@ public class RBACActionService {
 	 * @return The action with id actionId.
 	 */
 	public Optional<RBACAction> getActionById(final Long actionId){
-		LOGGER.trace("getAction");
+		log.trace("getAction");
 		return this.actionRepository.findById(actionId);
 	}
 	
@@ -48,7 +46,7 @@ public class RBACActionService {
 	 * @return All the action.
 	 */
 	public List<RBACAction> getAllActions() {
-		LOGGER.trace("getAllActions");
+		log.trace("getAllActions");
 		return this.actionRepository.findAll();
 	}
 	
@@ -60,7 +58,7 @@ public class RBACActionService {
 	 */
 		public List<RBACAction> getAllActionsBySpecification(Specification<RBACAction> specification) {
 		
-		LOGGER.trace("getAllActionsByPredicate, specification: {}" + specification);
+		log.trace("getAllActionsByPredicate, specification: {}" + specification);
 		return actionRepository.findAll(specification);
 	}
 	

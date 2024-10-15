@@ -3,8 +3,7 @@ package fr.avenirsesr.portfolio.security.controllers;
 import java.io.IOException;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,11 +23,10 @@ import jakarta.servlet.http.HttpServletResponse;
  * Interact with an OIDC provider, Apereo CAS for instance.
  * Can retrieve/Validate/introspect an access token.
  */
+
+@Slf4j
 @RestController
 public class AuthenticationController {
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
-	
 	/** Authentication service. */
 	@Autowired 
 	private AuthenticationService authenticationService;
@@ -44,7 +42,7 @@ public class AuthenticationController {
 	public void oidcCallback(@RequestHeader(value="x-forwarded-host") Optional<String> forwardHost,
 			HttpServletResponse response,
 			@RequestParam Optional<String> code) throws IOException {
-		LOGGER.trace("oidcCallback");
+		log.trace("oidcCallback");
 		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost.orElse("localhost"), code.orElse("NO_PROVIDED_CODE")));
 	}
 		
@@ -59,7 +57,7 @@ public class AuthenticationController {
 	
 	public void redirect(@RequestHeader(value="x-forwarded-host") Optional<String> host,
 			HttpServletResponse response) throws IOException{
-		LOGGER.trace("redirect");
+		log.trace("redirect");
 		response.sendRedirect(this.authenticationService.generateServiceURL(host.orElse("localhost")));
 	}
 	

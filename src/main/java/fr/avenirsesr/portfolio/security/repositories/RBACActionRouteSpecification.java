@@ -14,6 +14,7 @@ import jakarta.persistence.criteria.Root;
  * Assignment specification for ActionRoute model. Used to make queries based on
  * predicates.
  */
+
 public interface RBACActionRouteSpecification {
 
     /**

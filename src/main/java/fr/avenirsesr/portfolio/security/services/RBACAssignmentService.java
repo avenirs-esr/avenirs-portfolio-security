@@ -2,8 +2,7 @@ package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
 
 import fr.avenirsesr.portfolio.security.models.RBACAssignmentPK;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -13,11 +12,9 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 
 
 
+@Slf4j
 @Service
 public class RBACAssignmentService {
-	
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(RBACAssignmentService.class);
 	
 	@Autowired
 	private RBACAssignmentRepository assignmentRepository;
@@ -27,7 +24,7 @@ public class RBACAssignmentService {
 	 * @return All assignments.
 	 */
 	public List<RBACAssignment> getAllAssignments() {
-		LOGGER.trace("getAllAssignments");
+		log.trace("getAllAssignments");
 		return this.assignmentRepository.findAll();
 	}
 	
@@ -39,7 +36,7 @@ public class RBACAssignmentService {
 	 * @return The  filtered assignments.
 	 */
 	public List<RBACAssignment> getAllAssignmentsBySpecification(Specification<RBACAssignment> specification) {
-		LOGGER.trace("getAllAssignmentsByPredicate, specification: {}", specification);
+		log.trace("getAllAssignmentsByPredicate, specification: {}", specification);
 		return assignmentRepository.findAll(specification);
 	}
 	
@@ -49,7 +46,7 @@ public class RBACAssignmentService {
 	 * @return The saved assignment.
 	 */
 	public RBACAssignment createAssignment(RBACAssignment assignment) {
-		LOGGER.trace("createAssignment, assignment: {}", assignment);
+		log.trace("createAssignment, assignment: {}", assignment);
 		return this.assignmentRepository.save(assignment);
 	}
 	
@@ -58,7 +55,7 @@ public class RBACAssignmentService {
 	 * @param assignment The assignment to delete.
 	 */
 	public void deleteAssignment(RBACAssignment assignment) {
-		LOGGER.trace("deleteAssignment, assignment: {}", assignment);
+		log.trace("deleteAssignment, assignment: {}", assignment);
 		this.assignmentRepository.delete(assignment);
 	}
 
@@ -67,7 +64,7 @@ public class RBACAssignmentService {
 	 * @param assignment The assignment to update.
 	 */
 	public void updateAssignment(RBACAssignment assignment) {
-		LOGGER.trace("deleteAssignment, assignment: {}", assignment);
+		log.trace("deleteAssignment, assignment: {}", assignment);
 		this.assignmentRepository.save(assignment);
 	}
 	
@@ -76,7 +73,7 @@ public class RBACAssignmentService {
 	 * @param assignmentId The id of the assignment to delete.
 	 */
 	public void deleteAssignmentById(RBACAssignmentPK assignmentId) {
-		LOGGER.trace("deleteAssignment, assignmentId: {}", assignmentId);
+		log.trace("deleteAssignment, assignmentId: {}", assignmentId);
 		this.assignmentRepository.deleteById(assignmentId);
 	}
 }

@@ -1,7 +1,6 @@
 package fr.avenirsesr.portfolio.security.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +19,11 @@ import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 
+
+@Slf4j
 @RestController
 public class AccessControlController {
-
-    /**
-     * Logger
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccessControlController.class);
-
+    
     /**
      * Authentication service used to retrieve the user information.
      */
@@ -50,10 +46,10 @@ public class AccessControlController {
     public ResponseEntity<AccessControlResponse> hasAccess(@RequestHeader(value = "x-authorization") String token,
                                                            @RequestParam String uri, @RequestParam String method,
                                                            @RequestParam(required = false, name = "resourceId") Long resourceId) {
-        LOGGER.trace("hasAccess, token: {} ", token);
-        LOGGER.trace("hasAccess, uri: {} ", uri);
-        LOGGER.trace("hasAccess, method: {} ", method);
-        LOGGER.trace("hasAccess, resourceId: {} ", resourceId);
+        log.trace("hasAccess, token: {} ", token);
+        log.trace("hasAccess, uri: {} ", uri);
+        log.trace("hasAccess, method: {} ", method);
+        log.trace("hasAccess, resourceId: {} ", resourceId);
 
         AccessControlResponse response = new AccessControlResponse()
                 .setToken(token)
@@ -63,23 +59,23 @@ public class AccessControlController {
         if (StringUtils.hasLength(uri) && StringUtils.hasLength(method)) {
             RBACActionRoute actionRoute = actionRouteService.getAllActionRoutesBySpecification(
                     RBACActionRouteSpecification.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
-            LOGGER.trace("hasAccess, actionRoute: {} ", actionRoute);
+            log.trace("hasAccess, actionRoute: {} ", actionRoute);
 
             if (actionRoute != null) {
 
                 RBACAction action = actionRoute.getAction();
-                LOGGER.trace("hasAccess, action: {}", action);
+                log.trace("hasAccess, action: {}", action);
                 response.setActionName(action.getName());
                 OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
-                LOGGER.trace("hasAccess, introspectResponse: {}", introspectResponse);
+                log.trace("hasAccess, introspectResponse: {}", introspectResponse);
 
                 if (introspectResponse != null && introspectResponse.isActive()) {
                     String login = introspectResponse.getUniqueSecurityName();
-                    LOGGER.trace("hasAccess, login: {}", login);
+                    log.trace("hasAccess, login: {}", login);
                     response.setLogin(login);
 
                     boolean granted = accessControlService.hasAccess(login, action.getId(), resourceId);
-                    LOGGER.trace("hasAccess, granted: {}", granted);
+                    log.trace("hasAccess, granted: {}", granted);
 
                     response.setGranted(granted);
                     return response.isGranted() ? ResponseEntity.ok(response)
@@ -87,7 +83,7 @@ public class AccessControlController {
                 }
             }
         }
-        LOGGER.trace("hasAccess, response: {}", response);
+        log.trace("hasAccess, response: {}", response);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
     }
 

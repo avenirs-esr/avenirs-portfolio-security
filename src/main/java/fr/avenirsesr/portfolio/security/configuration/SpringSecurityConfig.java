@@ -3,8 +3,7 @@
  */
 package fr.avenirsesr.portfolio.security.configuration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +16,12 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * Configuration for spring security.
  */
+
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
-	/** Logger */
-	private static final Logger LOGGER = LoggerFactory.getLogger(SpringSecurityConfig.class);
-	
+
 	@Value("${avenirs.access.control.roles}")
 	private String roles;
 
@@ -38,11 +37,11 @@ public class SpringSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> { 
-		LOGGER.debug("filterChain, Configuring Spring security");
-		LOGGER.debug("filterChain, Permit All for:")	;	
-		LOGGER.debug("filterChain, Permit All for roles: {}", roles);	
-		LOGGER.debug("filterChain, Permit All for oidcCallback: {}", oidcCallback);	
-		LOGGER.debug("filterChain, Permit All for oidcRedirect: {}", oidcRedirect);	
+		log.debug("filterChain, Configuring Spring security");
+		log.debug("filterChain, Permit All for:")	;	
+		log.debug("filterChain, Permit All for roles: {}", roles);	
+		log.debug("filterChain, Permit All for oidcCallback: {}", oidcCallback);	
+		log.debug("filterChain, Permit All for oidcRedirect: {}", oidcRedirect);	
 		auth.requestMatchers(roles).permitAll();
 		auth.requestMatchers(oidcCallback).permitAll();
 		auth.requestMatchers(oidcRedirect).permitAll();
