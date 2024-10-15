@@ -50,7 +50,8 @@ public class AccessControlService {
 	RBACAssignmentService assignmentService;
 
 	/** Cache for the permissions. */
-	private final Map<String, List<RBACPermission>> permissionsByActionName = new HashMap<>();
+	private final Map<Long, List<RBACPermission>> permissionsByActionId = new HashMap<>();
+
 
 	/**
 	 * Checks that a principal has access to a resource to perform an action,
@@ -88,26 +89,6 @@ public class AccessControlService {
 
 		return checkGrantedPermissions(requiredPermissions, login, resourceId);
 	}
-
-	/**
-	 * Checks that a principal has access to a resource to perform an action,
-	 * without application context.
-	 * 
-	 * @param login      The login of the principal.
-	 * @param actionName The name of the action to perform.
-	 * @param resourceId The id of the accessed resource.
-	 * @return True if the principal has access to the resource.
-	 */
-	boolean hasAccess(String login, String actionName, Long resourceId) {
-		log.trace("hasAccess, login: {}", login);
-		log.trace("hasAccess, actionName: {}", actionName);
-		log.trace("hasAccess, resourceId: {}", resourceId);
-
-		List<RBACPermission> requiredPermissions = this.fetchPermissions(actionName);
-		log.trace("hasAccess, requiredPermissions: {}", requiredPermissions);
-		return checkGrantedPermissions(requiredPermissions, login, resourceId);
-	}
-	
 	
 	/**
 	 * Checks the granted permission for a user regarding the required ones.
@@ -126,9 +107,9 @@ public class AccessControlService {
 			List<RBACAssignment> validAssignment = filterByApplicationContext(principalAssignments);
 			log.trace("hasAccess, validAssignment: {}", validAssignment);
 
-			HashSet<RBACPermission> principalPermissions = validAssignment.stream().map(a -> {
-				return a.getRole().getPermissions();
-			}).flatMap(Collection::stream).collect(Collectors.toCollection(HashSet::new));
+			HashSet<RBACPermission> principalPermissions = validAssignment.stream().map(a ->  a.getRole().getPermissions())
+					.flatMap(Collection::stream)
+					.collect(Collectors.toCollection(HashSet::new));
 			log.trace("hasAccess, principalPermissions: {}", principalPermissions);
 
 			boolean accessGranted = principalPermissions.containsAll(requiredPermissions);
@@ -143,7 +124,7 @@ public class AccessControlService {
 	  log.trace("filterByApplicationContext, principalAssignments: {}", principalAssignments);
 	  
 	  if (CollectionUtils.isEmpty(principalAssignments)) {
-	    return new ArrayList<RBACAssignment>();
+	    return new ArrayList<>();
 	  }
 	    Principal principal = principalAssignments.getFirst().getPrincipal();
 	    RBACContext executionContext = createExecutionContext(principal);
@@ -203,25 +184,6 @@ public class AccessControlService {
 	  
 	  return true;
 	}
-	
-
-	/**
-	 * Fetches the permissions associated to an action.
-	 * 
-	 * @param actionName The name of the action.
-	 * @return The permission associated to the action or null if the action is not
-	 *         found.
-	 */
-	private List<RBACPermission> fetchPermissions(String actionName) {
-		if (actionName != null && !this.permissionsByActionName.containsKey(actionName)) {
-
-			RBACAction action = this.actionService.getActionByName(actionName).orElse(null);
-			List<RBACPermission> permissions = action == null ? null : action.getPermissions();
-			permissionsByActionName.put(actionName, permissions);
-		}
-		return permissionsByActionName.get(actionName);
-
-	}
 
 	/**
 	 * Fetches the permissions associated to an action.
@@ -232,10 +194,13 @@ public class AccessControlService {
 	 */
 	private List<RBACPermission> fetchPermissions(Long actionId) {
 
-		Optional<RBACAction> action = this.actionService.getActionById(actionId);
+		if (actionId != null && !this.permissionsByActionId.containsKey(actionId)) {
 
-		String actionName = action.isEmpty() ? "" : action.get().getName();
-		return fetchPermissions(actionName);
+			RBACAction action = this.actionService.getActionById(actionId).orElse(null);
+			List<RBACPermission> permissions = action == null ? null : action.getPermissions();
+			permissionsByActionId.put(actionId, permissions);
+		}
+		return permissionsByActionId.get(actionId);
 
 	}
 }
