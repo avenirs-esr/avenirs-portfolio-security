@@ -300,8 +300,6 @@ void updateAssignment() {
                 .setPrincipal(principal2)
                 .setScope(new RBACScope().setResources(Collections.singletonList(resource3))));
 
-       // assertEquals(4, assignmentService.getAllAssignments().size(), "Assignments after inserts");
-
         // Checks assignments for principal 1 and resource 1
         List<RBACAssignment> fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(principalLogin1, resourceId1));
         assertEquals(3, fetchedAssignments.size(), "Number of fetched Assignments for principal 1 and resource 1");
@@ -310,6 +308,7 @@ void updateAssignment() {
                 .extracting(assignment -> assignment.getPrincipal().getLogin())
                 .allMatch(login -> login.equals(principalLogin1));
 
+        // Resource
         assertThat(fetchedAssignments)
                 .as("Checks that all assignments are for resource 1")
                 .extracting(assignment -> assignment.getScope().getResources())
@@ -320,9 +319,7 @@ void updateAssignment() {
                 );
 
 
-
-
-        // Checks assignments for principal 1 and resource 1
+        // Checks assignments for principal 1 and resource 1 or 2
         fetchedAssignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(principalLogin1, resourceId1, resourceId2));
         assertEquals(4, fetchedAssignments.size(), "Number of fetched Assignments for principal 1 and resource 1 and 2");
         assertThat(fetchedAssignments)
@@ -330,7 +327,7 @@ void updateAssignment() {
                 .extracting(assignment -> assignment.getPrincipal().getLogin())
                 .allMatch(login -> login.equals(principalLogin1));
 
-
+        // Checks resources
         List<Long> expectedResourceIds = Arrays.asList(resourceId1, resourceId2);
         assertThat(fetchedAssignments)
                 .as("Checks that all assignments are for resource 1 or 2")
