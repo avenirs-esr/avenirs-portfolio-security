@@ -39,9 +39,8 @@ class PrincipalServiceTest {
 	@Test
 	void testGetAllPrincipals() {
 		List <Principal> actual  = principalService.getAllPrincipals();
-		System.out.println("actual:" + actual);
 		assertThat(actual).hasSize(actual.size());
-		assertThat(actual.stream().map(Principal::getLogin)).contains(expectedPrincipals);
+		assertThat(actual.stream().map(Principal::getLogin)).containsExactly(expectedPrincipals);
 	}
 
 	@Test
