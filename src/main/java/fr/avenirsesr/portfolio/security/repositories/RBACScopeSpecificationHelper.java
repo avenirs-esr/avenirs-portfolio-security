@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.repositories;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import fr.avenirsesr.portfolio.security.models.RBACResource_;
@@ -8,6 +9,8 @@ import fr.avenirsesr.portfolio.security.models.RBACScope_;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+
+import java.util.Arrays;
 
 /**
  * 
@@ -25,6 +28,8 @@ import jakarta.persistence.criteria.Root;
  * <h2>Since:</h2>
  * 1 Oct 2024
  */
+
+@Slf4j
 public abstract class RBACScopeSpecificationHelper {
 		
 	/**
@@ -33,6 +38,7 @@ public abstract class RBACScopeSpecificationHelper {
 	 * @return The Specification of RBACScope.
 	 */
 	public static Specification<RBACScope> filterByResources(Long...resourceIds) {
+		log.trace("filterByResources resourceIds: {}", Arrays.toString(resourceIds));
 		return (Root<RBACScope> root, CriteriaQuery<?> query,  CriteriaBuilder criteriaBuilder) -> {
 			return root.join(RBACScope_.resources).get(RBACResource_.id).in((Object[]) resourceIds);
 		};	
