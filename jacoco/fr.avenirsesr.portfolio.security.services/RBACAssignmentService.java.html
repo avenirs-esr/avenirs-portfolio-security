@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.models.RBACAssignment;
 import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 <span class="fc" id="L15">@Slf4j</span>
@@ -23,9 +23,10 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 	 * Gives all the assignments.
 	 * @return All assignments.
 	 */
+	@Transactional(readOnly = true)
 	public List&lt;RBACAssignment&gt; getAllAssignments() {
-<span class="fc" id="L27">		log.trace(&quot;getAllAssignments&quot;);</span>
-<span class="fc" id="L28">		return this.assignmentRepository.findAll();</span>
+<span class="fc" id="L28">		log.trace(&quot;getAllAssignments&quot;);</span>
+<span class="fc" id="L29">		return this.assignmentRepository.findAll();</span>
 	}
 	
 	
@@ -35,9 +36,10 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 	 * @param specification The specification used to filter the assignments.
 	 * @return The  filtered assignments.
 	 */
+	@Transactional(readOnly = true)
 	public List&lt;RBACAssignment&gt; getAllAssignmentsBySpecification(Specification&lt;RBACAssignment&gt; specification) {
-<span class="fc" id="L39">		log.trace(&quot;getAllAssignmentsByPredicate, specification: {}&quot;, specification);</span>
-<span class="fc" id="L40">		return assignmentRepository.findAll(specification);</span>
+<span class="fc" id="L41">		log.trace(&quot;getAllAssignmentsByPredicate, specification: {}&quot;, specification);</span>
+<span class="fc" id="L42">		return assignmentRepository.findAll(specification);</span>
 	}
 	
 	/**
@@ -45,37 +47,31 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 	 * @param assignment The assignment to create.
 	 * @return The saved assignment.
 	 */
+	@Transactional
 	public RBACAssignment createAssignment(RBACAssignment assignment) {
-<span class="fc" id="L49">		log.trace(&quot;createAssignment, assignment: {}&quot;, assignment);</span>
-<span class="fc" id="L50">		return this.assignmentRepository.save(assignment);</span>
+<span class="fc" id="L52">		log.trace(&quot;createAssignment, assignment: {}&quot;, assignment);</span>
+<span class="fc" id="L53">		return this.assignmentRepository.save(assignment);</span>
 	}
 
 	/**
 	 * Updates an assignment.
 	 * @param assignment The assignment to update.
 	 */
+	@Transactional
 	public void updateAssignment(RBACAssignment assignment) {
-<span class="fc" id="L58">		log.trace(&quot;updateAssignment, assignment: {}&quot;, assignment);</span>
-<span class="fc" id="L59">		this.assignmentRepository.save(assignment);</span>
-<span class="fc" id="L60">	}</span>
-
-	/**
-	 * Deletes an assignment.
-	 * @param assignment The assignment to delete.
-	 */
-	public void deleteAssignment(RBACAssignment assignment) {
-<span class="fc" id="L67">		log.trace(&quot;deleteAssignment, assignment: {}&quot;, assignment);</span>
-<span class="fc" id="L68">		this.assignmentRepository.delete(assignment);</span>
-<span class="fc" id="L69">	}</span>
+<span class="fc" id="L62">		log.trace(&quot;updateAssignment, assignment: {}&quot;, assignment);</span>
+<span class="fc" id="L63">		this.assignmentRepository.save(assignment);</span>
+<span class="fc" id="L64">	}</span>
 
 
 	/**
 	 * Deletes an assignment by id.
 	 * @param assignmentId The id of the assignment to delete.
 	 */
-	public void deleteAssignmentById(RBACAssignmentPK assignmentId) {
-<span class="fc" id="L77">		log.trace(&quot;deleteAssignment, assignmentId: {}&quot;, assignmentId);</span>
-<span class="fc" id="L78">		this.assignmentRepository.deleteById(assignmentId);</span>
-<span class="fc" id="L79">	}</span>
+	@Transactional
+	public void deleteAssignment(RBACAssignmentPK assignmentId) {
+<span class="fc" id="L73">		log.trace(&quot;deleteAssignment, assignmentId: {}&quot;, assignmentId);</span>
+<span class="fc" id="L74">		this.assignmentRepository.deleteById(assignmentId);</span>
+<span class="fc" id="L75">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
