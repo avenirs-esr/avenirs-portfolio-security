@@ -98,13 +98,17 @@ class RBACRoleServiceTest {
                         .collect(Collectors.toList()));
 
         RBACRole savedRole = roleService.createRole(newRole);
-
         assertNotNull(savedRole);
 
-        assertEquals(newRoleName, savedRole.getName(), "new Role name");
-        assertEquals(newRoleDescription, savedRole.getDescription(), "new Role description");
+        Optional<RBACRole> response = roleService.getRoleById(savedRole.getId());
+        assertTrue(response.isPresent());
+        RBACRole fetchedRole = response.get();
 
-        assertThat(savedRole.getPermissions())
+
+        assertEquals(newRoleName, fetchedRole.getName(), "new Role name");
+        assertEquals(newRoleDescription, fetchedRole.getDescription(), "new Role description");
+
+        assertThat(fetchedRole.getPermissions())
                 .as("New role permission")
                 .extracting(RBACPermission::getName)
                 .containsExactlyInAnyOrder(newRolePermissionNames);
