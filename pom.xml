@@ -191,7 +191,13 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>fr/avenirsesr/portfolio/security/models/*_*.class</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
+
                 </executions>
             </plugin>
 
