@@ -53,29 +53,27 @@ class RBACRoleServiceTest {
     @Test
     void getRoleById() {
 
-        Optional<RBACRole> response = roleService.getRoleById(roleId);
-        assertTrue(response.isPresent());
+        RBACRole role = roleService.getRoleById(roleId)
+                .orElseThrow(() -> new AssertionError("Role not found with ID: " + roleId));
 
-        RBACRole role = response.get();
         assertEquals(roleName, role.getName());
         assertEquals(roleDescription, role.getDescription());
 
-        response = roleService.getRoleById((long)allRoleNames.length + 1);
+        Optional<RBACRole> response = roleService.getRoleById((long)allRoleNames.length + 1);
         assertTrue(response.isEmpty());
     }
 
     @Test
     void getRoleByName() {
 
-        Optional<RBACRole> response = roleService.getRoleByName(roleName);
-        assertTrue(response.isPresent());
+        RBACRole role = roleService.getRoleByName(roleName)
+                .orElseThrow(() -> new AssertionError("Role not found with Name: " + roleName));
 
-        RBACRole role = response.get();
         assertEquals(roleId, role.getId());
         assertEquals(roleName, role.getName());
         assertEquals(roleDescription, role.getDescription());
 
-        response = roleService.getRoleByName(newRoleName);
+        Optional<RBACRole> response = roleService.getRoleByName(newRoleName);
         assertTrue(response.isEmpty());
     }
 
@@ -100,10 +98,8 @@ class RBACRoleServiceTest {
         RBACRole savedRole = roleService.createRole(newRole);
         assertNotNull(savedRole);
 
-        Optional<RBACRole> response = roleService.getRoleById(savedRole.getId());
-        assertTrue(response.isPresent());
-        RBACRole fetchedRole = response.get();
-
+        RBACRole fetchedRole = roleService.getRoleById(savedRole.getId())
+                .orElseThrow(() -> new AssertionError("Role not found with ID: " + savedRole.getId()));
 
         assertEquals(newRoleName, fetchedRole.getName(), "new Role name");
         assertEquals(newRoleDescription, fetchedRole.getDescription(), "new Role description");
@@ -141,9 +137,9 @@ class RBACRoleServiceTest {
 
          roleService.updateRole(updateRole);
 
-        Optional<RBACRole> response = roleService.getRoleById(savedRole.getId());
-        assertTrue(response.isPresent());
-        assertEquals(updatedName, response.get().getName(),"Updated role name");
+        RBACRole fetchedRole = roleService.getRoleById(savedRole.getId())
+                .orElseThrow(() -> new AssertionError("Role not found with ID: " + savedRole.getId()));
+        assertEquals(updatedName, fetchedRole.getName(),"Updated role name");
   }
 
     @Test
@@ -166,6 +162,7 @@ class RBACRoleServiceTest {
         assertTrue(fetchedRole.isPresent(), "Delete Role, present before delete");
 
         roleService.deleteRole(savedRole.getId());
+
         fetchedRole = roleService.getRoleById(savedRole.getId());
         assertFalse(fetchedRole.isPresent(), "Delete role, role deleted");
     }
