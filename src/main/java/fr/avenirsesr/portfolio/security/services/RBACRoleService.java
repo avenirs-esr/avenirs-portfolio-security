@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.models.RBACRole;
 import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -39,6 +40,7 @@ public class RBACRoleService {
 	 * @param roleId The id of the role to retrieve.
 	 * @return The Optional of role with id roleId.
 	 */
+	@Transactional(readOnly = true)
 	public Optional<RBACRole> getRoleById(final Long roleId){
 		log.trace("getRoleById roleId: {}", roleId);
 		return this.roleRepository.findById(roleId);
@@ -49,6 +51,7 @@ public class RBACRoleService {
 	 * @param roleName The name of the role to retrieve.
 	 * @return The Optional of role with name roleName.
 	 */
+	@Transactional(readOnly = true)
 	public Optional<RBACRole> getRoleByName(final String roleName) {
 		log.trace("getRoleByName roleName: {}", roleName);
 		return this.roleRepository.findByName(roleName);
@@ -58,6 +61,7 @@ public class RBACRoleService {
 	 * Gives all the roles.
 	 * @return All the roles.
 	 */
+	@Transactional(readOnly = true)
 	public List<RBACRole> getAllRoles() {
 		log.trace("getAllRoles");
 		return this.roleRepository.findAll();
@@ -68,6 +72,7 @@ public class RBACRoleService {
 	 * @param role The role to create.
 	 * @return The new created role.
 	 */
+	@Transactional
 	public RBACRole createRole(RBACRole role) {
 		log.trace("createRole, role: {}", role);
 		return this.roleRepository.save(role);
@@ -78,13 +83,16 @@ public class RBACRoleService {
 	 * @param role The role to update.
 	 * @return The updated role.
 	 */
+	@Transactional
 	public RBACRole  updateRole(RBACRole role) {
 		log.trace("updateRole, role: {}", role);
 		return this.roleRepository.findById(role.getId())
 				.map(storedRole -> {
-					storedRole.setName(role.getName());
-					storedRole.setDescription(role.getDescription());
-					return roleRepository.save(storedRole);
+					if (! storedRole.equals(role)) {
+						storedRole.setName(role.getName());
+						storedRole.setDescription(role.getDescription());
+					}
+					return storedRole;
 				})
 				.orElseThrow(() -> new EntityNotFoundException("Entity not found with ID: " + role.getId()));
 	}
@@ -93,6 +101,7 @@ public class RBACRoleService {
 	 * Deletes a role
 	 * @param roleId The id of the role to delete.
 	 */
+	@Transactional
 	public void deleteRole(Long roleId) {
 			log.trace("deleteRole, roleId: {}", roleId);
 		this.roleRepository.deleteById(roleId);

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.models.RBACAssignment;
 import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Slf4j
@@ -23,6 +23,7 @@ public class RBACAssignmentService {
 	 * Gives all the assignments.
 	 * @return All assignments.
 	 */
+	@Transactional(readOnly = true)
 	public List<RBACAssignment> getAllAssignments() {
 		log.trace("getAllAssignments");
 		return this.assignmentRepository.findAll();
@@ -35,6 +36,7 @@ public class RBACAssignmentService {
 	 * @param specification The specification used to filter the assignments.
 	 * @return The  filtered assignments.
 	 */
+	@Transactional(readOnly = true)
 	public List<RBACAssignment> getAllAssignmentsBySpecification(Specification<RBACAssignment> specification) {
 		log.trace("getAllAssignmentsByPredicate, specification: {}", specification);
 		return assignmentRepository.findAll(specification);
@@ -45,6 +47,7 @@ public class RBACAssignmentService {
 	 * @param assignment The assignment to create.
 	 * @return The saved assignment.
 	 */
+	@Transactional
 	public RBACAssignment createAssignment(RBACAssignment assignment) {
 		log.trace("createAssignment, assignment: {}", assignment);
 		return this.assignmentRepository.save(assignment);
@@ -54,6 +57,7 @@ public class RBACAssignmentService {
 	 * Updates an assignment.
 	 * @param assignment The assignment to update.
 	 */
+	@Transactional
 	public void updateAssignment(RBACAssignment assignment) {
 		log.trace("updateAssignment, assignment: {}", assignment);
 		this.assignmentRepository.save(assignment);
@@ -64,6 +68,7 @@ public class RBACAssignmentService {
 	 * Deletes an assignment by id.
 	 * @param assignmentId The id of the assignment to delete.
 	 */
+	@Transactional
 	public void deleteAssignment(RBACAssignmentPK assignmentId) {
 		log.trace("deleteAssignment, assignmentId: {}", assignmentId);
 		this.assignmentRepository.deleteById(assignmentId);
