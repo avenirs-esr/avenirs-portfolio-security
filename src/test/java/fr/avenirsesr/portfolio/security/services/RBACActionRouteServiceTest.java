@@ -42,12 +42,6 @@ class RBACActionRouteServiceTest {
 		RBACActionRoute actionRoute = response.get();
 		assertEquals(route, actionRoute.getUri());
 		assertTrue(HttpMethod.POST.name().equalsIgnoreCase(actionRoute.getMethod()));
-		//assertEquals(ACTION_NAME_1, actionRoute.getAction().getName());
-		
-//		actionRoute = actionRouteService.getAllActionRoutesBySpecification(RBACActionRouteSpecificationHelper.filterByURIAndMethod(ROUTE_2, METH_2)).get();
-//		assertEquals(ROUTE_2, actionRoute.getUri());
-//		assertEquals(METH_2, actionRoute.getMethod());
-//		assertEquals(ACTION_NAME_2, actionRoute.getAction().getName());
 	}
 
 }
