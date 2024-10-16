@@ -3,7 +3,9 @@ package fr.avenirsesr.portfolio.security.services;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+
 import fr.avenirsesr.portfolio.security.models.*;
 import fr.avenirsesr.portfolio.security.repositories.*;
 import org.junit.jupiter.api.*;
@@ -107,7 +109,7 @@ class RBACAssignmentServiceTest {
         assertEquals(1, assignments.size(), "One assignment registered");
 
         RBACAssignment fetchedAssignment = assignments.getFirst();
-        assertEquals(principal1.getId(),fetchedAssignment.getPrincipal().getId(), "Principal Id");
+        assertEquals(principal1.getId(), fetchedAssignment.getPrincipal().getId(), "Principal Id");
         assertNull(fetchedAssignment.getContext().getValidityStart(), "Context validity start");
         assertNull(fetchedAssignment.getContext().getValidityEnd(), "Context validity end");
         assertTrue(fetchedAssignment.getContext().getStructures().isEmpty(), "Context empty structures");
@@ -118,8 +120,8 @@ class RBACAssignmentServiceTest {
     }
 
     @Test
-void updateAssignment() {
-    List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+    void updateAssignment() {
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
         assertEquals(0, assignments.size(), "No assignment at start up");
 
         RBACScope scope = new RBACScope()
@@ -132,26 +134,36 @@ void updateAssignment() {
                 .setRole(owner)
                 .setPrincipal(principal1)
                 .setScope(scope);
-        assignment= assignmentService.createAssignment(assignment);
+        assignment = assignmentService.createAssignment(assignment);
 
         assignments = assignmentService.getAllAssignments();
+
         assertEquals(1, assignments.size(), "One assignment after creation");
 
         final String updatedScopeName = "updateAssignment Updated Value";
-        assignment.getScope().setName(updatedScopeName);
 
-        assignmentService.updateAssignment(assignment);
+        RBACScope updatedScope = new RBACScope()
+                .setId(assignment.getScope().getId())
+                .setName(updatedScopeName)
+                .setResources(assignment.getScope().getResources());
+
+        RBACAssignment updatedAssignment = new RBACAssignment()
+                .setContext(assignment.getContext())
+                .setRole(assignment.getRole())
+                .setPrincipal(assignment.getPrincipal())
+                .setScope(updatedScope);
+
+
+        assignmentService.updateAssignment(updatedAssignment);
         assignments = assignmentService.getAllAssignments();
         assertEquals(1, assignments.size(), "One assignment after update");
 
         RBACAssignment fetchedAssignment = assignments.getFirst();
         assertEquals(updatedScopeName, fetchedAssignment.getScope().getName(), "Scope name updated");
-
-
     }
 
     @Test
-    void deleteAssignment(){
+    void deleteAssignment() {
         List<RBACAssignment> assignments = assignmentService.getAllAssignments();
         assertEquals(0, assignments.size(), "No assignment at start up");
 
@@ -166,7 +178,7 @@ void updateAssignment() {
                 .setRole(owner)
                 .setPrincipal(principal1)
                 .setScope(scope);
-        assignment= assignmentService.createAssignment(assignment);
+        assignment = assignmentService.createAssignment(assignment);
 
         assignments = assignmentService.getAllAssignments();
         assertEquals(1, assignments.size(), "One assignment after create");
@@ -178,7 +190,7 @@ void updateAssignment() {
     }
 
     @Test
-    void deleteAssignmentById(){
+    void deleteAssignmentById() {
         List<RBACAssignment> assignments = assignmentService.getAllAssignments();
         assertEquals(0, assignments.size(), "No assignment at start up");
 
@@ -192,7 +204,7 @@ void updateAssignment() {
                 .setRole(owner)
                 .setPrincipal(principal1)
                 .setScope(scope);
-        assignment= assignmentService.createAssignment(assignment);
+        assignment = assignmentService.createAssignment(assignment);
 
         assignments = assignmentService.getAllAssignments();
         assertEquals(1, assignments.size(), "One assignment after create");
@@ -206,7 +218,7 @@ void updateAssignment() {
     }
 
     @Test
-    void getAllAssignmentsBySpecificationForPrincipal(){
+    void getAllAssignmentsBySpecificationForPrincipal() {
 
         assertEquals(0, assignmentService.getAllAssignments().size(), "No assignment at start up");
 
@@ -255,7 +267,7 @@ void updateAssignment() {
     }
 
     @Test
-    void getAllAssignmentsBySpecificationPrincipalAndResources(){
+    void getAllAssignmentsBySpecificationPrincipalAndResources() {
 
         assertEquals(0, assignmentService.getAllAssignments().size(), "No assignment at start up");
 
