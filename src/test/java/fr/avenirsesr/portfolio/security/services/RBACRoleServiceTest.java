@@ -82,7 +82,7 @@ class RBACRoleServiceTest {
     @Test
     void getAllRoles() {
         List<RBACRole> actual  = roleService.getAllRoles();
-        assertThat(actual).hasSize(actual.size());
+        assertThat(actual).hasSize(allRoleNames.length);
         assertThat(actual.stream().map(RBACRole::getName)).containsExactlyInAnyOrder(allRoleNames);
     }
 
