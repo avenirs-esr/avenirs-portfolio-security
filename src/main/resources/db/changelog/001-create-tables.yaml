@@ -237,7 +237,7 @@ databaseChangeLog:
                type: VARCHAR(255)
                constraints:
                    nullable:  false
-                   unique: true                  
+                   unique: false
            - column:
                name: id_resource_type
                type: BIGSERIAL
