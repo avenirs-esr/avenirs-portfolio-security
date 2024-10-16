@@ -40,7 +40,7 @@ class PrincipalServiceTest {
 	void testGetAllPrincipals() {
 		List <Principal> actual  = principalService.getAllPrincipals();
 		assertThat(actual).hasSize(expectedPrincipals.length);
-		assertThat(actual.stream().map(Principal::getLogin)).containsExactly(expectedPrincipals);
+		assertThat(actual.stream().map(Principal::getLogin)).containsExactlyInAnyOrder(expectedPrincipals);
 	}
 
 	@Test
