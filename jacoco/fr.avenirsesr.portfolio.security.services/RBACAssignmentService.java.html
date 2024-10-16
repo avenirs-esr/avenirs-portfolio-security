@@ -49,32 +49,33 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 <span class="fc" id="L49">		log.trace(&quot;createAssignment, assignment: {}&quot;, assignment);</span>
 <span class="fc" id="L50">		return this.assignmentRepository.save(assignment);</span>
 	}
-	
-	/**
-	 * Deletes an assignment.
-	 * @param assignment The assignment to delete.
-	 */
-	public void deleteAssignment(RBACAssignment assignment) {
-<span class="fc" id="L58">		log.trace(&quot;deleteAssignment, assignment: {}&quot;, assignment);</span>
-<span class="fc" id="L59">		this.assignmentRepository.delete(assignment);</span>
-<span class="fc" id="L60">	}</span>
 
 	/**
 	 * Updates an assignment.
 	 * @param assignment The assignment to update.
 	 */
 	public void updateAssignment(RBACAssignment assignment) {
+<span class="fc" id="L58">		log.trace(&quot;updateAssignment, assignment: {}&quot;, assignment);</span>
+<span class="fc" id="L59">		this.assignmentRepository.save(assignment);</span>
+<span class="fc" id="L60">	}</span>
+
+	/**
+	 * Deletes an assignment.
+	 * @param assignment The assignment to delete.
+	 */
+	public void deleteAssignment(RBACAssignment assignment) {
 <span class="fc" id="L67">		log.trace(&quot;deleteAssignment, assignment: {}&quot;, assignment);</span>
-<span class="fc" id="L68">		this.assignmentRepository.save(assignment);</span>
+<span class="fc" id="L68">		this.assignmentRepository.delete(assignment);</span>
 <span class="fc" id="L69">	}</span>
-	
+
+
 	/**
 	 * Deletes an assignment by id.
 	 * @param assignmentId The id of the assignment to delete.
 	 */
 	public void deleteAssignmentById(RBACAssignmentPK assignmentId) {
-<span class="fc" id="L76">		log.trace(&quot;deleteAssignment, assignmentId: {}&quot;, assignmentId);</span>
-<span class="fc" id="L77">		this.assignmentRepository.deleteById(assignmentId);</span>
-<span class="fc" id="L78">	}</span>
+<span class="fc" id="L77">		log.trace(&quot;deleteAssignment, assignmentId: {}&quot;, assignmentId);</span>
+<span class="fc" id="L78">		this.assignmentRepository.deleteById(assignmentId);</span>
+<span class="fc" id="L79">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
