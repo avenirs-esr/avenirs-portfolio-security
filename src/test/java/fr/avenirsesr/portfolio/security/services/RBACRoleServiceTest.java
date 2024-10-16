@@ -123,21 +123,24 @@ class RBACRoleServiceTest {
                         .collect(Collectors.toList()));
 
         RBACRole savedRole = roleService.createRole(newRole);
-
         assertNotNull(savedRole);
 
         assertEquals(newRoleName, savedRole.getName(), "Update Role initial name");
         String updatedName = newRoleName + "Updated";
-        savedRole.setName(updatedName);
-         roleService.updateRole(savedRole);
+
+        RBACRole updateRole = new RBACRole()
+                .setId(newRole.getId())
+                .setName(updatedName)
+                .setDescription(newRoleDescription)
+                .setPermissions(newRole.getPermissions());
+
+
+         roleService.updateRole(updateRole);
 
         Optional<RBACRole> response = roleService.getRoleById(savedRole.getId());
         assertTrue(response.isPresent());
         assertEquals(updatedName, response.get().getName(),"Updated role name");
-
-
-
-    }
+  }
 
     @Test
     void deleteRole() {
