@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class RBACRoleService {
 	
 	@Autowired
 	private RBACRoleRepository roleRepository;
-	
+
 	/**
 	 * Gives a specific role by its id.
 	 * @param roleId The id of the role to retrieve.
@@ -68,9 +69,7 @@ public class RBACRoleService {
 	 * @return The new created role.
 	 */
 	public RBACRole createRole(RBACRole role) {
-		if (log.isTraceEnabled()) {
-			log.trace("createRole, role: {}", role);
-		}
+		log.trace("createRole, role: {}", role);
 		return this.roleRepository.save(role);
 	}
 	
@@ -80,18 +79,14 @@ public class RBACRoleService {
 	 * @return The updated role.
 	 */
 	public RBACRole  updateRole(RBACRole role) {
-		if (log.isTraceEnabled()) {
-			log.trace("updateRole, role: {}", role);
-		}
-		Optional<RBACRole> response = this.roleRepository.findById(role.getId());
-		
-		if (response.isPresent() && ! response.get().equals(role)) {
-				RBACRole storedRole = response.get();
-				storedRole.setName(role.getName());
-				storedRole.setDescription(role.getDescription());
-				return this.roleRepository.save(storedRole);
-		}
-		return response.orElse(role);
+		log.trace("updateRole, role: {}", role);
+		return this.roleRepository.findById(role.getId())
+				.map(storedRole -> {
+					storedRole.setName(role.getName());
+					storedRole.setDescription(role.getDescription());
+					return roleRepository.save(storedRole);
+				})
+				.orElseThrow(() -> new EntityNotFoundException("Entity not found with ID: " + role.getId()));
 	}
 	
 	/**
@@ -99,9 +94,7 @@ public class RBACRoleService {
 	 * @param roleId The id of the role to delete.
 	 */
 	public void deleteRole(Long roleId) {
-		if (log.isTraceEnabled()) {
 			log.trace("deleteRole, roleId: {}", roleId);
-		}
 		this.roleRepository.deleteById(roleId);
 	}
 }
