@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.models.RBACContext;
 import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <h1>RBACContextService</h1>
@@ -41,6 +42,7 @@ public class RBACContextService {
    * Gives all the contexts.
    * @return All contexts.
    */
+  @Transactional(readOnly = true)
   public List<RBACContext> getAllContexts() {
       log.trace("getAllContexts");
       return this.contextRepository.findAll();
@@ -51,24 +53,17 @@ public class RBACContextService {
    * @param context The context to create.
    * @return The saved context.
    */
+  @Transactional
   public RBACContext createContext(RBACContext context) {
       log.trace("createContext, context: {}", context);
       return this.contextRepository.save(context);
   }
-  
-  /**
-   * Deletes a context.
-   * @param context The context to delete.
-   */
-  public void deleteAssignment(RBACContext context) {
-      log.trace("deleteAssignment, context: {}", context);
-      this.contextRepository.delete(context);
-  }
-  
+
   /**
    * Deletes a context by id.
    * @param contextId The id of the context to delete.
    */
+  @Transactional
   public void deleteContext(Long contextId) {
       log.trace("deleteAssignment, contextId: {}", contextId);
        this.contextRepository.deleteById(contextId);

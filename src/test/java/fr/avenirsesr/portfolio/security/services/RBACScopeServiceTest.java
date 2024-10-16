@@ -67,7 +67,7 @@ class RBACScopeServiceTest {
         assertEquals(1, scope.getResources().size());
         assertEquals(scopeResourceId, scope.getResources().getFirst().getId());
 
-        response = scopeService.getScopeById((long)allScopeNames.length + 1);
+        response = scopeService.getScopeById((long) allScopeNames.length + 1);
         assertTrue(response.isEmpty());
     }
 
@@ -90,7 +90,7 @@ class RBACScopeServiceTest {
 
     @Test
     void getAllScopes() {
-        List<RBACScope> actual  = scopeService.getAllScopes();
+        List<RBACScope> actual = scopeService.getAllScopes();
         assertThat(actual).hasSize(allScopeNames.length);
         assertThat(actual.stream().map(RBACScope::getName)).containsExactlyInAnyOrder(allScopeNames);
     }
@@ -138,18 +138,19 @@ class RBACScopeServiceTest {
         RBACScope savedScope = scopeService.createScope(newScope);
         assertNotNull(savedScope);
 
-       String updatedName=newScopeName + "Updated";
-       RBACScope updatedScope =  new RBACScope()
-               .setId(savedScope.getId())
-                       .setName(updatedName)
-               .setResources(savedScope.getResources());
-       scopeService.updateScope(updatedScope);
+        String updatedName = newScopeName + "Updated";
+        RBACScope updatedScope = new RBACScope()
+                .setId(savedScope.getId())
+                .setName(updatedName)
+                .setResources(savedScope.getResources());
+        updatedScope = scopeService.updateScope(updatedScope);
+        assertNotNull(updatedScope);
 
-       Optional<RBACScope> response = scopeService.getScopeById(savedScope.getId());
-       assertTrue(response.isPresent());
+        Optional<RBACScope> response = scopeService.getScopeById(savedScope.getId());
+        assertTrue(response.isPresent());
 
-       RBACScope fetchedScope = response.get();
-       assertEquals(updatedName, fetchedScope.getName());
+        RBACScope fetchedScope = response.get();
+        assertEquals(updatedName, fetchedScope.getName());
     }
 
     @Test
