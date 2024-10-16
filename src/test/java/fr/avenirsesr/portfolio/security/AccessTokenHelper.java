@@ -46,7 +46,7 @@ public class AccessTokenHelper {
 					password);
 			if (accessTokenResponse.isEmpty()) {
 				throw new RuntimeException(
-						"Unable to retrieve access token respnse for login: " + login);
+						"Unable to retrieve access token response for login: " + login);
 			}
 			AccessTokenHelper.accessTokenRepository.put(login, accessTokenResponse.get().getAccessToken());
 		}
