@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class RBACScopeServiceTest {
 
-
     @Value("${avenirs.test.rbac.scope.service.scope.id}")
     private Long scopeId;
 
     @Value("${avenirs.test.rbac.scope.service.scope.name}")
     private String scopeName;
+
     @Value("${avenirs.test.rbac.scope.service.scope.resource.id}")
     private Long scopeResourceId;
 
@@ -58,33 +58,28 @@ class RBACScopeServiceTest {
 
     @Test
     void getScopeById() {
-        Optional<RBACScope> response = scopeService.getScopeById(scopeId);
-        assertTrue(response.isPresent());
-
-        RBACScope scope = response.get();
+        RBACScope scope = scopeService.getScopeById(scopeId)
+                .orElseThrow(() -> new AssertionError("Scope not found with ID: " + scopeId));
         assertEquals(scopeName, scope.getName());
 
         assertEquals(1, scope.getResources().size());
         assertEquals(scopeResourceId, scope.getResources().getFirst().getId());
 
-        response = scopeService.getScopeById((long) allScopeNames.length + 1);
+        Optional<RBACScope> response = scopeService.getScopeById((long) allScopeNames.length + 1);
         assertTrue(response.isEmpty());
     }
 
     @Test
     void getScopeByName() {
-        Optional<RBACScope> response = scopeService.getScopeByName(scopeName);
-        assertTrue(response.isPresent());
-
-        RBACScope scope = response.get();
+        RBACScope scope = scopeService.getScopeByName(scopeName)
+                .orElseThrow(() -> new AssertionError("Scope not found with Name: " + scopeName));
         assertEquals(scopeId, scope.getId());
         assertEquals(scopeName, scope.getName());
-
 
         assertEquals(1, scope.getResources().size());
         assertEquals(scopeResourceId, scope.getResources().getFirst().getId());
 
-        response = scopeService.getScopeByName(newScopeName);
+        Optional<RBACScope> response = scopeService.getScopeByName(newScopeName);
         assertTrue(response.isEmpty());
     }
 
@@ -116,10 +111,9 @@ class RBACScopeServiceTest {
         RBACScope savedScope = scopeService.createScope(newScope);
         assertNotNull(savedScope);
 
-        Optional<RBACScope> response = scopeService.getScopeById(savedScope.getId());
-        assertTrue(response.isPresent());
+        RBACScope fetchedScope = scopeService.getScopeById(savedScope.getId())
+                .orElseThrow(() -> new AssertionError("Scope not found with ID: " + savedScope.getId()));
 
-        RBACScope fetchedScope = response.get();
         assertEquals(newScopeName, fetchedScope.getName());
         assertEquals(newScopeResourcesNumber, fetchedScope.getResources().size());
 
@@ -146,10 +140,9 @@ class RBACScopeServiceTest {
         updatedScope = scopeService.updateScope(updatedScope);
         assertNotNull(updatedScope);
 
-        Optional<RBACScope> response = scopeService.getScopeById(savedScope.getId());
-        assertTrue(response.isPresent());
+        RBACScope fetchedScope = scopeService.getScopeById(savedScope.getId())
+                .orElseThrow(() -> new AssertionError("Scope not found with ID: " + savedScope.getId()));
 
-        RBACScope fetchedScope = response.get();
         assertEquals(updatedName, fetchedScope.getName());
     }
 
