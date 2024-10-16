@@ -172,7 +172,6 @@ class RBACAssignmentServiceTest {
                 .setResources(Collections.singletonList(resource1));
         RBACContext context = new RBACContext();
 
-
         RBACAssignment assignment = new RBACAssignment()
                 .setContext(context)
                 .setRole(owner)
@@ -183,33 +182,7 @@ class RBACAssignmentServiceTest {
         assignments = assignmentService.getAllAssignments();
         assertEquals(1, assignments.size(), "One assignment after create");
 
-        assignmentService.deleteAssignment(assignment);
-
-        assignments = assignmentService.getAllAssignments();
-        assertEquals(0, assignments.size(), "No assignment after delete");
-    }
-
-    @Test
-    void deleteAssignmentById() {
-        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
-        assertEquals(0, assignments.size(), "No assignment at start up");
-
-        RBACScope scope = new RBACScope()
-                .setName("createAssignment Scope")
-                .setResources(Collections.singletonList(resource1));
-        RBACContext context = new RBACContext();
-
-        RBACAssignment assignment = new RBACAssignment()
-                .setContext(context)
-                .setRole(owner)
-                .setPrincipal(principal1)
-                .setScope(scope);
-        assignment = assignmentService.createAssignment(assignment);
-
-        assignments = assignmentService.getAllAssignments();
-        assertEquals(1, assignments.size(), "One assignment after create");
-
-        assignmentService.deleteAssignmentById(assignment.getId());
+        assignmentService.deleteAssignment(assignment.getId());
 
         assignments = assignmentService.getAllAssignments();
         assertEquals(0, assignments.size(), "No assignment after deleteById");

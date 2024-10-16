@@ -59,21 +59,12 @@ public class RBACAssignmentService {
 		this.assignmentRepository.save(assignment);
 	}
 
-	/**
-	 * Deletes an assignment.
-	 * @param assignment The assignment to delete.
-	 */
-	public void deleteAssignment(RBACAssignment assignment) {
-		log.trace("deleteAssignment, assignment: {}", assignment);
-		this.assignmentRepository.delete(assignment);
-	}
-
 
 	/**
 	 * Deletes an assignment by id.
 	 * @param assignmentId The id of the assignment to delete.
 	 */
-	public void deleteAssignmentById(RBACAssignmentPK assignmentId) {
+	public void deleteAssignment(RBACAssignmentPK assignmentId) {
 		log.trace("deleteAssignment, assignmentId: {}", assignmentId);
 		this.assignmentRepository.deleteById(assignmentId);
 	}
