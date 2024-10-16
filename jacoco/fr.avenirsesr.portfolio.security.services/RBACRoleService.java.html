@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACRoleService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.services</a> &gt; <span class="el_source">RBACRoleService.java</span></div><h1>RBACRoleService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
+import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,24 +11,46 @@ import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
 
 
 /**
- * Role Service
+ * &lt;h1&gt;RBACRoleService&lt;/h1&gt;
+ * &lt;p&gt;
+ * &lt;b&gt;Description:&lt;/b&gt; RBAC Role Service.
+ * &lt;/p&gt;
+ *
+ * &lt;h2&gt;Version:&lt;/h2&gt;
+ * 1.0.0
+ *
+ * &lt;h2&gt;Author:&lt;/h2&gt;
+ * Arnaud Deman
+ *
+ * &lt;h2&gt;Since:&lt;/h2&gt;
+ * 15/10/2024
  */
 
-<span class="fc" id="L16">@Slf4j</span>
+<span class="fc" id="L29">@Slf4j</span>
 @Service
-<span class="fc" id="L18">public class RBACRoleService {</span>
+<span class="fc" id="L31">public class RBACRoleService {</span>
 	
 	@Autowired
 	private RBACRoleRepository roleRepository;
 	
 	/**
-	 * Gives a specific role.
+	 * Gives a specific role by its id.
 	 * @param roleId The id of the role to retrieve.
-	 * @return The role with id roleId.
+	 * @return The Optional of role with id roleId.
 	 */
-	public RBACRole getRole(final Long roleId){
-<span class="nc" id="L29">		log.trace(&quot;getRole&quot;);</span>
-<span class="nc" id="L30">		return this.roleRepository.findById(roleId).get();</span>
+	public Optional&lt;RBACRole&gt; getRoleById(final Long roleId){
+<span class="fc" id="L42">		log.trace(&quot;getRoleById roleId: {}&quot;, roleId);</span>
+<span class="fc" id="L43">		return this.roleRepository.findById(roleId);</span>
+	}
+
+	/**
+	 * Gives a specific role by its name.
+	 * @param roleName The name of the role to retrieve.
+	 * @return The Optional of role with name roleName.
+	 */
+	public Optional&lt;RBACRole&gt; getRoleByName(final String roleName) {
+<span class="fc" id="L52">		log.trace(&quot;getRoleByName roleName: {}&quot;, roleName);</span>
+<span class="fc" id="L53">		return this.roleRepository.findByName(roleName);</span>
 	}
 	
 	/**
@@ -35,8 +58,8 @@ import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
 	 * @return All the roles.
 	 */
 	public List&lt;RBACRole&gt; getAllRoles() {
-<span class="nc" id="L38">		log.trace(&quot;getAllRoles&quot;);</span>
-<span class="nc" id="L39">		return this.roleRepository.findAll();</span>
+<span class="fc" id="L61">		log.trace(&quot;getAllRoles&quot;);</span>
+<span class="fc" id="L62">		return this.roleRepository.findAll();</span>
 	}
 	
 	/**
@@ -45,10 +68,10 @@ import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
 	 * @return The new created role.
 	 */
 	public RBACRole createRole(RBACRole role) {
-<span class="nc bnc" id="L48" title="All 2 branches missed.">		if (log.isTraceEnabled()) {</span>
-<span class="nc" id="L49">			log.trace(&quot;createRole, role: &quot; + role);</span>
-		};
-<span class="nc" id="L51">		return this.roleRepository.save(role);</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">		if (log.isTraceEnabled()) {</span>
+<span class="fc" id="L72">			log.trace(&quot;createRole, role: {}&quot;, role);</span>
+		}
+<span class="fc" id="L74">		return this.roleRepository.save(role);</span>
 	}
 	
 	/**
@@ -57,17 +80,18 @@ import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
 	 * @return The updated role.
 	 */
 	public RBACRole  updateRole(RBACRole role) {
-<span class="nc bnc" id="L60" title="All 2 branches missed.">		if (log.isTraceEnabled()) {</span>
-<span class="nc" id="L61">			log.trace(&quot;updateRole, role: &quot; + role);</span>
-		};
-<span class="nc" id="L63">		RBACRole storedRole = this.roleRepository.findById(role.getId()).get();</span>
-		
-<span class="nc bnc" id="L65" title="All 4 branches missed.">		if (storedRole != null &amp;&amp; ! storedRole.equals(role)) {</span>
-<span class="nc" id="L66">				storedRole.setName(role.getName());</span>
-<span class="nc" id="L67">				storedRole.setDescription(role.getDescription());</span>
-<span class="nc" id="L68">				return this.roleRepository.save(storedRole);</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">		if (log.isTraceEnabled()) {</span>
+<span class="fc" id="L84">			log.trace(&quot;updateRole, role: {}&quot;, role);</span>
 		}
-<span class="nc" id="L70">		return storedRole;</span>
+<span class="fc" id="L86">		Optional&lt;RBACRole&gt; response = this.roleRepository.findById(role.getId());</span>
+		
+<span class="pc bpc" id="L88" title="2 of 4 branches missed.">		if (response.isPresent() &amp;&amp; ! response.get().equals(role)) {</span>
+<span class="nc" id="L89">				RBACRole storedRole = response.get();</span>
+<span class="nc" id="L90">				storedRole.setName(role.getName());</span>
+<span class="nc" id="L91">				storedRole.setDescription(role.getDescription());</span>
+<span class="nc" id="L92">				return this.roleRepository.save(storedRole);</span>
+		}
+<span class="fc" id="L94">		return response.orElse(role);</span>
 	}
 	
 	/**
@@ -75,12 +99,10 @@ import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
 	 * @param roleId The id of the role to delete.
 	 */
 	public void deleteRole(Long roleId) {
-<span class="nc bnc" id="L78" title="All 2 branches missed.">		if (log.isTraceEnabled()) {</span>
-<span class="nc" id="L79">			log.trace(&quot;deleteRole, roleId: &quot; + roleId);</span>
-		};
-<span class="nc" id="L81">		this.roleRepository.deleteById(roleId);</span>
-<span class="nc" id="L82">	}</span>
-	
-	
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">		if (log.isTraceEnabled()) {</span>
+<span class="fc" id="L103">			log.trace(&quot;deleteRole, roleId: {}&quot;, roleId);</span>
+		}
+<span class="fc" id="L105">		this.roleRepository.deleteById(roleId);</span>
+<span class="fc" id="L106">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
