@@ -69,10 +69,8 @@ public class RBACContextService {
    * Deletes a context by id.
    * @param contextId The id of the context to delete.
    */
-  public void deleteContextById(Long contextId) {
+  public void deleteContext(Long contextId) {
       log.trace("deleteAssignment, contextId: {}", contextId);
-       
-      
        this.contextRepository.deleteById(contextId);
   }
 
