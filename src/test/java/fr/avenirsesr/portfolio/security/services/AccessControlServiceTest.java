@@ -1,9 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.Principal;
-import fr.avenirsesr.portfolio.security.models.RBACAction;
-import fr.avenirsesr.portfolio.security.models.RBACContext;
-import fr.avenirsesr.portfolio.security.models.RBACResource;
+import fr.avenirsesr.portfolio.security.models.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -17,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,8 +44,7 @@ import static org.mockito.Mockito.doAnswer;
 @SpringBootTest
 @ActiveProfiles("test")
 @Sql(scripts={
-        "classpath:db/test-fixtures-commons.sql",
-        "classpath:db/test-fixtures-rbac-case2.sql"
+        "classpath:db/test-fixtures-commons.sql"
 })
 @Transactional
 class AccessControlServiceTest {
@@ -72,20 +69,49 @@ class AccessControlServiceTest {
     @Value("${avenirs.test.rbac.case2.application.context.validity.start}")
     private String validityStartString;
 
+    @Value("${avenirs.test.access.control.service.grant.resource.ids}")
+    private Long[] grantResourceIds;
+
+    @Value("${avenirs.test.access.control.service.grant.structure.ids}")
+    private Long[] grantStructureIds;
+
+    @Value("${avenirs.test.access.control.service.grant.role.id}")
+    private Long grantRoleId;
+
     /** execution date in valid date range. */
     private LocalDateTime effectiveDateInValidityRange;
+
+    /** Validity start date. */
+    private LocalDateTime validityStart;
+
+    /** Validity end date. */
+    private LocalDateTime validityEnd;
+
+    @Value("${avenirs.access.control.date.format}")
+    private String dateFormat;
+
+    private DateTimeFormatter formatter;
 
     @SpyBean
     @Autowired
     private AccessControlService accessControlService;
 
+    @Autowired
+    private RBACAssignmentService assignmentService;
+
     @PostConstruct
     public void init() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        LocalDateTime validityStart = LocalDate.parse(validityStartString, formatter).atStartOfDay();
+        validityStart = LocalDate.parse(validityStartString, formatter).atStartOfDay();
+        validityEnd = validityStart.plusDays(10);
         this.effectiveDateInValidityRange = validityStart.plusDays(1);
+        this.formatter = DateTimeFormatter.ofPattern(dateFormat);
     }
 
+    @Sql(scripts={
+            "classpath:db/test-fixtures-commons.sql",
+            "classpath:db/test-fixtures-rbac-case2.sql"
+    })
     @Test
     void hasAccess() {
         Principal principal = new Principal().setLogin(userLogin);
@@ -111,4 +137,31 @@ class AccessControlServiceTest {
         assertFalse (accessControlService.hasAccess(principal, feedback, unauthorizedResource), "Feedback access on unauthorized resource.");
 
     }
+
+    @Sql(scripts={
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void grantAccess(){
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+        assertTrue(assignments.isEmpty(), "No assignment at startup");
+
+        AccessControlGrantRequest grantRequest =new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.format(formatter))
+                .setStructureIds(grantStructureIds)
+                .setResourceIds(grantResourceIds)
+                .setRoleId(grantRoleId);
+
+        accessControlService.grantAccess(grantRequest);
+
+        assignments = assignmentService.getAllAssignments();
+        assertEquals(1,assignments.size(), "Assignment created after grant");
+
+        RBACAssignment assignment = assignments.getFirst();
+        assertEquals(userLogin, assignment.getPrincipal().getLogin(), "Assignment principal login");
+    }
+
 }
