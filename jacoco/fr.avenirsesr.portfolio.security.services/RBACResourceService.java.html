@@ -67,8 +67,8 @@ import java.util.Optional;
 	 */
 	@Transactional(readOnly = true)
 	public List&lt;RBACResource&gt; getAllResourcesBySpecification(Specification&lt;RBACResource&gt; specification) {
-<span class="nc" id="L70">		log.trace(&quot;getAllResourcesBySpecification, specification: {}&quot;, specification);</span>
-<span class="nc" id="L71">		return resourceRepository.findAll(specification);</span>
+<span class="fc" id="L70">		log.trace(&quot;getAllResourcesBySpecification, specification: {}&quot;, specification);</span>
+<span class="fc" id="L71">		return resourceRepository.findAll(specification);</span>
 	}
 	
 	/**

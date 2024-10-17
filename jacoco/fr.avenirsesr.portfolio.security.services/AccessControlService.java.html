@@ -3,23 +3,26 @@
  */
 package fr.avenirsesr.portfolio.security.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fr.avenirsesr.portfolio.security.models.*;
+import fr.avenirsesr.portfolio.security.repositories.RBACResourceSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repositories.StructureSpecificationHelper;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import fr.avenirsesr.portfolio.security.models.Principal;
-import fr.avenirsesr.portfolio.security.models.RBACAction;
-import fr.avenirsesr.portfolio.security.models.RBACAssignment;
-import fr.avenirsesr.portfolio.security.models.RBACContext;
-import fr.avenirsesr.portfolio.security.models.RBACPermission;
-import fr.avenirsesr.portfolio.security.models.RBACResource;
-import fr.avenirsesr.portfolio.security.models.Structure;
 import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecificationHelper;
+import org.springframework.util.StringUtils;
 
 /**
  * &lt;h1&gt;AccessControlService&lt;/h1&gt;
@@ -37,9 +40,9 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
  * &lt;h2&gt;Since:&lt;/h2&gt;
  * 04/10/2024
  */
-<span class="fc" id="L40">@Slf4j</span>
+<span class="fc" id="L43">@Slf4j</span>
 @Service
-<span class="fc" id="L42">public class AccessControlService {</span>
+<span class="fc" id="L45">public class AccessControlService {</span>
 	
 	/** Action service */
 	@Autowired
@@ -49,9 +52,130 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 	@Autowired
 	RBACAssignmentService assignmentService;
 
-	/** Cache for the permissions. */
-<span class="fc" id="L53">	private final Map&lt;Long, List&lt;RBACPermission&gt;&gt; permissionsByActionId = new HashMap&lt;&gt;();</span>
+	@Autowired
+	RBACResourceService resourceService;
 
+	@Autowired
+	PrincipalService principalService;
+
+	@Autowired
+	RBACRoleService roleService;
+
+	@Autowired
+	StructureService structureService;
+
+	@Value(&quot;${avenirs.access.control.date.format}&quot;)
+	private String dateFormat;
+
+	private DateTimeFormatter formatter;
+
+	/** Cache for the permissions. */
+<span class="fc" id="L73">	private final Map&lt;Long, List&lt;RBACPermission&gt;&gt; permissionsByActionId = new HashMap&lt;&gt;();</span>
+
+
+	@PostConstruct
+	public void init() {
+<span class="fc" id="L78">		this.formatter = DateTimeFormatter.ofPattern(dateFormat);</span>
+<span class="fc" id="L79">	}</span>
+	/**
+	 * Grant access.
+	 * @param grantRequest The request with the information on the access to grant.
+	 * @return An AccessControlResponse.
+	 */
+	public AccessControlGrantResponse grantAccess(AccessControlGrantRequest grantRequest) {
+<span class="fc" id="L86">        log.trace(&quot;grantAccess, grantRequest: {}&quot;, grantRequest);</span>
+
+
+		// Role and principal.
+<span class="fc" id="L90">        RBACRole role = roleService.getRoleById(grantRequest.getRoleId())</span>
+<span class="pc" id="L91">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Role not found, ID: &quot; + grantRequest.getRoleId()));</span>
+
+<span class="fc" id="L93">        Principal principal = principalService.getPrincipalByLogin(grantRequest.getUid())</span>
+<span class="pc" id="L94">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Principal not found, UID: &quot; + grantRequest.getUid()));</span>
+
+<span class="fc" id="L96">		log.trace(&quot;grantAccess, role: {}&quot;, role);</span>
+<span class="fc" id="L97">		log.trace(&quot;grantAccess, principal: {}&quot;, principal);</span>
+
+		// Retrieve and check resources.
+		List&lt;RBACResource&gt; resources;
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">		if (grantRequest.getResourceIds().length &gt; 0){</span>
+<span class="fc" id="L102">			resources = resourceService.getAllResourcesBySpecification(</span>
+<span class="fc" id="L103">					RBACResourceSpecificationHelper.filterByIds(grantRequest.getResourceIds()));</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">			if (resources.size() != grantRequest.getResourceIds().length) {</span>
+<span class="nc" id="L105">				List&lt;Long&gt; foundIds = resources.stream()</span>
+<span class="nc" id="L106">						.map(RBACResource::getId)</span>
+<span class="nc" id="L107">						.toList();</span>
+
+<span class="nc" id="L109">				List&lt;Long&gt; missingIds = Arrays.stream(grantRequest.getStructureIds())</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">						.filter(id -&gt; !foundIds.contains(id))</span>
+<span class="nc" id="L111">						.collect(Collectors.toList());</span>
+
+
+<span class="nc" id="L114">				log.warn(&quot;Missing resource ids: {}&quot;, missingIds);</span>
+
+<span class="nc" id="L116">				throw new EntityNotFoundException(&quot;Missing structures, IDs : &quot; + missingIds);</span>
+			}
+		} else {
+<span class="nc" id="L119">			resources = Collections.emptyList();</span>
+		}
+<span class="fc" id="L121">        log.trace(&quot;grantAccess, resource: {}&quot;, resources);</span>
+
+
+
+		// Generates an application context.
+<span class="fc" id="L126">		RBACContext applicationContext = new RBACContext();</span>
+
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">		if(StringUtils.hasLength(grantRequest.getValidityStart())) {</span>
+			try {
+<span class="fc" id="L130">				applicationContext.setValidityStart(LocalDate.parse(grantRequest.getValidityStart(), formatter).atStartOfDay());</span>
+<span class="nc" id="L131">			} catch (DateTimeParseException e) {</span>
+<span class="nc" id="L132">				throw new RuntimeException(&quot;Invalid validity start date format (&quot; + dateFormat + &quot;): &quot; + grantRequest.getValidityStart());</span>
+<span class="fc" id="L133">			}</span>
+		}
+
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">		if(StringUtils.hasLength(grantRequest.getValidityEnd())) {</span>
+			try {
+<span class="fc" id="L138">				applicationContext.setValidityEnd(LocalDate.parse(grantRequest.getValidityEnd(), formatter).atStartOfDay());</span>
+<span class="nc" id="L139">			} catch (DateTimeParseException e) {</span>
+<span class="nc" id="L140">				throw new RuntimeException(&quot;Invalid validity end date format (&quot; + dateFormat + &quot;): &quot; + grantRequest.getValidityEnd());</span>
+<span class="fc" id="L141">			}</span>
+		}
+
+		// Retrieve and checks the structures.
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">		if (grantRequest.getStructureIds().length &gt; 0){</span>
+<span class="fc" id="L146">			List&lt;Structure&gt; structures = structureService.getAllStructuresBySpecification(StructureSpecificationHelper.filterByIds(grantRequest.getStructureIds()));</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">			if (structures.size() != grantRequest.getStructureIds().length) {</span>
+<span class="nc" id="L148">				List&lt;Long&gt; foundIds = structures.stream()</span>
+<span class="nc" id="L149">						.map(Structure::getId)</span>
+<span class="nc" id="L150">						.toList();</span>
+
+<span class="nc" id="L152">				List&lt;Long&gt; missingIds = Arrays.stream(grantRequest.getStructureIds())</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">						.filter(id -&gt; !foundIds.contains(id))</span>
+<span class="nc" id="L154">						.collect(Collectors.toList());</span>
+
+
+<span class="nc" id="L157">				log.warn(&quot;Missing structures ids: {}&quot;, missingIds);</span>
+
+<span class="nc" id="L159">				throw new EntityNotFoundException(&quot;Missing structures, IDs : &quot; + missingIds);</span>
+			}
+<span class="fc" id="L161">			applicationContext.setStructures(new HashSet&lt;&gt;(structures));</span>
+<span class="fc" id="L162">		} else {</span>
+<span class="nc" id="L163">			applicationContext.setStructures(new HashSet&lt;&gt;());</span>
+		}
+
+<span class="fc" id="L166">		RBACAssignment assignment = new RBACAssignment()</span>
+<span class="fc" id="L167">				.setScope(new RBACScope().setResources(resources))</span>
+<span class="fc" id="L168">				.setRole(role)</span>
+<span class="fc" id="L169">				.setPrincipal(principal)</span>
+<span class="fc" id="L170">				.setContext(applicationContext);</span>
+
+<span class="fc" id="L172">		assignmentService.createAssignment(assignment);</span>
+
+
+<span class="fc" id="L175">        return new AccessControlGrantResponse()</span>
+<span class="fc" id="L176">				.setLogin(grantRequest.getUid())</span>
+<span class="fc" id="L177">                .setGranted(true);</span>
+    }
 
 	/**
 	 * Checks that a principal has access to a resource to perform an action,
@@ -63,11 +187,11 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 	 * @return True if the principal has access to the resource.
 	 */
 	public boolean hasAccess(Principal principal, RBACAction action, RBACResource resource) {
-<span class="fc" id="L66">		log.trace(&quot;hasAccess, principal: {}&quot;, principal);</span>
-<span class="fc" id="L67">		log.trace(&quot;hasAccess, action: {}&quot;, action);</span>
-<span class="fc" id="L68">		log.trace(&quot;hasAccess, resource: {}&quot;, resource);</span>
+<span class="fc" id="L190">		log.trace(&quot;hasAccess, principal: {}&quot;, principal);</span>
+<span class="fc" id="L191">		log.trace(&quot;hasAccess, action: {}&quot;, action);</span>
+<span class="fc" id="L192">		log.trace(&quot;hasAccess, resource: {}&quot;, resource);</span>
 
-<span class="fc" id="L70">		return hasAccess(principal.getLogin(), action.getId(), resource.getId());</span>
+<span class="fc" id="L194">		return hasAccess(principal.getLogin(), action.getId(), resource.getId());</span>
 	}
 
 	/**
@@ -80,14 +204,14 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 	 * @return True if the principal has access to the resource.
 	 */
 	public boolean hasAccess(String login, Long actionId, Long resourceId) {
-<span class="fc" id="L83">		log.trace(&quot;hasAccess, login: {}&quot;, login);</span>
-<span class="fc" id="L84">		log.trace(&quot;hasAccess, actionId: {}&quot;, actionId);</span>
-<span class="fc" id="L85">		log.trace(&quot;hasAccess, resourceId: {}&quot;, resourceId);</span>
+<span class="fc" id="L207">		log.trace(&quot;hasAccess, login: {}&quot;, login);</span>
+<span class="fc" id="L208">		log.trace(&quot;hasAccess, actionId: {}&quot;, actionId);</span>
+<span class="fc" id="L209">		log.trace(&quot;hasAccess, resourceId: {}&quot;, resourceId);</span>
 
-<span class="fc" id="L87">		List&lt;RBACPermission&gt; requiredPermissions = this.fetchPermissions(actionId);</span>
-<span class="fc" id="L88">		log.trace(&quot;hasAccess, requiredPermissions: {}&quot;, requiredPermissions);</span>
+<span class="fc" id="L211">		List&lt;RBACPermission&gt; requiredPermissions = this.fetchPermissions(actionId);</span>
+<span class="fc" id="L212">		log.trace(&quot;hasAccess, requiredPermissions: {}&quot;, requiredPermissions);</span>
 
-<span class="fc" id="L90">		return checkGrantedPermissions(requiredPermissions, login, resourceId);</span>
+<span class="fc" id="L214">		return checkGrantedPermissions(requiredPermissions, login, resourceId);</span>
 	}
 	
 	/**
@@ -98,39 +222,39 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 	 * @return True if the permissions granted to the user for the resource contains all the required permissions.
 	 */
 	private boolean checkGrantedPermissions(List&lt;RBACPermission&gt; requiredPermissions, String login, Long resourceId) {
-<span class="pc bpc" id="L101" title="2 of 4 branches missed.">		if (requiredPermissions != null &amp;&amp; !requiredPermissions.isEmpty()) {</span>
+<span class="pc bpc" id="L225" title="2 of 4 branches missed.">		if (requiredPermissions != null &amp;&amp; !requiredPermissions.isEmpty()) {</span>
 
-<span class="fc" id="L103">			List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(</span>
-<span class="fc" id="L104">					RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(login, resourceId));</span>
-<span class="fc" id="L105">			log.trace(&quot;hasAccess, principalAssignments: {}&quot;, principalAssignments);</span>
+<span class="fc" id="L227">			List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(</span>
+<span class="fc" id="L228">					RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(login, resourceId));</span>
+<span class="fc" id="L229">			log.trace(&quot;hasAccess, principalAssignments: {}&quot;, principalAssignments);</span>
 			
-<span class="fc" id="L107">			List&lt;RBACAssignment&gt; validAssignment = filterByApplicationContext(principalAssignments);</span>
-<span class="fc" id="L108">			log.trace(&quot;hasAccess, validAssignment: {}&quot;, validAssignment);</span>
+<span class="fc" id="L231">			List&lt;RBACAssignment&gt; validAssignment = filterByApplicationContext(principalAssignments);</span>
+<span class="fc" id="L232">			log.trace(&quot;hasAccess, validAssignment: {}&quot;, validAssignment);</span>
 
-<span class="fc" id="L110">			HashSet&lt;RBACPermission&gt; principalPermissions = validAssignment.stream().map(a -&gt;  a.getRole().getPermissions())</span>
-<span class="fc" id="L111">					.flatMap(Collection::stream)</span>
-<span class="fc" id="L112">					.collect(Collectors.toCollection(HashSet::new));</span>
-<span class="fc" id="L113">			log.trace(&quot;hasAccess, principalPermissions: {}&quot;, principalPermissions);</span>
+<span class="fc" id="L234">			HashSet&lt;RBACPermission&gt; principalPermissions = validAssignment.stream().map(a -&gt;  a.getRole().getPermissions())</span>
+<span class="fc" id="L235">					.flatMap(Collection::stream)</span>
+<span class="fc" id="L236">					.collect(Collectors.toCollection(HashSet::new));</span>
+<span class="fc" id="L237">			log.trace(&quot;hasAccess, principalPermissions: {}&quot;, principalPermissions);</span>
 
-<span class="fc" id="L115">			boolean accessGranted = principalPermissions.containsAll(requiredPermissions);</span>
-<span class="fc" id="L116">			log.trace(&quot;hasAccess, accessGranted: {}&quot;, accessGranted);</span>
+<span class="fc" id="L239">			boolean accessGranted = principalPermissions.containsAll(requiredPermissions);</span>
+<span class="fc" id="L240">			log.trace(&quot;hasAccess, accessGranted: {}&quot;, accessGranted);</span>
 
-<span class="fc" id="L118">			return accessGranted;</span>
+<span class="fc" id="L242">			return accessGranted;</span>
 		}
-<span class="nc" id="L120">		return false;</span>
+<span class="nc" id="L244">		return false;</span>
 	}
 	
 	private List&lt;RBACAssignment&gt; filterByApplicationContext(List&lt;RBACAssignment&gt; principalAssignments) {
-<span class="fc" id="L124">	  log.trace(&quot;filterByApplicationContext, principalAssignments: {}&quot;, principalAssignments);</span>
+<span class="fc" id="L248">	  log.trace(&quot;filterByApplicationContext, principalAssignments: {}&quot;, principalAssignments);</span>
 	  
-<span class="fc bfc" id="L126" title="All 2 branches covered.">	  if (CollectionUtils.isEmpty(principalAssignments)) {</span>
-<span class="fc" id="L127">	    return new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">	  if (CollectionUtils.isEmpty(principalAssignments)) {</span>
+<span class="fc" id="L251">	    return new ArrayList&lt;&gt;();</span>
 	  }
-<span class="fc" id="L129">	    Principal principal = principalAssignments.getFirst().getPrincipal();</span>
-<span class="fc" id="L130">	    RBACContext executionContext = createExecutionContext(principal);</span>
-<span class="fc" id="L131">	    return principalAssignments.stream()</span>
-<span class="fc" id="L132">	        .filter(a -&gt; checkExecutionContext(a.getContext(), executionContext))</span>
-<span class="fc" id="L133">	        .collect(Collectors.toList());</span>
+<span class="fc" id="L253">	    Principal principal = principalAssignments.getFirst().getPrincipal();</span>
+<span class="fc" id="L254">	    RBACContext executionContext = createExecutionContext(principal);</span>
+<span class="fc" id="L255">	    return principalAssignments.stream()</span>
+<span class="fc" id="L256">	        .filter(a -&gt; checkExecutionContext(a.getContext(), executionContext))</span>
+<span class="fc" id="L257">	        .collect(Collectors.toList());</span>
 	}
 	
 	/**
@@ -139,50 +263,50 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 	 * @return The execution context.
 	 */
 	public RBACContext createExecutionContext(Principal principal) { // Need to be public to be mocked in tests.
-<span class="fc" id="L142">	  return new RBACContext().setStructures(principal.getStructures());</span>
+<span class="fc" id="L266">	  return new RBACContext().setStructures(principal.getStructures());</span>
 	}
 	
 	private boolean checkExecutionContext(RBACContext applicationContext, RBACContext executionContext) {
-<span class="fc" id="L146">	  log.trace(&quot;checkExecutionContext, applicationContext: {}&quot;, applicationContext);</span>
-<span class="fc" id="L147">	  log.trace(&quot;checkExecutionContext, executionContext: {}&quot;, executionContext);</span>
+<span class="fc" id="L270">	  log.trace(&quot;checkExecutionContext, applicationContext: {}&quot;, applicationContext);</span>
+<span class="fc" id="L271">	  log.trace(&quot;checkExecutionContext, executionContext: {}&quot;, executionContext);</span>
       
-<span class="pc bpc" id="L149" title="1 of 2 branches missed.">	  if (applicationContext != null) {</span>
-<span class="fc" id="L150">	    LocalDateTime validityStart = applicationContext.getValidityStart();</span>
-<span class="fc" id="L151">	    LocalDateTime validityEnd= applicationContext.getValidityEnd();</span>
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">	  if (applicationContext != null) {</span>
+<span class="fc" id="L274">	    LocalDateTime validityStart = applicationContext.getValidityStart();</span>
+<span class="fc" id="L275">	    LocalDateTime validityEnd= applicationContext.getValidityEnd();</span>
 	    
-<span class="fc" id="L153">	    log.trace(&quot;checkExecutionContext, validityStart: {}&quot;, validityStart);</span>
-<span class="fc" id="L154">	    log.trace(&quot;checkExecutionContext, validityEnd: {}&quot;, validityEnd);</span>
-<span class="fc" id="L155">	    log.trace(&quot;checkExecutionContext, executionContext.getEffectiveDate(): {}&quot;, executionContext.getEffectiveDate());</span>
+<span class="fc" id="L277">	    log.trace(&quot;checkExecutionContext, validityStart: {}&quot;, validityStart);</span>
+<span class="fc" id="L278">	    log.trace(&quot;checkExecutionContext, validityEnd: {}&quot;, validityEnd);</span>
+<span class="fc" id="L279">	    log.trace(&quot;checkExecutionContext, executionContext.getEffectiveDate(): {}&quot;, executionContext.getEffectiveDate());</span>
 	    
-<span class="pc bpc" id="L157" title="1 of 4 branches missed.">	    if (validityStart != null &amp;&amp; executionContext.getEffectiveDate().isBefore(validityStart)) {</span>
-<span class="fc" id="L158">	      log.trace(&quot;checkExecutionContext, validityStart not respected&quot;);</span>
-<span class="fc" id="L159">	        return false;</span>
+<span class="pc bpc" id="L281" title="1 of 4 branches missed.">	    if (validityStart != null &amp;&amp; executionContext.getEffectiveDate().isBefore(validityStart)) {</span>
+<span class="fc" id="L282">	      log.trace(&quot;checkExecutionContext, validityStart not respected&quot;);</span>
+<span class="fc" id="L283">	        return false;</span>
 	    }
 	    
-<span class="fc bfc" id="L162" title="All 4 branches covered.">	    if (validityEnd != null &amp;&amp; executionContext.getEffectiveDate().isAfter(validityEnd)) {</span>
-<span class="fc" id="L163">	      log.trace(&quot;checkExecutionContext, validityEnd not respected&quot;);</span>
-<span class="fc" id="L164">            return false;</span>
+<span class="fc bfc" id="L286" title="All 4 branches covered.">	    if (validityEnd != null &amp;&amp; executionContext.getEffectiveDate().isAfter(validityEnd)) {</span>
+<span class="fc" id="L287">	      log.trace(&quot;checkExecutionContext, validityEnd not respected&quot;);</span>
+<span class="fc" id="L288">            return false;</span>
           }
-<span class="fc" id="L166">	  Set&lt;Structure&gt; exContextStructures = executionContext.getStructures();</span>
-<span class="fc" id="L167">	  Set&lt;Structure&gt; appContextStructures = applicationContext.getStructures();</span>
-<span class="fc" id="L168">	  log.trace(&quot;checkExecutionContext, exContextStructures: {}&quot;, exContextStructures);</span>
-<span class="fc" id="L169">	  log.trace(&quot;checkExecutionContext, appContextStructures: {}&quot;, appContextStructures);</span>
+<span class="fc" id="L290">	  Set&lt;Structure&gt; exContextStructures = executionContext.getStructures();</span>
+<span class="fc" id="L291">	  Set&lt;Structure&gt; appContextStructures = applicationContext.getStructures();</span>
+<span class="fc" id="L292">	  log.trace(&quot;checkExecutionContext, exContextStructures: {}&quot;, exContextStructures);</span>
+<span class="fc" id="L293">	  log.trace(&quot;checkExecutionContext, appContextStructures: {}&quot;, appContextStructures);</span>
 	  
-<span class="pc bpc" id="L171" title="1 of 2 branches missed.">	  if (CollectionUtils.isEmpty(appContextStructures)) {</span>
-<span class="fc" id="L172">	    log.trace(&quot;checkExecutionContext, no structure in application context&quot;);</span>
-<span class="fc" id="L173">	    return true;</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">	  if (CollectionUtils.isEmpty(appContextStructures)) {</span>
+<span class="fc" id="L296">	    log.trace(&quot;checkExecutionContext, no structure in application context&quot;);</span>
+<span class="fc" id="L297">	    return true;</span>
 	  }
 	  
-<span class="nc bnc" id="L176" title="All 4 branches missed.">	  if (CollectionUtils.isEmpty(exContextStructures) || !exContextStructures.containsAll(appContextStructures)) {</span>
-<span class="nc" id="L177">	    log.trace(&quot;checkExecutionContext, structures of application context not respected&quot;);</span>
-<span class="nc" id="L178">	    return false;</span>
+<span class="nc bnc" id="L300" title="All 4 branches missed.">	  if (CollectionUtils.isEmpty(exContextStructures) || !exContextStructures.containsAll(appContextStructures)) {</span>
+<span class="nc" id="L301">	    log.trace(&quot;checkExecutionContext, structures of application context not respected&quot;);</span>
+<span class="nc" id="L302">	    return false;</span>
 	  }
 	  
-<span class="nc" id="L181">	  log.trace(&quot;checkExecutionContext, structures of application context respected&quot;);</span>
-<span class="nc" id="L182">	  return true;</span>
+<span class="nc" id="L305">	  log.trace(&quot;checkExecutionContext, structures of application context respected&quot;);</span>
+<span class="nc" id="L306">	  return true;</span>
 	  }
 	  
-<span class="nc" id="L185">	  return true;</span>
+<span class="nc" id="L309">	  return true;</span>
 	}
 
 	/**
@@ -194,14 +318,16 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 	 */
 	private List&lt;RBACPermission&gt; fetchPermissions(Long actionId) {
 
-<span class="pc bpc" id="L197" title="1 of 4 branches missed.">		if (actionId != null &amp;&amp; !this.permissionsByActionId.containsKey(actionId)) {</span>
+<span class="pc bpc" id="L321" title="1 of 4 branches missed.">		if (actionId != null &amp;&amp; !this.permissionsByActionId.containsKey(actionId)) {</span>
 
-<span class="fc" id="L199">			RBACAction action = this.actionService.getActionById(actionId).orElse(null);</span>
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">			List&lt;RBACPermission&gt; permissions = action == null ? null : action.getPermissions();</span>
-<span class="fc" id="L201">			permissionsByActionId.put(actionId, permissions);</span>
+<span class="fc" id="L323">			RBACAction action = this.actionService.getActionById(actionId).orElse(null);</span>
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">			List&lt;RBACPermission&gt; permissions = action == null ? null : action.getPermissions();</span>
+<span class="fc" id="L325">			permissionsByActionId.put(actionId, permissions);</span>
 		}
-<span class="fc" id="L203">		return permissionsByActionId.get(actionId);</span>
+<span class="fc" id="L327">		return permissionsByActionId.get(actionId);</span>
 
 	}
+
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
