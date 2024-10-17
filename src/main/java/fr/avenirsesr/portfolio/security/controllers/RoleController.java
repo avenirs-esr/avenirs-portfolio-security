@@ -5,12 +5,14 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 import fr.avenirsesr.portfolio.security.services.RBACAssignmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,8 +47,8 @@ public class RoleController {
 			log.trace("Role for {}: {}", uid, roles);
 			return roles;
 		}
-		
-		return Collections.emptyList();
+
+		throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 	}
 	
 }
