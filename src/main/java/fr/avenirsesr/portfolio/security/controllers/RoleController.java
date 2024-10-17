@@ -1,10 +1,8 @@
 package fr.avenirsesr.portfolio.security.controllers;
 
 import fr.avenirsesr.portfolio.security.models.RBACAssignment;
-import fr.avenirsesr.portfolio.security.models.RBACRole;
 import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecificationHelper;
 import fr.avenirsesr.portfolio.security.services.RBACAssignmentService;
-import fr.avenirsesr.portfolio.security.services.RBACRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +14,6 @@ import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -29,8 +26,8 @@ public class RoleController {
 	/** Assignment service, used to retrieve roles assigned to a principal for instance.*/
 	@Autowired
 	private RBACAssignmentService assignmentService;
-	
-	@GetMapping("/roles")
+	@SuppressWarnings("SpringOmittedPathVariableParameterInspection")
+	@GetMapping("${avenirs.access.control.roles}")
 	public List<String> getRoles(@RequestHeader(value="x-authorization") String token) {
 		log.trace("getRoles, token: {}", token);
 		
