@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.repositories;
 
 import fr.avenirsesr.portfolio.security.models.RBACResource;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * <h1>RBACResourceRepository</h1>
@@ -19,6 +20,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 07/10/2024
  */
 
-public interface RBACResourceRepository extends JpaRepository<RBACResource, Long>  {
+public interface RBACResourceRepository extends JpaRepository<RBACResource, Long>, JpaSpecificationExecutor<RBACResource> {
 
 }

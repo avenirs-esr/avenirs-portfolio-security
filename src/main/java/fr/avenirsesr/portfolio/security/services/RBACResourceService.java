@@ -1,10 +1,12 @@
 package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.models.RBACResource;
+import fr.avenirsesr.portfolio.security.models.Structure;
 import fr.avenirsesr.portfolio.security.repositories.RBACResourceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +56,19 @@ public class RBACResourceService {
 	public List<RBACResource> getAllResources() {
 		log.trace("getAllResources");
 		return this.resourceRepository.findAll();
+	}
+
+
+	/**
+	 * Gives all the resources associated to a specification.
+	 *
+	 * @param specification The specification used to filter the resources.
+	 * @return The filtered resources.
+	 */
+	@Transactional(readOnly = true)
+	public List<RBACResource> getAllResourcesBySpecification(Specification<RBACResource> specification) {
+		log.trace("getAllResourcesBySpecification, specification: {}", specification);
+		return resourceRepository.findAll(specification);
 	}
 	
 	/**
