@@ -26,7 +26,9 @@ import jakarta.servlet.http.HttpServletResponse;
 <span class="fc" id="L26">@Slf4j</span>
 @RestController
 <span class="fc" id="L28">public class AuthenticationController {</span>
+	/** Constant for a missing authorization code. */
 	public static final String NO_PROVIDED_CODE = &quot;NO_PROVIDED_CODE&quot;;
+
 	/** Authentication service. */
 	@Autowired 
 	private AuthenticationService authenticationService;
@@ -43,10 +45,10 @@ import jakarta.servlet.http.HttpServletResponse;
 	public void oidcCallback(@RequestHeader(value=&quot;x-forwarded-host&quot;, required=false) String forwardHost,
 			HttpServletResponse response,
 			@RequestParam(value=&quot;code&quot;, required=false) String code) throws IOException {
-<span class="nc" id="L46">		log.trace(&quot;oidcCallback&quot;);</span>
-<span class="nc bnc" id="L47" title="All 2 branches missed.">		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost == null ? &quot;localhost&quot;:forwardHost,</span>
-<span class="nc bnc" id="L48" title="All 2 branches missed.">				code == null ? NO_PROVIDED_CODE : code));</span>
-<span class="nc" id="L49">	}</span>
+<span class="fc" id="L48">		log.trace(&quot;oidcCallback&quot;);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost == null ? &quot;localhost&quot;:forwardHost,</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">				code == null ? NO_PROVIDED_CODE : code));</span>
+<span class="fc" id="L51">	}</span>
 		
 	/**
 	 * Performs the redirection after the access token is retrieved.
@@ -60,9 +62,9 @@ import jakarta.servlet.http.HttpServletResponse;
 	
 	public void redirect(@RequestHeader(value=&quot;x-forwarded-host&quot;, required=false) String host,
 			HttpServletResponse response) throws IOException{
-<span class="nc" id="L63">		log.trace(&quot;redirect&quot;);</span>
-<span class="nc bnc" id="L64" title="All 2 branches missed.">		response.sendRedirect(this.authenticationService.generateServiceURL(host == null ? &quot;localhost&quot;: host));</span>
-<span class="nc" id="L65">	}</span>
+<span class="fc" id="L65">		log.trace(&quot;redirect&quot;);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		response.sendRedirect(this.authenticationService.generateServiceURL(host == null ? &quot;localhost&quot;: host));</span>
+<span class="fc" id="L67">	}</span>
 	
 	/**
 	 * Access token introspection end point. 
@@ -72,12 +74,12 @@ import jakarta.servlet.http.HttpServletResponse;
 	@SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
 	@PostMapping(&quot;${avenirs.authentication.oidc.callback.profile}&quot;)
 	public OIDCProfileResponse profile(@RequestHeader(value=&quot;x-authorization&quot;) String token) {
-<span class="nc" id="L75">		OIDCIntrospectResponse introspectResponse = this.authenticationService.introspectAccessToken(token);</span>
+<span class="fc" id="L77">		OIDCIntrospectResponse introspectResponse = this.authenticationService.introspectAccessToken(token);</span>
 		
-<span class="nc bnc" id="L77" title="All 4 branches missed.">		if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
-<span class="nc" id="L78">            return this.authenticationService.profile(token);</span>
+<span class="fc bfc" id="L79" title="All 4 branches covered.">		if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
+<span class="fc" id="L80">            return this.authenticationService.profile(token);</span>
 		}
-<span class="nc" id="L80">		throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
+<span class="fc" id="L82">		throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
 	}
 
 	/**
@@ -88,7 +90,7 @@ import jakarta.servlet.http.HttpServletResponse;
 	@SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
 	@PostMapping(&quot;${avenirs.authentication.oidc.callback.introspect}&quot;)
 	public OIDCIntrospectResponse introspect(@RequestHeader(value=&quot;x-authorization&quot;) String token) {
-<span class="nc" id="L91">		return this.authenticationService.introspectAccessToken(token);</span>
+<span class="fc" id="L93">		return this.authenticationService.introspectAccessToken(token);</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
