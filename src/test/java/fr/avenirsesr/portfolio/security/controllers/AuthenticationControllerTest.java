@@ -62,6 +62,7 @@ class AuthenticationControllerTest {
 
     @InjectMocks
     private AuthenticationController authenticationController;
+
     private AutoCloseable closeable;
 
     @Autowired
