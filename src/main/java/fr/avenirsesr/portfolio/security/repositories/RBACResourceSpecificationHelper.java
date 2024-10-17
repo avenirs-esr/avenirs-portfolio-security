@@ -24,7 +24,7 @@ import java.util.Arrays;
  */
 
 @Slf4j
-public abstract class ResourceSpecificationHelper {
+public abstract class RBACResourceSpecificationHelper {
 		
 	/**
 	 * Generates a Specification to filter Resources from a list of  ids.
