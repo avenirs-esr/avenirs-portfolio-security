@@ -19,7 +19,7 @@ import jakarta.transaction.Transactional;
 public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {
 	
 	public static void main(String[] args) {
-		log.info("Starting Avenirs Portfolio Securiy Module");
+		log.info("Starting Avenirs Portfolio Security Module");
 		/* ApplicationContext app = */SpringApplication.run(AvenirsPortfolioSecurityApplication.class, args);
 	}
 
