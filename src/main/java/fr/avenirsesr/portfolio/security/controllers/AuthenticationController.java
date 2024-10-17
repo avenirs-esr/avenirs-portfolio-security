@@ -26,7 +26,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 public class AuthenticationController {
+	/** Constant for a missing authorization code. */
 	public static final String NO_PROVIDED_CODE = "NO_PROVIDED_CODE";
+
 	/** Authentication service. */
 	@Autowired 
 	private AuthenticationService authenticationService;
