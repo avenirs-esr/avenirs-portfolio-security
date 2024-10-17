@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -162,6 +163,11 @@ class AccessControlServiceTest {
 
         RBACAssignment assignment = assignments.getFirst();
         assertEquals(userLogin, assignment.getPrincipal().getLogin(), "Assignment principal login");
+        assertEquals(grantRoleId, assignment.getRole().getId(), "Assignment role id");
+        assertThat(assignment.getScope().getResources().stream().map(RBACResource::getId)).containsExactlyInAnyOrder(grantResourceIds);
+        assertEquals(validityStart, assignment.getContext().getValidityStart(), "Assignment validity start");
+        assertEquals(validityEnd, assignment.getContext().getValidityEnd(), "Assignment validity end");
+        assertThat(assignment.getContext().getStructures().stream().map(Structure::getId)).containsExactlyInAnyOrder(grantStructureIds);
     }
 
 }
