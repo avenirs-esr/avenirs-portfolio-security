@@ -122,8 +122,10 @@ class StructureServiceTest {
                 .setName(updatedName)
                 .setDescription(newStructureDescription);
 
-        structureService.updateStructure(updateStructure);
+        updateStructure = structureService.updateStructure(updateStructure);
 
+        assertNotNull(updateStructure, "Updated structure not null");
+        
         Structure fetchedStructure = structureService.getStructureById(savedStructure.getId())
                 .orElseThrow(() -> new AssertionError("Structure not found with ID: " + savedStructure.getId()));
         assertEquals(updatedName, fetchedStructure.getName(), "Updated structure name");
