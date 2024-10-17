@@ -3,23 +3,26 @@
  */
 package fr.avenirsesr.portfolio.security.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fr.avenirsesr.portfolio.security.models.*;
+import fr.avenirsesr.portfolio.security.repositories.RBACResourceSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repositories.StructureSpecificationHelper;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import fr.avenirsesr.portfolio.security.models.Principal;
-import fr.avenirsesr.portfolio.security.models.RBACAction;
-import fr.avenirsesr.portfolio.security.models.RBACAssignment;
-import fr.avenirsesr.portfolio.security.models.RBACContext;
-import fr.avenirsesr.portfolio.security.models.RBACPermission;
-import fr.avenirsesr.portfolio.security.models.RBACResource;
-import fr.avenirsesr.portfolio.security.models.Structure;
 import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecificationHelper;
+import org.springframework.util.StringUtils;
 
 /**
  * <h1>AccessControlService</h1>
@@ -49,9 +52,130 @@ public class AccessControlService {
 	@Autowired
 	RBACAssignmentService assignmentService;
 
+	@Autowired
+	RBACResourceService resourceService;
+
+	@Autowired
+	PrincipalService principalService;
+
+	@Autowired
+	RBACRoleService roleService;
+
+	@Autowired
+	StructureService structureService;
+
+	@Value("${avenirs.access.control.date.format}")
+	private String dateFormat;
+
+	private DateTimeFormatter formatter;
+
 	/** Cache for the permissions. */
 	private final Map<Long, List<RBACPermission>> permissionsByActionId = new HashMap<>();
 
+
+	@PostConstruct
+	public void init() {
+		this.formatter = DateTimeFormatter.ofPattern(dateFormat);
+	}
+	/**
+	 * Grant access.
+	 * @param grantRequest The request with the information on the access to grant.
+	 * @return An AccessControlResponse.
+	 */
+	public AccessControlGrantResponse grantAccess(AccessControlGrantRequest grantRequest) {
+        log.trace("grantAccess, grantRequest: {}", grantRequest);
+
+
+		// Role and principal.
+        RBACRole role = roleService.getRoleById(grantRequest.getRoleId())
+                .orElseThrow(() -> new EntityNotFoundException("Role not found, ID: " + grantRequest.getRoleId()));
+
+        Principal principal = principalService.getPrincipalByLogin(grantRequest.getUid())
+                .orElseThrow(() -> new EntityNotFoundException("Principal not found, UID: " + grantRequest.getUid()));
+
+		log.trace("grantAccess, role: {}", role);
+		log.trace("grantAccess, principal: {}", principal);
+
+		// Retrieve and check resources.
+		List<RBACResource> resources;
+		if (grantRequest.getResourceIds().length > 0){
+			resources = resourceService.getAllResourcesBySpecification(
+					RBACResourceSpecificationHelper.filterByIds(grantRequest.getResourceIds()));
+			if (resources.size() != grantRequest.getResourceIds().length) {
+				List<Long> foundIds = resources.stream()
+						.map(RBACResource::getId)
+						.toList();
+
+				List<Long> missingIds = Arrays.stream(grantRequest.getStructureIds())
+						.filter(id -> !foundIds.contains(id))
+						.collect(Collectors.toList());
+
+
+				log.warn("Missing resource ids: {}", missingIds);
+
+				throw new EntityNotFoundException("Missing structures, IDs : " + missingIds);
+			}
+		} else {
+			resources = Collections.emptyList();
+		}
+        log.trace("grantAccess, resource: {}", resources);
+
+
+
+		// Generates an application context.
+		RBACContext applicationContext = new RBACContext();
+
+		if(StringUtils.hasLength(grantRequest.getValidityStart())) {
+			try {
+				applicationContext.setValidityStart(LocalDate.parse(grantRequest.getValidityStart(), formatter).atStartOfDay());
+			} catch (DateTimeParseException e) {
+				throw new RuntimeException("Invalid validity start date format (" + dateFormat + "): " + grantRequest.getValidityStart());
+			}
+		}
+
+		if(StringUtils.hasLength(grantRequest.getValidityEnd())) {
+			try {
+				applicationContext.setValidityEnd(LocalDate.parse(grantRequest.getValidityEnd(), formatter).atStartOfDay());
+			} catch (DateTimeParseException e) {
+				throw new RuntimeException("Invalid validity end date format (" + dateFormat + "): " + grantRequest.getValidityEnd());
+			}
+		}
+
+		// Retrieve and checks the structures.
+		if (grantRequest.getStructureIds().length > 0){
+			List<Structure> structures = structureService.getAllStructuresBySpecification(StructureSpecificationHelper.filterByIds(grantRequest.getStructureIds()));
+			if (structures.size() != grantRequest.getStructureIds().length) {
+				List<Long> foundIds = structures.stream()
+						.map(Structure::getId)
+						.toList();
+
+				List<Long> missingIds = Arrays.stream(grantRequest.getStructureIds())
+						.filter(id -> !foundIds.contains(id))
+						.collect(Collectors.toList());
+
+
+				log.warn("Missing structures ids: {}", missingIds);
+
+				throw new EntityNotFoundException("Missing structures, IDs : " + missingIds);
+			}
+			applicationContext.setStructures(new HashSet<>(structures));
+		} else {
+			applicationContext.setStructures(new HashSet<>());
+		}
+
+		RBACAssignment assignment = new RBACAssignment()
+				.setScope(new RBACScope().setResources(resources))
+				.setRole(role)
+				.setPrincipal(principal)
+				.setContext(applicationContext);
+
+		assignmentService.createAssignment(assignment);
+
+
+        return new AccessControlGrantResponse()
+				.setLogin(grantRequest.getUid())
+                .setGranted(true);
+    }
 
 	/**
 	 * Checks that a principal has access to a resource to perform an action,
@@ -203,4 +327,6 @@ public class AccessControlService {
 		return permissionsByActionId.get(actionId);
 
 	}
+
+
 }
