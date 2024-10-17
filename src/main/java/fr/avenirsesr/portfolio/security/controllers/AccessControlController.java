@@ -1,23 +1,19 @@
 package fr.avenirsesr.portfolio.security.controllers;
 
+import fr.avenirsesr.portfolio.security.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import fr.avenirsesr.portfolio.security.models.AccessControlResponse;
-import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
-import fr.avenirsesr.portfolio.security.models.RBACAction;
-import fr.avenirsesr.portfolio.security.models.RBACActionRoute;
 import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecificationHelper;
 import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
+
+import java.util.Arrays;
 
 /**
  * <h1>AccessControlController</h1>
@@ -44,7 +40,7 @@ import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 @Slf4j
 @RestController
 public class AccessControlController {
-    
+
     /**
      * Authentication service used to retrieve the user information.
      */
@@ -65,17 +61,20 @@ public class AccessControlController {
 
 
     /**
-     * Checks if a principal
-     * @param token
-     * @param uri
-     * @param method
-     * @param resourceId
-     * @return
+     * Checks if a principal is authorized to perform an action on a resource.
+     * The action is specified by an uri and an HTTP method.
+     *
+     * @param token      The token associated to the principal.
+     * @param uri        The uri of the action.
+     * @param method     The HTTP method of the action.
+     * @param resourceId The involved resource.
+     * @return The AccessControlResponse that contains the flag to determine if the action is authorized.
      */
     @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
     @GetMapping("${avenirs.access.control}")
     public ResponseEntity<AccessControlResponse> isAuthorized(@RequestHeader(value = "x-authorization") String token,
-                                                              @RequestParam String uri, @RequestParam String method,
+                                                              @RequestParam String uri,
+                                                              @RequestParam String method,
                                                               @RequestParam(required = false, name = "resourceId") Long resourceId) {
         log.trace("hasAccess, token: {} ", token);
         log.trace("hasAccess, uri: {} ", uri);
@@ -118,6 +117,44 @@ public class AccessControlController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
     }
 
+    /**
+     * Grant a role to a principal for a resource (optional) and an application context (optional).
+     *
+     * @param token   The token associated to the principal.
+     * @param request grant request with the role, the resource and application context information.
+     * @return An AccessControlGrantResponse.
+     */
+    @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
+    @PostMapping("${avenirs.access.control.grant}")
+    public ResponseEntity<AccessControlGrantResponse> grant(@RequestHeader(value = "x-authorization") String token,
+                                                            @RequestBody AccessControlGrantRequest request) {
+        if (log.isTraceEnabled()) {
+            log.trace("Authorization Token: {}", token);
+            log.trace("Role ID: {}", request.getRoleId());
+            log.trace("Resource ID: {}", Arrays.toString(request.getResourceIds()));
+            log.trace("Validity Start: {}", request.getValidityStart());
+            log.trace("Validity End: {}", request.getValidityEnd());
+            log.trace("Structure IDs: {}", Arrays.toString(request.getStructureIds()));
+        }
+
+        OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
+        log.trace("grant, introspectResponse: {}", introspectResponse);
+
+        if (introspectResponse != null && introspectResponse.isActive()) {
+            AccessControlGrantResponse response;
+            try {
+                response = this.accessControlService.grantAccess(request.setUid(introspectResponse.getUniqueSecurityName()));
+            } catch (Exception e) {
+                response = new AccessControlGrantResponse()
+                        .setLogin(introspectResponse.getUniqueSecurityName())
+                        .setGranted(false)
+                        .setError(e.getMessage());
+            }
+            return response.isGranted() ? ResponseEntity.ok(response)
+                    : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
 
+    }
 }
