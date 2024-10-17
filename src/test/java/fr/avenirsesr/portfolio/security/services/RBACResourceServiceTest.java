@@ -2,7 +2,10 @@ package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.models.RBACResource;
 import fr.avenirsesr.portfolio.security.models.RBACResourceType;
+import fr.avenirsesr.portfolio.security.models.Structure;
+import fr.avenirsesr.portfolio.security.repositories.RBACResourceSpecificationHelper;
 import fr.avenirsesr.portfolio.security.repositories.RBACResourceTypeRepository;
+import fr.avenirsesr.portfolio.security.repositories.StructureSpecificationHelper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,11 @@ class RBACResourceServiceTest {
     @Value("${avenirs.test.rbac.resource.service.new.resource.type.id}")
     private Long newResourceTypeId;
 
+
+    @Value("${avenirs.test.rbac.resource.service.filtered.resource.ids}")
+    private Long[] filteredResourceIds;
+
+
     @Autowired
     private RBACResourceTypeRepository resourceTypeRepository;
 
@@ -61,6 +69,13 @@ class RBACResourceServiceTest {
         List<RBACResource> actual = resourceService.getAllResources();
         assertThat(actual).hasSize(allResourceSelectors.length);
         assertThat(actual.stream().map(RBACResource::getSelector)).containsExactlyInAnyOrder(allResourceSelectors);
+    }
+
+    @Test
+    void getAllResourcesBySpecification() {
+        List<RBACResource> actual = resourceService.getAllResourcesBySpecification(RBACResourceSpecificationHelper.filterByIds(filteredResourceIds));
+        assertThat(actual).hasSize(filteredResourceIds.length);
+        assertThat(actual.stream().map(RBACResource::getId)).containsExactlyInAnyOrder(filteredResourceIds);
     }
 
     @Test
