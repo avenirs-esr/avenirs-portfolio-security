@@ -19,6 +19,27 @@ import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
 
+/**
+ * <h1>AccessControlController</h1>
+ * <p>
+ * <b>Description:</b> AccessControlController is used to:
+ * <ul>
+ *     <li>Create assignment to grant privileges</li>
+ *     <li>Update assignment to modify granted privileges</li>
+ *     <li>Delete assignment to revoke privileges</li>
+ *     <li>Check assignment to determine if an action is authorized for a principal</li>
+ * </ul>
+ * </p>
+ *
+ * <h2>Version:</h2>
+ * 1.0.0
+ *
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 17/10/2024
+ */
 
 @Slf4j
 @RestController
@@ -42,10 +63,20 @@ public class AccessControlController {
     @Autowired
     private AccessControlService accessControlService;
 
+
+    /**
+     * Checks if a principal
+     * @param token
+     * @param uri
+     * @param method
+     * @param resourceId
+     * @return
+     */
+    @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
     @GetMapping("${avenirs.access.control}")
-    public ResponseEntity<AccessControlResponse> hasAccess(@RequestHeader(value = "x-authorization") String token,
-                                                           @RequestParam String uri, @RequestParam String method,
-                                                           @RequestParam(required = false, name = "resourceId") Long resourceId) {
+    public ResponseEntity<AccessControlResponse> isAuthorized(@RequestHeader(value = "x-authorization") String token,
+                                                              @RequestParam String uri, @RequestParam String method,
+                                                              @RequestParam(required = false, name = "resourceId") Long resourceId) {
         log.trace("hasAccess, token: {} ", token);
         log.trace("hasAccess, uri: {} ", uri);
         log.trace("hasAccess, method: {} ", method);
@@ -86,5 +117,7 @@ public class AccessControlController {
         log.trace("hasAccess, response: {}", response);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
     }
+
+
 
 }

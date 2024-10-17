@@ -49,7 +49,7 @@ class AccessControlControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	void testHasAccessWithoutHeader() throws Exception {
+	void testIsAuthorizedWithoutHeader() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/access-control").contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON).param("uri", "/ac").param("method", "get")).andDo(print())
@@ -58,7 +58,7 @@ class AccessControlControllerTest {
 	}
 
 	@Test
-	void testHasAccessWithoutURI() throws Exception {
+	void testIsAuthorizedWithoutURI() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/access-control").contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON).header("x-authorization", "accesstokenvalue")
@@ -66,7 +66,7 @@ class AccessControlControllerTest {
 	}
 
 	@Test
-	void testHasAccessWithoutMethod() throws Exception {
+	void testIsAuthorizedWithoutMethod() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/access-control").contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON).header("x-authorization", "accesstokenvalue").param("uri", "/feedback"))
@@ -74,7 +74,7 @@ class AccessControlControllerTest {
 	}
 
 	@Test
-	void testHasAccessNotGranted() throws Exception {
+	void testIsAuthorizedNotGranted() throws Exception {
 		
 		String token = "invalid token";
 		mockMvc.perform(MockMvcRequestBuilders.get("/access-control")
