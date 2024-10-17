@@ -5,19 +5,21 @@ import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecification
 import fr.avenirsesr.portfolio.security.services.RBACAssignmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
 
-<span class="fc" id="L18">@Slf4j</span>
+<span class="fc" id="L20">@Slf4j</span>
 @RestController
-<span class="fc" id="L20">public class RoleController {</span>
+<span class="fc" id="L22">public class RoleController {</span>
 	
 	/** Authentication service used to retrieve the user information.*/
 	@Autowired
@@ -29,24 +31,24 @@ import java.util.List;
 	@SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
 	@GetMapping(&quot;${avenirs.access.control.roles}&quot;)
 	public List&lt;String&gt; getRoles(@RequestHeader(value=&quot;x-authorization&quot;) String token) {
-<span class="nc" id="L32">		log.trace(&quot;getRoles, token: {}&quot;, token);</span>
+<span class="fc" id="L34">		log.trace(&quot;getRoles, token: {}&quot;, token);</span>
 		
-<span class="nc" id="L34">		OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
-<span class="nc" id="L35">		log.trace(&quot;getRoles, introspectResponse: {}&quot;, introspectResponse);</span>
+<span class="fc" id="L36">		OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
+<span class="fc" id="L37">		log.trace(&quot;getRoles, introspectResponse: {}&quot;, introspectResponse);</span>
 		
-<span class="nc bnc" id="L37" title="All 4 branches missed.">		if (introspectResponse != null  &amp;&amp; introspectResponse .isActive()) {</span>
-<span class="nc" id="L38">			String uid = introspectResponse.getUniqueSecurityName();</span>
-<span class="nc" id="L39">			log.trace(&quot;getRoles, uid: {}&quot;, uid);</span>
-<span class="nc" id="L40">			List&lt;RBACAssignment&gt; assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(uid));</span>
+<span class="pc bpc" id="L39" title="1 of 4 branches missed.">		if (introspectResponse != null  &amp;&amp; introspectResponse .isActive()) {</span>
+<span class="fc" id="L40">			String uid = introspectResponse.getUniqueSecurityName();</span>
+<span class="fc" id="L41">			log.trace(&quot;getRoles, uid: {}&quot;, uid);</span>
+<span class="fc" id="L42">			List&lt;RBACAssignment&gt; assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(uid));</span>
 
-<span class="nc" id="L42">			List&lt;String&gt; roles = assignments.stream()</span>
-<span class="nc" id="L43">					.map(assignment-&gt;assignment.getRole().getName())</span>
-<span class="nc" id="L44">					.toList();</span>
-<span class="nc" id="L45">			log.trace(&quot;Role for {}: {}&quot;, uid, roles);</span>
-<span class="nc" id="L46">			return roles;</span>
+<span class="fc" id="L44">			List&lt;String&gt; roles = assignments.stream()</span>
+<span class="fc" id="L45">					.map(assignment-&gt;assignment.getRole().getName())</span>
+<span class="fc" id="L46">					.toList();</span>
+<span class="fc" id="L47">			log.trace(&quot;Role for {}: {}&quot;, uid, roles);</span>
+<span class="fc" id="L48">			return roles;</span>
 		}
-		
-<span class="nc" id="L49">		return Collections.emptyList();</span>
+
+<span class="fc" id="L51">		throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
 	}
 	
 }
