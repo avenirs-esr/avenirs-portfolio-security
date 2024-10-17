@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACResourceService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.services</a> &gt; <span class="el_source">RBACResourceService.java</span></div><h1>RBACResourceService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.models.RBACResource;
+import fr.avenirsesr.portfolio.security.models.Structure;
 import fr.avenirsesr.portfolio.security.repositories.RBACResourceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +30,9 @@ import java.util.Optional;
  * 17/10/2024
  */
 
-<span class="fc" id="L31">@Slf4j</span>
+<span class="fc" id="L33">@Slf4j</span>
 @Service
-<span class="fc" id="L33">public class RBACResourceService {</span>
+<span class="fc" id="L35">public class RBACResourceService {</span>
 	
 	@Autowired
 	private RBACResourceRepository resourceRepository;
@@ -42,8 +44,8 @@ import java.util.Optional;
 	 */
 	@Transactional(readOnly = true)
 	public Optional&lt;RBACResource&gt; getResourceById(final Long resourceId){
-<span class="fc" id="L45">		log.trace(&quot;getResourceById resourceId: {}&quot;, resourceId);</span>
-<span class="fc" id="L46">		return this.resourceRepository.findById(resourceId);</span>
+<span class="fc" id="L47">		log.trace(&quot;getResourceById resourceId: {}&quot;, resourceId);</span>
+<span class="fc" id="L48">		return this.resourceRepository.findById(resourceId);</span>
 	}
 	
 	/**
@@ -52,8 +54,21 @@ import java.util.Optional;
 	 */
 	@Transactional(readOnly = true)
 	public List&lt;RBACResource&gt; getAllResources() {
-<span class="fc" id="L55">		log.trace(&quot;getAllResources&quot;);</span>
-<span class="fc" id="L56">		return this.resourceRepository.findAll();</span>
+<span class="fc" id="L57">		log.trace(&quot;getAllResources&quot;);</span>
+<span class="fc" id="L58">		return this.resourceRepository.findAll();</span>
+	}
+
+
+	/**
+	 * Gives all the resources associated to a specification.
+	 *
+	 * @param specification The specification used to filter the resources.
+	 * @return The filtered resources.
+	 */
+	@Transactional(readOnly = true)
+	public List&lt;RBACResource&gt; getAllResourcesBySpecification(Specification&lt;RBACResource&gt; specification) {
+<span class="nc" id="L70">		log.trace(&quot;getAllResourcesBySpecification, specification: {}&quot;, specification);</span>
+<span class="nc" id="L71">		return resourceRepository.findAll(specification);</span>
 	}
 	
 	/**
@@ -63,8 +78,8 @@ import java.util.Optional;
 	 */
 	@Transactional
 	public RBACResource createResource(RBACResource resource) {
-<span class="fc" id="L66">		log.trace(&quot;createResource, resource: {}&quot;, resource);</span>
-<span class="fc" id="L67">		return this.resourceRepository.save(resource);</span>
+<span class="fc" id="L81">		log.trace(&quot;createResource, resource: {}&quot;, resource);</span>
+<span class="fc" id="L82">		return this.resourceRepository.save(resource);</span>
 	}
 	
 	/**
@@ -74,15 +89,15 @@ import java.util.Optional;
 	 */
 	@Transactional
 	public RBACResource  updateResource(RBACResource resource) {
-<span class="fc" id="L77">		log.trace(&quot;updateResource, resource: {}&quot;, resource);</span>
-<span class="fc" id="L78">		return this.resourceRepository.findById(resource.getId())</span>
-<span class="fc" id="L79">				.map(storedResource -&gt; {</span>
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">					if (! storedResource.equals(resource)) {</span>
-<span class="fc" id="L81">                        storedResource.setSelector(resource.getSelector());</span>
+<span class="fc" id="L92">		log.trace(&quot;updateResource, resource: {}&quot;, resource);</span>
+<span class="fc" id="L93">		return this.resourceRepository.findById(resource.getId())</span>
+<span class="fc" id="L94">				.map(storedResource -&gt; {</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">					if (! storedResource.equals(resource)) {</span>
+<span class="fc" id="L96">                        storedResource.setSelector(resource.getSelector());</span>
 					}
-<span class="fc" id="L83">					return storedResource;</span>
+<span class="fc" id="L98">					return storedResource;</span>
 				})
-<span class="pc" id="L85">				.orElseThrow(() -&gt; new EntityNotFoundException(&quot;Entity not found with ID: &quot; + resource.getId()));</span>
+<span class="pc" id="L100">				.orElseThrow(() -&gt; new EntityNotFoundException(&quot;Entity not found with ID: &quot; + resource.getId()));</span>
 	}
 	
 	/**
@@ -91,8 +106,8 @@ import java.util.Optional;
 	 */
 	@Transactional
 	public void deleteResource(Long resourceId) {
-<span class="fc" id="L94">			log.trace(&quot;deleteResource, resourceId: {}&quot;, resourceId);</span>
-<span class="fc" id="L95">		this.resourceRepository.deleteById(resourceId);</span>
-<span class="fc" id="L96">	}</span>
+<span class="fc" id="L109">			log.trace(&quot;deleteResource, resourceId: {}&quot;, resourceId);</span>
+<span class="fc" id="L110">		this.resourceRepository.deleteById(resourceId);</span>
+<span class="fc" id="L111">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
