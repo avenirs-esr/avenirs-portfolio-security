@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.security.repositories;
 
-import jakarta.annotation.Resource;
+import fr.avenirsesr.portfolio.security.models.RBACResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -31,7 +31,7 @@ public abstract class RBACResourceSpecificationHelper {
 	 * @param ids The ids of the resources.
 	 * @return The Specification .
 	 */
-	public static Specification<Resource> filterByIds(Long...ids) {
+	public static Specification<RBACResource> filterByIds(Long...ids) {
 		if (log.isTraceEnabled()) {
             log.trace("filterByIds ids: {}", Arrays.toString(ids));
 		}
