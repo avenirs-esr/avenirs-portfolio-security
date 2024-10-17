@@ -44,10 +44,10 @@ class AuthenticationControllerTest {
     @Value("${avenirs.test.authentication.controller.profile.expected.service}")
     private String profileExpectedService;
 
-    @Value("${avenirs.test.authentication.controller.profile.expected.firstName}")
+    @Value("${avenirs.test.authentication.controller.profile.expected.first.name}")
     private String profileExpectedFirstName;
 
-    @Value("${avenirs.test.authentication.controller.profile.expected.lastName}")
+    @Value("${avenirs.test.authentication.controller.profile.expected.last.name}")
     private String profileExpectedLastName;
 
     @Value("${avenirs.test.authentication.controller.profile.expected.email}")
