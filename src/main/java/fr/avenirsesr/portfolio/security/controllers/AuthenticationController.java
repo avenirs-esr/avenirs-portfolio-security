@@ -1,7 +1,6 @@
 package fr.avenirsesr.portfolio.security.controllers;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 public class AuthenticationController {
+	public static final String NO_PROVIDED_CODE = "NO_PROVIDED_CODE";
 	/** Authentication service. */
 	@Autowired 
 	private AuthenticationService authenticationService;
@@ -38,12 +38,14 @@ public class AuthenticationController {
 	 * @param code The session code used to issue an access token.
 	 * @throws IOException If an input or output exception occurs.
 	 */
+	@SuppressWarnings("SpringOmittedPathVariableParameterInspection")
 	@GetMapping("${avenirs.authentication.oidc.callback}")
-	public void oidcCallback(@RequestHeader(value="x-forwarded-host") Optional<String> forwardHost,
+	public void oidcCallback(@RequestHeader(value="x-forwarded-host", required=false) String forwardHost,
 			HttpServletResponse response,
-			@RequestParam Optional<String> code) throws IOException {
+			@RequestParam(value="code", required=false) String code) throws IOException {
 		log.trace("oidcCallback");
-		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost.orElse("localhost"), code.orElse("NO_PROVIDED_CODE")));
+		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost == null ? "localhost":forwardHost,
+				code == null ? NO_PROVIDED_CODE : code));
 	}
 		
 	/**
@@ -53,39 +55,39 @@ public class AuthenticationController {
 	 * @param response The servlet response instance, used to perform a redirection.
 	 * @throws IOException If an input or output exception occurs.
 	 */
-	@GetMapping("${avenirs.authentication.oidc.callback.redirect}")
+	@SuppressWarnings("SpringOmittedPathVariableParameterInspection")
+    @GetMapping("${avenirs.authentication.oidc.callback.redirect}")
 	
-	public void redirect(@RequestHeader(value="x-forwarded-host") Optional<String> host,
+	public void redirect(@RequestHeader(value="x-forwarded-host", required=false) String host,
 			HttpServletResponse response) throws IOException{
 		log.trace("redirect");
-		response.sendRedirect(this.authenticationService.generateServiceURL(host.orElse("localhost")));
+		response.sendRedirect(this.authenticationService.generateServiceURL(host == null ? "localhost": host));
 	}
 	
 	/**
 	 * Access token introspection end point. 
 	 * @param token The token to introspect.
 	 * @return The response of the OIDC provider.
-	 * @throws IOException  If an input or output exception occurs.
 	 */
+	@SuppressWarnings("SpringOmittedPathVariableParameterInspection")
 	@PostMapping("${avenirs.authentication.oidc.callback.profile}")
-	public OIDCProfileResponse profile(@RequestHeader(value="x-authorization") String token) throws IOException{
+	public OIDCProfileResponse profile(@RequestHeader(value="x-authorization") String token) {
 		OIDCIntrospectResponse introspectResponse = this.authenticationService.introspectAccessToken(token);
 		
 		if (introspectResponse != null && introspectResponse.isActive()) {
-			OIDCProfileResponse profileResponse = this.authenticationService.profile(token);
-				return profileResponse;
+            return this.authenticationService.profile(token);
 		}
 		throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 	}
-		
+
 	/**
 	 * Access token introspection end point. 
 	 * @param token The token to introspect.
 	 * @return The OIDC Provider response.
-	 * @throws IOException
 	 */
+	@SuppressWarnings("SpringOmittedPathVariableParameterInspection")
 	@PostMapping("${avenirs.authentication.oidc.callback.introspect}")
-	public OIDCIntrospectResponse introspect(@RequestHeader(value="x-authorization") String token) throws IOException{
+	public OIDCIntrospectResponse introspect(@RequestHeader(value="x-authorization") String token) {
 		return this.authenticationService.introspectAccessToken(token);
 	}
 }
