@@ -10,7 +10,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACResourc
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AuthenticationService,8,359,5,7,3,64,5,12,0,11
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,JWTService,104,225,11,13,40,48,11,8,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,RBACRoleService,7,85,1,1,0,21,2,9,1,9
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AccessControlService,88,509,13,31,19,119,15,26,4,15
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.services,AccessControlService,23,574,13,31,7,131,11,30,0,19
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACResourceType_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACResource_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.models,RBACActionRoute_,3,0,0,0,1,0,1,0,1,0

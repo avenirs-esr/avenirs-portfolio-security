@@ -97,10 +97,10 @@ import org.springframework.util.StringUtils;
 
         // Role and principal.
 <span class="fc" id="L99">        RBACRole role = roleService.getRoleById(grantRequest.getRoleId())</span>
-<span class="pc" id="L100">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Role not found, ID: &quot; + grantRequest.getRoleId()));</span>
+<span class="fc" id="L100">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Role not found, ID: &quot; + grantRequest.getRoleId()));</span>
 
 <span class="fc" id="L102">        Principal principal = principalService.getPrincipalByLogin(grantRequest.getUid())</span>
-<span class="pc" id="L103">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Principal not found, UID: &quot; + grantRequest.getUid()));</span>
+<span class="fc" id="L103">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Principal not found, UID: &quot; + grantRequest.getUid()));</span>
 
 <span class="fc" id="L105">        log.trace(&quot;grantAccess, role: {}&quot;, role);</span>
 <span class="fc" id="L106">        log.trace(&quot;grantAccess, principal: {}&quot;, principal);</span>
@@ -190,21 +190,21 @@ import org.springframework.util.StringUtils;
      * @return The response with the result of the operation.
      */
     public AccessControlRevokeResponse revokeAccess(AccessControlRevokeRequest revokeRequest) {
-<span class="nc" id="L193">        log.trace(&quot;revokeAccess, revokeRequest: {}&quot;, revokeRequest);</span>
+<span class="fc" id="L193">        log.trace(&quot;revokeAccess, revokeRequest: {}&quot;, revokeRequest);</span>
 
-<span class="nc" id="L195">        Principal principal = principalService.getPrincipalByLogin(revokeRequest.getUid())</span>
-<span class="nc" id="L196">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Principal not found, UID: &quot; + revokeRequest.getUid()));</span>
+<span class="fc" id="L195">        Principal principal = principalService.getPrincipalByLogin(revokeRequest.getUid())</span>
+<span class="fc" id="L196">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Principal not found, UID: &quot; + revokeRequest.getUid()));</span>
 
-<span class="nc" id="L198">        RBACAssignmentPK key = new RBACAssignmentPK()</span>
-<span class="nc" id="L199">                .setPrincipal(principal.getId())</span>
-<span class="nc" id="L200">                .setContext(revokeRequest.getContextId())</span>
-<span class="nc" id="L201">                .setScope(revokeRequest.getScopeId())</span>
-<span class="nc" id="L202">                .setRole(revokeRequest.getRoleId());</span>
+<span class="fc" id="L198">        RBACAssignmentPK key = new RBACAssignmentPK()</span>
+<span class="fc" id="L199">                .setPrincipal(principal.getId())</span>
+<span class="fc" id="L200">                .setContext(revokeRequest.getContextId())</span>
+<span class="fc" id="L201">                .setScope(revokeRequest.getScopeId())</span>
+<span class="fc" id="L202">                .setRole(revokeRequest.getRoleId());</span>
 
-<span class="nc" id="L204">        assignmentService.deleteAssignment(key);</span>
-<span class="nc" id="L205">        return new AccessControlRevokeResponse()</span>
-<span class="nc" id="L206">                .setLogin(revokeRequest.getUid())</span>
-<span class="nc" id="L207">                .setRevoked(true);</span>
+<span class="fc" id="L204">        assignmentService.deleteAssignment(key);</span>
+<span class="fc" id="L205">        return new AccessControlRevokeResponse()</span>
+<span class="fc" id="L206">                .setLogin(revokeRequest.getUid())</span>
+<span class="fc" id="L207">                .setRevoked(true);</span>
     }
 
     /**
