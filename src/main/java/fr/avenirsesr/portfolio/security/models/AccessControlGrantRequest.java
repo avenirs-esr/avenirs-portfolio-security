@@ -5,14 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
-
 /**
  * <h1>AccessControlGrantRequest</h1>
  * <p>
  * Description: AccessControlGrantRequest is used to grant a role to a principal.
  * The granted role can be associated to specific resources and limited to an application context.
- *
  * </p>
  *
  * <h2>Version:</h2>
