@@ -35,6 +35,6 @@ public class AccessControlGrantResponse {
 	/** Access granted or not. */
 	private boolean granted;
 
-	/** Message if an error occures. */
+	/** Message if an error occurs. */
 	private String error;
 }
