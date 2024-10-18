@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
+import java.util.Optional;
 
 import fr.avenirsesr.portfolio.security.models.RBACAssignmentPK;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,18 @@ public class RBACAssignmentService {
 	public List<RBACAssignment> getAllAssignmentsBySpecification(Specification<RBACAssignment> specification) {
 		log.trace("getAllAssignmentsByPredicate, specification: {}", specification);
 		return assignmentRepository.findAll(specification);
+	}
+
+	/**
+	 * Gives all the assignments associated to a principal.
+	 *
+	 * @param assignmentId The id of the assignment to retrieve.
+	 * @return The  Optional with the assignment if found.
+	 */
+	@Transactional(readOnly = true)
+	public Optional<RBACAssignment> getAssignmentsById(RBACAssignmentPK assignmentId) {
+		log.trace("getAssignmentsById, assignmentId: {}", assignmentId);
+		return assignmentRepository.findById(assignmentId);
 	}
 	
 	/**

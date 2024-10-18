@@ -82,6 +82,7 @@ class AccessControlServiceTest {
     @Value("${avenirs.test.access.control.service.grant.role.id}")
     private Long grantRoleId;
 
+
     /**
      * execution date in valid date range.
      */
@@ -96,6 +97,7 @@ class AccessControlServiceTest {
      * Validity end date.
      */
     private LocalDateTime validityEnd;
+
 
     @Value("${avenirs.access.control.date.format}")
     private String dateFormat;

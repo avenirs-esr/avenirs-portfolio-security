@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 /**
  * <h1>AccessControlGrantResponse</h1>
  * <p>
- * <b>Description:</b> response to a grant (creation or update) operation.
+ * <b>Description:</b> response to a grant operation.
  * </p>
  *
  * <h2>Version:</h2>

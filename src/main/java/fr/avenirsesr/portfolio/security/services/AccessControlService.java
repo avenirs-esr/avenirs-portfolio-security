@@ -69,6 +69,9 @@ public class AccessControlService {
     @Autowired
     StructureService structureService;
 
+    @Autowired
+    RBACContextService contextService;
+
     @Value("${avenirs.access.control.date.format}")
     private String dateFormat;
 
