@@ -104,7 +104,7 @@ public class AccessControlController {
                     log.trace("hasAccess, login: {}", login);
                     response.setLogin(login);
 
-                    boolean granted = accessControlService.hasAccess(login, action.getId(), resourceId);
+                    boolean granted = accessControlService.isAuthorized(login, action.getId(), resourceId);
                     log.trace("hasAccess, granted: {}", granted);
 
                     response.setGranted(granted);

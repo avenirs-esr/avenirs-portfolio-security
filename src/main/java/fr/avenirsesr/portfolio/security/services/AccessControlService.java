@@ -192,12 +192,12 @@ public class AccessControlService {
      * @param resource  The accessed resource.
      * @return True if the principal has access to the resource.
      */
-    public boolean hasAccess(Principal principal, RBACAction action, RBACResource resource) {
+    public boolean isAuthorized(Principal principal, RBACAction action, RBACResource resource) {
         log.trace("hasAccess, principal: {}", principal);
         log.trace("hasAccess, action: {}", action);
         log.trace("hasAccess, resource: {}", resource);
 
-        return hasAccess(principal.getLogin(), action.getId(), resource.getId());
+        return isAuthorized(principal.getLogin(), action.getId(), resource.getId());
     }
 
     /**
@@ -209,7 +209,7 @@ public class AccessControlService {
      * @param resourceId The id of the accessed resource.
      * @return True if the principal has access to the resource.
      */
-    public boolean hasAccess(String login, Long actionId, Long resourceId) {
+    public boolean isAuthorized(String login, Long actionId, Long resourceId) {
         log.trace("hasAccess, login: {}", login);
         log.trace("hasAccess, actionId: {}", actionId);
         log.trace("hasAccess, resourceId: {}", resourceId);

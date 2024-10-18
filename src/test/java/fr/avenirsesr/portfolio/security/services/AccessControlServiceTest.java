@@ -123,7 +123,7 @@ class AccessControlServiceTest {
             "classpath:db/test-fixtures-rbac-case2.sql"
     })
     @Test
-    void hasAccess() {
+    void isAuthorized() {
         Principal principal = new Principal().setLogin(userLogin);
         RBACAction display = new RBACAction().setId(displayActionId);
         RBACAction edit = new RBACAction().setId(editActionId);
@@ -139,12 +139,12 @@ class AccessControlServiceTest {
         }).when(accessControlService).createExecutionContext(any(Principal.class));
 
 
-        assertTrue(accessControlService.hasAccess(principal, display, authorizedResource), "Display access on authorized resource.");
-        assertFalse(accessControlService.hasAccess(principal, display, unauthorizedResource), "Display access on unauthorized resource.");
-        assertFalse(accessControlService.hasAccess(principal, edit, authorizedResource), "Edit access on authorized resource.");
-        assertFalse(accessControlService.hasAccess(principal, edit, unauthorizedResource), "Edit access on unauthorized resource.");
-        assertTrue(accessControlService.hasAccess(principal, feedback, authorizedResource), "Feedback access on authorized resource.");
-        assertFalse(accessControlService.hasAccess(principal, feedback, unauthorizedResource), "Feedback access on unauthorized resource.");
+        assertTrue(accessControlService.isAuthorized(principal, display, authorizedResource), "Display access on authorized resource.");
+        assertFalse(accessControlService.isAuthorized(principal, display, unauthorizedResource), "Display access on unauthorized resource.");
+        assertFalse(accessControlService.isAuthorized(principal, edit, authorizedResource), "Edit access on authorized resource.");
+        assertFalse(accessControlService.isAuthorized(principal, edit, unauthorizedResource), "Edit access on unauthorized resource.");
+        assertTrue(accessControlService.isAuthorized(principal, feedback, authorizedResource), "Feedback access on authorized resource.");
+        assertFalse(accessControlService.isAuthorized(principal, feedback, unauthorizedResource), "Feedback access on unauthorized resource.");
 
     }
 
