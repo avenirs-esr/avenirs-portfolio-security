@@ -126,34 +126,34 @@ import java.util.Arrays;
      */
     @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
     @PostMapping(&quot;${avenirs.access.control.grant}&quot;)
-    public ResponseEntity&lt;AccessControlGrantResponse&gt; grant(@RequestHeader(value = &quot;x-authorization&quot;) String token,
-                                                            @RequestBody AccessControlGrantRequest request) {
-<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (log.isTraceEnabled()) {</span>
-<span class="nc" id="L132">            log.trace(&quot;Authorization Token: {}&quot;, token);</span>
-<span class="nc" id="L133">            log.trace(&quot;Role ID: {}&quot;, request.getRoleId());</span>
-<span class="nc" id="L134">            log.trace(&quot;Resource ID: {}&quot;, Arrays.toString(request.getResourceIds()));</span>
-<span class="nc" id="L135">            log.trace(&quot;Validity Start: {}&quot;, request.getValidityStart());</span>
-<span class="nc" id="L136">            log.trace(&quot;Validity End: {}&quot;, request.getValidityEnd());</span>
-<span class="nc" id="L137">            log.trace(&quot;Structure IDs: {}&quot;, Arrays.toString(request.getStructureIds()));</span>
+    public ResponseEntity&lt;AccessControlGrantResponse&gt; grantAccess(@RequestHeader(value = &quot;x-authorization&quot;) String token,
+                                                                  @RequestBody AccessControlGrantRequest request) {
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (log.isTraceEnabled()) {</span>
+<span class="fc" id="L132">            log.trace(&quot;Authorization Token: {}&quot;, token);</span>
+<span class="fc" id="L133">            log.trace(&quot;Role ID: {}&quot;, request.getRoleId());</span>
+<span class="fc" id="L134">            log.trace(&quot;Resource ID: {}&quot;, Arrays.toString(request.getResourceIds()));</span>
+<span class="fc" id="L135">            log.trace(&quot;Validity Start: {}&quot;, request.getValidityStart());</span>
+<span class="fc" id="L136">            log.trace(&quot;Validity End: {}&quot;, request.getValidityEnd());</span>
+<span class="fc" id="L137">            log.trace(&quot;Structure IDs: {}&quot;, Arrays.toString(request.getStructureIds()));</span>
         }
 
-<span class="nc" id="L140">        OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
-<span class="nc" id="L141">        log.trace(&quot;grant, introspectResponse: {}&quot;, introspectResponse);</span>
+<span class="fc" id="L140">        OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
+<span class="fc" id="L141">        log.trace(&quot;grant, introspectResponse: {}&quot;, introspectResponse);</span>
 
-<span class="nc bnc" id="L143" title="All 4 branches missed.">        if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
+<span class="pc bpc" id="L143" title="1 of 4 branches missed.">        if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
             AccessControlGrantResponse response;
             try {
-<span class="nc" id="L146">                response = this.accessControlService.grantAccess(request.setUid(introspectResponse.getUniqueSecurityName()));</span>
-<span class="nc" id="L147">            } catch (Exception e) {</span>
-<span class="nc" id="L148">                response = new AccessControlGrantResponse()</span>
-<span class="nc" id="L149">                        .setLogin(introspectResponse.getUniqueSecurityName())</span>
-<span class="nc" id="L150">                        .setGranted(false)</span>
-<span class="nc" id="L151">                        .setError(e.getMessage());</span>
-<span class="nc" id="L152">            }</span>
-<span class="nc bnc" id="L153" title="All 2 branches missed.">            return response.isGranted() ? ResponseEntity.ok(response)</span>
-<span class="nc" id="L154">                    : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
+<span class="fc" id="L146">                response = this.accessControlService.grantAccess(request.setUid(introspectResponse.getUniqueSecurityName()));</span>
+<span class="fc" id="L147">            } catch (Exception e) {</span>
+<span class="fc" id="L148">                response = new AccessControlGrantResponse()</span>
+<span class="fc" id="L149">                        .setLogin(introspectResponse.getUniqueSecurityName())</span>
+<span class="fc" id="L150">                        .setGranted(false)</span>
+<span class="fc" id="L151">                        .setError(e.getMessage());</span>
+<span class="fc" id="L152">            }</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            return response.isGranted() ? ResponseEntity.ok(response)</span>
+<span class="fc" id="L154">                    : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
         }
-<span class="nc" id="L156">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+<span class="fc" id="L156">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
 
 
     }
