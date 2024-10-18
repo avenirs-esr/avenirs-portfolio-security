@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.models.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.test.context.jdbc.Sql;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,12 +28,12 @@ import static org.mockito.Mockito.doAnswer;
  * <h1>AccessControlServiceTest</h1>
  * <p>
  * <b>Description:</b> based on test case 1: user gribonvald is pair for a resource of type MES.
- *  * </p>
- *  * For more details
- *  * <a href="https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case2/">
- *  *     https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case2/
- *  * </a>
- *  *
+ * * </p>
+ * * For more details
+ * * <a href="https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case2/">
+ * *     https://avenirs-esr.github.io/dev-doc/arch-soft-specif-security-rbac-test-case2/
+ * * </a>
+ * *
  *
  * <h2>Version:</h2>
  * 1.0.0
@@ -44,7 +47,7 @@ import static org.mockito.Mockito.doAnswer;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Sql(scripts={
+@Sql(scripts = {
         "classpath:db/test-fixtures-commons.sql"
 })
 @Transactional
@@ -79,13 +82,19 @@ class AccessControlServiceTest {
     @Value("${avenirs.test.access.control.service.grant.role.id}")
     private Long grantRoleId;
 
-    /** execution date in valid date range. */
+    /**
+     * execution date in valid date range.
+     */
     private LocalDateTime effectiveDateInValidityRange;
 
-    /** Validity start date. */
+    /**
+     * Validity start date.
+     */
     private LocalDateTime validityStart;
 
-    /** Validity end date. */
+    /**
+     * Validity end date.
+     */
     private LocalDateTime validityEnd;
 
     @Value("${avenirs.access.control.date.format}")
@@ -109,7 +118,7 @@ class AccessControlServiceTest {
         this.formatter = DateTimeFormatter.ofPattern(dateFormat);
     }
 
-    @Sql(scripts={
+    @Sql(scripts = {
             "classpath:db/test-fixtures-commons.sql",
             "classpath:db/test-fixtures-rbac-case2.sql"
     })
@@ -130,25 +139,25 @@ class AccessControlServiceTest {
         }).when(accessControlService).createExecutionContext(any(Principal.class));
 
 
-        assertTrue (accessControlService.hasAccess(principal, display, authorizedResource), "Display access on authorized resource.");
-        assertFalse (accessControlService.hasAccess(principal, display, unauthorizedResource), "Display access on unauthorized resource.");
-        assertFalse (accessControlService.hasAccess(principal, edit, authorizedResource), "Edit access on authorized resource.");
-        assertFalse (accessControlService.hasAccess(principal, edit, unauthorizedResource), "Edit access on unauthorized resource.");
-        assertTrue (accessControlService.hasAccess(principal, feedback, authorizedResource), "Feedback access on authorized resource.");
-        assertFalse (accessControlService.hasAccess(principal, feedback, unauthorizedResource), "Feedback access on unauthorized resource.");
+        assertTrue(accessControlService.hasAccess(principal, display, authorizedResource), "Display access on authorized resource.");
+        assertFalse(accessControlService.hasAccess(principal, display, unauthorizedResource), "Display access on unauthorized resource.");
+        assertFalse(accessControlService.hasAccess(principal, edit, authorizedResource), "Edit access on authorized resource.");
+        assertFalse(accessControlService.hasAccess(principal, edit, unauthorizedResource), "Edit access on unauthorized resource.");
+        assertTrue(accessControlService.hasAccess(principal, feedback, authorizedResource), "Feedback access on authorized resource.");
+        assertFalse(accessControlService.hasAccess(principal, feedback, unauthorizedResource), "Feedback access on unauthorized resource.");
 
     }
 
-    @Sql(scripts={
+    @Sql(scripts = {
             "classpath:db/test-fixtures-commons.sql"
     })
     @Test
-    void grantAccess(){
+    void grantAccess() {
 
         List<RBACAssignment> assignments = assignmentService.getAllAssignments();
         assertTrue(assignments.isEmpty(), "No assignment at startup");
 
-        AccessControlGrantRequest grantRequest =new AccessControlGrantRequest()
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
                 .setUid(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
@@ -159,7 +168,7 @@ class AccessControlServiceTest {
         accessControlService.grantAccess(grantRequest);
 
         assignments = assignmentService.getAllAssignments();
-        assertEquals(1,assignments.size(), "Assignment created after grant");
+        assertEquals(1, assignments.size(), "Assignment created after grant");
 
         RBACAssignment assignment = assignments.getFirst();
         assertEquals(userLogin, assignment.getPrincipal().getLogin(), "Assignment principal login");
@@ -168,6 +177,154 @@ class AccessControlServiceTest {
         assertEquals(validityStart, assignment.getContext().getValidityStart(), "Assignment validity start");
         assertEquals(validityEnd, assignment.getContext().getValidityEnd(), "Assignment validity end");
         assertThat(assignment.getContext().getStructures().stream().map(Structure::getId)).containsExactlyInAnyOrder(grantStructureIds);
+    }
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void grantAccessNoResource() {
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+        assertTrue(assignments.isEmpty(), "No assignment at startup");
+
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.format(formatter))
+                .setStructureIds(grantStructureIds)
+                //.setResourceIds(grantResourceIds)
+                .setRoleId(grantRoleId);
+
+        accessControlService.grantAccess(grantRequest);
+
+        assignments = assignmentService.getAllAssignments();
+        assertEquals(1, assignments.size(), "Assignment created after grant");
+
+        RBACAssignment assignment = assignments.getFirst();
+        assertEquals(userLogin, assignment.getPrincipal().getLogin(), "Assignment principal login");
+        assertEquals(grantRoleId, assignment.getRole().getId(), "Assignment role id");
+        assertTrue(assignment.getScope().getResources().isEmpty(), "No resource");
+        assertEquals(validityStart, assignment.getContext().getValidityStart(), "Assignment validity start");
+        assertEquals(validityEnd, assignment.getContext().getValidityEnd(), "Assignment validity end");
+        assertThat(assignment.getContext().getStructures().stream().map(Structure::getId)).containsExactlyInAnyOrder(grantStructureIds);
+    }
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void grantAccessWithInvalidResource() {
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+        assertTrue(assignments.isEmpty(), "No assignment at startup");
+
+        List<Long> invalidResourceIds = new ArrayList<>(Arrays.asList(grantResourceIds));
+        invalidResourceIds.add(100L);
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.format(formatter))
+                .setStructureIds(grantStructureIds)
+                .setResourceIds(invalidResourceIds.toArray(new Long[0]))
+                .setRoleId(grantRoleId);
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> accessControlService.grantAccess(grantRequest));
+        assertEquals("Missing resources, IDs : [100]", exception.getMessage(), "Exception message for missing resources");
+    }
+
+    @Test
+    void grantAccessNoStructure() {
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+        assertTrue(assignments.isEmpty(), "No assignment at startup");
+
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.format(formatter))
+                .setResourceIds(grantResourceIds)
+                .setRoleId(grantRoleId);
+
+        accessControlService.grantAccess(grantRequest);
+
+        assignments = assignmentService.getAllAssignments();
+        assertEquals(1, assignments.size(), "Assignment created after grant");
+
+        RBACAssignment assignment = assignments.getFirst();
+        assertEquals(userLogin, assignment.getPrincipal().getLogin(), "Assignment principal login");
+        assertEquals(grantRoleId, assignment.getRole().getId(), "Assignment role id");
+        assertThat(assignment.getScope().getResources().stream().map(RBACResource::getId)).containsExactlyInAnyOrder(grantResourceIds);
+        assertEquals(validityStart, assignment.getContext().getValidityStart(), "Assignment validity start");
+        assertEquals(validityEnd, assignment.getContext().getValidityEnd(), "Assignment validity end");
+        assertTrue(assignment.getContext().getStructures().isEmpty(),"No structure");
+    }
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void grantAccessWithInvalidStructure() {
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+        assertTrue(assignments.isEmpty(), "No assignment at startup");
+
+        List<Long> invalidStructureIds = new ArrayList<>(Arrays.asList(grantStructureIds));
+        invalidStructureIds.add(100L);
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.format(formatter))
+                .setStructureIds(invalidStructureIds.toArray(new Long[0]))
+                .setResourceIds(grantResourceIds)
+                .setRoleId(grantRoleId);
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> accessControlService.grantAccess(grantRequest));
+        assertEquals("Missing structures, IDs : [100]", exception.getMessage(), "Exception message for missing resources");
+    }
+
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void grantAccessWithInvalidValidityStart() {
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+        assertTrue(assignments.isEmpty(), "No assignment at startup");
+
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.toString())
+                .setValidityEnd(validityEnd.format(formatter))
+                .setStructureIds(grantStructureIds)
+                .setResourceIds(grantResourceIds)
+                .setRoleId(grantRoleId);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> accessControlService.grantAccess(grantRequest));
+        assertTrue(exception.getMessage().contains("Invalid validity start date format"), "Exception message for invalid start date format");
+    }
+
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void grantAccessWithInvalidValidityEnd() {
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+        assertTrue(assignments.isEmpty(), "No assignment at startup");
+
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.toString())
+                .setStructureIds(grantStructureIds)
+                .setResourceIds(grantResourceIds)
+                .setRoleId(grantRoleId);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> accessControlService.grantAccess(grantRequest));
+        assertTrue(exception.getMessage().contains("Invalid validity end date format"), "Exception message for invalid end date format");
     }
 
 }
