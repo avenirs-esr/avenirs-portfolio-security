@@ -181,6 +181,7 @@ class AccessControlServiceTest {
         assertThat(assignment.getContext().getStructures().stream().map(Structure::getId)).containsExactlyInAnyOrder(grantStructureIds);
     }
 
+
     @Sql(scripts = {
             "classpath:db/test-fixtures-commons.sql"
     })
