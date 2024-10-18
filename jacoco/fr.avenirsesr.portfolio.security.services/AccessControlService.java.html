@@ -192,12 +192,12 @@ import org.springframework.util.StringUtils;
      * @param resource  The accessed resource.
      * @return True if the principal has access to the resource.
      */
-    public boolean hasAccess(Principal principal, RBACAction action, RBACResource resource) {
+    public boolean isAuthorized(Principal principal, RBACAction action, RBACResource resource) {
 <span class="fc" id="L196">        log.trace(&quot;hasAccess, principal: {}&quot;, principal);</span>
 <span class="fc" id="L197">        log.trace(&quot;hasAccess, action: {}&quot;, action);</span>
 <span class="fc" id="L198">        log.trace(&quot;hasAccess, resource: {}&quot;, resource);</span>
 
-<span class="fc" id="L200">        return hasAccess(principal.getLogin(), action.getId(), resource.getId());</span>
+<span class="fc" id="L200">        return isAuthorized(principal.getLogin(), action.getId(), resource.getId());</span>
     }
 
     /**
@@ -209,7 +209,7 @@ import org.springframework.util.StringUtils;
      * @param resourceId The id of the accessed resource.
      * @return True if the principal has access to the resource.
      */
-    public boolean hasAccess(String login, Long actionId, Long resourceId) {
+    public boolean isAuthorized(String login, Long actionId, Long resourceId) {
 <span class="fc" id="L213">        log.trace(&quot;hasAccess, login: {}&quot;, login);</span>
 <span class="fc" id="L214">        log.trace(&quot;hasAccess, actionId: {}&quot;, actionId);</span>
 <span class="fc" id="L215">        log.trace(&quot;hasAccess, resourceId: {}&quot;, resourceId);</span>

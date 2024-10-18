@@ -104,7 +104,7 @@ import java.util.Arrays;
 <span class="fc" id="L104">                    log.trace(&quot;hasAccess, login: {}&quot;, login);</span>
 <span class="fc" id="L105">                    response.setLogin(login);</span>
 
-<span class="fc" id="L107">                    boolean granted = accessControlService.hasAccess(login, action.getId(), resourceId);</span>
+<span class="fc" id="L107">                    boolean granted = accessControlService.isAuthorized(login, action.getId(), resourceId);</span>
 <span class="fc" id="L108">                    log.trace(&quot;hasAccess, granted: {}&quot;, granted);</span>
 
 <span class="fc" id="L110">                    response.setGranted(granted);</span>
