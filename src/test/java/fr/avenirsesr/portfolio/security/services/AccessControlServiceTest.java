@@ -183,6 +183,46 @@ class AccessControlServiceTest {
             "classpath:db/test-fixtures-commons.sql"
     })
     @Test
+    void grantAccessWithInvalidPrincipal() {
+
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid("user123")
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.format(formatter))
+                .setStructureIds(grantStructureIds)
+                .setResourceIds(grantResourceIds)
+                .setRoleId(grantRoleId);
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> accessControlService.grantAccess(grantRequest));
+
+        assertEquals("Principal not found, UID: user123", exception.getMessage(), "Exception message");
+    }
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void grantAccessWithInvalidRole() {
+
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.format(formatter))
+                .setStructureIds(grantStructureIds)
+                .setResourceIds(grantResourceIds)
+                .setRoleId(123L);
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> accessControlService.grantAccess(grantRequest));
+
+        assertEquals("Role not found, ID: 123", exception.getMessage(), "Exception message");
+    }
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
     void grantAccessNoResource() {
 
         List<RBACAssignment> assignments = assignmentService.getAllAssignments();
@@ -257,7 +297,7 @@ class AccessControlServiceTest {
         assertThat(assignment.getScope().getResources().stream().map(RBACResource::getId)).containsExactlyInAnyOrder(grantResourceIds);
         assertEquals(validityStart, assignment.getContext().getValidityStart(), "Assignment validity start");
         assertEquals(validityEnd, assignment.getContext().getValidityEnd(), "Assignment validity end");
-        assertTrue(assignment.getContext().getStructures().isEmpty(),"No structure");
+        assertTrue(assignment.getContext().getStructures().isEmpty(), "No structure");
     }
 
     @Sql(scripts = {
@@ -325,6 +365,57 @@ class AccessControlServiceTest {
 
         Exception exception = assertThrows(RuntimeException.class, () -> accessControlService.grantAccess(grantRequest));
         assertTrue(exception.getMessage().contains("Invalid validity end date format"), "Exception message for invalid end date format");
+    }
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void revokeAccess() {
+
+
+        AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
+                .setUid(userLogin)
+                .setValidityStart(validityStart.format(formatter))
+                .setValidityEnd(validityEnd.format(formatter))
+                .setStructureIds(grantStructureIds)
+                .setResourceIds(grantResourceIds)
+                .setRoleId(grantRoleId);
+
+        accessControlService.grantAccess(grantRequest);
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignments();
+        assertEquals(1, assignments.size(), "Assignment created after grant");
+        RBACAssignment assignment = assignments.getFirst();
+
+        AccessControlRevokeResponse response = accessControlService.revokeAccess(new AccessControlRevokeRequest()
+                .setUid(userLogin)
+                .setContextId(assignment.getContext().getId())
+                .setRoleId(assignment.getRole().getId())
+                .setScopeId(assignment.getScope().getId()));
+        assertEquals(userLogin, response.getLogin(), "Response user login");
+        assertTrue(response.isRevoked(), "Response revoked flag");
+        assertNull(response.getError(), "Response without error");
+
+        assignments = assignmentService.getAllAssignments();
+        assertTrue(assignments.isEmpty(), "Assignment deleted");
+    }
+
+    @Sql(scripts = {
+            "classpath:db/test-fixtures-commons.sql"
+    })
+    @Test
+    void revokeAccessWithInvalidPrincipal() {
+
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> accessControlService.revokeAccess(new AccessControlRevokeRequest()
+                .setUid("user123")
+                .setContextId(1L)
+                .setRoleId(1L)
+                .setScopeId(1L)));
+
+        assertEquals("Principal not found, UID: user123", exception.getMessage(), "Revoke exception message");
+
     }
 
 }
