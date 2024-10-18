@@ -126,8 +126,8 @@ import java.util.Arrays;
      */
     @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
     @PostMapping(&quot;${avenirs.access.control.grant}&quot;)
-    public ResponseEntity&lt;AccessControlGrantResponse&gt; grantAccess(@RequestHeader(value = &quot;x-authorization&quot;) String token,
-                                                                  @RequestBody AccessControlGrantRequest request) {
+    public ResponseEntity&lt;AccessControlGrantResponse&gt; grant(@RequestHeader(value = &quot;x-authorization&quot;) String token,
+                                                            @RequestBody AccessControlGrantRequest request) {
 <span class="nc bnc" id="L131" title="All 2 branches missed.">        if (log.isTraceEnabled()) {</span>
 <span class="nc" id="L132">            log.trace(&quot;Authorization Token: {}&quot;, token);</span>
 <span class="nc" id="L133">            log.trace(&quot;Role ID: {}&quot;, request.getRoleId());</span>
