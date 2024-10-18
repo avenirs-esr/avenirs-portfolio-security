@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.*;
-import fr.avenirsesr.portfolio.security.models.AccessControlGrantRequest;
-import fr.avenirsesr.portfolio.security.models.AccessControlGrantResponse;
-import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
+
+import fr.avenirsesr.portfolio.security.models.*;
 import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import org.junit.jupiter.api.AfterEach;
@@ -75,6 +74,8 @@ class AccessControlControllerTest {
 
     private AccessControlGrantRequest grantRequest;
 
+    private AccessControlRevokeRequest revokeRequest;
+
 
     @BeforeEach
     void setUp() {
@@ -86,6 +87,12 @@ class AccessControlControllerTest {
                 .setValidityStart("2024-10-01")
                 .setValidityEnd("2024-12-31")
                 .setStructureIds(new Long[]{1L, 2L});
+
+        revokeRequest = new AccessControlRevokeRequest()
+                .setUid("user123")
+                .setRoleId(1L)
+                .setScopeId(1L)
+                .setContextId(1L);
     }
     @AfterEach
     void tearDown() throws Exception {
@@ -147,6 +154,60 @@ class AccessControlControllerTest {
         assertEquals("user123", response.getBody().getLogin());
         assertFalse(response.getBody().isGranted());
         assertEquals("Error during access granting", response.getBody().getError());
+    }
+
+    @Test
+    void revokeAccessSuccess() {
+        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
+        introspectResponse.setActive(true);
+        introspectResponse.setUniqueSecurityName("user123");
+
+        when(authenticationService.introspectAccessToken("valid-token")).thenReturn(introspectResponse);
+
+        AccessControlRevokeResponse revokeResponse = new AccessControlRevokeResponse()
+                .setLogin("user123")
+                .setRevoked(true);
+
+        when(accessControlService.revokeAccess(any(AccessControlRevokeRequest.class))).thenReturn(revokeResponse);
+
+        ResponseEntity<AccessControlRevokeResponse> response = accessControlController.revokeAccess("valid-token", revokeRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody(), "response body not null");
+        assertTrue(response.getBody().isRevoked());
+        assertEquals("user123", response.getBody().getLogin());
+    }
+
+    @Test
+    void revokeAccessWithInactiveToken() {
+        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
+        introspectResponse.setActive(false);
+
+        when(authenticationService.introspectAccessToken("inactive-token")).thenReturn(introspectResponse);
+
+        ResponseEntity<AccessControlRevokeResponse> response = accessControlController.revokeAccess("inactive-token", revokeRequest);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void revokeAccessWithServiceError() {
+        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
+        introspectResponse.setActive(true);
+        introspectResponse.setUniqueSecurityName("user123");
+
+        when(authenticationService.introspectAccessToken("valid-token")).thenReturn(introspectResponse);
+
+        when(accessControlService.revokeAccess(any(AccessControlRevokeRequest.class))).thenThrow(new RuntimeException("Error during access revoking"));
+
+        ResponseEntity<AccessControlRevokeResponse> response = accessControlController.revokeAccess("valid-token", revokeRequest);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("user123", response.getBody().getLogin());
+        assertFalse(response.getBody().isRevoked());
+        assertEquals("Error during access revoking", response.getBody().getError());
     }
 
 
