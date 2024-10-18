@@ -126,8 +126,8 @@ public class AccessControlController {
      */
     @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
     @PostMapping("${avenirs.access.control.grant}")
-    public ResponseEntity<AccessControlGrantResponse> grant(@RequestHeader(value = "x-authorization") String token,
-                                                            @RequestBody AccessControlGrantRequest request) {
+    public ResponseEntity<AccessControlGrantResponse> grantAccess(@RequestHeader(value = "x-authorization") String token,
+                                                                  @RequestBody AccessControlGrantRequest request) {
         if (log.isTraceEnabled()) {
             log.trace("Authorization Token: {}", token);
             log.trace("Role ID: {}", request.getRoleId());
