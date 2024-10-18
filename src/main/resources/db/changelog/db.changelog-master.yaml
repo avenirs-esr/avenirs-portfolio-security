@@ -4,7 +4,7 @@ databaseChangeLog:
   - include:
       file: db/changelog/002-add-column-assignment-timestamp.yaml
   - include:
-      file: db/changelog/003-add-table-stucture.yaml
+      file: db/changelog/003-add-table-structure.yaml
   - include:
       file: db/changelog/004-add-table-context_structure.yaml
   - include:
