@@ -1,16 +1,29 @@
 package fr.avenirsesr.portfolio.security.controllers;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.mockito.Mockito.*;
+import fr.avenirsesr.portfolio.security.models.AccessControlGrantRequest;
+import fr.avenirsesr.portfolio.security.models.AccessControlGrantResponse;
+import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
+import fr.avenirsesr.portfolio.security.services.AccessControlService;
+import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,6 +61,94 @@ class AccessControlControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Mock
+    private AuthenticationService authenticationService;
+
+    @Mock
+    private AccessControlService accessControlService;
+
+    @InjectMocks
+    private AccessControlController accessControlController;
+
+    private AutoCloseable closeable;
+
+    private AccessControlGrantRequest grantRequest;
+
+
+    @BeforeEach
+    void setUp() {
+        closeable = MockitoAnnotations.openMocks(this);
+
+        grantRequest = new AccessControlGrantRequest()
+                .setRoleId(1L)
+                .setResourceIds(new Long[]{1L, 2L})
+                .setValidityStart("2024-10-01")
+                .setValidityEnd("2024-12-31")
+                .setStructureIds(new Long[]{1L, 2L});
+    }
+    @AfterEach
+    void tearDown() throws Exception {
+        if (closeable != null) {
+            closeable.close();
+        }
+    }
+
+    @Test
+    void grantAccessSuccess() {
+
+        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
+        introspectResponse.setActive(true);
+        introspectResponse.setUniqueSecurityName("user123");
+
+        when(authenticationService.introspectAccessToken("valid-token")).thenReturn(introspectResponse);
+
+        AccessControlGrantResponse grantResponse = new AccessControlGrantResponse()
+                .setLogin("user123")
+                .setGranted(true);
+
+        when(accessControlService.grantAccess(any(AccessControlGrantRequest.class))).thenReturn(grantResponse);
+
+        ResponseEntity<AccessControlGrantResponse> response = accessControlController.grantAccess("valid-token", grantRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody(), "Response body not null");
+        assertTrue(response.getBody().isGranted());
+        assertEquals("user123", response.getBody().getLogin());
+    }
+
+    @Test
+    void grantAccessWithToInactiveToken() {
+        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
+        introspectResponse.setActive(false);
+
+        when(authenticationService.introspectAccessToken("inactive-token")).thenReturn(introspectResponse);
+
+        ResponseEntity<AccessControlGrantResponse> response = accessControlController.grantAccess("inactive-token", grantRequest);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void grantAccessWithServiceError() {
+        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
+        introspectResponse.setActive(true);
+        introspectResponse.setUniqueSecurityName("user123");
+
+        when(authenticationService.introspectAccessToken("valid-token")).thenReturn(introspectResponse);
+
+        when(accessControlService.grantAccess(any(AccessControlGrantRequest.class))).thenThrow(new RuntimeException("Error during access granting"));
+
+        ResponseEntity<AccessControlGrantResponse> response = accessControlController.grantAccess("valid-token", grantRequest);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("user123", response.getBody().getLogin());
+        assertFalse(response.getBody().isGranted());
+        assertEquals("Error during access granting", response.getBody().getError());
+    }
+
 
     @Test
     void testIsAuthorizedWithoutHeader() throws Exception {
