@@ -183,6 +183,30 @@ public class AccessControlService {
                 .setGranted(true);
     }
 
+
+    /**
+     * Revokes access by deleting the underlying assignment.
+     * @param revokeRequest The information to determine the assignment to delete.
+     * @return The response with the result of the operation.
+     */
+    public AccessControlRevokeResponse revokeAccess(AccessControlRevokeRequest revokeRequest) {
+        log.trace("revokeAccess, revokeRequest: {}", revokeRequest);
+
+        Principal principal = principalService.getPrincipalByLogin(revokeRequest.getUid())
+                .orElseThrow(() -> new EntityNotFoundException("Principal not found, UID: " + revokeRequest.getUid()));
+
+        RBACAssignmentPK key = new RBACAssignmentPK()
+                .setPrincipal(principal.getId())
+                .setContext(revokeRequest.getContextId())
+                .setScope(revokeRequest.getScopeId())
+                .setRole(revokeRequest.getRoleId());
+
+        assignmentService.deleteAssignment(key);
+        return new AccessControlRevokeResponse()
+                .setLogin(revokeRequest.getUid())
+                .setRevoked(true);
+    }
+
     /**
      * Checks that a principal has access to a resource to perform an action,
      * without application context.
