@@ -183,6 +183,30 @@ import org.springframework.util.StringUtils;
 <span class="fc" id="L183">                .setGranted(true);</span>
     }
 
+
+    /**
+     * Revokes access by deleting the underlying assignment.
+     * @param revokeRequest The information to determine the assignment to delete.
+     * @return The response with the result of the operation.
+     */
+    public AccessControlRevokeResponse revokeAccess(AccessControlRevokeRequest revokeRequest) {
+<span class="nc" id="L193">        log.trace(&quot;revokeAccess, revokeRequest: {}&quot;, revokeRequest);</span>
+
+<span class="nc" id="L195">        Principal principal = principalService.getPrincipalByLogin(revokeRequest.getUid())</span>
+<span class="nc" id="L196">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Principal not found, UID: &quot; + revokeRequest.getUid()));</span>
+
+<span class="nc" id="L198">        RBACAssignmentPK key = new RBACAssignmentPK()</span>
+<span class="nc" id="L199">                .setPrincipal(principal.getId())</span>
+<span class="nc" id="L200">                .setContext(revokeRequest.getContextId())</span>
+<span class="nc" id="L201">                .setScope(revokeRequest.getScopeId())</span>
+<span class="nc" id="L202">                .setRole(revokeRequest.getRoleId());</span>
+
+<span class="nc" id="L204">        assignmentService.deleteAssignment(key);</span>
+<span class="nc" id="L205">        return new AccessControlRevokeResponse()</span>
+<span class="nc" id="L206">                .setLogin(revokeRequest.getUid())</span>
+<span class="nc" id="L207">                .setRevoked(true);</span>
+    }
+
     /**
      * Checks that a principal has access to a resource to perform an action,
      * without application context.
@@ -193,11 +217,11 @@ import org.springframework.util.StringUtils;
      * @return True if the principal has access to the resource.
      */
     public boolean isAuthorized(Principal principal, RBACAction action, RBACResource resource) {
-<span class="fc" id="L196">        log.trace(&quot;hasAccess, principal: {}&quot;, principal);</span>
-<span class="fc" id="L197">        log.trace(&quot;hasAccess, action: {}&quot;, action);</span>
-<span class="fc" id="L198">        log.trace(&quot;hasAccess, resource: {}&quot;, resource);</span>
+<span class="fc" id="L220">        log.trace(&quot;hasAccess, principal: {}&quot;, principal);</span>
+<span class="fc" id="L221">        log.trace(&quot;hasAccess, action: {}&quot;, action);</span>
+<span class="fc" id="L222">        log.trace(&quot;hasAccess, resource: {}&quot;, resource);</span>
 
-<span class="fc" id="L200">        return isAuthorized(principal.getLogin(), action.getId(), resource.getId());</span>
+<span class="fc" id="L224">        return isAuthorized(principal.getLogin(), action.getId(), resource.getId());</span>
     }
 
     /**
@@ -210,14 +234,14 @@ import org.springframework.util.StringUtils;
      * @return True if the principal has access to the resource.
      */
     public boolean isAuthorized(String login, Long actionId, Long resourceId) {
-<span class="fc" id="L213">        log.trace(&quot;hasAccess, login: {}&quot;, login);</span>
-<span class="fc" id="L214">        log.trace(&quot;hasAccess, actionId: {}&quot;, actionId);</span>
-<span class="fc" id="L215">        log.trace(&quot;hasAccess, resourceId: {}&quot;, resourceId);</span>
+<span class="fc" id="L237">        log.trace(&quot;hasAccess, login: {}&quot;, login);</span>
+<span class="fc" id="L238">        log.trace(&quot;hasAccess, actionId: {}&quot;, actionId);</span>
+<span class="fc" id="L239">        log.trace(&quot;hasAccess, resourceId: {}&quot;, resourceId);</span>
 
-<span class="fc" id="L217">        List&lt;RBACPermission&gt; requiredPermissions = this.fetchPermissions(actionId);</span>
-<span class="fc" id="L218">        log.trace(&quot;hasAccess, requiredPermissions: {}&quot;, requiredPermissions);</span>
+<span class="fc" id="L241">        List&lt;RBACPermission&gt; requiredPermissions = this.fetchPermissions(actionId);</span>
+<span class="fc" id="L242">        log.trace(&quot;hasAccess, requiredPermissions: {}&quot;, requiredPermissions);</span>
 
-<span class="fc" id="L220">        return checkGrantedPermissions(requiredPermissions, login, resourceId);</span>
+<span class="fc" id="L244">        return checkGrantedPermissions(requiredPermissions, login, resourceId);</span>
     }
 
     /**
@@ -229,39 +253,39 @@ import org.springframework.util.StringUtils;
      * @return True if the permissions granted to the user for the resource contains all the required permissions.
      */
     private boolean checkGrantedPermissions(List&lt;RBACPermission&gt; requiredPermissions, String login, Long resourceId) {
-<span class="pc bpc" id="L232" title="2 of 4 branches missed.">        if (requiredPermissions != null &amp;&amp; !requiredPermissions.isEmpty()) {</span>
+<span class="pc bpc" id="L256" title="2 of 4 branches missed.">        if (requiredPermissions != null &amp;&amp; !requiredPermissions.isEmpty()) {</span>
 
-<span class="fc" id="L234">            List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(</span>
-<span class="fc" id="L235">                    RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(login, resourceId));</span>
-<span class="fc" id="L236">            log.trace(&quot;hasAccess, principalAssignments: {}&quot;, principalAssignments);</span>
+<span class="fc" id="L258">            List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(</span>
+<span class="fc" id="L259">                    RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(login, resourceId));</span>
+<span class="fc" id="L260">            log.trace(&quot;hasAccess, principalAssignments: {}&quot;, principalAssignments);</span>
 
-<span class="fc" id="L238">            List&lt;RBACAssignment&gt; validAssignment = filterByApplicationContext(principalAssignments);</span>
-<span class="fc" id="L239">            log.trace(&quot;hasAccess, validAssignment: {}&quot;, validAssignment);</span>
+<span class="fc" id="L262">            List&lt;RBACAssignment&gt; validAssignment = filterByApplicationContext(principalAssignments);</span>
+<span class="fc" id="L263">            log.trace(&quot;hasAccess, validAssignment: {}&quot;, validAssignment);</span>
 
-<span class="fc" id="L241">            HashSet&lt;RBACPermission&gt; principalPermissions = validAssignment.stream().map(a -&gt; a.getRole().getPermissions())</span>
-<span class="fc" id="L242">                    .flatMap(Collection::stream)</span>
-<span class="fc" id="L243">                    .collect(Collectors.toCollection(HashSet::new));</span>
-<span class="fc" id="L244">            log.trace(&quot;hasAccess, principalPermissions: {}&quot;, principalPermissions);</span>
+<span class="fc" id="L265">            HashSet&lt;RBACPermission&gt; principalPermissions = validAssignment.stream().map(a -&gt; a.getRole().getPermissions())</span>
+<span class="fc" id="L266">                    .flatMap(Collection::stream)</span>
+<span class="fc" id="L267">                    .collect(Collectors.toCollection(HashSet::new));</span>
+<span class="fc" id="L268">            log.trace(&quot;hasAccess, principalPermissions: {}&quot;, principalPermissions);</span>
 
-<span class="fc" id="L246">            boolean accessGranted = principalPermissions.containsAll(requiredPermissions);</span>
-<span class="fc" id="L247">            log.trace(&quot;hasAccess, accessGranted: {}&quot;, accessGranted);</span>
+<span class="fc" id="L270">            boolean accessGranted = principalPermissions.containsAll(requiredPermissions);</span>
+<span class="fc" id="L271">            log.trace(&quot;hasAccess, accessGranted: {}&quot;, accessGranted);</span>
 
-<span class="fc" id="L249">            return accessGranted;</span>
+<span class="fc" id="L273">            return accessGranted;</span>
         }
-<span class="nc" id="L251">        return false;</span>
+<span class="nc" id="L275">        return false;</span>
     }
 
     private List&lt;RBACAssignment&gt; filterByApplicationContext(List&lt;RBACAssignment&gt; principalAssignments) {
-<span class="fc" id="L255">        log.trace(&quot;filterByApplicationContext, principalAssignments: {}&quot;, principalAssignments);</span>
+<span class="fc" id="L279">        log.trace(&quot;filterByApplicationContext, principalAssignments: {}&quot;, principalAssignments);</span>
 
-<span class="fc bfc" id="L257" title="All 2 branches covered.">        if (CollectionUtils.isEmpty(principalAssignments)) {</span>
-<span class="fc" id="L258">            return new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">        if (CollectionUtils.isEmpty(principalAssignments)) {</span>
+<span class="fc" id="L282">            return new ArrayList&lt;&gt;();</span>
         }
-<span class="fc" id="L260">        Principal principal = principalAssignments.getFirst().getPrincipal();</span>
-<span class="fc" id="L261">        RBACContext executionContext = createExecutionContext(principal);</span>
-<span class="fc" id="L262">        return principalAssignments.stream()</span>
-<span class="fc" id="L263">                .filter(a -&gt; checkExecutionContext(a.getContext(), executionContext))</span>
-<span class="fc" id="L264">                .collect(Collectors.toList());</span>
+<span class="fc" id="L284">        Principal principal = principalAssignments.getFirst().getPrincipal();</span>
+<span class="fc" id="L285">        RBACContext executionContext = createExecutionContext(principal);</span>
+<span class="fc" id="L286">        return principalAssignments.stream()</span>
+<span class="fc" id="L287">                .filter(a -&gt; checkExecutionContext(a.getContext(), executionContext))</span>
+<span class="fc" id="L288">                .collect(Collectors.toList());</span>
     }
 
     /**
@@ -271,50 +295,50 @@ import org.springframework.util.StringUtils;
      * @return The execution context.
      */
     public RBACContext createExecutionContext(Principal principal) { // Need to be public to be mocked in tests.
-<span class="fc" id="L274">        return new RBACContext().setStructures(principal.getStructures());</span>
+<span class="fc" id="L298">        return new RBACContext().setStructures(principal.getStructures());</span>
     }
 
     private boolean checkExecutionContext(RBACContext applicationContext, RBACContext executionContext) {
-<span class="fc" id="L278">        log.trace(&quot;checkExecutionContext, applicationContext: {}&quot;, applicationContext);</span>
-<span class="fc" id="L279">        log.trace(&quot;checkExecutionContext, executionContext: {}&quot;, executionContext);</span>
+<span class="fc" id="L302">        log.trace(&quot;checkExecutionContext, applicationContext: {}&quot;, applicationContext);</span>
+<span class="fc" id="L303">        log.trace(&quot;checkExecutionContext, executionContext: {}&quot;, executionContext);</span>
 
-<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        if (applicationContext != null) {</span>
-<span class="fc" id="L282">            LocalDateTime validityStart = applicationContext.getValidityStart();</span>
-<span class="fc" id="L283">            LocalDateTime validityEnd = applicationContext.getValidityEnd();</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if (applicationContext != null) {</span>
+<span class="fc" id="L306">            LocalDateTime validityStart = applicationContext.getValidityStart();</span>
+<span class="fc" id="L307">            LocalDateTime validityEnd = applicationContext.getValidityEnd();</span>
 
-<span class="fc" id="L285">            log.trace(&quot;checkExecutionContext, validityStart: {}&quot;, validityStart);</span>
-<span class="fc" id="L286">            log.trace(&quot;checkExecutionContext, validityEnd: {}&quot;, validityEnd);</span>
-<span class="fc" id="L287">            log.trace(&quot;checkExecutionContext, executionContext.getEffectiveDate(): {}&quot;, executionContext.getEffectiveDate());</span>
+<span class="fc" id="L309">            log.trace(&quot;checkExecutionContext, validityStart: {}&quot;, validityStart);</span>
+<span class="fc" id="L310">            log.trace(&quot;checkExecutionContext, validityEnd: {}&quot;, validityEnd);</span>
+<span class="fc" id="L311">            log.trace(&quot;checkExecutionContext, executionContext.getEffectiveDate(): {}&quot;, executionContext.getEffectiveDate());</span>
 
-<span class="pc bpc" id="L289" title="1 of 4 branches missed.">            if (validityStart != null &amp;&amp; executionContext.getEffectiveDate().isBefore(validityStart)) {</span>
-<span class="fc" id="L290">                log.trace(&quot;checkExecutionContext, validityStart not respected&quot;);</span>
-<span class="fc" id="L291">                return false;</span>
+<span class="pc bpc" id="L313" title="1 of 4 branches missed.">            if (validityStart != null &amp;&amp; executionContext.getEffectiveDate().isBefore(validityStart)) {</span>
+<span class="fc" id="L314">                log.trace(&quot;checkExecutionContext, validityStart not respected&quot;);</span>
+<span class="fc" id="L315">                return false;</span>
             }
 
-<span class="fc bfc" id="L294" title="All 4 branches covered.">            if (validityEnd != null &amp;&amp; executionContext.getEffectiveDate().isAfter(validityEnd)) {</span>
-<span class="fc" id="L295">                log.trace(&quot;checkExecutionContext, validityEnd not respected&quot;);</span>
-<span class="fc" id="L296">                return false;</span>
+<span class="fc bfc" id="L318" title="All 4 branches covered.">            if (validityEnd != null &amp;&amp; executionContext.getEffectiveDate().isAfter(validityEnd)) {</span>
+<span class="fc" id="L319">                log.trace(&quot;checkExecutionContext, validityEnd not respected&quot;);</span>
+<span class="fc" id="L320">                return false;</span>
             }
-<span class="fc" id="L298">            Set&lt;Structure&gt; exContextStructures = executionContext.getStructures();</span>
-<span class="fc" id="L299">            Set&lt;Structure&gt; appContextStructures = applicationContext.getStructures();</span>
-<span class="fc" id="L300">            log.trace(&quot;checkExecutionContext, exContextStructures: {}&quot;, exContextStructures);</span>
-<span class="fc" id="L301">            log.trace(&quot;checkExecutionContext, appContextStructures: {}&quot;, appContextStructures);</span>
+<span class="fc" id="L322">            Set&lt;Structure&gt; exContextStructures = executionContext.getStructures();</span>
+<span class="fc" id="L323">            Set&lt;Structure&gt; appContextStructures = applicationContext.getStructures();</span>
+<span class="fc" id="L324">            log.trace(&quot;checkExecutionContext, exContextStructures: {}&quot;, exContextStructures);</span>
+<span class="fc" id="L325">            log.trace(&quot;checkExecutionContext, appContextStructures: {}&quot;, appContextStructures);</span>
 
-<span class="pc bpc" id="L303" title="1 of 2 branches missed.">            if (CollectionUtils.isEmpty(appContextStructures)) {</span>
-<span class="fc" id="L304">                log.trace(&quot;checkExecutionContext, no structure in application context&quot;);</span>
-<span class="fc" id="L305">                return true;</span>
-            }
-
-<span class="nc bnc" id="L308" title="All 4 branches missed.">            if (CollectionUtils.isEmpty(exContextStructures) || !exContextStructures.containsAll(appContextStructures)) {</span>
-<span class="nc" id="L309">                log.trace(&quot;checkExecutionContext, structures of application context not respected&quot;);</span>
-<span class="nc" id="L310">                return false;</span>
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">            if (CollectionUtils.isEmpty(appContextStructures)) {</span>
+<span class="fc" id="L328">                log.trace(&quot;checkExecutionContext, no structure in application context&quot;);</span>
+<span class="fc" id="L329">                return true;</span>
             }
 
-<span class="nc" id="L313">            log.trace(&quot;checkExecutionContext, structures of application context respected&quot;);</span>
-<span class="nc" id="L314">            return true;</span>
+<span class="nc bnc" id="L332" title="All 4 branches missed.">            if (CollectionUtils.isEmpty(exContextStructures) || !exContextStructures.containsAll(appContextStructures)) {</span>
+<span class="nc" id="L333">                log.trace(&quot;checkExecutionContext, structures of application context not respected&quot;);</span>
+<span class="nc" id="L334">                return false;</span>
+            }
+
+<span class="nc" id="L337">            log.trace(&quot;checkExecutionContext, structures of application context respected&quot;);</span>
+<span class="nc" id="L338">            return true;</span>
         }
 
-<span class="nc" id="L317">        return true;</span>
+<span class="nc" id="L341">        return true;</span>
     }
 
     /**
@@ -326,13 +350,13 @@ import org.springframework.util.StringUtils;
      */
     private List&lt;RBACPermission&gt; fetchPermissions(Long actionId) {
 
-<span class="pc bpc" id="L329" title="1 of 4 branches missed.">        if (actionId != null &amp;&amp; !this.permissionsByActionId.containsKey(actionId)) {</span>
+<span class="pc bpc" id="L353" title="1 of 4 branches missed.">        if (actionId != null &amp;&amp; !this.permissionsByActionId.containsKey(actionId)) {</span>
 
-<span class="fc" id="L331">            RBACAction action = this.actionService.getActionById(actionId).orElse(null);</span>
-<span class="pc bpc" id="L332" title="1 of 2 branches missed.">            List&lt;RBACPermission&gt; permissions = action == null ? null : action.getPermissions();</span>
-<span class="fc" id="L333">            permissionsByActionId.put(actionId, permissions);</span>
+<span class="fc" id="L355">            RBACAction action = this.actionService.getActionById(actionId).orElse(null);</span>
+<span class="pc bpc" id="L356" title="1 of 2 branches missed.">            List&lt;RBACPermission&gt; permissions = action == null ? null : action.getPermissions();</span>
+<span class="fc" id="L357">            permissionsByActionId.put(actionId, permissions);</span>
         }
-<span class="fc" id="L335">        return permissionsByActionId.get(actionId);</span>
+<span class="fc" id="L359">        return permissionsByActionId.get(actionId);</span>
 
     }
 
