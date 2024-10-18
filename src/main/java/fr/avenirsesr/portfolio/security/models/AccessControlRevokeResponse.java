@@ -33,7 +33,7 @@ public class AccessControlRevokeResponse {
 	private String login;
 
 	/** Access granted or not. */
-	private boolean revoke;
+	private boolean revoked;
 
 	/** Message if an error occurs. */
 	private String error;
