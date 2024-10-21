@@ -48,15 +48,15 @@ import io.jsonwebtoken.security.SignatureException;
 	private String oidcJWKSURL;
 	
 	/** Public keys indexed by their corresponding kid in the JWKS. */
-<span class="fc" id="L51">	private Map&lt;String, PublicKey&gt; keysRepository = new HashMap&lt;String, PublicKey&gt;();</span>
+<span class="fc" id="L51">	private final Map&lt;String, PublicKey&gt; keysRepository = new HashMap&lt;&gt;();</span>
 
 	/** Rest client to retrieve JWKS data. */
-<span class="fc" id="L54">	private RestClient client = RestClient.create();</span>
+<span class="fc" id="L54">	private final RestClient client = RestClient.create();</span>
 	
 	
 
 	/**
-	 * Retrieves the modulus and exponent for a RSA key.
+	 * Retrieves the modulus and exponent for an RSA key.
 	 * @param kid The key id.
 	 * @return The modulus and exponent fetched from the OIDC provider end point.
 	 */
@@ -70,12 +70,12 @@ import io.jsonwebtoken.security.SignatureException;
 
 <span class="nc" id="L71">		} catch (RestClientResponseException e) {</span>
 <span class="nc" id="L72">			log.error(</span>
-					&quot;fetchModulusAndExponent, unable to fetch Modulus and Exponent. HTTP Status code: {}, response body&quot;,
+					&quot;fetchModulusAndExponent, unable to fetch Modulus and Exponent. HTTP Status code: {}, response body: {}&quot;,
 <span class="nc" id="L74">					e.getStatusCode().value(), e.getResponseBodyAsString());</span>
-<span class="nc" id="L75">			log.error(&quot;Excetion: &quot;, e);</span>
+<span class="nc" id="L75">			log.error(&quot;Exception: &quot;, e);</span>
 
 <span class="nc" id="L77">		} catch (Exception e) {</span>
-<span class="nc" id="L78">			log.error(&quot;Excetion: &quot;, e);</span>
+<span class="nc" id="L78">			log.error(&quot;Exception: &quot;, e);</span>
 <span class="nc" id="L79">		}</span>
 <span class="nc" id="L80">		return Optional.empty();</span>
 	}
@@ -119,7 +119,7 @@ import io.jsonwebtoken.security.SignatureException;
 
 
 	/**
-	 * Generates a RSA public key.
+	 * Generates an RSA public key.
 	 * @param alg The algorithm specified in the id token.
 	 * @param modulusAndExponent The modulus and exponent.
 	 * @return An Optional of the Public key.
@@ -141,7 +141,7 @@ import io.jsonwebtoken.security.SignatureException;
 <span class="fc" id="L141">			KeyFactory keyFactory = KeyFactory.getInstance(keyAlgo.get());</span>
 <span class="fc" id="L142">			return Optional.of(keyFactory.generatePublic(rsaPublicKeySpec));</span>
 <span class="nc" id="L143">		} catch (NoSuchAlgorithmException e) {</span>
-<span class="nc" id="L144">			log.error(&quot;generateRSAPublicKey, invalid algorim alg: {}&quot;, alg);</span>
+<span class="nc" id="L144">			log.error(&quot;generateRSAPublicKey, invalid algorithm alg: {}&quot;, alg);</span>
 <span class="nc" id="L145">			log.error(&quot;generateRSAPublicKey&quot;, e);</span>
 <span class="nc" id="L146">		} catch (InvalidKeySpecException e) {</span>
 <span class="nc" id="L147">			log.error(&quot;generateRSAPublicKey&quot;, e);</span>
