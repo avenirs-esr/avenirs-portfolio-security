@@ -48,15 +48,15 @@ public class JWTService {
 	private String oidcJWKSURL;
 	
 	/** Public keys indexed by their corresponding kid in the JWKS. */
-	private Map<String, PublicKey> keysRepository = new HashMap<String, PublicKey>();
+	private final Map<String, PublicKey> keysRepository = new HashMap<>();
 
 	/** Rest client to retrieve JWKS data. */
-	private RestClient client = RestClient.create();
+	private final RestClient client = RestClient.create();
 	
 	
 
 	/**
-	 * Retrieves the modulus and exponent for a RSA key.
+	 * Retrieves the modulus and exponent for an RSA key.
 	 * @param kid The key id.
 	 * @return The modulus and exponent fetched from the OIDC provider end point.
 	 */
@@ -70,12 +70,12 @@ public class JWTService {
 
 		} catch (RestClientResponseException e) {
 			log.error(
-					"fetchModulusAndExponent, unable to fetch Modulus and Exponent. HTTP Status code: {}, response body",
+					"fetchModulusAndExponent, unable to fetch Modulus and Exponent. HTTP Status code: {}, response body: {}",
 					e.getStatusCode().value(), e.getResponseBodyAsString());
-			log.error("Excetion: ", e);
+			log.error("Exception: ", e);
 
 		} catch (Exception e) {
-			log.error("Excetion: ", e);
+			log.error("Exception: ", e);
 		}
 		return Optional.empty();
 	}
@@ -119,7 +119,7 @@ public class JWTService {
 
 
 	/**
-	 * Generates a RSA public key.
+	 * Generates an RSA public key.
 	 * @param alg The algorithm specified in the id token.
 	 * @param modulusAndExponent The modulus and exponent.
 	 * @return An Optional of the Public key.
@@ -141,7 +141,7 @@ public class JWTService {
 			KeyFactory keyFactory = KeyFactory.getInstance(keyAlgo.get());
 			return Optional.of(keyFactory.generatePublic(rsaPublicKeySpec));
 		} catch (NoSuchAlgorithmException e) {
-			log.error("generateRSAPublicKey, invalid algorim alg: {}", alg);
+			log.error("generateRSAPublicKey, invalid algorithm alg: {}", alg);
 			log.error("generateRSAPublicKey", e);
 		} catch (InvalidKeySpecException e) {
 			log.error("generateRSAPublicKey", e);
