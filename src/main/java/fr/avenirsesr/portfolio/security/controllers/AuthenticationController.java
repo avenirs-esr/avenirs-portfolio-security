@@ -2,14 +2,13 @@ package fr.avenirsesr.portfolio.security.controllers;
 
 import java.io.IOException;
 
+import fr.avenirsesr.portfolio.security.models.LoginRequest;
+import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
@@ -32,6 +31,23 @@ public class AuthenticationController {
 	/** Authentication service. */
 	@Autowired 
 	private AuthenticationService authenticationService;
+
+
+	/**
+	 * Gives an access token.
+	 * @param request The object with the credentials.
+	 * @return The access token.
+	 * @throws IOException If the access token could not be retrieved.
+	 */
+	@SuppressWarnings("SpringOmittedPathVariableParameterInspection")
+	@PostMapping("${avenirs.authentication.oidc.login}")
+	public ResponseEntity<String> login(@RequestBody LoginRequest request) throws IOException {
+		log.trace("login, request: {}", request);
+		OIDCAccessTokenResponse response = authenticationService.getAccessToken(request.getLogin(), request.getPassword())
+				.orElseThrow(()->new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid login credentials"));
+		return ResponseEntity.ok(response.getAccessToken());
+
+	}
 	
 	/**
 	 * Callback after OIDC authentication.
@@ -49,7 +65,7 @@ public class AuthenticationController {
 		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost == null ? "localhost":forwardHost,
 				code == null ? NO_PROVIDED_CODE : code));
 	}
-		
+
 	/**
 	 * Performs the redirection after the access token is retrieved.
 	 *

@@ -220,7 +220,7 @@ class AccessControlControllerTest {
                         .param("uri", "/ac")
                         .param("method", HttpMethod.GET.name()))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
 
     }
 
@@ -233,7 +233,7 @@ class AccessControlControllerTest {
                         .header("x-authorization", "access-token-value")
                         .param("method", HttpMethod.GET.name()))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -244,7 +244,7 @@ class AccessControlControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("x-authorization", "access-token-value")
                         .param("uri", feedbackEndPoint))
-                .andDo(print()).andExpect(status().isBadRequest());
+                .andDo(print()).andExpect(status().isForbidden());
     }
 
     @Test

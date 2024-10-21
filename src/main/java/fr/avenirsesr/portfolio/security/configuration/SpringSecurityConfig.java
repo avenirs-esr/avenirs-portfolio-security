@@ -3,15 +3,19 @@
  */
 package fr.avenirsesr.portfolio.security.configuration;
 
+import fr.avenirsesr.portfolio.security.filters.CASTokenAuthenticationFilter;
+import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Configuration for spring security.
@@ -22,65 +26,53 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-    @Value("${avenirs.access.control.roles}")
-    private String roles;
+    @Value("${avenirs.authentication.oidc.login}")
+    private String login;
 
-    /** OIDC callback URI.*/
+    /**
+     * OIDC callback URI.
+     */
     @Value("${avenirs.authentication.oidc.callback}")
     private String oidcCallback;
 
-    /** OIDC callback redirect URI.*/
+    /**
+     * OIDC callback redirect URI.
+     */
     @Value("${avenirs.authentication.oidc.callback.redirect}")
     private String oidcRedirect;
 
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> {
-                    log.debug("filterChain, Configuring Spring security");
-                    log.debug("filterChain, Permit All for:");
-                    log.debug("filterChain, Permit All for roles: {}", roles);
-                    log.debug("filterChain, Permit All for oidcCallback: {}", oidcCallback);
-                    log.debug("filterChain, Permit All for oidcRedirect: {}", oidcRedirect);
-                    auth.requestMatchers(roles).permitAll();
-                    auth.requestMatchers("/v3/**", "/swagger-ui/**").permitAll();
-                    auth.requestMatchers(oidcCallback).permitAll();
-                    auth.requestMatchers(oidcRedirect).permitAll();
-                    auth.anyRequest().permitAll();
-//		auth.anyRequest().authenticated();
-                }).formLogin(Customizer.withDefaults()).build();
+    SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .securityMatcher("/v3/**",
+                        "/swagger-ui/**",
+                        login,
+                        oidcCallback,
+                        oidcRedirect)
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .build();
     }
 
-//    @Bean
-//    UserDetailsService users() {
-//    	UserDetails user = User.builder()
-//    			.username("deman")
-//    			.password(passwordEncoder().encode("user"))
-//    			.roles("USER")
-//    			.build();
-//    	UserDetails admin = User.builder()
-//    			.username("admin")
-//    			.password(passwordEncoder().encode("admin"))
-//    			.roles("USER", "ADMIN")
-//    			.build();
-//    	
-//    	return new InMemoryUserDetailsManager(user, admin);
-//    }
+    @Bean
+    SecurityFilterChain protectedFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .securityMatcher("/**")
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
 
-//    @Bean
-//    BCryptPasswordEncoder passwordEncoder() {
-//    	return new BCryptPasswordEncoder();
-//    }
+    Filter casTokenAuthenticationFilter(){
+        return new CASTokenAuthenticationFilter(authenticationService);
+    }
 
-//    @Bean
-//    AuthenticationManager authenticaionManager(HttpSecurity httpSecurity, BCryptPasswordEncoder bCryptPasswordEndoder) 
-//    throws Exception {
-//    	AuthenticationManagerBuilder authenticationManagerBuilder =  httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-//    	authenticationManagerBuilder
-//    		.userDetailsService(userDetailsService)
-//    		.passwordEncoder(bCryptPasswordEndoder);
-//    	return authenticationManagerBuilder.build();
-//    }
 }
 
 

@@ -2,16 +2,21 @@ package fr.avenirsesr.portfolio.security.controllers;
 
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,11 +44,23 @@ class RoleControllerTest {
     RoleController roleController;
 
 
+    @BeforeEach
+    void setUp() throws Exception {
+        String token = accessTokenHelper.provideAccessToken(userLogin, userPassword);
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(userLogin, token, new ArrayList<>());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
     @Test
     void getRolesWithValidTokenWithoutFixtures() {
         try {
-            String token = accessTokenHelper.provideAccessToken(userLogin, userPassword);
-            List<String> roles = roleController.getRoles(token);
+            List<String> roles = roleController.getRoles();
             assertTrue(roles.isEmpty(), "Valid token, No role");
         } catch (Exception e) {
             fail("Exception should not be thrown: " + e.getMessage());
@@ -58,8 +75,7 @@ class RoleControllerTest {
     @Test
     void getRolesWithValidTokenWithFixtures() {
         try {
-            String token = accessTokenHelper.provideAccessToken(userLogin, userPassword);
-            List<String> roles = roleController.getRoles(token);
+            List<String> roles = roleController.getRoles();
             assertEquals(expectedRoles.length, roles.size(), "Roles number");
             assertTrue(roles.containsAll(Arrays.asList(expectedRoles)), "Role list");
 
@@ -69,10 +85,12 @@ class RoleControllerTest {
     }
 
     @Test
-    void getRolesWithInvalidToken() {
+    void getRolesWithoutAuthentication() {
+
+        SecurityContextHolder.clearContext();
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () ->roleController.getRoles("invalid-token"),
+                () ->roleController.getRoles(),
                 "Invalid token throws exception"
         );
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
