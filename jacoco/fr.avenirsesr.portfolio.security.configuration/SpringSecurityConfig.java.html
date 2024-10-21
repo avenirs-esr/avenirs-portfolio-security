@@ -3,84 +3,76 @@
  */
 package fr.avenirsesr.portfolio.security.configuration;
 
+import fr.avenirsesr.portfolio.security.filters.CASTokenAuthenticationFilter;
+import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Configuration for spring security.
  */
 
-<span class="fc" id="L20">@Slf4j</span>
+<span class="fc" id="L24">@Slf4j</span>
 @Configuration
 @EnableWebSecurity
-<span class="fc" id="L23">public class SpringSecurityConfig {</span>
+<span class="fc" id="L27">public class SpringSecurityConfig {</span>
 
-    @Value(&quot;${avenirs.access.control.roles}&quot;)
-    private String roles;
+    @Value(&quot;${avenirs.authentication.oidc.login}&quot;)
+    private String login;
 
-    /** OIDC callback URI.*/
+    /**
+     * OIDC callback URI.
+     */
     @Value(&quot;${avenirs.authentication.oidc.callback}&quot;)
     private String oidcCallback;
 
-    /** OIDC callback redirect URI.*/
+    /**
+     * OIDC callback redirect URI.
+     */
     @Value(&quot;${avenirs.authentication.oidc.callback.redirect}&quot;)
     private String oidcRedirect;
 
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L38">        return httpSecurity.csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L39">                .authorizeHttpRequests(auth -&gt; {</span>
-<span class="fc" id="L40">                    log.debug(&quot;filterChain, Configuring Spring security&quot;);</span>
-<span class="fc" id="L41">                    log.debug(&quot;filterChain, Permit All for:&quot;);</span>
-<span class="fc" id="L42">                    log.debug(&quot;filterChain, Permit All for roles: {}&quot;, roles);</span>
-<span class="fc" id="L43">                    log.debug(&quot;filterChain, Permit All for oidcCallback: {}&quot;, oidcCallback);</span>
-<span class="fc" id="L44">                    log.debug(&quot;filterChain, Permit All for oidcRedirect: {}&quot;, oidcRedirect);</span>
-<span class="fc" id="L45">                    auth.requestMatchers(roles).permitAll();</span>
-<span class="fc" id="L46">                    auth.requestMatchers(&quot;/v3/**&quot;, &quot;/swagger-ui/**&quot;).permitAll();</span>
-<span class="fc" id="L47">                    auth.requestMatchers(oidcCallback).permitAll();</span>
-<span class="fc" id="L48">                    auth.requestMatchers(oidcRedirect).permitAll();</span>
-<span class="fc" id="L49">                    auth.anyRequest().permitAll();</span>
-//		auth.anyRequest().authenticated();
-<span class="fc" id="L51">                }).formLogin(Customizer.withDefaults()).build();</span>
+    SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
+<span class="fc" id="L51">        return httpSecurity</span>
+<span class="fc" id="L52">                .securityMatcher(&quot;/v3/**&quot;,</span>
+                        &quot;/swagger-ui/**&quot;,
+                        login,
+                        oidcCallback,
+                        oidcRedirect)
+<span class="fc" id="L57">                .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L58">                .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
+<span class="fc" id="L59">                .build();</span>
     }
 
-//    @Bean
-//    UserDetailsService users() {
-//    	UserDetails user = User.builder()
-//    			.username(&quot;deman&quot;)
-//    			.password(passwordEncoder().encode(&quot;user&quot;))
-//    			.roles(&quot;USER&quot;)
-//    			.build();
-//    	UserDetails admin = User.builder()
-//    			.username(&quot;admin&quot;)
-//    			.password(passwordEncoder().encode(&quot;admin&quot;))
-//    			.roles(&quot;USER&quot;, &quot;ADMIN&quot;)
-//    			.build();
-//    	
-//    	return new InMemoryUserDetailsManager(user, admin);
-//    }
+    @Bean
+    SecurityFilterChain protectedFilterChain(HttpSecurity httpSecurity) throws Exception {
+<span class="fc" id="L64">        return httpSecurity</span>
+<span class="fc" id="L65">                .securityMatcher(&quot;/**&quot;)</span>
+<span class="fc" id="L66">                .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L67">                .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
+<span class="fc" id="L68">                .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L69">                .build();</span>
+    }
 
-//    @Bean
-//    BCryptPasswordEncoder passwordEncoder() {
-//    	return new BCryptPasswordEncoder();
-//    }
+    Filter casTokenAuthenticationFilter(){
+<span class="fc" id="L73">        return new CASTokenAuthenticationFilter(authenticationService);</span>
+    }
 
-//    @Bean
-//    AuthenticationManager authenticaionManager(HttpSecurity httpSecurity, BCryptPasswordEncoder bCryptPasswordEndoder) 
-//    throws Exception {
-//    	AuthenticationManagerBuilder authenticationManagerBuilder =  httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-//    	authenticationManagerBuilder
-//    		.userDetailsService(userDetailsService)
-//    		.passwordEncoder(bCryptPasswordEndoder);
-//    	return authenticationManagerBuilder.build();
-//    }
 }
 
 
