@@ -1,7 +1,7 @@
 /**
  * 
  */
-package helpers;
+package helper;
 
 import java.util.Base64;
 
