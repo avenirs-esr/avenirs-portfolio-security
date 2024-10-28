@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import fr.avenirsesr.portfolio.security.models.*;
+import fr.avenirsesr.portfolio.security.model.*;
 import fr.avenirsesr.portfolio.security.repositories.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

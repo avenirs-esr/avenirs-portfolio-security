@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.filter;
 
 
-import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

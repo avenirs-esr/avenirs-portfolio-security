@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.models;
+package fr.avenirsesr.portfolio.security.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,24 +17,27 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * Scope in the RBAC system.
- * A scope is used to determine the resources involved in a Role assignment.
+ * Role in the RBAC system.
+ * A role is associated to one or several permissions.
  */
 @Data
 @Accessors(chain=true)
 @Entity
-@Table(name="scope")
-public class RBACScope {
-	
+@Table(name = "role")
+public class RBACRole {
+
 	/** Database id. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
-	/** Name of the scope. */
+
+	/** Name of the Role. */
 	private String name;
+
+	/** Descriptions of the Role. */
+	private String description;
 	
-	/** Resources associated to the scope. */
+	/** Permission associated to the role. */
 	@ManyToMany(
 			fetch=FetchType.LAZY,
 			cascade = {
@@ -43,11 +46,11 @@ public class RBACScope {
 			}
 	)
 	@JoinTable(
-			name="scope_resource",
-			joinColumns = @JoinColumn(name= "id_scope"),
-			inverseJoinColumns = @JoinColumn(name="id_resource")
+			name="role_permission",
+			joinColumns = @JoinColumn(name= "id_role"),
+			inverseJoinColumns = @JoinColumn(name="id_permission")
 			
 	)
-	private List<RBACResource> resources = new ArrayList<>();
-	
+	private List<RBACPermission> permissions = new ArrayList<>();
+
 }

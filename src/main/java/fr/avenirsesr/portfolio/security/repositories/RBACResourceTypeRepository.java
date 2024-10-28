@@ -1,7 +1,6 @@
 package fr.avenirsesr.portfolio.security.repositories;
 
-import fr.avenirsesr.portfolio.security.models.RBACResource;
-import fr.avenirsesr.portfolio.security.models.RBACResourceType;
+import fr.avenirsesr.portfolio.security.model.RBACResourceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

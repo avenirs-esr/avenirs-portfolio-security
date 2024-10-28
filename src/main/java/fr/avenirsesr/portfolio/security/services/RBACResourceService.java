@@ -1,7 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.RBACResource;
-import fr.avenirsesr.portfolio.security.models.Structure;
+import fr.avenirsesr.portfolio.security.model.RBACResource;
 import fr.avenirsesr.portfolio.security.repositories.RBACResourceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;

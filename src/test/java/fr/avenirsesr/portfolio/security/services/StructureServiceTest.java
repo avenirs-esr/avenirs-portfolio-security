@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.Structure;
+import fr.avenirsesr.portfolio.security.model.Structure;
 import fr.avenirsesr.portfolio.security.repositories.StructureSpecificationHelper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;

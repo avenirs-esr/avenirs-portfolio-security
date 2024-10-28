@@ -23,8 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
-import fr.avenirsesr.portfolio.security.models.Principal;
-import fr.avenirsesr.portfolio.security.models.RBACContext;
+import fr.avenirsesr.portfolio.security.model.Principal;
+import fr.avenirsesr.portfolio.security.model.RBACContext;
 import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;

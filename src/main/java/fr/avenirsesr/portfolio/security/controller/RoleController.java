@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.security.controller;
 
-import fr.avenirsesr.portfolio.security.models.RBACAssignment;
+import fr.avenirsesr.portfolio.security.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecificationHelper;
 import fr.avenirsesr.portfolio.security.services.RBACAssignmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

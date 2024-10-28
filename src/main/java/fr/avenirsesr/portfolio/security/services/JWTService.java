@@ -23,9 +23,9 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
 import fr.avenirsesr.portfolio.security.configuration.JWTToCryptographicKeyAlgoMapper;
-import fr.avenirsesr.portfolio.security.models.ModulusAndExponent;
-import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
-import fr.avenirsesr.portfolio.security.models.OIDCIdToken;
+import fr.avenirsesr.portfolio.security.model.ModulusAndExponent;
+import fr.avenirsesr.portfolio.security.model.OIDCAccessTokenResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCIdToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;

@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.avenirsesr.portfolio.security.models.RBACContext;
+import fr.avenirsesr.portfolio.security.model.RBACContext;
 import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
 import org.springframework.transaction.annotation.Transactional;
 

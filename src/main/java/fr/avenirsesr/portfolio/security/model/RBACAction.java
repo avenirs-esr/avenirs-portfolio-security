@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.models;
+package fr.avenirsesr.portfolio.security.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,27 +17,27 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * Role in the RBAC system.
- * A role is associated to one or several permissions.
+ * Context in the RBAC system.
+ * A context is used to limit an assignment with a period of validity and an establishment.
  */
 @Data
 @Accessors(chain=true)
 @Entity
-@Table(name = "role")
-public class RBACRole {
-
-	/** Database id. */
+@Table(name="action")
+public class RBACAction {
+	
+	/** Database Id. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-
-	/** Name of the Role. */
+	
+	/** Name associated to the context.*/
 	private String name;
-
-	/** Descriptions of the Role. */
+	
+	/** Description of the context. */
 	private String description;
 	
-	/** Permission associated to the role. */
+	/** Permissions associated to the scope. */
 	@ManyToMany(
 			fetch=FetchType.LAZY,
 			cascade = {
@@ -46,8 +46,8 @@ public class RBACRole {
 			}
 	)
 	@JoinTable(
-			name="role_permission",
-			joinColumns = @JoinColumn(name= "id_role"),
+			name="action_permission",
+			joinColumns = @JoinColumn(name= "id_action"),
 			inverseJoinColumns = @JoinColumn(name="id_permission")
 			
 	)

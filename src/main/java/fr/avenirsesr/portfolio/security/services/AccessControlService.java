@@ -10,7 +10,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import fr.avenirsesr.portfolio.security.models.*;
+import fr.avenirsesr.portfolio.security.model.*;
 import fr.avenirsesr.portfolio.security.repositories.RBACResourceSpecificationHelper;
 import fr.avenirsesr.portfolio.security.repositories.StructureSpecificationHelper;
 import jakarta.annotation.PostConstruct;

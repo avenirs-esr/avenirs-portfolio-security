@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.models;
+package fr.avenirsesr.portfolio.security.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

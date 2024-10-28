@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCAccessTokenResponse;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 
 /**

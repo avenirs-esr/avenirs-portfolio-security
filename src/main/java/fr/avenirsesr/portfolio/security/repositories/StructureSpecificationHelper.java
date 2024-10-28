@@ -1,12 +1,6 @@
 package fr.avenirsesr.portfolio.security.repositories;
 
-import fr.avenirsesr.portfolio.security.models.RBACResource_;
-import fr.avenirsesr.portfolio.security.models.RBACScope;
-import fr.avenirsesr.portfolio.security.models.RBACScope_;
-import fr.avenirsesr.portfolio.security.models.Structure;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
+import fr.avenirsesr.portfolio.security.model.Structure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 

@@ -1,11 +1,12 @@
-package fr.avenirsesr.portfolio.security.models;
+/**
+ * 
+ */
+package fr.avenirsesr.portfolio.security.model;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,38 +16,33 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+
 /**
- * Context in the RBAC system.
- * A context is used to limit an assignment with a period of validity and an establishment.
+ * Principal in the RBAC system.
  */
 @Data
 @Accessors(chain=true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name="context")
-public class RBACContext {
+@Table(name="principal")
+public class Principal {
 	
 	/** Database Id. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	/** Start of  validity. */
-	@Column(columnDefinition="TIMESTAMP")
-	private LocalDateTime validityStart;
-
-	/** End of the validity. */
-	@Column(columnDefinition="TIMESTAMP")
-	private LocalDateTime validityEnd;
+	/** Login of the user. */
+	private String login;
 	
-	/** Effective date. */
-	@Transient
-	private LocalDateTime effectiveDate = LocalDateTime.now(); 
 	
-	/** Structures associated to the context. */
+	/** Structures associated to the principal. */
     @ManyToMany(
             fetch=FetchType.LAZY,
             cascade = {
@@ -55,10 +51,12 @@ public class RBACContext {
             }
     )
     @JoinTable(
-            name="context_structure",
-            joinColumns = @JoinColumn(name= "id_context"),
+            name="principal_structure",
+            joinColumns = @JoinColumn(name= "id_principal"),
             inverseJoinColumns = @JoinColumn(name="id_structure")
             
     )
     private Set<Structure> structures = new HashSet<>();
+	
+		
 }

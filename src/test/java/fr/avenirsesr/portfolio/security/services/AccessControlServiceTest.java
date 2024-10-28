@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.*;
+import fr.avenirsesr.portfolio.security.model.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.avenirsesr.portfolio.security.models.Principal;
+import fr.avenirsesr.portfolio.security.model.Principal;
 import fr.avenirsesr.portfolio.security.repositories.PrincipalRepository;
 
 

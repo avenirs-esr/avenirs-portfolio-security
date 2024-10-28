@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.models;
+package fr.avenirsesr.portfolio.security.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,27 +17,24 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * Context in the RBAC system.
- * A context is used to limit an assignment with a period of validity and an establishment.
+ * Scope in the RBAC system.
+ * A scope is used to determine the resources involved in a Role assignment.
  */
 @Data
 @Accessors(chain=true)
 @Entity
-@Table(name="action")
-public class RBACAction {
+@Table(name="scope")
+public class RBACScope {
 	
-	/** Database Id. */
+	/** Database id. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	/** Name associated to the context.*/
+	/** Name of the scope. */
 	private String name;
 	
-	/** Description of the context. */
-	private String description;
-	
-	/** Permissions associated to the scope. */
+	/** Resources associated to the scope. */
 	@ManyToMany(
 			fetch=FetchType.LAZY,
 			cascade = {
@@ -46,11 +43,11 @@ public class RBACAction {
 			}
 	)
 	@JoinTable(
-			name="action_permission",
-			joinColumns = @JoinColumn(name= "id_action"),
-			inverseJoinColumns = @JoinColumn(name="id_permission")
+			name="scope_resource",
+			joinColumns = @JoinColumn(name= "id_scope"),
+			inverseJoinColumns = @JoinColumn(name="id_resource")
 			
 	)
-	private List<RBACPermission> permissions = new ArrayList<>();
-
+	private List<RBACResource> resources = new ArrayList<>();
+	
 }

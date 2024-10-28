@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.RBACActionRoute;
+import fr.avenirsesr.portfolio.security.model.RBACActionRoute;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

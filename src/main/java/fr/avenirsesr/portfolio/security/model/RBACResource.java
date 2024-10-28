@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.models;
+package fr.avenirsesr.portfolio.security.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

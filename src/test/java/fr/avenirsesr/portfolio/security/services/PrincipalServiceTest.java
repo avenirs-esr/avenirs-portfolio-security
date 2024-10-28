@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import fr.avenirsesr.portfolio.security.models.Principal;
+import fr.avenirsesr.portfolio.security.model.Principal;
 
 import java.util.List;
 import java.util.Optional;

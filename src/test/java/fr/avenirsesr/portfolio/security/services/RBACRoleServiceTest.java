@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.RBACPermission;
-import fr.avenirsesr.portfolio.security.models.RBACRole;
+import fr.avenirsesr.portfolio.security.model.RBACPermission;
+import fr.avenirsesr.portfolio.security.model.RBACRole;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

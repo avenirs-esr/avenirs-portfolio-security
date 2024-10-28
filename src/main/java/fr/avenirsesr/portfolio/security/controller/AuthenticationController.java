@@ -2,8 +2,8 @@ package fr.avenirsesr.portfolio.security.controller;
 
 import java.io.IOException;
 
-import fr.avenirsesr.portfolio.security.models.LoginRequest;
-import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
+import fr.avenirsesr.portfolio.security.model.LoginRequest;
+import fr.avenirsesr.portfolio.security.model.OIDCAccessTokenResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
-import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCIntrospectResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCProfileResponse;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletResponse;
 

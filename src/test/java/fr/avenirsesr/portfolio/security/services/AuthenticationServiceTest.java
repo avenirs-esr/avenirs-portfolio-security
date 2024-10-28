@@ -1,9 +1,9 @@
 package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
-import fr.avenirsesr.portfolio.security.models.OIDCAccessTokenResponse;
-import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
-import fr.avenirsesr.portfolio.security.models.OIDCProfileResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCAccessTokenResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCIntrospectResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCProfileResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;

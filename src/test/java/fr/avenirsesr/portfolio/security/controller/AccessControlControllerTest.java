@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.*;
 
-import fr.avenirsesr.portfolio.security.models.*;
+import fr.avenirsesr.portfolio.security.model.*;
 import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import org.junit.jupiter.api.AfterEach;

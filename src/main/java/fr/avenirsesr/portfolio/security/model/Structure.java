@@ -1,4 +1,7 @@
-package fr.avenirsesr.portfolio.security.models;
+/**
+ * 
+ */
+package fr.avenirsesr.portfolio.security.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,26 +13,40 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+
 /**
- * Permission.
- * A permission is mainly a label and can be required to perform actions.
+ * 
+ * <h1>Structure</h1>
+ * <p>
+ * Description:  is used to represent the notion of structure.
+ * </p>
+ * 
+ * <h2>Version:</h2>
+ * 1.0
+ * 
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 1 Oct 2024
  */
 @Data
 @Accessors(chain=true)
-@Entity
-@Table(name="permission")
 @NoArgsConstructor
 @AllArgsConstructor
-public class RBACPermission {
+@Entity
+@Table(name="structure")
+public class Structure {
 	
-	/** Database id. */
+	/** Database Id. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	/** Name of the permission.*/
+	/** Name of the structure. */
 	private String name;
 	
-	/** Description of the permission. */
+	/** The description of the structure. */
 	private String description;
+	
 }

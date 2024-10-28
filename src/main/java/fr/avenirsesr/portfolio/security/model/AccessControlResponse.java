@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.avenirsesr.portfolio.security.models;
+package fr.avenirsesr.portfolio.security.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

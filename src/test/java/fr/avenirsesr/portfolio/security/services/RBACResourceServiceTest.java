@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.RBACResource;
-import fr.avenirsesr.portfolio.security.models.RBACResourceType;
+import fr.avenirsesr.portfolio.security.model.RBACResource;
+import fr.avenirsesr.portfolio.security.model.RBACResourceType;
 import fr.avenirsesr.portfolio.security.repositories.RBACResourceSpecificationHelper;
 import fr.avenirsesr.portfolio.security.repositories.RBACResourceTypeRepository;
 import jakarta.transaction.Transactional;

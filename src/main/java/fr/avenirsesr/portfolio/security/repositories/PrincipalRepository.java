@@ -3,7 +3,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import fr.avenirsesr.portfolio.security.models.Principal;
+import fr.avenirsesr.portfolio.security.model.Principal;
 
 /**
  * Repository for Principal.

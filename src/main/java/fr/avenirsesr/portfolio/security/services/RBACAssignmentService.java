@@ -2,13 +2,13 @@ package fr.avenirsesr.portfolio.security.services;
 import java.util.List;
 import java.util.Optional;
 
-import fr.avenirsesr.portfolio.security.models.RBACAssignmentPK;
+import fr.avenirsesr.portfolio.security.model.RBACAssignmentPK;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import fr.avenirsesr.portfolio.security.models.RBACAssignment;
+import fr.avenirsesr.portfolio.security.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentRepository;
 import org.springframework.transaction.annotation.Transactional;
 

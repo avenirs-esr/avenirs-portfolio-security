@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import fr.avenirsesr.portfolio.security.models.RBACRole;
+import fr.avenirsesr.portfolio.security.model.RBACRole;
 
 import java.util.Optional;
 

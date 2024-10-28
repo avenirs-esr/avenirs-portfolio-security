@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.*;
+import fr.avenirsesr.portfolio.security.model.*;
 import fr.avenirsesr.portfolio.security.repositories.RBACScopeSpecificationHelper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;

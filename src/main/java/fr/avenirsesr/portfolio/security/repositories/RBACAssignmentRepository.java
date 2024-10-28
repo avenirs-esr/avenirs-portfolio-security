@@ -1,10 +1,10 @@
 package fr.avenirsesr.portfolio.security.repositories;
 
-import fr.avenirsesr.portfolio.security.models.RBACAssignmentPK;
+import fr.avenirsesr.portfolio.security.model.RBACAssignmentPK;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import fr.avenirsesr.portfolio.security.models.RBACAssignment;
+import fr.avenirsesr.portfolio.security.model.RBACAssignment;
 
 /**
  * <h1>RBACAssignmentRepository</h1>

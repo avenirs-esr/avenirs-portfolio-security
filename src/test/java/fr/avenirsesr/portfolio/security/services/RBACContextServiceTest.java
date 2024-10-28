@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 
-import fr.avenirsesr.portfolio.security.models.RBACContext;
-import fr.avenirsesr.portfolio.security.models.Structure;
+import fr.avenirsesr.portfolio.security.model.RBACContext;
+import fr.avenirsesr.portfolio.security.model.Structure;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
