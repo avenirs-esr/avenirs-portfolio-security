@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.controllers;
+package fr.avenirsesr.portfolio.security.controller;
 
 import java.io.IOException;
 

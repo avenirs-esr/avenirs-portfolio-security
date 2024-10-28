@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.controllers;
+package fr.avenirsesr.portfolio.security.controller;
 
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.ArgumentMatchers.any;

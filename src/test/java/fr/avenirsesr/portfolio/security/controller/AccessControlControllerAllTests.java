@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.avenirsesr.portfolio.security.controllers;
+package fr.avenirsesr.portfolio.security.controller;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;

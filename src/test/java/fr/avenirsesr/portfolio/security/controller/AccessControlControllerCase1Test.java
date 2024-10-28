@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.controllers;
+package fr.avenirsesr.portfolio.security.controller;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

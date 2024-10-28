@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.controllers;
+package fr.avenirsesr.portfolio.security.controller;
 
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
 import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
