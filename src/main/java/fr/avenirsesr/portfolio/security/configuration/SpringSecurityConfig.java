@@ -3,7 +3,7 @@
  */
 package fr.avenirsesr.portfolio.security.configuration;
 
-import fr.avenirsesr.portfolio.security.filters.CASTokenAuthenticationFilter;
+import fr.avenirsesr.portfolio.security.filter.CASTokenAuthenticationFilter;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
