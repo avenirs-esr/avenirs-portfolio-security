@@ -1,7 +1,7 @@
 fr.avenirsesr.portfolio.security
 fr.avenirsesr.portfolio.security.configuration
 fr.avenirsesr.portfolio.security.controller
-fr.avenirsesr.portfolio.security.filters
-fr.avenirsesr.portfolio.security.models
-fr.avenirsesr.portfolio.security.repositories
-fr.avenirsesr.portfolio.security.services
+fr.avenirsesr.portfolio.security.filter
+fr.avenirsesr.portfolio.security.model
+fr.avenirsesr.portfolio.security.repository
+fr.avenirsesr.portfolio.security.service

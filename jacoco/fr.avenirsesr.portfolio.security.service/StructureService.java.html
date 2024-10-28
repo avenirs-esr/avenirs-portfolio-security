@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StructureService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.service</a> &gt; <span class="el_source">StructureService.java</span></div><h1>StructureService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.service;
+
+import fr.avenirsesr.portfolio.security.model.Structure;
+import fr.avenirsesr.portfolio.security.repository.StructureRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+
+/**
+ * &lt;h1&gt;StructureService&lt;/h1&gt;
+ * &lt;p&gt;
+ * &lt;b&gt;Description:&lt;/b&gt; Service used to manage Structures.
+ * &lt;/p&gt;
+ *
+ * &lt;h2&gt;Version:&lt;/h2&gt;
+ * 1.0.0
+ *
+ * &lt;h2&gt;Author:&lt;/h2&gt;
+ * Arnaud Deman
+ *
+ * &lt;h2&gt;Since:&lt;/h2&gt;
+ * 17/10/2024
+ */
+
+<span class="fc" id="L32">@Slf4j</span>
+@Service
+<span class="fc" id="L34">public class StructureService {</span>
+	
+	@Autowired
+	private StructureRepository structureRepository;
+
+	/**
+	 * Gives a specific structure by its id.
+	 * @param structureId The id of the structure to retrieve.
+	 * @return The Optional of structure with id structureId.
+	 */
+	@Transactional(readOnly = true)
+	public Optional&lt;Structure&gt; getStructureById(final Long structureId){
+<span class="fc" id="L46">		log.trace(&quot;getStructureById structureId: {}&quot;, structureId);</span>
+<span class="fc" id="L47">		return this.structureRepository.findById(structureId);</span>
+	}
+
+	/**
+	 * Gives a specific structure by its name.
+	 * @param structureName The name of the structure to retrieve.
+	 * @return The Optional of structure with name structureName.
+	 */
+	@Transactional(readOnly = true)
+	public Optional&lt;Structure&gt; getStructureByName(final String structureName){
+<span class="fc" id="L57">		log.trace(&quot;getStructureById structureId: {}&quot;, structureName);</span>
+<span class="fc" id="L58">		return this.structureRepository.findByName(structureName);</span>
+	}
+	
+	/**
+	 * Gives all the structures.
+	 * @return All the structures.
+	 */
+	@Transactional(readOnly = true)
+	public List&lt;Structure&gt; getAllStructures() {
+<span class="fc" id="L67">		log.trace(&quot;getAllStructures&quot;);</span>
+<span class="fc" id="L68">		return this.structureRepository.findAll();</span>
+	}
+
+	/**
+	 * Gives all the structures associated to a specification.
+	 *
+	 * @param specification The specification used to filter the strutures.
+	 * @return The filtered structures.
+	 */
+	@Transactional(readOnly = true)
+	public List&lt;Structure&gt; getAllStructuresBySpecification(Specification&lt;Structure&gt; specification) {
+<span class="fc" id="L79">		log.trace(&quot;getAllStructuresBySpecification, specification: {}&quot;, specification);</span>
+<span class="fc" id="L80">		return structureRepository.findAll(specification);</span>
+	}
+	
+	/**
+	 * Creates a structure.
+	 * @param structure The structure to create.
+	 * @return The new created structure.
+	 */
+	@Transactional
+	public Structure createStructure(Structure structure) {
+<span class="fc" id="L90">		log.trace(&quot;createStructure, structure: {}&quot;, structure);</span>
+<span class="fc" id="L91">		return this.structureRepository.save(structure);</span>
+	}
+	
+	/**
+	 * Updates a structure.
+	 * @param structure The structure to update.
+	 * @return The updated structure.
+	 */
+	@Transactional
+	public Structure  updateStructure(Structure structure) {
+<span class="fc" id="L101">		log.trace(&quot;updateStructure, structure: {}&quot;, structure);</span>
+<span class="fc" id="L102">		return this.structureRepository.findById(structure.getId())</span>
+<span class="fc" id="L103">				.map(storedStructure -&gt; {</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">					if (! storedStructure.equals(structure)) {</span>
+<span class="fc" id="L105">                        storedStructure.setName(structure.getName());</span>
+<span class="fc" id="L106">                        storedStructure.setDescription(structure.getDescription());</span>
+					}
+<span class="fc" id="L108">					return storedStructure;</span>
+				})
+<span class="pc" id="L110">				.orElseThrow(() -&gt; new EntityNotFoundException(&quot;Entity not found with ID: &quot; + structure.getId()));</span>
+	}
+	
+	/**
+	 * Deletes a structure
+	 * @param structureId The id of the structure to delete.
+	 */
+	@Transactional
+	public void deleteStructure(Long structureId) {
+<span class="fc" id="L119">			log.trace(&quot;deleteStructure, structureId: {}&quot;, structureId);</span>
+<span class="fc" id="L120">		this.structureRepository.deleteById(structureId);</span>
+<span class="fc" id="L121">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACAssignment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.model</a> &gt; <span class="el_source">RBACAssignment.java</span></div><h1>RBACAssignment.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package fr.avenirsesr.portfolio.security.model;
+
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
+
+/**
+ * &lt;h1&gt;RBACAssignment&lt;/h1&gt;
+ * &lt;p&gt;
+ * &lt;b&gt;Description:&lt;/b&gt; represents an assignment in the RBAC system&lt;br/&gt;  
+ * An assignment links:&lt;br/&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt; an user (principal)&lt;/li&gt;
+ * &lt;li&gt; a role, linked to one or many permissions.&lt;/li&gt;
+ * &lt;li&gt; a scope which is liked to on or many resources.&lt;/li&gt;
+ * &lt;li&gt; a context which determine additional information on the assignment, for instance a period of validity.&lt;/li&gt; 
+ * &lt;/ul&gt; 
+ * &lt;/p&gt;
+ * 
+ * &lt;h2&gt;Version:&lt;/h2&gt;
+ * 1.0
+ * 
+ * &lt;h2&gt;Author:&lt;/h2&gt;
+ * Arnaud Deman
+ *
+ * &lt;h2&gt;Since:&lt;/h2&gt;
+ * 16 Sept 2024
+ */
+@Data
+@Accessors(chain=true)
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@IdClass(RBACAssignmentPK.class)
+@Table(name=&quot;assignment&quot;)
+public class RBACAssignment {
+	/** Role in the assignment. */
+	@Id
+	@ManyToOne
+	@JoinColumn(name=&quot;id_role&quot;, referencedColumnName = &quot;id&quot;)
+	private RBACRole role;
+
+	/** Principal to which the role is assigned. */
+	@Id
+	@ManyToOne
+	@JoinColumn(name=&quot;id_principal&quot;, referencedColumnName = &quot;id&quot;)
+	private Principal principal;
+	
+	/** The scope, which determine the resources involved in the assignment. */
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name=&quot;id_scope&quot;, referencedColumnName = &quot;id&quot;)
+	private RBACScope scope;
+	
+	/** The context, which determines some limits of the assignment. */
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name=&quot;id_context&quot;, referencedColumnName = &quot;id&quot;)
+	private RBACContext context;
+	
+	/** Date of the assignment. */
+	@Column(columnDefinition=&quot;TIMESTAMP DEFAULT CURRENT_TIMESTAMP&quot;, updatable = false)
+	private LocalDateTime timestamp;
+
+
+	public RBACAssignmentPK getId() {
+<span class="fc" id="L76">		return new RBACAssignmentPK(this.role.getId(), this.principal.getId(), this.scope.getId(), this.context.getId());</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

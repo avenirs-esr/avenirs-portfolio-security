@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACRoleService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.service</a> &gt; <span class="el_source">RBACRoleService.java</span></div><h1>RBACRoleService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.service;
+import java.util.List;
+import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import fr.avenirsesr.portfolio.security.model.RBACRole;
+import fr.avenirsesr.portfolio.security.repository.RBACRoleRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+
+/**
+ * &lt;h1&gt;RBACRoleService&lt;/h1&gt;
+ * &lt;p&gt;
+ * &lt;b&gt;Description:&lt;/b&gt; RBAC Role Service.
+ * &lt;/p&gt;
+ *
+ * &lt;h2&gt;Version:&lt;/h2&gt;
+ * 1.0.0
+ *
+ * &lt;h2&gt;Author:&lt;/h2&gt;
+ * Arnaud Deman
+ *
+ * &lt;h2&gt;Since:&lt;/h2&gt;
+ * 15/10/2024
+ */
+
+<span class="fc" id="L31">@Slf4j</span>
+@Service
+<span class="fc" id="L33">public class RBACRoleService {</span>
+	
+	@Autowired
+	private RBACRoleRepository roleRepository;
+
+	/**
+	 * Gives a specific role by its id.
+	 * @param roleId The id of the role to retrieve.
+	 * @return The Optional of role with id roleId.
+	 */
+	@Transactional(readOnly = true)
+	public Optional&lt;RBACRole&gt; getRoleById(final Long roleId){
+<span class="fc" id="L45">		log.trace(&quot;getRoleById roleId: {}&quot;, roleId);</span>
+<span class="fc" id="L46">		return this.roleRepository.findById(roleId);</span>
+	}
+
+	/**
+	 * Gives a specific role by its name.
+	 * @param roleName The name of the role to retrieve.
+	 * @return The Optional of role with name roleName.
+	 */
+	@Transactional(readOnly = true)
+	public Optional&lt;RBACRole&gt; getRoleByName(final String roleName) {
+<span class="fc" id="L56">		log.trace(&quot;getRoleByName roleName: {}&quot;, roleName);</span>
+<span class="fc" id="L57">		return this.roleRepository.findByName(roleName);</span>
+	}
+	
+	/**
+	 * Gives all the roles.
+	 * @return All the roles.
+	 */
+	@Transactional(readOnly = true)
+	public List&lt;RBACRole&gt; getAllRoles() {
+<span class="fc" id="L66">		log.trace(&quot;getAllRoles&quot;);</span>
+<span class="fc" id="L67">		return this.roleRepository.findAll();</span>
+	}
+	
+	/**
+	 * Creates a role.
+	 * @param role The role to create.
+	 * @return The new created role.
+	 */
+	@Transactional
+	public RBACRole createRole(RBACRole role) {
+<span class="fc" id="L77">		log.trace(&quot;createRole, role: {}&quot;, role);</span>
+<span class="fc" id="L78">		return this.roleRepository.save(role);</span>
+	}
+	
+	/**
+	 * Updates a role.
+	 * @param role The role to update.
+	 * @return The updated role.
+	 */
+	@Transactional
+	public RBACRole  updateRole(RBACRole role) {
+<span class="fc" id="L88">		log.trace(&quot;updateRole, role: {}&quot;, role);</span>
+<span class="fc" id="L89">		return this.roleRepository.findById(role.getId())</span>
+<span class="fc" id="L90">				.map(storedRole -&gt; {</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">					if (! storedRole.equals(role)) {</span>
+<span class="fc" id="L92">						storedRole.setName(role.getName());</span>
+<span class="fc" id="L93">						storedRole.setDescription(role.getDescription());</span>
+					}
+<span class="fc" id="L95">					return storedRole;</span>
+				})
+<span class="pc" id="L97">				.orElseThrow(() -&gt; new EntityNotFoundException(&quot;Entity not found with ID: &quot; + role.getId()));</span>
+	}
+	
+	/**
+	 * Deletes a role
+	 * @param roleId The id of the role to delete.
+	 */
+	@Transactional
+	public void deleteRole(Long roleId) {
+<span class="fc" id="L106">			log.trace(&quot;deleteRole, roleId: {}&quot;, roleId);</span>
+<span class="fc" id="L107">		this.roleRepository.deleteById(roleId);</span>
+<span class="fc" id="L108">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

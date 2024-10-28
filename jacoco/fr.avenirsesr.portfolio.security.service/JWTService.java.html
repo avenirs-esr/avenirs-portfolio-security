@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JWTService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.service</a> &gt; <span class="el_source">JWTService.java</span></div><h1>JWTService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.service;
+
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
+
+import fr.avenirsesr.portfolio.security.configuration.JWTToCryptographicKeyAlgoMapper;
+import fr.avenirsesr.portfolio.security.model.ModulusAndExponent;
+import fr.avenirsesr.portfolio.security.model.OIDCAccessTokenResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCIdToken;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.SignatureException;
+
+/**
+ * Service used to checks and parse JWT. 
+ * @implNote Only RSA algorithms are supported to generate the public keys.
+ */
+
+<span class="fc" id="L38">@Slf4j</span>
+@Service()
+<span class="fc" id="L40">public class JWTService {</span>
+
+	/** Mapping between jwt and cryptographic key algorithm (e.g. RS256 -&gt; RSA). */
+	@Autowired
+	private JWTToCryptographicKeyAlgoMapper algoMapper;
+
+	/** OIDC provider JWKS end point. */
+	@Value(&quot;${avenirs.authentication.oidc.provider.jwks.url}&quot;)
+	private String oidcJWKSURL;
+	
+	/** Public keys indexed by their corresponding kid in the JWKS. */
+<span class="fc" id="L51">	private final Map&lt;String, PublicKey&gt; keysRepository = new HashMap&lt;&gt;();</span>
+
+	/** Rest client to retrieve JWKS data. */
+<span class="fc" id="L54">	private final RestClient client = RestClient.create();</span>
+	
+	
+
+	/**
+	 * Retrieves the modulus and exponent for an RSA key.
+	 * @param kid The key id.
+	 * @return The modulus and exponent fetched from the OIDC provider end point.
+	 */
+	private Optional&lt;ModulusAndExponent&gt; fetchModulusAndExponent(String kid) {
+		try {
+			// Fetches the JWKS from the OIDC provider end point.
+<span class="fc" id="L66">			String jwksResponse = client.get().uri(oidcJWKSURL).retrieve().body(String.class);</span>
+
+			// Extracts the modulus and exponent corresponding to the key id (kid).
+<span class="fc" id="L69">			return extractModulusAndExponent(jwksResponse, kid);</span>
+
+<span class="nc" id="L71">		} catch (RestClientResponseException e) {</span>
+<span class="nc" id="L72">			log.error(</span>
+					&quot;fetchModulusAndExponent, unable to fetch Modulus and Exponent. HTTP Status code: {}, response body: {}&quot;,
+<span class="nc" id="L74">					e.getStatusCode().value(), e.getResponseBodyAsString());</span>
+<span class="nc" id="L75">			log.error(&quot;Exception: &quot;, e);</span>
+
+<span class="nc" id="L77">		} catch (Exception e) {</span>
+<span class="nc" id="L78">			log.error(&quot;Exception: &quot;, e);</span>
+<span class="nc" id="L79">		}</span>
+<span class="nc" id="L80">		return Optional.empty();</span>
+	}
+
+	/**
+	 * Extracts the modulus and exponent corresponding to a key id from a JWKS response.
+	 * @param jwksResponse The JWKS .
+	 * @param kid The key id of the key associated to the modulus &amp;amp; exponent.
+	 * @return An Optional of ModulusAndExponent.
+	 */
+	protected Optional&lt;ModulusAndExponent&gt; extractModulusAndExponent(String jwksResponse, String kid) {
+		try {
+<span class="fc" id="L91">			JSONObject jsonObject = new JSONObject(jwksResponse);</span>
+<span class="fc" id="L92">			JSONArray keys = jsonObject.getJSONArray(&quot;keys&quot;);</span>
+
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">			for (int i = 0; i &lt; keys.length(); i++) {</span>
+<span class="fc" id="L95">				JSONObject key = keys.getJSONObject(i);</span>
+
+<span class="fc" id="L97">				String kidToTest = key.getString(&quot;kid&quot;);</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">				if (kidToTest.equals(kid)) {</span>
+<span class="fc" id="L99">					String modulusBase64Url = key.getString(&quot;n&quot;);</span>
+<span class="fc" id="L100">					String exponentBase64Url = key.getString(&quot;e&quot;);</span>
+
+<span class="fc" id="L102">					String modulusBase64 = modulusBase64Url.replace(&quot;-&quot;, &quot;+&quot;).replace(&quot;_&quot;, &quot;/&quot;);</span>
+<span class="fc" id="L103">					String exponentBase64 = exponentBase64Url.replace(&quot;-&quot;, &quot;+&quot;).replace(&quot;_&quot;, &quot;/&quot;);</span>
+
+<span class="fc" id="L105">					byte[] modulusBytes = Base64.getDecoder().decode(modulusBase64);</span>
+<span class="fc" id="L106">					byte[] exponentBytes = Base64.getDecoder().decode(exponentBase64);</span>
+
+<span class="fc" id="L108">					BigInteger modulus = new BigInteger(1, modulusBytes);</span>
+<span class="fc" id="L109">					BigInteger exponent = new BigInteger(1, exponentBytes);</span>
+
+<span class="fc" id="L111">					return Optional.of(new ModulusAndExponent(modulus, exponent));</span>
+				}
+			}
+<span class="nc" id="L114">		} catch (Exception e) {</span>
+<span class="nc" id="L115">			log.error(&quot;extractModulusAndExponent, error&quot;, e);</span>
+<span class="nc" id="L116">		}</span>
+<span class="nc" id="L117">		return Optional.empty();</span>
+	}
+
+
+	/**
+	 * Generates an RSA public key.
+	 * @param alg The algorithm specified in the id token.
+	 * @param modulusAndExponent The modulus and exponent.
+	 * @return An Optional of the Public key.
+	 */
+	protected Optional&lt;PublicKey&gt; generateRSAPublicKey(String alg, ModulusAndExponent modulusAndExponent) {
+
+		try {
+			// Builds the key specification.
+<span class="fc" id="L131">			RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(modulusAndExponent.getModulus(),</span>
+<span class="fc" id="L132">				modulusAndExponent.getExponent());</span>
+
+		
+<span class="fc" id="L135">			final Optional&lt;String&gt; keyAlgo = algoMapper.mapJWTToCryptographicKey(alg);</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">			if (keyAlgo.isEmpty()) {</span>
+<span class="nc" id="L137">				log.error(&quot;generatePublicKey, unable to map jwt alg {}, from mapping defined in properties&quot;, alg);</span>
+<span class="nc" id="L138">				return Optional.empty();</span>
+			}
+			
+<span class="fc" id="L141">			KeyFactory keyFactory = KeyFactory.getInstance(keyAlgo.get());</span>
+<span class="fc" id="L142">			return Optional.of(keyFactory.generatePublic(rsaPublicKeySpec));</span>
+<span class="nc" id="L143">		} catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L144">			log.error(&quot;generateRSAPublicKey, invalid algorithm alg: {}&quot;, alg);</span>
+<span class="nc" id="L145">			log.error(&quot;generateRSAPublicKey&quot;, e);</span>
+<span class="nc" id="L146">		} catch (InvalidKeySpecException e) {</span>
+<span class="nc" id="L147">			log.error(&quot;generateRSAPublicKey&quot;, e);</span>
+<span class="nc" id="L148">		}</span>
+<span class="nc" id="L149">		return Optional.empty();</span>
+	}
+
+	/**
+	 * Gives the public key associated to an idToken header. If the key does not
+	 * exist in the key repository it is generated.
+	 * 
+	 * @param idToken The id token which contains in its header the properties kid and alg.
+	 * @return An optional of the publicKey.
+	 */
+	protected Optional&lt;PublicKey&gt; getPublicKey(OIDCIdToken idToken) {
+<span class="pc bpc" id="L160" title="2 of 4 branches missed.">		if (idToken != null &amp;&amp; StringUtils.hasLength(idToken.getHeader())) {</span>
+
+			try {
+<span class="fc" id="L163">				JSONObject jsonObject = new JSONObject(idToken.getHeader());</span>
+<span class="fc" id="L164">				String kid = jsonObject.getString(&quot;kid&quot;);</span>
+
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">				if (!StringUtils.hasLength(kid)) {</span>
+<span class="nc" id="L167">					log.error(&quot;getPublicKey, Unable to fetch kid from idToken: {}&quot;, idToken);</span>
+<span class="nc" id="L168">					return Optional.empty();</span>
+				}
+
+				// The key is not in the repository so it is generated.
+<span class="fc bfc" id="L172" title="All 2 branches covered.">				if (!this.keysRepository.containsKey(kid)) {</span>
+<span class="fc" id="L173">					String alg = jsonObject.getString(&quot;alg&quot;);</span>
+
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">					if (!StringUtils.hasLength(alg)) {</span>
+<span class="nc" id="L176">						log.error(&quot;getPublicKey, Unable to fetch alg from idToken: {}&quot;, idToken);</span>
+<span class="nc" id="L177">						return Optional.empty();</span>
+					}
+					
+					
+<span class="fc" id="L181">					Optional&lt;ModulusAndExponent&gt; modulusAndExponent = this.fetchModulusAndExponent(kid);</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">					if (modulusAndExponent.isEmpty()) {</span>
+<span class="nc" id="L183">						return Optional.empty();</span>
+					}
+
+<span class="fc" id="L186">					Optional&lt;PublicKey&gt; publicKey = this.generateRSAPublicKey(alg, modulusAndExponent.get());</span>
+
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">					if (publicKey.isEmpty()) {</span>
+<span class="nc" id="L189">						log.error(&quot;getPublicKey, Error while trying to generate public key from kid{}, idToken: {}&quot;,</span>
+								kid, idToken);
+<span class="nc" id="L191">						return Optional.empty();</span>
+					}
+
+<span class="fc" id="L194">					this.keysRepository.put(kid, publicKey.get());</span>
+				}
+<span class="fc" id="L196">				return Optional.of(this.keysRepository.get(kid));</span>
+
+<span class="nc" id="L198">			} catch (JSONException e) {</span>
+<span class="nc" id="L199">				log.error(&quot;getPublicKey invalid JSON&quot;, e);</span>
+<span class="nc" id="L200">			} catch (Exception e) {</span>
+<span class="nc" id="L201">				log.error(&quot;getPublicKey&quot;, e);</span>
+<span class="nc" id="L202">			}</span>
+		}
+<span class="nc" id="L204">		return Optional.empty();</span>
+
+	}
+
+	/**
+	 * Parses an access token and checks its signature.
+	 * @param accessTokenResponse The access token response which contains the
+	 *                            access token and the id token.
+	 * @return An Optional of Claims.
+	 */
+	public Optional&lt;Claims&gt; parseAndCheckSignature(OIDCAccessTokenResponse accessTokenResponse) {
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">		if (accessTokenResponse == null) {</span>
+<span class="nc" id="L216">			return Optional.empty();</span>
+		}
+<span class="fc" id="L218">		final Optional&lt;PublicKey&gt; publicKey = getPublicKey(accessTokenResponse.getIdToken());</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">		if (publicKey.isEmpty()) {</span>
+<span class="nc" id="L220">			log.error(&quot;Empty public key while trying to fetch claims from accessTokenResponse: {}&quot;,</span>
+					accessTokenResponse);
+<span class="nc" id="L222">			return Optional.empty();</span>
+		}
+
+		try {
+			// Parses and checks signature.
+<span class="fc" id="L227">			final Claims claims = Jwts.parser()</span>
+<span class="fc" id="L228">					.verifyWith(publicKey.get())</span>
+<span class="fc" id="L229">					.build()</span>
+<span class="fc" id="L230">					.parseSignedClaims(accessTokenResponse.getAccessToken()).getPayload();</span>
+
+<span class="fc" id="L232">			return Optional.of(claims);</span>
+<span class="nc" id="L233">		} catch (SignatureException e) {</span>
+<span class="nc" id="L234">			log.error(&quot;Invalid signature of access token in access token response: {}&quot;, accessTokenResponse);</span>
+<span class="nc" id="L235">			return Optional.empty();</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
