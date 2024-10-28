@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.model.Principal;
-import fr.avenirsesr.portfolio.security.repositories.PrincipalRepository;
+import fr.avenirsesr.portfolio.security.repository.PrincipalRepository;
 
 
 /**

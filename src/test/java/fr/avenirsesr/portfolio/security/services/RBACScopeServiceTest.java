@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.model.*;
-import fr.avenirsesr.portfolio.security.repositories.RBACScopeSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repository.RBACScopeSpecificationHelper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

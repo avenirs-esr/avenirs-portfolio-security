@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.repositories;
+package fr.avenirsesr.portfolio.security.repository;
 
 import fr.avenirsesr.portfolio.security.model.Structure;
 import lombok.extern.slf4j.Slf4j;

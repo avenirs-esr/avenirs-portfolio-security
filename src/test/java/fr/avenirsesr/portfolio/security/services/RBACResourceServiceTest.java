@@ -2,8 +2,8 @@ package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.model.RBACResource;
 import fr.avenirsesr.portfolio.security.model.RBACResourceType;
-import fr.avenirsesr.portfolio.security.repositories.RBACResourceSpecificationHelper;
-import fr.avenirsesr.portfolio.security.repositories.RBACResourceTypeRepository;
+import fr.avenirsesr.portfolio.security.repository.RBACResourceSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repository.RBACResourceTypeRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

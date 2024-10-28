@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import fr.avenirsesr.portfolio.security.model.*;
-import fr.avenirsesr.portfolio.security.repositories.RBACResourceSpecificationHelper;
-import fr.avenirsesr.portfolio.security.repositories.StructureSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repository.RBACResourceSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repository.StructureSpecificationHelper;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import fr.avenirsesr.portfolio.security.repositories.RBACAssignmentSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repository.RBACAssignmentSpecificationHelper;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 

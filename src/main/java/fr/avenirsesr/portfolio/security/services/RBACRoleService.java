@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.model.RBACRole;
-import fr.avenirsesr.portfolio.security.repositories.RBACRoleRepository;
+import fr.avenirsesr.portfolio.security.repository.RBACRoleRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 

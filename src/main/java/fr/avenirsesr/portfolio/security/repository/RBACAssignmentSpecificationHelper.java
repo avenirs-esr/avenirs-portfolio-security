@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.repositories;
+package fr.avenirsesr.portfolio.security.repository;
 
 import java.util.Arrays;
 

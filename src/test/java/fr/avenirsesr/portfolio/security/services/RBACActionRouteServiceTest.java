@@ -9,7 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repository.RBACActionRouteSpecificationHelper;
 import jakarta.transaction.Transactional;
 
 import java.util.Optional;

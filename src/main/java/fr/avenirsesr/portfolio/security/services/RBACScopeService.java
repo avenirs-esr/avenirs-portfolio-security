@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.model.RBACScope;
-import fr.avenirsesr.portfolio.security.repositories.RBACScopeRepository;
+import fr.avenirsesr.portfolio.security.repository.RBACScopeRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 

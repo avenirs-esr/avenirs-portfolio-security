@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.avenirsesr.portfolio.security.model.RBACContext;
-import fr.avenirsesr.portfolio.security.repositories.RBACContextRepository;
+import fr.avenirsesr.portfolio.security.repository.RBACContextRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.model.Structure;
-import fr.avenirsesr.portfolio.security.repositories.StructureRepository;
+import fr.avenirsesr.portfolio.security.repository.StructureRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

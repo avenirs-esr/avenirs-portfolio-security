@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.services;
 
 import fr.avenirsesr.portfolio.security.model.RBACResource;
-import fr.avenirsesr.portfolio.security.repositories.RBACResourceRepository;
+import fr.avenirsesr.portfolio.security.repository.RBACResourceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import fr.avenirsesr.portfolio.security.repositories.RBACActionRouteSpecificationHelper;
+import fr.avenirsesr.portfolio.security.repository.RBACActionRouteSpecificationHelper;
 import fr.avenirsesr.portfolio.security.services.AccessControlService;
 import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
