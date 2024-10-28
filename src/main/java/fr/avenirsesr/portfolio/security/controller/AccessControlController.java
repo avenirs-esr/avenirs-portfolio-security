@@ -125,7 +125,7 @@ public class AccessControlController {
         log.trace("grantAccess, request: {}", request);
         AccessControlGrantResponse response;
         try {
-            response = this.accessControlService.grantAccess(request.setUid(login));
+            response = this.accessControlService.grantAccess(request.setLogin(login));
         } catch (Exception e) {
             response = new AccessControlGrantResponse()
                     .setLogin(login)
@@ -157,7 +157,7 @@ public class AccessControlController {
 
         AccessControlRevokeResponse response;
         try {
-            response = this.accessControlService.revokeAccess(request.setUid(login));
+            response = this.accessControlService.revokeAccess(request.setLogin(login));
         } catch (Exception e) {
             response = new AccessControlRevokeResponse()
                     .setLogin(login)

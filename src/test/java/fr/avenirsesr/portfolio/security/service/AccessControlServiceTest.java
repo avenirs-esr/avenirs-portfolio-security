@@ -160,7 +160,7 @@ class AccessControlServiceTest {
         assertTrue(assignments.isEmpty(), "No assignment at startup");
 
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
@@ -189,7 +189,7 @@ class AccessControlServiceTest {
     void grantAccessWithInvalidPrincipal() {
 
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid("user123")
+                .setLogin("user123")
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
@@ -209,7 +209,7 @@ class AccessControlServiceTest {
     void grantAccessWithInvalidRole() {
 
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
@@ -232,7 +232,7 @@ class AccessControlServiceTest {
         assertTrue(assignments.isEmpty(), "No assignment at startup");
 
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
@@ -265,7 +265,7 @@ class AccessControlServiceTest {
         List<Long> invalidResourceIds = new ArrayList<>(Arrays.asList(grantResourceIds));
         invalidResourceIds.add(100L);
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
@@ -283,7 +283,7 @@ class AccessControlServiceTest {
         assertTrue(assignments.isEmpty(), "No assignment at startup");
 
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setResourceIds(grantResourceIds)
@@ -315,7 +315,7 @@ class AccessControlServiceTest {
         List<Long> invalidStructureIds = new ArrayList<>(Arrays.asList(grantStructureIds));
         invalidStructureIds.add(100L);
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(invalidStructureIds.toArray(new Long[0]))
@@ -337,7 +337,7 @@ class AccessControlServiceTest {
         assertTrue(assignments.isEmpty(), "No assignment at startup");
 
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.toString())
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
@@ -359,7 +359,7 @@ class AccessControlServiceTest {
         assertTrue(assignments.isEmpty(), "No assignment at startup");
 
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.toString())
                 .setStructureIds(grantStructureIds)
@@ -378,7 +378,7 @@ class AccessControlServiceTest {
 
 
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
@@ -392,7 +392,7 @@ class AccessControlServiceTest {
         RBACAssignment assignment = assignments.getFirst();
 
         AccessControlRevokeResponse response = accessControlService.revokeAccess(new AccessControlRevokeRequest()
-                .setUid(userLogin)
+                .setLogin(userLogin)
                 .setContextId(assignment.getContext().getId())
                 .setRoleId(assignment.getRole().getId())
                 .setScopeId(assignment.getScope().getId()));
@@ -412,7 +412,7 @@ class AccessControlServiceTest {
 
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> accessControlService.revokeAccess(new AccessControlRevokeRequest()
-                .setUid("user123")
+                .setLogin("user123")
                 .setContextId(1L)
                 .setRoleId(1L)
                 .setScopeId(1L)));

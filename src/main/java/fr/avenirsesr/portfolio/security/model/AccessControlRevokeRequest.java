@@ -26,8 +26,8 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class AccessControlRevokeRequest {
 
-    /** The uid of the principal. */
-    private String uid;
+    /** The login of the principal. */
+    private String login;
 
     /** The id of the role to grant. */
     private Long roleId;

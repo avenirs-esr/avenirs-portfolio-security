@@ -101,7 +101,7 @@ class AccessControlControllerTest {
                 .setStructureIds(new Long[]{1L, 2L});
 
         revokeRequest = new AccessControlRevokeRequest()
-                .setUid("user123")
+                .setLogin("user123")
                 .setRoleId(1L)
                 .setScopeId(1L)
                 .setContextId(1L);

@@ -25,8 +25,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class LoginRequest {
 
+    /** User login. */
     private String login;
 
+    /** User password. */
     @ToString.Exclude
     private String password;
 

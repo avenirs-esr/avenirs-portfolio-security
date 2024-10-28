@@ -102,8 +102,8 @@ public class AccessControlService {
         RBACRole role = roleService.getRoleById(grantRequest.getRoleId())
                 .orElseThrow(() -> new EntityNotFoundException("Role not found, ID: " + grantRequest.getRoleId()));
 
-        Principal principal = principalService.getPrincipalByLogin(grantRequest.getUid())
-                .orElseThrow(() -> new EntityNotFoundException("Principal not found, UID: " + grantRequest.getUid()));
+        Principal principal = principalService.getPrincipalByLogin(grantRequest.getLogin())
+                .orElseThrow(() -> new EntityNotFoundException("Principal not found, UID: " + grantRequest.getLogin()));
 
         log.trace("grantAccess, role: {}", role);
         log.trace("grantAccess, principal: {}", principal);
@@ -182,7 +182,7 @@ public class AccessControlService {
 
 
         return new AccessControlGrantResponse()
-                .setLogin(grantRequest.getUid())
+                .setLogin(grantRequest.getLogin())
                 .setGranted(true);
     }
 
@@ -195,8 +195,8 @@ public class AccessControlService {
     public AccessControlRevokeResponse revokeAccess(AccessControlRevokeRequest revokeRequest) {
         log.trace("revokeAccess, revokeRequest: {}", revokeRequest);
 
-        Principal principal = principalService.getPrincipalByLogin(revokeRequest.getUid())
-                .orElseThrow(() -> new EntityNotFoundException("Principal not found, UID: " + revokeRequest.getUid()));
+        Principal principal = principalService.getPrincipalByLogin(revokeRequest.getLogin())
+                .orElseThrow(() -> new EntityNotFoundException("Principal not found, UID: " + revokeRequest.getLogin()));
 
         RBACAssignmentPK key = new RBACAssignmentPK()
                 .setPrincipal(principal.getId())
@@ -206,7 +206,7 @@ public class AccessControlService {
 
         assignmentService.deleteAssignment(key);
         return new AccessControlRevokeResponse()
-                .setLogin(revokeRequest.getUid())
+                .setLogin(revokeRequest.getLogin())
                 .setRevoked(true);
     }
 
