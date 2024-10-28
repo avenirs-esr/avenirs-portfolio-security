@@ -31,7 +31,6 @@ public class AccessControlGrantRequest {
 
     /** The id of the role to grant. */
     private Long roleId;
-;
 
     /** The ids of the resources (optional). */
     private Long[] resourceIds;
