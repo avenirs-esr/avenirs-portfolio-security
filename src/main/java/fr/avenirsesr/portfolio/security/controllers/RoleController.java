@@ -10,11 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
-import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -24,11 +21,6 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 public class RoleController {
 
-    /**
-     * Authentication service used to retrieve the user information.
-     */
-    @Autowired
-    private AuthenticationService authenticationService;
 
     /**
      * Assignment service, used to retrieve roles assigned to a principal for instance.
@@ -43,7 +35,6 @@ public class RoleController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Vérifier si l'utilisateur est authentifié
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
