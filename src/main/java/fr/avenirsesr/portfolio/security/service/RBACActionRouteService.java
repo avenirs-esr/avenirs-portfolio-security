@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.services;
+package fr.avenirsesr.portfolio.security.service;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;

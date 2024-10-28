@@ -4,7 +4,7 @@
 package fr.avenirsesr.portfolio.security.configuration;
 
 import fr.avenirsesr.portfolio.security.filter.CASTokenAuthenticationFilter;
-import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import fr.avenirsesr.portfolio.security.service.AuthenticationService;
 import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.services;
+package fr.avenirsesr.portfolio.security.service;
 
 import fr.avenirsesr.portfolio.security.model.RBACResource;
 import fr.avenirsesr.portfolio.security.model.RBACResourceType;

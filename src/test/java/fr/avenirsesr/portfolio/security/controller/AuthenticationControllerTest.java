@@ -3,7 +3,7 @@ package fr.avenirsesr.portfolio.security.controller;
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
 import fr.avenirsesr.portfolio.security.model.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.model.OIDCProfileResponse;
-import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import fr.avenirsesr.portfolio.security.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package fr.avenirsesr.portfolio.security.services;
+package fr.avenirsesr.portfolio.security.service;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;

@@ -9,9 +9,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import fr.avenirsesr.portfolio.security.repository.RBACActionRouteSpecificationHelper;
-import fr.avenirsesr.portfolio.security.services.AccessControlService;
-import fr.avenirsesr.portfolio.security.services.AuthenticationService;
-import fr.avenirsesr.portfolio.security.services.RBACActionRouteService;
+import fr.avenirsesr.portfolio.security.service.AccessControlService;
+import fr.avenirsesr.portfolio.security.service.AuthenticationService;
+import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
 
 /**
  * <h1>AccessControlController</h1>

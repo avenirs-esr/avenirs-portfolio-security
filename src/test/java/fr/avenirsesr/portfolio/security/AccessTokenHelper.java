@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fr.avenirsesr.portfolio.security.model.OIDCAccessTokenResponse;
-import fr.avenirsesr.portfolio.security.services.AuthenticationService;
+import fr.avenirsesr.portfolio.security.service.AuthenticationService;
 
 /**
  * <h1>AccessTokenHelper</h1>

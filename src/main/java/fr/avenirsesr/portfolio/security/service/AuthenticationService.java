@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.avenirsesr.portfolio.security.services;
+package fr.avenirsesr.portfolio.security.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
