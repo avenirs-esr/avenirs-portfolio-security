@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccessControlController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.controller</a> &gt; <span class="el_source">AccessControlController.java</span></div><h1>AccessControlController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.controller;
 
+import fr.avenirsesr.portfolio.security.delegate.SecurityDelegate;
 import fr.avenirsesr.portfolio.security.model.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import fr.avenirsesr.portfolio.security.repository.RBACActionRouteSpecificationHelper;
 import fr.avenirsesr.portfolio.security.service.AccessControlService;
-import fr.avenirsesr.portfolio.security.service.AuthenticationService;
 import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
 
 /**
@@ -35,15 +36,10 @@ import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
  * 17/10/2024
  */
 
-<span class="fc" id="L38">@Slf4j</span>
+<span class="fc" id="L39">@Slf4j</span>
 @RestController
-<span class="fc" id="L40">public class AccessControlController {</span>
-
-    /**
-     * Authentication service used to retrieve the user information.
-     */
-    @Autowired
-    private AuthenticationService authenticationService;
+@SecurityRequirement(name = &quot;bearerAuth&quot;)
+<span class="fc" id="L42">public class AccessControlController {</span>
 
     /**
      * Action route service.
@@ -57,12 +53,17 @@ import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
     @Autowired
     private AccessControlService accessControlService;
 
+    /**
+     * Delegate for the security checks.
+     */
+    @Autowired
+    private SecurityDelegate securityDelegate;
+
 
     /**
      * Checks if a principal is authorized to perform an action on a resource.
      * The action is specified by an uri and an HTTP method.
      *
-     * @param token      The token associated to the principal.
      * @param uri        The uri of the action.
      * @param method     The HTTP method of the action.
      * @param resourceId The involved resource.
@@ -70,82 +71,69 @@ import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
      */
     @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
     @GetMapping(&quot;${avenirs.access.control}&quot;)
-    public ResponseEntity&lt;AccessControlResponse&gt; isAuthorized(@RequestHeader(value = &quot;x-authorization&quot;) String token,
-                                                              @RequestParam String uri,
+    public ResponseEntity&lt;AccessControlResponse&gt; isAuthorized(@RequestParam String uri,
                                                               @RequestParam String method,
                                                               @RequestParam(required = false, name = &quot;resourceId&quot;) Long resourceId) {
-<span class="fc" id="L77">        log.trace(&quot;hasAccess, token: {} &quot;, token);</span>
-<span class="fc" id="L78">        log.trace(&quot;hasAccess, uri: {} &quot;, uri);</span>
-<span class="fc" id="L79">        log.trace(&quot;hasAccess, method: {} &quot;, method);</span>
-<span class="fc" id="L80">        log.trace(&quot;hasAccess, resourceId: {} &quot;, resourceId);</span>
+<span class="fc" id="L77">        String login = securityDelegate.getAuthenticatedUserLogin();</span>
+<span class="fc" id="L78">        log.trace(&quot;hasAccess, login: {} &quot;, login);</span>
 
-<span class="fc" id="L82">        AccessControlResponse response = new AccessControlResponse()</span>
-<span class="fc" id="L83">                .setToken(token)</span>
-<span class="fc" id="L84">                .setResourceId(resourceId)</span>
-<span class="fc" id="L85">                .setUri(uri)</span>
-<span class="fc" id="L86">                .setMethod(method);</span>
-<span class="pc bpc" id="L87" title="2 of 4 branches missed.">        if (StringUtils.hasLength(uri) &amp;&amp; StringUtils.hasLength(method)) {</span>
-<span class="fc" id="L88">            RBACActionRoute actionRoute = actionRouteService.getAllActionRoutesBySpecification(</span>
-<span class="fc" id="L89">                    RBACActionRouteSpecificationHelper.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);</span>
-<span class="fc" id="L90">            log.trace(&quot;hasAccess, actionRoute: {} &quot;, actionRoute);</span>
+<span class="fc" id="L80">        log.trace(&quot;hasAccess, uri: {} &quot;, uri);</span>
+<span class="fc" id="L81">        log.trace(&quot;hasAccess, method: {} &quot;, method);</span>
+<span class="fc" id="L82">        log.trace(&quot;hasAccess, resourceId: {} &quot;, resourceId);</span>
 
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            if (actionRoute != null) {</span>
 
-<span class="fc" id="L94">                RBACAction action = actionRoute.getAction();</span>
-<span class="fc" id="L95">                log.trace(&quot;hasAccess, action: {}&quot;, action);</span>
-<span class="fc" id="L96">                response.setActionName(action.getName());</span>
-<span class="fc" id="L97">                OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
-<span class="fc" id="L98">                log.trace(&quot;hasAccess, introspectResponse: {}&quot;, introspectResponse);</span>
+<span class="fc" id="L85">        AccessControlResponse response = new AccessControlResponse()</span>
+<span class="fc" id="L86">                .setLogin(login)</span>
+<span class="fc" id="L87">                .setResourceId(resourceId)</span>
+<span class="fc" id="L88">                .setUri(uri)</span>
+<span class="fc" id="L89">                .setMethod(method);</span>
+<span class="pc bpc" id="L90" title="2 of 4 branches missed.">        if (StringUtils.hasLength(uri) &amp;&amp; StringUtils.hasLength(method)) {</span>
+<span class="fc" id="L91">            RBACActionRoute actionRoute = actionRouteService.getAllActionRoutesBySpecification(</span>
+<span class="fc" id="L92">                    RBACActionRouteSpecificationHelper.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);</span>
+<span class="fc" id="L93">            log.trace(&quot;hasAccess, actionRoute: {} &quot;, actionRoute);</span>
 
-<span class="pc bpc" id="L100" title="2 of 4 branches missed.">                if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
-<span class="fc" id="L101">                    String login = introspectResponse.getUniqueSecurityName();</span>
-<span class="fc" id="L102">                    log.trace(&quot;hasAccess, login: {}&quot;, login);</span>
-<span class="fc" id="L103">                    response.setLogin(login);</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            if (actionRoute != null) {</span>
 
-<span class="fc" id="L105">                    boolean granted = accessControlService.isAuthorized(login, action.getId(), resourceId);</span>
-<span class="fc" id="L106">                    log.trace(&quot;hasAccess, granted: {}&quot;, granted);</span>
+<span class="fc" id="L97">                RBACAction action = actionRoute.getAction();</span>
+<span class="fc" id="L98">                log.trace(&quot;hasAccess, action: {}&quot;, action);</span>
+<span class="fc" id="L99">                response.setActionName(action.getName());</span>
 
-<span class="fc" id="L108">                    response.setGranted(granted);</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">                    return response.isGranted() ? ResponseEntity.ok(response)</span>
-<span class="fc" id="L110">                            : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
-                }
+<span class="fc" id="L101">                boolean granted = accessControlService.isAuthorized(login, action.getId(), resourceId);</span>
+<span class="fc" id="L102">                log.trace(&quot;hasAccess, granted: {}&quot;, granted);</span>
+
+<span class="fc" id="L104">                response.setGranted(granted);</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                return response.isGranted() ? ResponseEntity.ok(response)</span>
+<span class="fc" id="L106">                        : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
             }
         }
-<span class="nc" id="L114">        log.trace(&quot;hasAccess, response: {}&quot;, response);</span>
-<span class="nc" id="L115">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+<span class="nc" id="L109">        log.trace(&quot;hasAccess, response: {}&quot;, response);</span>
+<span class="nc" id="L110">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
     }
 
     /**
      * Grant a role to a principal for a resource (optional) and an application context (optional).
      *
-     * @param token   The token associated to the principal.
      * @param request grant request with the role, the resource and application context information.
      * @return An AccessControlGrantResponse.
      */
     @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
     @PostMapping(&quot;${avenirs.access.control.grant}&quot;)
-    public ResponseEntity&lt;AccessControlGrantResponse&gt; grantAccess(@RequestHeader(value = &quot;x-authorization&quot;) String token,
-                                                                  @RequestBody AccessControlGrantRequest request) {
-<span class="fc" id="L129">        log.trace(&quot;grantAccess, token: {}&quot;, token);</span>
-<span class="fc" id="L130">        log.trace(&quot;grantAccess, request: {}&quot;, request);</span>
+    public ResponseEntity&lt;AccessControlGrantResponse&gt; grantAccess(@RequestBody AccessControlGrantRequest request) {
 
-<span class="fc" id="L132">        OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
-<span class="fc" id="L133">        log.trace(&quot;grantAccess, introspectResponse: {}&quot;, introspectResponse);</span>
-
-<span class="pc bpc" id="L135" title="1 of 4 branches missed.">        if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
-            AccessControlGrantResponse response;
-            try {
-<span class="fc" id="L138">                response = this.accessControlService.grantAccess(request.setUid(introspectResponse.getUniqueSecurityName()));</span>
-<span class="fc" id="L139">            } catch (Exception e) {</span>
-<span class="fc" id="L140">                response = new AccessControlGrantResponse()</span>
-<span class="fc" id="L141">                        .setLogin(introspectResponse.getUniqueSecurityName())</span>
-<span class="fc" id="L142">                        .setGranted(false)</span>
-<span class="fc" id="L143">                        .setError(e.getMessage());</span>
-<span class="fc" id="L144">            }</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">            return response.isGranted() ? ResponseEntity.ok(response)</span>
-<span class="fc" id="L146">                    : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
-        }
-<span class="fc" id="L148">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+<span class="fc" id="L123">        String login = securityDelegate.getAuthenticatedUserLogin();</span>
+<span class="fc" id="L124">        log.trace(&quot;grantAccess, login: {}&quot;, login);</span>
+<span class="fc" id="L125">        log.trace(&quot;grantAccess, request: {}&quot;, request);</span>
+        AccessControlGrantResponse response;
+        try {
+<span class="fc" id="L128">            response = this.accessControlService.grantAccess(request.setUid(login));</span>
+<span class="fc" id="L129">        } catch (Exception e) {</span>
+<span class="fc" id="L130">            response = new AccessControlGrantResponse()</span>
+<span class="fc" id="L131">                    .setLogin(login)</span>
+<span class="fc" id="L132">                    .setGranted(false)</span>
+<span class="fc" id="L133">                    .setError(e.getMessage());</span>
+<span class="fc" id="L134">        }</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        return response.isGranted() ? ResponseEntity.ok(response)</span>
+<span class="fc" id="L136">                : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
 
 
     }
@@ -154,36 +142,30 @@ import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
     /**
      * Revoke access granted to a principal on resource(s).
      *
-     * @param token        The access token associated to the principal.
      * @param request The ids used to revoke the access.
      * @return An instance of AccessControlGrantResponse which contains the result of the operation.
      */
     @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
     @DeleteMapping(&quot;${avenirs.access.control.grant}&quot;)
-    public ResponseEntity&lt;AccessControlRevokeResponse&gt; revokeAccess(@RequestHeader(value = &quot;x-authorization&quot;) String token,
-                                                                    @RequestBody AccessControlRevokeRequest request) {
-<span class="fc" id="L165">        log.trace(&quot;revokeAccess, token: {}&quot;, token);</span>
-<span class="fc" id="L166">        log.trace(&quot;revokeAccess, request: {}&quot;, request);</span>
+    public ResponseEntity&lt;AccessControlRevokeResponse&gt; revokeAccess(@RequestBody AccessControlRevokeRequest request) {
 
-<span class="fc" id="L168">        OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
-<span class="fc" id="L169">        log.trace(&quot;revokeAccess, introspectResponse: {}&quot;, introspectResponse);</span>
+<span class="fc" id="L152">        String login = securityDelegate.getAuthenticatedUserLogin();</span>
+<span class="fc" id="L153">        log.trace(&quot;grantAccess, login: {}&quot;, login);</span>
 
-<span class="pc bpc" id="L171" title="1 of 4 branches missed.">        if (introspectResponse != null &amp;&amp; introspectResponse.isActive()) {</span>
-            AccessControlRevokeResponse response;
-            try {
-<span class="fc" id="L174">                response = this.accessControlService.revokeAccess(request.setUid(introspectResponse.getUniqueSecurityName()));</span>
-<span class="fc" id="L175">            } catch (Exception e) {</span>
-<span class="fc" id="L176">                response = new AccessControlRevokeResponse()</span>
-<span class="fc" id="L177">                        .setLogin(introspectResponse.getUniqueSecurityName())</span>
-<span class="fc" id="L178">                        .setRevoked(false)</span>
-<span class="fc" id="L179">                        .setError(e.getMessage());</span>
-<span class="fc" id="L180">            }</span>
-<span class="fc bfc" id="L181" title="All 2 branches covered.">            return response.isRevoked() ? ResponseEntity.ok(response)</span>
-<span class="fc" id="L182">                    : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
-        }
-<span class="fc" id="L184">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+<span class="fc" id="L155">        log.trace(&quot;revokeAccess, request: {}&quot;, request);</span>
 
 
+        AccessControlRevokeResponse response;
+        try {
+<span class="fc" id="L160">            response = this.accessControlService.revokeAccess(request.setUid(login));</span>
+<span class="fc" id="L161">        } catch (Exception e) {</span>
+<span class="fc" id="L162">            response = new AccessControlRevokeResponse()</span>
+<span class="fc" id="L163">                    .setLogin(login)</span>
+<span class="fc" id="L164">                    .setRevoked(false)</span>
+<span class="fc" id="L165">                    .setError(e.getMessage());</span>
+<span class="fc" id="L166">        }</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        return response.isRevoked() ? ResponseEntity.ok(response)</span>
+<span class="fc" id="L168">                : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

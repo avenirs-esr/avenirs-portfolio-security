@@ -40,6 +40,7 @@ import java.util.List;
     @Autowired
     private RBACAssignmentService assignmentService;
 
+    /** Delegate for the security checks.*/
     @Autowired
     private SecurityDelegate securityDelegate;
 
@@ -51,17 +52,17 @@ import java.util.List;
     @GetMapping(&quot;${avenirs.access.control.roles}&quot;)
     public List&lt;String&gt; getRoles() {
 
-<span class="fc" id="L54">        String login =securityDelegate.getAuthenticatedUserLogin();</span>
+<span class="fc" id="L55">        String login =securityDelegate.getAuthenticatedUserLogin();</span>
 
-<span class="fc" id="L56">        log.trace(&quot;getRoles, login: {}&quot;, login);</span>
+<span class="fc" id="L57">        log.trace(&quot;getRoles, login: {}&quot;, login);</span>
 
-<span class="fc" id="L58">        List&lt;RBACAssignment&gt; assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(login));</span>
+<span class="fc" id="L59">        List&lt;RBACAssignment&gt; assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(login));</span>
 
-<span class="fc" id="L60">        List&lt;String&gt; roles = assignments.stream()</span>
-<span class="fc" id="L61">                .map(assignment -&gt; assignment.getRole().getName())</span>
-<span class="fc" id="L62">                .toList();</span>
-<span class="fc" id="L63">        log.trace(&quot;Role for {}: {}&quot;, login, roles);</span>
-<span class="fc" id="L64">        return roles;</span>
+<span class="fc" id="L61">        List&lt;String&gt; roles = assignments.stream()</span>
+<span class="fc" id="L62">                .map(assignment -&gt; assignment.getRole().getName())</span>
+<span class="fc" id="L63">                .toList();</span>
+<span class="fc" id="L64">        log.trace(&quot;Role for {}: {}&quot;, login, roles);</span>
+<span class="fc" id="L65">        return roles;</span>
 
     }
 
