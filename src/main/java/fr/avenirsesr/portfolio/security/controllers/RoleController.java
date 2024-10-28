@@ -16,6 +16,22 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * <h1>RoleController</h1>
+ * <p>
+ * <b>Description:</b> used to retrieve the roles associated to a principal.
+ * </p>
+ *
+ * <h2>Version:</h2>
+ * 1.0.0
+ *
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 28/10/2024
+ */
+
 @Slf4j
 @RestController
 @SecurityRequirement(name = "bearerAuth")
@@ -28,7 +44,10 @@ public class RoleController {
     @Autowired
     private RBACAssignmentService assignmentService;
 
-
+    /**
+     * Gives the roles associated to a users.
+     * @return The list of role names.
+     */
     @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
     @GetMapping("${avenirs.access.control.roles}")
     public List<String> getRoles() {
