@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoleController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.controller</a> &gt; <span class="el_source">RoleController.java</span></div><h1>RoleController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.controller;
 
+import fr.avenirsesr.portfolio.security.delegate.SecurityDelegate;
 import fr.avenirsesr.portfolio.security.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.repository.RBACAssignmentSpecificationHelper;
 import fr.avenirsesr.portfolio.security.service.RBACAssignmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -32,10 +28,10 @@ import java.util.List;
  * 28/10/2024
  */
 
-<span class="fc" id="L35">@Slf4j</span>
+<span class="fc" id="L31">@Slf4j</span>
 @RestController
 @SecurityRequirement(name = &quot;bearerAuth&quot;)
-<span class="fc" id="L38">public class RoleController {</span>
+<span class="fc" id="L34">public class RoleController {</span>
 
 
     /**
@@ -43,6 +39,9 @@ import java.util.List;
      */
     @Autowired
     private RBACAssignmentService assignmentService;
+
+    @Autowired
+    private SecurityDelegate securityDelegate;
 
     /**
      * Gives the roles associated to a users.
@@ -52,20 +51,17 @@ import java.util.List;
     @GetMapping(&quot;${avenirs.access.control.roles}&quot;)
     public List&lt;String&gt; getRoles() {
 
-<span class="fc" id="L55">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L54">        String login =securityDelegate.getAuthenticatedUserLogin();</span>
 
-<span class="pc bpc" id="L57" title="1 of 4 branches missed.">        if (authentication == null || !authentication.isAuthenticated()) {</span>
-<span class="fc" id="L58">            throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
-        }
-<span class="fc" id="L60">        String uid = authentication.getName();</span>
-<span class="fc" id="L61">        log.trace(&quot;getRoles, uid: {}&quot;, uid);</span>
-<span class="fc" id="L62">        List&lt;RBACAssignment&gt; assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(uid));</span>
+<span class="fc" id="L56">        log.trace(&quot;getRoles, login: {}&quot;, login);</span>
 
-<span class="fc" id="L64">        List&lt;String&gt; roles = assignments.stream()</span>
-<span class="fc" id="L65">                .map(assignment -&gt; assignment.getRole().getName())</span>
-<span class="fc" id="L66">                .toList();</span>
-<span class="fc" id="L67">        log.trace(&quot;Role for {}: {}&quot;, uid, roles);</span>
-<span class="fc" id="L68">        return roles;</span>
+<span class="fc" id="L58">        List&lt;RBACAssignment&gt; assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(login));</span>
+
+<span class="fc" id="L60">        List&lt;String&gt; roles = assignments.stream()</span>
+<span class="fc" id="L61">                .map(assignment -&gt; assignment.getRole().getName())</span>
+<span class="fc" id="L62">                .toList();</span>
+<span class="fc" id="L63">        log.trace(&quot;Role for {}: {}&quot;, login, roles);</span>
+<span class="fc" id="L64">        return roles;</span>
 
     }
 
