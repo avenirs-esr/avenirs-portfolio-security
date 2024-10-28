@@ -25,15 +25,17 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class LoginRequest {
 
+    /** User login. */
     private String login;
 
+    /** User password. */
     @ToString.Exclude
     private String password;
 
     @ToString.Include(name = &quot;password&quot;)
     @Schema(hidden = true)
     public String getMaskedPassword() {
-<span class="nc bnc" id="L36" title="All 2 branches missed.">        return password != null ? &quot;****&quot;  : null;</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        return password != null ? &quot;****&quot;  : null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

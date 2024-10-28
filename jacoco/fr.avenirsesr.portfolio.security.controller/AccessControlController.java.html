@@ -125,7 +125,7 @@ import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
 <span class="fc" id="L125">        log.trace(&quot;grantAccess, request: {}&quot;, request);</span>
         AccessControlGrantResponse response;
         try {
-<span class="fc" id="L128">            response = this.accessControlService.grantAccess(request.setUid(login));</span>
+<span class="fc" id="L128">            response = this.accessControlService.grantAccess(request.setLogin(login));</span>
 <span class="fc" id="L129">        } catch (Exception e) {</span>
 <span class="fc" id="L130">            response = new AccessControlGrantResponse()</span>
 <span class="fc" id="L131">                    .setLogin(login)</span>
@@ -157,7 +157,7 @@ import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
 
         AccessControlRevokeResponse response;
         try {
-<span class="fc" id="L160">            response = this.accessControlService.revokeAccess(request.setUid(login));</span>
+<span class="fc" id="L160">            response = this.accessControlService.revokeAccess(request.setLogin(login));</span>
 <span class="fc" id="L161">        } catch (Exception e) {</span>
 <span class="fc" id="L162">            response = new AccessControlRevokeResponse()</span>
 <span class="fc" id="L163">                    .setLogin(login)</span>
