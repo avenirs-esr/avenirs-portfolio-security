@@ -1,6 +1,8 @@
 package fr.avenirsesr.portfolio.security.controller;
 
+import fr.avenirsesr.portfolio.security.delegate.SecurityDelegate;
 import fr.avenirsesr.portfolio.security.model.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import fr.avenirsesr.portfolio.security.repository.RBACActionRouteSpecificationHelper;
 import fr.avenirsesr.portfolio.security.service.AccessControlService;
-import fr.avenirsesr.portfolio.security.service.AuthenticationService;
 import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
 
 /**
@@ -37,13 +38,8 @@ import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
 
 @Slf4j
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 public class AccessControlController {
-
-    /**
-     * Authentication service used to retrieve the user information.
-     */
-    @Autowired
-    private AuthenticationService authenticationService;
 
     /**
      * Action route service.
@@ -57,12 +53,17 @@ public class AccessControlController {
     @Autowired
     private AccessControlService accessControlService;
 
+    /**
+     * Delegate for the security checks.
+     */
+    @Autowired
+    private SecurityDelegate securityDelegate;
+
 
     /**
      * Checks if a principal is authorized to perform an action on a resource.
      * The action is specified by an uri and an HTTP method.
      *
-     * @param token      The token associated to the principal.
      * @param uri        The uri of the action.
      * @param method     The HTTP method of the action.
      * @param resourceId The involved resource.
@@ -70,17 +71,19 @@ public class AccessControlController {
      */
     @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
     @GetMapping("${avenirs.access.control}")
-    public ResponseEntity<AccessControlResponse> isAuthorized(@RequestHeader(value = "x-authorization") String token,
-                                                              @RequestParam String uri,
+    public ResponseEntity<AccessControlResponse> isAuthorized(@RequestParam String uri,
                                                               @RequestParam String method,
                                                               @RequestParam(required = false, name = "resourceId") Long resourceId) {
-        log.trace("hasAccess, token: {} ", token);
+        String login = securityDelegate.getAuthenticatedUserLogin();
+        log.trace("hasAccess, login: {} ", login);
+
         log.trace("hasAccess, uri: {} ", uri);
         log.trace("hasAccess, method: {} ", method);
         log.trace("hasAccess, resourceId: {} ", resourceId);
 
+
         AccessControlResponse response = new AccessControlResponse()
-                .setToken(token)
+                .setLogin(login)
                 .setResourceId(resourceId)
                 .setUri(uri)
                 .setMethod(method);
@@ -94,21 +97,13 @@ public class AccessControlController {
                 RBACAction action = actionRoute.getAction();
                 log.trace("hasAccess, action: {}", action);
                 response.setActionName(action.getName());
-                OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
-                log.trace("hasAccess, introspectResponse: {}", introspectResponse);
 
-                if (introspectResponse != null && introspectResponse.isActive()) {
-                    String login = introspectResponse.getUniqueSecurityName();
-                    log.trace("hasAccess, login: {}", login);
-                    response.setLogin(login);
+                boolean granted = accessControlService.isAuthorized(login, action.getId(), resourceId);
+                log.trace("hasAccess, granted: {}", granted);
 
-                    boolean granted = accessControlService.isAuthorized(login, action.getId(), resourceId);
-                    log.trace("hasAccess, granted: {}", granted);
-
-                    response.setGranted(granted);
-                    return response.isGranted() ? ResponseEntity.ok(response)
-                            : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-                }
+                response.setGranted(granted);
+                return response.isGranted() ? ResponseEntity.ok(response)
+                        : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
         }
         log.trace("hasAccess, response: {}", response);
@@ -118,34 +113,27 @@ public class AccessControlController {
     /**
      * Grant a role to a principal for a resource (optional) and an application context (optional).
      *
-     * @param token   The token associated to the principal.
      * @param request grant request with the role, the resource and application context information.
      * @return An AccessControlGrantResponse.
      */
     @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
     @PostMapping("${avenirs.access.control.grant}")
-    public ResponseEntity<AccessControlGrantResponse> grantAccess(@RequestHeader(value = "x-authorization") String token,
-                                                                  @RequestBody AccessControlGrantRequest request) {
-        log.trace("grantAccess, token: {}", token);
+    public ResponseEntity<AccessControlGrantResponse> grantAccess(@RequestBody AccessControlGrantRequest request) {
+
+        String login = securityDelegate.getAuthenticatedUserLogin();
+        log.trace("grantAccess, login: {}", login);
         log.trace("grantAccess, request: {}", request);
-
-        OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
-        log.trace("grantAccess, introspectResponse: {}", introspectResponse);
-
-        if (introspectResponse != null && introspectResponse.isActive()) {
-            AccessControlGrantResponse response;
-            try {
-                response = this.accessControlService.grantAccess(request.setUid(introspectResponse.getUniqueSecurityName()));
-            } catch (Exception e) {
-                response = new AccessControlGrantResponse()
-                        .setLogin(introspectResponse.getUniqueSecurityName())
-                        .setGranted(false)
-                        .setError(e.getMessage());
-            }
-            return response.isGranted() ? ResponseEntity.ok(response)
-                    : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        AccessControlGrantResponse response;
+        try {
+            response = this.accessControlService.grantAccess(request.setUid(login));
+        } catch (Exception e) {
+            response = new AccessControlGrantResponse()
+                    .setLogin(login)
+                    .setGranted(false)
+                    .setError(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        return response.isGranted() ? ResponseEntity.ok(response)
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
 
 
     }
@@ -154,35 +142,29 @@ public class AccessControlController {
     /**
      * Revoke access granted to a principal on resource(s).
      *
-     * @param token        The access token associated to the principal.
      * @param request The ids used to revoke the access.
      * @return An instance of AccessControlGrantResponse which contains the result of the operation.
      */
     @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
     @DeleteMapping("${avenirs.access.control.grant}")
-    public ResponseEntity<AccessControlRevokeResponse> revokeAccess(@RequestHeader(value = "x-authorization") String token,
-                                                                    @RequestBody AccessControlRevokeRequest request) {
-        log.trace("revokeAccess, token: {}", token);
+    public ResponseEntity<AccessControlRevokeResponse> revokeAccess(@RequestBody AccessControlRevokeRequest request) {
+
+        String login = securityDelegate.getAuthenticatedUserLogin();
+        log.trace("grantAccess, login: {}", login);
+
         log.trace("revokeAccess, request: {}", request);
 
-        OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
-        log.trace("revokeAccess, introspectResponse: {}", introspectResponse);
 
-        if (introspectResponse != null && introspectResponse.isActive()) {
-            AccessControlRevokeResponse response;
-            try {
-                response = this.accessControlService.revokeAccess(request.setUid(introspectResponse.getUniqueSecurityName()));
-            } catch (Exception e) {
-                response = new AccessControlRevokeResponse()
-                        .setLogin(introspectResponse.getUniqueSecurityName())
-                        .setRevoked(false)
-                        .setError(e.getMessage());
-            }
-            return response.isRevoked() ? ResponseEntity.ok(response)
-                    : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        AccessControlRevokeResponse response;
+        try {
+            response = this.accessControlService.revokeAccess(request.setUid(login));
+        } catch (Exception e) {
+            response = new AccessControlRevokeResponse()
+                    .setLogin(login)
+                    .setRevoked(false)
+                    .setError(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-
-
+        return response.isRevoked() ? ResponseEntity.ok(response)
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }

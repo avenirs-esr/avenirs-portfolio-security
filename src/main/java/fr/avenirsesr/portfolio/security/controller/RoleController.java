@@ -40,6 +40,7 @@ public class RoleController {
     @Autowired
     private RBACAssignmentService assignmentService;
 
+    /** Delegate for the security checks.*/
     @Autowired
     private SecurityDelegate securityDelegate;
 

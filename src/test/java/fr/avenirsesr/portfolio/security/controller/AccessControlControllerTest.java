@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.security.delegate.SecurityDelegate;
 import fr.avenirsesr.portfolio.security.model.*;
 import fr.avenirsesr.portfolio.security.service.AccessControlService;
 import fr.avenirsesr.portfolio.security.service.AuthenticationService;
@@ -23,12 +24,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
 
 
 /**
@@ -67,6 +73,9 @@ class AccessControlControllerTest {
     @Mock
     private AccessControlService accessControlService;
 
+    @Autowired
+    private SecurityDelegate securityDelegate;
+
     @InjectMocks
     private AccessControlController accessControlController;
 
@@ -79,6 +88,9 @@ class AccessControlControllerTest {
 
     @BeforeEach
     void setUp() {
+
+        ReflectionTestUtils.setField(accessControlController, "securityDelegate", securityDelegate);
+
         closeable = MockitoAnnotations.openMocks(this);
 
         grantRequest = new AccessControlGrantRequest()
@@ -94,6 +106,7 @@ class AccessControlControllerTest {
                 .setScopeId(1L)
                 .setContextId(1L);
     }
+
     @AfterEach
     void tearDown() throws Exception {
         if (closeable != null) {
@@ -103,12 +116,9 @@ class AccessControlControllerTest {
 
     @Test
     void grantAccessSuccess() {
-
-        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
-        introspectResponse.setActive(true);
-        introspectResponse.setUniqueSecurityName("user123");
-
-        when(authenticationService.introspectAccessToken("valid-token")).thenReturn(introspectResponse);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user123", "valid-token", new ArrayList<>())
+        );
 
         AccessControlGrantResponse grantResponse = new AccessControlGrantResponse()
                 .setLogin("user123")
@@ -116,7 +126,7 @@ class AccessControlControllerTest {
 
         when(accessControlService.grantAccess(any(AccessControlGrantRequest.class))).thenReturn(grantResponse);
 
-        ResponseEntity<AccessControlGrantResponse> response = accessControlController.grantAccess("valid-token", grantRequest);
+        ResponseEntity<AccessControlGrantResponse> response = accessControlController.grantAccess(grantRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody(), "Response body not null");
@@ -125,29 +135,15 @@ class AccessControlControllerTest {
     }
 
     @Test
-    void grantAccessWithToInactiveToken() {
-        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
-        introspectResponse.setActive(false);
-
-        when(authenticationService.introspectAccessToken("inactive-token")).thenReturn(introspectResponse);
-
-        ResponseEntity<AccessControlGrantResponse> response = accessControlController.grantAccess("inactive-token", grantRequest);
-
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-        assertNull(response.getBody());
-    }
-
-    @Test
     void grantAccessWithServiceError() {
-        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
-        introspectResponse.setActive(true);
-        introspectResponse.setUniqueSecurityName("user123");
 
-        when(authenticationService.introspectAccessToken("valid-token")).thenReturn(introspectResponse);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user123", "valid-token", new ArrayList<>())
+        );
 
         when(accessControlService.grantAccess(any(AccessControlGrantRequest.class))).thenThrow(new RuntimeException("Error during access granting"));
 
-        ResponseEntity<AccessControlGrantResponse> response = accessControlController.grantAccess("valid-token", grantRequest);
+        ResponseEntity<AccessControlGrantResponse> response = accessControlController.grantAccess(grantRequest);
 
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -158,11 +154,10 @@ class AccessControlControllerTest {
 
     @Test
     void revokeAccessSuccess() {
-        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
-        introspectResponse.setActive(true);
-        introspectResponse.setUniqueSecurityName("user123");
 
-        when(authenticationService.introspectAccessToken("valid-token")).thenReturn(introspectResponse);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user123", "valid-token", new ArrayList<>())
+        );
 
         AccessControlRevokeResponse revokeResponse = new AccessControlRevokeResponse()
                 .setLogin("user123")
@@ -170,7 +165,7 @@ class AccessControlControllerTest {
 
         when(accessControlService.revokeAccess(any(AccessControlRevokeRequest.class))).thenReturn(revokeResponse);
 
-        ResponseEntity<AccessControlRevokeResponse> response = accessControlController.revokeAccess("valid-token", revokeRequest);
+        ResponseEntity<AccessControlRevokeResponse> response = accessControlController.revokeAccess(revokeRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody(), "response body not null");
@@ -179,29 +174,14 @@ class AccessControlControllerTest {
     }
 
     @Test
-    void revokeAccessWithInactiveToken() {
-        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
-        introspectResponse.setActive(false);
-
-        when(authenticationService.introspectAccessToken("inactive-token")).thenReturn(introspectResponse);
-
-        ResponseEntity<AccessControlRevokeResponse> response = accessControlController.revokeAccess("inactive-token", revokeRequest);
-
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-        assertNull(response.getBody());
-    }
-
-    @Test
     void revokeAccessWithServiceError() {
-        OIDCIntrospectResponse introspectResponse = new OIDCIntrospectResponse();
-        introspectResponse.setActive(true);
-        introspectResponse.setUniqueSecurityName("user123");
-
-        when(authenticationService.introspectAccessToken("valid-token")).thenReturn(introspectResponse);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user123", "valid-token", new ArrayList<>())
+        );
 
         when(accessControlService.revokeAccess(any(AccessControlRevokeRequest.class))).thenThrow(new RuntimeException("Error during access revoking"));
 
-        ResponseEntity<AccessControlRevokeResponse> response = accessControlController.revokeAccess("valid-token", revokeRequest);
+        ResponseEntity<AccessControlRevokeResponse> response = accessControlController.revokeAccess(revokeRequest);
 
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
         assertNotNull(response.getBody());
