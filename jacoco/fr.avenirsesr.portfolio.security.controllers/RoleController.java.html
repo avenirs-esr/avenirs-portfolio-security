@@ -10,25 +10,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.avenirsesr.portfolio.security.models.OIDCIntrospectResponse;
-import fr.avenirsesr.portfolio.security.services.AuthenticationService;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-<span class="fc" id="L22">@Slf4j</span>
+<span class="fc" id="L19">@Slf4j</span>
 @RestController
 @SecurityRequirement(name = &quot;bearerAuth&quot;)
-<span class="fc" id="L25">public class RoleController {</span>
+<span class="fc" id="L22">public class RoleController {</span>
 
-    /**
-     * Authentication service used to retrieve the user information.
-     */
-    @Autowired
-    private AuthenticationService authenticationService;
 
     /**
      * Assignment service, used to retrieve roles assigned to a principal for instance.
@@ -41,21 +33,20 @@ import java.util.List;
     @GetMapping(&quot;${avenirs.access.control.roles}&quot;)
     public List&lt;String&gt; getRoles() {
 
-<span class="fc" id="L44">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L36">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
 
-        // Vérifier si l'utilisateur est authentifié
-<span class="pc bpc" id="L47" title="1 of 4 branches missed.">        if (authentication == null || !authentication.isAuthenticated()) {</span>
-<span class="fc" id="L48">            throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
+<span class="pc bpc" id="L38" title="1 of 4 branches missed.">        if (authentication == null || !authentication.isAuthenticated()) {</span>
+<span class="fc" id="L39">            throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
         }
-<span class="fc" id="L50">        String uid = authentication.getName();</span>
-<span class="fc" id="L51">        log.trace(&quot;getRoles, uid: {}&quot;, uid);</span>
-<span class="fc" id="L52">        List&lt;RBACAssignment&gt; assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(uid));</span>
+<span class="fc" id="L41">        String uid = authentication.getName();</span>
+<span class="fc" id="L42">        log.trace(&quot;getRoles, uid: {}&quot;, uid);</span>
+<span class="fc" id="L43">        List&lt;RBACAssignment&gt; assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(uid));</span>
 
-<span class="fc" id="L54">        List&lt;String&gt; roles = assignments.stream()</span>
-<span class="fc" id="L55">                .map(assignment -&gt; assignment.getRole().getName())</span>
-<span class="fc" id="L56">                .toList();</span>
-<span class="fc" id="L57">        log.trace(&quot;Role for {}: {}&quot;, uid, roles);</span>
-<span class="fc" id="L58">        return roles;</span>
+<span class="fc" id="L45">        List&lt;String&gt; roles = assignments.stream()</span>
+<span class="fc" id="L46">                .map(assignment -&gt; assignment.getRole().getName())</span>
+<span class="fc" id="L47">                .toList();</span>
+<span class="fc" id="L48">        log.trace(&quot;Role for {}: {}&quot;, uid, roles);</span>
+<span class="fc" id="L49">        return roles;</span>
 
     }
 
