@@ -1,18 +1,14 @@
 package fr.avenirsesr.portfolio.security.controller;
 
+import fr.avenirsesr.portfolio.security.delegate.SecurityDelegate;
 import fr.avenirsesr.portfolio.security.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.repository.RBACAssignmentSpecificationHelper;
 import fr.avenirsesr.portfolio.security.service.RBACAssignmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -44,6 +40,9 @@ public class RoleController {
     @Autowired
     private RBACAssignmentService assignmentService;
 
+    @Autowired
+    private SecurityDelegate securityDelegate;
+
     /**
      * Gives the roles associated to a users.
      * @return The list of role names.
@@ -52,19 +51,16 @@ public class RoleController {
     @GetMapping("${avenirs.access.control.roles}")
     public List<String> getRoles() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login =securityDelegate.getAuthenticatedUserLogin();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-        String uid = authentication.getName();
-        log.trace("getRoles, uid: {}", uid);
-        List<RBACAssignment> assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(uid));
+        log.trace("getRoles, login: {}", login);
+
+        List<RBACAssignment> assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(login));
 
         List<String> roles = assignments.stream()
                 .map(assignment -> assignment.getRole().getName())
                 .toList();
-        log.trace("Role for {}: {}", uid, roles);
+        log.trace("Role for {}: {}", login, roles);
         return roles;
 
     }
