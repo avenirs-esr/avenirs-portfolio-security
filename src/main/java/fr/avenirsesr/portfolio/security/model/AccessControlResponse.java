@@ -16,10 +16,6 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class AccessControlResponse {
 	
-	/** Access token. */
-	private String token;
-	
-	
 	/** Login of the user. */
 	private String login;
 	
