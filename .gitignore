@@ -82,3 +82,6 @@ liquibase-keyring.gpg
 
 # Swap file
 *.swp
+
+# Python
+__pycache__/
