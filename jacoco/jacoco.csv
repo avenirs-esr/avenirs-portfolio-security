@@ -27,7 +27,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,AccessContro
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,RBACContextService,7,81,1,1,0,20,2,8,1,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,RBACActionService,22,15,0,0,5,4,3,3,3,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,StructureService,7,94,1,1,0,23,2,10,1,10
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,JWTService,104,225,11,13,40,48,11,8,0,7
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,JWTService,79,250,6,18,31,57,6,13,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,RBACRoleService,7,85,1,1,0,21,2,9,1,9
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,RBACActionRouteService,0,16,0,0,0,4,0,3,0,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,PrincipalService,0,23,0,0,0,6,0,4,0,4

@@ -91,11 +91,11 @@ import io.jsonwebtoken.security.SignatureException;
 <span class="fc" id="L91">			JSONObject jsonObject = new JSONObject(jwksResponse);</span>
 <span class="fc" id="L92">			JSONArray keys = jsonObject.getJSONArray(&quot;keys&quot;);</span>
 
-<span class="pc bpc" id="L94" title="1 of 2 branches missed.">			for (int i = 0; i &lt; keys.length(); i++) {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">			for (int i = 0; i &lt; keys.length(); i++) {</span>
 <span class="fc" id="L95">				JSONObject key = keys.getJSONObject(i);</span>
 
 <span class="fc" id="L97">				String kidToTest = key.getString(&quot;kid&quot;);</span>
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">				if (kidToTest.equals(kid)) {</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">				if (kidToTest.equals(kid)) {</span>
 <span class="fc" id="L99">					String modulusBase64Url = key.getString(&quot;n&quot;);</span>
 <span class="fc" id="L100">					String exponentBase64Url = key.getString(&quot;e&quot;);</span>
 
@@ -111,10 +111,10 @@ import io.jsonwebtoken.security.SignatureException;
 <span class="fc" id="L111">					return Optional.of(new ModulusAndExponent(modulus, exponent));</span>
 				}
 			}
-<span class="nc" id="L114">		} catch (Exception e) {</span>
-<span class="nc" id="L115">			log.error(&quot;extractModulusAndExponent, error&quot;, e);</span>
-<span class="nc" id="L116">		}</span>
-<span class="nc" id="L117">		return Optional.empty();</span>
+<span class="fc" id="L114">		} catch (Exception e) {</span>
+<span class="fc" id="L115">			log.error(&quot;extractModulusAndExponent, error&quot;, e);</span>
+<span class="fc" id="L116">		}</span>
+<span class="fc" id="L117">		return Optional.empty();</span>
 	}
 
 
@@ -133,9 +133,9 @@ import io.jsonwebtoken.security.SignatureException;
 
 		
 <span class="fc" id="L135">			final Optional&lt;String&gt; keyAlgo = algoMapper.mapJWTToCryptographicKey(alg);</span>
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">			if (keyAlgo.isEmpty()) {</span>
-<span class="nc" id="L137">				log.error(&quot;generatePublicKey, unable to map jwt alg {}, from mapping defined in properties&quot;, alg);</span>
-<span class="nc" id="L138">				return Optional.empty();</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">			if (keyAlgo.isEmpty()) {</span>
+<span class="fc" id="L137">				log.error(&quot;generatePublicKey, unable to map jwt alg {}, from mapping defined in properties&quot;, alg);</span>
+<span class="fc" id="L138">				return Optional.empty();</span>
 			}
 			
 <span class="fc" id="L141">			KeyFactory keyFactory = KeyFactory.getInstance(keyAlgo.get());</span>
@@ -179,16 +179,16 @@ import io.jsonwebtoken.security.SignatureException;
 					
 					
 <span class="fc" id="L181">					Optional&lt;ModulusAndExponent&gt; modulusAndExponent = this.fetchModulusAndExponent(kid);</span>
-<span class="pc bpc" id="L182" title="1 of 2 branches missed.">					if (modulusAndExponent.isEmpty()) {</span>
-<span class="nc" id="L183">						return Optional.empty();</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">					if (modulusAndExponent.isEmpty()) {</span>
+<span class="fc" id="L183">						return Optional.empty();</span>
 					}
 
 <span class="fc" id="L186">					Optional&lt;PublicKey&gt; publicKey = this.generateRSAPublicKey(alg, modulusAndExponent.get());</span>
 
-<span class="pc bpc" id="L188" title="1 of 2 branches missed.">					if (publicKey.isEmpty()) {</span>
-<span class="nc" id="L189">						log.error(&quot;getPublicKey, Error while trying to generate public key from kid{}, idToken: {}&quot;,</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">					if (publicKey.isEmpty()) {</span>
+<span class="fc" id="L189">						log.error(&quot;getPublicKey, Error while trying to generate public key from kid{}, idToken: {}&quot;,</span>
 								kid, idToken);
-<span class="nc" id="L191">						return Optional.empty();</span>
+<span class="fc" id="L191">						return Optional.empty();</span>
 					}
 
 <span class="fc" id="L194">					this.keysRepository.put(kid, publicKey.get());</span>
