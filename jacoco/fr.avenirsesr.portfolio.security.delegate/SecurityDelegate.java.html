@@ -32,7 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
     public String getAuthenticatedUserLogin() {
 <span class="fc" id="L33">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
 
-<span class="pc bpc" id="L35" title="1 of 4 branches missed.">        if (authentication == null || !authentication.isAuthenticated()) {</span>
+<span class="fc bfc" id="L35" title="All 4 branches covered.">        if (authentication == null || !authentication.isAuthenticated()) {</span>
 <span class="fc" id="L36">            throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
         }
 
