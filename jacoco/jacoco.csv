@@ -13,9 +13,9 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACPermission
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACAction_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACResourceType_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,OIDCProfileResponse,0,19,0,0,0,4,0,1,0,1
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,OIDCAccessTokenResponse,1,6,1,1,0,1,1,1,0,1
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,OIDCAccessTokenResponse,0,7,0,2,0,1,0,2,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,LoginRequest,7,0,2,0,1,0,2,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,OIDCIdToken,4,63,5,5,0,12,5,4,0,4
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,OIDCIdToken,2,65,2,8,0,12,2,7,0,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.repository,StructureSpecificationHelper,3,22,1,1,1,4,2,3,1,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.repository,RBACResourceSpecificationHelper,3,22,1,1,1,4,2,3,1,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.repository,RBACAssignmentSpecificationHelper,3,52,0,0,1,11,1,5,1,5
@@ -27,7 +27,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,AccessContro
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,RBACContextService,7,81,1,1,0,20,2,8,1,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,RBACActionService,22,15,0,0,5,4,3,3,3,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,StructureService,7,94,1,1,0,23,2,10,1,10
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,JWTService,59,270,4,20,23,65,4,15,0,7
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,JWTService,51,278,1,23,20,68,1,18,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,RBACRoleService,7,85,1,1,0,21,2,9,1,9
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,RBACActionRouteService,0,16,0,0,0,4,0,3,0,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.service,PrincipalService,0,23,0,0,0,6,0,4,0,4

@@ -22,7 +22,7 @@ public class OIDCIdToken {
 	
 <span class="fc" id="L23">	public OIDCIdToken(String rawIdToken) {</span>
 <span class="fc" id="L24">		this.rawIdToken = rawIdToken;</span>
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">		if (StringUtils.hasLength(rawIdToken)) {</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">		if (StringUtils.hasLength(rawIdToken)) {</span>
 <span class="fc" id="L26">			String[]tokens = rawIdToken.split(&quot;\\.&quot;);</span>
 <span class="fc" id="L27">			this.header = decodeToken(tokens[0]);</span>
 <span class="pc bpc" id="L28" title="1 of 2 branches missed.">			this.payload = tokens.length &gt; 1 ? decodeToken(tokens[1]) : &quot;&quot;;</span>
@@ -38,12 +38,12 @@ public class OIDCIdToken {
 
 	@ToString.Include(name = &quot;signature&quot;)
 	public String getMaskedSignature() {
-<span class="pc bpc" id="L41" title="1 of 2 branches missed.">		return signature != null ? &quot;****&quot;  : null;</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">		return signature != null ? &quot;****&quot;  : null;</span>
 	}
 
 	@ToString.Include(name = &quot;payload&quot;)
 	public String getMaskedPayload() {
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">		return payload != null ? &quot;****&quot;  : null;</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">		return payload != null ? &quot;****&quot;  : null;</span>
 	}
 
 }

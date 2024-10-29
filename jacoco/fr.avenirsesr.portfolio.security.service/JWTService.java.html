@@ -157,7 +157,7 @@ import io.jsonwebtoken.security.SignatureException;
 	 * @return An optional of the publicKey.
 	 */
 	protected Optional&lt;PublicKey&gt; getPublicKey(OIDCIdToken idToken) {
-<span class="pc bpc" id="L160" title="2 of 4 branches missed.">		if (idToken != null &amp;&amp; StringUtils.hasLength(idToken.getHeader())) {</span>
+<span class="pc bpc" id="L160" title="1 of 4 branches missed.">		if (idToken != null &amp;&amp; StringUtils.hasLength(idToken.getHeader())) {</span>
 
 			try {
 <span class="fc" id="L163">				JSONObject jsonObject = new JSONObject(idToken.getHeader());</span>
@@ -212,14 +212,14 @@ import io.jsonwebtoken.security.SignatureException;
 	 * @return An Optional of Claims.
 	 */
 	public Optional&lt;Claims&gt; parseAndCheckSignature(OIDCAccessTokenResponse accessTokenResponse) {
-<span class="pc bpc" id="L215" title="1 of 2 branches missed.">		if (accessTokenResponse == null) {</span>
-<span class="nc" id="L216">			return Optional.empty();</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">		if (accessTokenResponse == null) {</span>
+<span class="fc" id="L216">			return Optional.empty();</span>
 		}
 <span class="fc" id="L218">		final Optional&lt;PublicKey&gt; publicKey = getPublicKey(accessTokenResponse.getIdToken());</span>
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">		if (publicKey.isEmpty()) {</span>
-<span class="nc" id="L220">			log.error(&quot;Empty public key while trying to fetch claims from accessTokenResponse: {}&quot;,</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">		if (publicKey.isEmpty()) {</span>
+<span class="fc" id="L220">			log.error(&quot;Empty public key while trying to fetch claims from accessTokenResponse: {}&quot;,</span>
 					accessTokenResponse);
-<span class="nc" id="L222">			return Optional.empty();</span>
+<span class="fc" id="L222">			return Optional.empty();</span>
 		}
 
 		try {
