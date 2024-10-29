@@ -107,11 +107,58 @@ class JWTServiceTest {
     }
 
     @Test
+    void testGetPublicKeyFailureEmptyKID() {
+        //noinspection SpellCheckingInspection
+        String jwksResponse = "{ \"keys\": [{ \"kid\": \"\", \"n\": \"AKOx0nEfb2MP3iBwpQZ5Tx7gA5Mje6UAVAnzjEY64IBDdK5B9UPu7vE2YffIDVwo5KeJlWyNqkOBh5n8OEpuE6A=\", \"e\": \"AQAB\" }] }";
+        mockWebServer.enqueue(new MockResponse().setBody(jwksResponse).setResponseCode(200));
+
+        String headerJson = "{ \"kid\": \"\", \"alg\": \"invalidAlg\" }";
+        OIDCIdToken idToken = mock(OIDCIdToken.class);
+        when(idToken.getHeader()).thenReturn(headerJson);
+
+        Optional<PublicKey> result = jwtService.getPublicKey(idToken);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetPublicKeyFailureEmptyAlgorithm() {
+        //noinspection SpellCheckingInspection
+        String jwksResponse = "{ \"keys\": [{ \"kid\": \"" + TEST_KID + "\", \"n\": \"AKOx0nEfb2MP3iBwpQZ5Tx7gA5Mje6UAVAnzjEY64IBDdK5B9UPu7vE2YffIDVwo5KeJlWyNqkOBh5n8OEpuE6A=\", \"e\": \"AQAB\" }] }";
+        mockWebServer.enqueue(new MockResponse().setBody(jwksResponse).setResponseCode(200));
+
+        String headerJson = "{ \"kid\": \"" + TEST_KID + "\", \"alg\": \"\" }";
+        OIDCIdToken idToken = mock(OIDCIdToken.class);
+        when(idToken.getHeader()).thenReturn(headerJson);
+       // when(algoMapper.mapJWTToCryptographicKey("invalidAlg")).thenReturn(Optional.empty());
+
+        Optional<PublicKey> result = jwtService.getPublicKey(idToken);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     void testGetPublicKeyFailureInvalidJWKSFormat() {
         String invalidJwksResponse = "invalidJWKS";
         mockWebServer.enqueue(new MockResponse().setBody(invalidJwksResponse).setResponseCode(200));
 
         String headerJson = "{ \"kid\": \"" + TEST_KID + "\", \"alg\": \"" + TEST_ALG + "\" }";
+        OIDCIdToken idToken = mock(OIDCIdToken.class);
+        when(idToken.getHeader()).thenReturn(headerJson);
+        when(algoMapper.mapJWTToCryptographicKey(TEST_ALG)).thenReturn(Optional.of("RSA"));
+
+        Optional<PublicKey> result = jwtService.getPublicKey(idToken);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetPublicKeyFailureInvalidIdTokenFormat() {
+        //noinspection SpellCheckingInspection
+        String jwksResponse = "{ \"keys\": [{ \"kid\": \"" + TEST_KID + "\", \"n\": \"AKOx0nEfb2MP3iBwpQZ5Tx7gA5Mje6UAVAnzjEY64IBDdK5B9UPu7vE2YffIDVwo5KeJlWyNqkOBh5n8OEpuE6A=\", \"e\": \"AQAB\" }] }";
+        mockWebServer.enqueue(new MockResponse().setBody(jwksResponse).setResponseCode(200));
+
+        String headerJson = "{ \"kid\": \"" + TEST_KID + "\", \"alg\": \"" + TEST_ALG + "\" ";
         OIDCIdToken idToken = mock(OIDCIdToken.class);
         when(idToken.getHeader()).thenReturn(headerJson);
         when(algoMapper.mapJWTToCryptographicKey(TEST_ALG)).thenReturn(Optional.of("RSA"));
