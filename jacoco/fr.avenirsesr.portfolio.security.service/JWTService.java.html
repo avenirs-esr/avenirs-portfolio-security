@@ -163,18 +163,18 @@ import io.jsonwebtoken.security.SignatureException;
 <span class="fc" id="L163">				JSONObject jsonObject = new JSONObject(idToken.getHeader());</span>
 <span class="fc" id="L164">				String kid = jsonObject.getString(&quot;kid&quot;);</span>
 
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">				if (!StringUtils.hasLength(kid)) {</span>
-<span class="nc" id="L167">					log.error(&quot;getPublicKey, Unable to fetch kid from idToken: {}&quot;, idToken);</span>
-<span class="nc" id="L168">					return Optional.empty();</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">				if (!StringUtils.hasLength(kid)) {</span>
+<span class="fc" id="L167">					log.error(&quot;getPublicKey, Unable to fetch kid from idToken: {}&quot;, idToken);</span>
+<span class="fc" id="L168">					return Optional.empty();</span>
 				}
 
 				// The key is not in the repository so it is generated.
 <span class="fc bfc" id="L172" title="All 2 branches covered.">				if (!this.keysRepository.containsKey(kid)) {</span>
 <span class="fc" id="L173">					String alg = jsonObject.getString(&quot;alg&quot;);</span>
 
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">					if (!StringUtils.hasLength(alg)) {</span>
-<span class="nc" id="L176">						log.error(&quot;getPublicKey, Unable to fetch alg from idToken: {}&quot;, idToken);</span>
-<span class="nc" id="L177">						return Optional.empty();</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">					if (!StringUtils.hasLength(alg)) {</span>
+<span class="fc" id="L176">						log.error(&quot;getPublicKey, Unable to fetch alg from idToken: {}&quot;, idToken);</span>
+<span class="fc" id="L177">						return Optional.empty();</span>
 					}
 					
 					
@@ -195,13 +195,13 @@ import io.jsonwebtoken.security.SignatureException;
 				}
 <span class="fc" id="L196">				return Optional.of(this.keysRepository.get(kid));</span>
 
-<span class="nc" id="L198">			} catch (JSONException e) {</span>
-<span class="nc" id="L199">				log.error(&quot;getPublicKey invalid JSON&quot;, e);</span>
+<span class="fc" id="L198">			} catch (JSONException e) {</span>
+<span class="fc" id="L199">				log.error(&quot;getPublicKey invalid JSON&quot;, e);</span>
 <span class="nc" id="L200">			} catch (Exception e) {</span>
 <span class="nc" id="L201">				log.error(&quot;getPublicKey&quot;, e);</span>
-<span class="nc" id="L202">			}</span>
+<span class="fc" id="L202">			}</span>
 		}
-<span class="nc" id="L204">		return Optional.empty();</span>
+<span class="fc" id="L204">		return Optional.empty();</span>
 
 	}
 
