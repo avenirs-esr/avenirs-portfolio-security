@@ -58,17 +58,17 @@ class SecurityDelegateTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.isAuthenticated()).thenReturn(false);
 
-        assertThrows(ResponseStatusException.class, () -> {
-            securityDelegate.getAuthenticatedUserLogin();
-        }, HttpStatus.FORBIDDEN.getReasonPhrase());
+        assertThrows(ResponseStatusException.class,
+                () -> securityDelegate.getAuthenticatedUserLogin(),
+                HttpStatus.FORBIDDEN.getReasonPhrase());
     }
 
     @Test
     void testGetAuthenticatedUserLoginForbiddenNoAuthentication() {
         when(securityContext.getAuthentication()).thenReturn(null);
 
-        assertThrows(ResponseStatusException.class, () -> {
-            securityDelegate.getAuthenticatedUserLogin();
-        }, HttpStatus.FORBIDDEN.getReasonPhrase());
+        assertThrows(ResponseStatusException.class,
+                () -> securityDelegate.getAuthenticatedUserLogin(),
+                HttpStatus.FORBIDDEN.getReasonPhrase());
     }
 }
