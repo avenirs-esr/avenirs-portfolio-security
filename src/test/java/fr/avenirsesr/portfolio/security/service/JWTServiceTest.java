@@ -1,6 +1,8 @@
 package fr.avenirsesr.portfolio.security.service;
 
 import fr.avenirsesr.portfolio.security.configuration.JWTToCryptographicKeyAlgoMapper;
+import fr.avenirsesr.portfolio.security.model.OIDCAccessTokenResponse;
+import io.jsonwebtoken.Claims;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
@@ -75,6 +77,7 @@ class JWTServiceTest {
         assertTrue(result.isPresent());
         assertInstanceOf(RSAPublicKey.class, result.get() );
     }
+
     @Test
     void testGetPublicKeyFailureKeyNotFound() {
         //noinspection SpellCheckingInspection
@@ -166,5 +169,24 @@ class JWTServiceTest {
         Optional<PublicKey> result = jwtService.getPublicKey(idToken);
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testParseAndCheckSignatureFailureNullAccessTokenResponse() {
+
+        Optional<Claims> result = jwtService.parseAndCheckSignature(null);
+
+        assertTrue(result.isEmpty());
+
+    }
+
+    @Test
+    void testParseAndCheckSignatureFailureEmptyKey() {
+
+        OIDCAccessTokenResponse accessTokenResponse = new OIDCAccessTokenResponse().setIdToken(new OIDCIdToken(""));
+        Optional<Claims> result = jwtService.parseAndCheckSignature(accessTokenResponse);
+
+        assertTrue(result.isEmpty());
+
     }
 }
