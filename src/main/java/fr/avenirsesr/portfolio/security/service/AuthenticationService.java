@@ -188,9 +188,14 @@ OIDCProfileResponse profileResponse = restClient.post()
 
 		log.debug("introspectAccessToken");
 
-		OIDCIntrospectResponse introspectResponse = restClient.post().uri(generateIntrospectURL(token))
-				.header("Authorization", basicAuthentication()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON).retrieve().body(OIDCIntrospectResponse.class);
+		OIDCIntrospectResponse introspectResponse = restClient
+				.post()
+				.uri(generateIntrospectURL(token))
+				.header("Authorization", basicAuthentication())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.retrieve()
+				.body(OIDCIntrospectResponse.class);
 
 		log.debug("introspect, introspectResponse: {}", introspectResponse);
 
