@@ -27,7 +27,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE principal OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE principal OWNER TO ${avenirs.admin.role}
            stripComments:  true
        
        
@@ -61,7 +61,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE role OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE role OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -95,7 +95,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE permission OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE permission OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -129,7 +129,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE action OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE action OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -179,7 +179,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE action_route OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE action_route OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -213,7 +213,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE resource_type OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE resource_type OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -252,7 +252,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE resource OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE resource OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -281,7 +281,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE scope OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE scope OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -317,7 +317,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE scope_resource OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE scope_resource OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -346,7 +346,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE context OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE context OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -386,7 +386,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE action_permission OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE action_permission OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
        
@@ -426,7 +426,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE role_permission OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE role_permission OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
 
@@ -488,7 +488,7 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE assignment OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE assignment OWNER TO ${avenirs.admin.role}
            stripComments:  true
 
 

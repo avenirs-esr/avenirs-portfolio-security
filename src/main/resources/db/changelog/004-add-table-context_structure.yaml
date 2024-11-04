@@ -35,6 +35,6 @@ databaseChangeLog:
            dbms:  'postgresql'
            endDelimiter:  \nGO
            splitStatements:  true
-           sql:  ALTER TABLE context_structure OWNER TO avenirs_security_admin_role
+           sql:  ALTER TABLE context_structure OWNER TO ${avenirs.admin.role}
            stripComments:  true
        
