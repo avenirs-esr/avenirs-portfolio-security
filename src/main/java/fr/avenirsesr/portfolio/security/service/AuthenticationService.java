@@ -148,7 +148,7 @@ public class AuthenticationService {
 		String introspectURL = String.format(oidcProviderIntrospectURL, token);
 		if (log.isDebugEnabled()) {
 			String maskedIntrospectURL = String.format(oidcProviderIntrospectURL, token.substring(0, 4) + "****" + token.substring(token.length() - 4));
-			log.debug("generateProfileURL, maskedIntrospectURL: {}", maskedIntrospectURL);
+			log.debug("generateIntrospectURL, maskedIntrospectURL: {}", maskedIntrospectURL);
 		}
 
 		log.trace("generateIntrospectURL, introspectURL: {}", introspectURL);
