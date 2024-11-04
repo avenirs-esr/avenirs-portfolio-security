@@ -74,7 +74,7 @@ public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
     private String getTokenFromRequest(HttpServletRequest request) {
 <span class="fc" id="L75">        log.trace(&quot;getTokenFromRequest &quot;);</span>
 <span class="fc" id="L76">        String bearerToken = request.getHeader(&quot;x-authorization&quot;);</span>
-<span class="fc" id="L77">        log.trace(&quot;getTokenFromRequest bearerToken: {}&quot;, bearerToken);</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        log.trace(&quot;getTokenFromRequest bearerToken: {}&quot;, StringUtils.hasLength(bearerToken) ? &quot;****&quot;: bearerToken);</span>
 <span class="fc" id="L78">       return bearerToken;</span>
     }
 }
