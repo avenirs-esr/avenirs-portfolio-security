@@ -68,7 +68,7 @@ public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
     /**
      * Retrieves the token from the request.
      *
-     * @param request The request from which teh access token has to be retrieved.
+     * @param request The request from which the access token has to be retrieved.
      * @return The access token if found, null otherwise.
      */
     private String getTokenFromRequest(HttpServletRequest request) {
