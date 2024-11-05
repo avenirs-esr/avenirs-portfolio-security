@@ -9,3 +9,4 @@ GRANT ALL PRIVILEGES ON DATABASE avenirs_access_control_test TO avenirs_security
 CREATE SCHEMA IF NOT EXISTS test AUTHORIZATION avenirs_security_admin_test;
 ALTER USER avenirs_security_admin_test SET search_path TO test, public;
 CREATE EXTENSION IF NOT EXISTS citext;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;

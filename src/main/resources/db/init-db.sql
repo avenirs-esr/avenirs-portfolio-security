@@ -8,5 +8,6 @@ GRANT ALL PRIVILEGES ON DATABASE avenirs_access_control TO avenirs_security_admi
 CREATE SCHEMA IF NOT EXISTS dev AUTHORIZATION avenirs_security_admin;
 ALTER USER avenirs_security_admin SET search_path TO dev, public;
 CREATE EXTENSION IF NOT EXISTS citext;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 
