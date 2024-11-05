@@ -24,15 +24,15 @@ class RBACActionServiceTest {
 	
 	private static final UUID SHARE_READ_RESOURCE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 	private static final String SHARE_READ_RESOURCE_NAME = "ACT_SHARE_READ_RESOURCE";
-	private static final String[] SHARE_READ_RESOURCE_PERMS= {"PERM_SEE", "PERM_SHARE"};
+	private static final String[] SHARE_READ_RESOURCE_PERMS= {"PERM_SHARE"};
 	
 	private static final UUID DO_FEEDBACK_ID = UUID.fromString("00000000-0000-0000-0000-000000000005");
 	private static final String DO_FEEDBACK_NAME = "ACT_DO_FEEDBACK";
-	private static final String[] DO_FEEDBACK_PERMS={"PERM_SEE", "PERM_READ", "PERM_COMMENT"};
+	private static final String[] DO_FEEDBACK_PERMS={ "PERM_READ", "PERM_COMMENT"};
 
 	private static final UUID DELETE_ID = UUID.fromString("00000000-0000-0000-0000-000000000006");
 	private static final String DELETE_NAME = "ACT_DELETE";
-	private static final String[] DELETE_PERMS={"PERM_SEE", "PERM_READ", "PERM_DELETE"};
+	private static final String[] DELETE_PERMS={ "PERM_READ", "PERM_DELETE"};
 	
 	private final static String[] EXPECTED_ACTION_NAMES = {
 			"ACT_SHARE_READ_RESOURCE",
