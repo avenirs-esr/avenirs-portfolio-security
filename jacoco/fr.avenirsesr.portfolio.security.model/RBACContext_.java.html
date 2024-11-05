@@ -6,10 +6,11 @@ import jakarta.persistence.metamodel.SetAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @StaticMetamodel(RBACContext.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L12">public abstract class RBACContext_ {</span>
+<span class="nc" id="L13">public abstract class RBACContext_ {</span>
 
 	public static final String VALIDITY_END = &quot;validityEnd&quot;;
 	public static final String STRUCTURES = &quot;structures&quot;;
@@ -30,7 +31,7 @@ import java.time.LocalDateTime;
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACContext#id
 	 **/
-	public static volatile SingularAttribute&lt;RBACContext, Long&gt; id;
+	public static volatile SingularAttribute&lt;RBACContext, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACContext#validityStart

@@ -5,10 +5,11 @@ import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
+import java.util.UUID;
 
 @StaticMetamodel(RBACScope.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L11">public abstract class RBACScope_ {</span>
+<span class="nc" id="L12">public abstract class RBACScope_ {</span>
 
 	public static final String NAME = &quot;name&quot;;
 	public static final String RESOURCES = &quot;resources&quot;;
@@ -28,7 +29,7 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACScope#id
 	 **/
-	public static volatile SingularAttribute&lt;RBACScope, Long&gt; id;
+	public static volatile SingularAttribute&lt;RBACScope, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACScope

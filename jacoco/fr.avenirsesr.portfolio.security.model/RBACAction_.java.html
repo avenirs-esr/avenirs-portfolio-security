@@ -5,10 +5,11 @@ import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
+import java.util.UUID;
 
 @StaticMetamodel(RBACAction.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L11">public abstract class RBACAction_ {</span>
+<span class="nc" id="L12">public abstract class RBACAction_ {</span>
 
 	public static final String PERMISSIONS = &quot;permissions&quot;;
 	public static final String NAME = &quot;name&quot;;
@@ -34,7 +35,7 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACAction#id
 	 **/
-	public static volatile SingularAttribute&lt;RBACAction, Long&gt; id;
+	public static volatile SingularAttribute&lt;RBACAction, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACAction

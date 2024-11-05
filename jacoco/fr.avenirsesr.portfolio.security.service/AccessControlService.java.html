@@ -80,7 +80,7 @@ import org.springframework.util.StringUtils;
     /**
      * Cache for the permissions.
      */
-<span class="fc" id="L83">    private final Map&lt;Long, List&lt;RBACPermission&gt;&gt; permissionsByActionId = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L83">    private final Map&lt;UUID, List&lt;RBACPermission&gt;&gt; permissionsByActionId = new HashMap&lt;&gt;();</span>
 
 
     @PostConstruct
@@ -114,11 +114,11 @@ import org.springframework.util.StringUtils;
 <span class="fc" id="L114">            resources = resourceService.getAllResourcesBySpecification(</span>
 <span class="fc" id="L115">                    RBACResourceSpecificationHelper.filterByIds(grantRequest.getResourceIds()));</span>
 
-<span class="fc" id="L117">            List&lt;Long&gt; foundIds = resources.stream()</span>
+<span class="fc" id="L117">            List&lt;UUID&gt; foundIds = resources.stream()</span>
 <span class="fc" id="L118">                    .map(RBACResource::getId)</span>
 <span class="fc" id="L119">                    .toList();</span>
 
-<span class="fc" id="L121">            List&lt;Long&gt; missingIds = Arrays.stream(grantRequest.getResourceIds())</span>
+<span class="fc" id="L121">            List&lt;UUID&gt; missingIds = Arrays.stream(grantRequest.getResourceIds())</span>
 <span class="fc bfc" id="L122" title="All 2 branches covered.">                    .filter(id -&gt; !foundIds.contains(id))</span>
 <span class="fc" id="L123">                    .collect(Collectors.toList());</span>
 
@@ -155,11 +155,11 @@ import org.springframework.util.StringUtils;
 <span class="fc bfc" id="L155" title="All 2 branches covered.">        if (!ObjectUtils.isEmpty(grantRequest.getStructureIds())) {</span>
 <span class="fc" id="L156">            List&lt;Structure&gt; structures = structureService.getAllStructuresBySpecification(StructureSpecificationHelper.filterByIds(grantRequest.getStructureIds()));</span>
 
-<span class="fc" id="L158">            List&lt;Long&gt; foundIds = structures.stream()</span>
+<span class="fc" id="L158">            List&lt;UUID&gt; foundIds = structures.stream()</span>
 <span class="fc" id="L159">                    .map(Structure::getId)</span>
 <span class="fc" id="L160">                    .toList();</span>
 
-<span class="fc" id="L162">            List&lt;Long&gt; missingIds = Arrays.stream(grantRequest.getStructureIds())</span>
+<span class="fc" id="L162">            List&lt;UUID&gt; missingIds = Arrays.stream(grantRequest.getStructureIds())</span>
 <span class="fc bfc" id="L163" title="All 2 branches covered.">                    .filter(id -&gt; !foundIds.contains(id))</span>
 <span class="fc" id="L164">                    .collect(Collectors.toList());</span>
 
@@ -236,7 +236,7 @@ import org.springframework.util.StringUtils;
      * @param resourceId The id of the accessed resource.
      * @return True if the principal has access to the resource.
      */
-    public boolean isAuthorized(String login, Long actionId, Long resourceId) {
+    public boolean isAuthorized(String login, UUID actionId, UUID resourceId) {
 <span class="fc" id="L240">        log.trace(&quot;hasAccess, login: {}&quot;, login);</span>
 <span class="fc" id="L241">        log.trace(&quot;hasAccess, actionId: {}&quot;, actionId);</span>
 <span class="fc" id="L242">        log.trace(&quot;hasAccess, resourceId: {}&quot;, resourceId);</span>
@@ -255,7 +255,7 @@ import org.springframework.util.StringUtils;
      * @param resourceId          The resource id.
      * @return True if the permissions granted to the user for the resource contains all the required permissions.
      */
-    private boolean checkGrantedPermissions(List&lt;RBACPermission&gt; requiredPermissions, String login, Long resourceId) {
+    private boolean checkGrantedPermissions(List&lt;RBACPermission&gt; requiredPermissions, String login, UUID resourceId) {
 <span class="pc bpc" id="L259" title="2 of 4 branches missed.">        if (requiredPermissions != null &amp;&amp; !requiredPermissions.isEmpty()) {</span>
 
 <span class="fc" id="L261">            List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(</span>
@@ -351,7 +351,7 @@ import org.springframework.util.StringUtils;
      * @return The permission associated to the action or null if the action is not
      * found.
      */
-    private List&lt;RBACPermission&gt; fetchPermissions(Long actionId) {
+    private List&lt;RBACPermission&gt; fetchPermissions(UUID actionId) {
 
 <span class="pc bpc" id="L356" title="1 of 4 branches missed.">        if (actionId != null &amp;&amp; !this.permissionsByActionId.containsKey(actionId)) {</span>
 

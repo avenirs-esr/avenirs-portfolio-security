@@ -5,10 +5,11 @@ import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SetAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
+import java.util.UUID;
 
 @StaticMetamodel(Principal.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L11">public abstract class Principal_ {</span>
+<span class="nc" id="L12">public abstract class Principal_ {</span>
 
 	public static final String STRUCTURES = &quot;structures&quot;;
 	public static final String ID = &quot;id&quot;;
@@ -23,7 +24,7 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.Principal#id
 	 **/
-	public static volatile SingularAttribute&lt;Principal, Long&gt; id;
+	public static volatile SingularAttribute&lt;Principal, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.Principal#login

@@ -4,10 +4,11 @@ import jakarta.annotation.Generated;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
+import java.util.UUID;
 
 @StaticMetamodel(Structure.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L10">public abstract class Structure_ {</span>
+<span class="nc" id="L11">public abstract class Structure_ {</span>
 
 	public static final String NAME = &quot;name&quot;;
 	public static final String DESCRIPTION = &quot;description&quot;;
@@ -27,7 +28,7 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.Structure#id
 	 **/
-	public static volatile SingularAttribute&lt;Structure, Long&gt; id;
+	public static volatile SingularAttribute&lt;Structure, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.Structure

@@ -4,10 +4,11 @@ import jakarta.annotation.Generated;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
+import java.util.UUID;
 
 @StaticMetamodel(RBACActionRoute.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L10">public abstract class RBACActionRoute_ {</span>
+<span class="nc" id="L11">public abstract class RBACActionRoute_ {</span>
 
 	public static final String METHOD = &quot;method&quot;;
 	public static final String ACTION = &quot;action&quot;;
@@ -28,7 +29,7 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACActionRoute#id
 	 **/
-	public static volatile SingularAttribute&lt;RBACActionRoute, Long&gt; id;
+	public static volatile SingularAttribute&lt;RBACActionRoute, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACActionRoute

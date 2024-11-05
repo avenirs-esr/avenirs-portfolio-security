@@ -11,6 +11,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * 
@@ -29,18 +30,18 @@ import java.util.Arrays;
  * 1 Oct 2024
  */
 
-<span class="fc" id="L32">@Slf4j</span>
-<span class="nc" id="L33">public abstract class RBACScopeSpecificationHelper {</span>
+<span class="fc" id="L33">@Slf4j</span>
+<span class="nc" id="L34">public abstract class RBACScopeSpecificationHelper {</span>
 		
 	/**
 	 * Specification to filter RBACScope from a list of resource ids.
 	 * @param resourceIds The Resource ids.
 	 * @return The Specification of RBACScope.
 	 */
-	public static Specification&lt;RBACScope&gt; filterByResources(Long...resourceIds) {
-<span class="fc" id="L41">		log.trace(&quot;filterByResources resourceIds: {}&quot;, Arrays.toString(resourceIds));</span>
-<span class="fc" id="L42">		return (Root&lt;RBACScope&gt; root, CriteriaQuery&lt;?&gt; query,  CriteriaBuilder criteriaBuilder) -&gt; {</span>
-<span class="fc" id="L43">			return root.join(RBACScope_.resources).get(RBACResource_.id).in((Object[]) resourceIds);</span>
+	public static Specification&lt;RBACScope&gt; filterByResources(UUID...resourceIds) {
+<span class="fc" id="L42">		log.trace(&quot;filterByResources resourceIds: {}&quot;, Arrays.toString(resourceIds));</span>
+<span class="fc" id="L43">		return (Root&lt;RBACScope&gt; root, CriteriaQuery&lt;?&gt; query,  CriteriaBuilder criteriaBuilder) -&gt; {</span>
+<span class="fc" id="L44">			return root.join(RBACScope_.resources).get(RBACResource_.id).in((Object[]) resourceIds);</span>
 		};	
 	}
 }

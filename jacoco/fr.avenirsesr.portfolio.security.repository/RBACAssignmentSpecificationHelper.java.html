@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACAssignmentSpecificationHelper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.repository</a> &gt; <span class="el_source">RBACAssignmentSpecificationHelper.java</span></div><h1>RBACAssignmentSpecificationHelper.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.repository;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,8 +22,8 @@ import jakarta.persistence.criteria.Root;
  * Assignment specification for Assignment model. Used to make queries based on
  * predicates.
  */
-<span class="fc" id="L24">@Slf4j</span>
-<span class="nc" id="L25">public abstract class RBACAssignmentSpecificationHelper {</span>
+<span class="fc" id="L25">@Slf4j</span>
+<span class="nc" id="L26">public abstract class RBACAssignmentSpecificationHelper {</span>
 
 	/**
 	 * Specification to generate predicate to select the assignments associated to a
@@ -32,8 +33,8 @@ import jakarta.persistence.criteria.Root;
 	 * @return The assignments for the principal.
 	 */
 	public static Specification&lt;RBACAssignment&gt; filterByPrincipal(String login) {
-<span class="fc" id="L35">		return (Root&lt;RBACAssignment&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
-<span class="fc" id="L36">			return criteriaBuilder.equal(root.get(RBACAssignment_.principal).get(Principal_.login), login);</span>
+<span class="fc" id="L36">		return (Root&lt;RBACAssignment&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
+<span class="fc" id="L37">			return criteriaBuilder.equal(root.get(RBACAssignment_.principal).get(Principal_.login), login);</span>
 		};
 	}
 
@@ -46,18 +47,18 @@ import jakarta.persistence.criteria.Root;
 	 * @return The assignments for the principal and the resources.
 	 */
 
-	public static Specification&lt;RBACAssignment&gt; filterByPrincipalAndResources(String login, Long... resourceIds) {
-<span class="fc" id="L50">		return (Root&lt;RBACAssignment&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
+	public static Specification&lt;RBACAssignment&gt; filterByPrincipalAndResources(String login, UUID... resourceIds) {
+<span class="fc" id="L51">		return (Root&lt;RBACAssignment&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
 
-<span class="fc" id="L52">			log.trace(&quot;filterByPrincipalAndResources, login: {}&quot;, login);</span>
-<span class="fc" id="L53">			log.trace(&quot;filterByPrincipalAndResources, resourceIds: {}&quot;, Arrays.toString(resourceIds));</span>
+<span class="fc" id="L53">			log.trace(&quot;filterByPrincipalAndResources, login: {}&quot;, login);</span>
+<span class="fc" id="L54">			log.trace(&quot;filterByPrincipalAndResources, resourceIds: {}&quot;, Arrays.toString(resourceIds));</span>
 
-<span class="fc" id="L55">			Join&lt;RBACAssignment, RBACScope&gt; joinScope = root.join(RBACAssignment_.scope);</span>
-<span class="fc" id="L56">			Join&lt;RBACScope, RBACResource&gt; joinResource = joinScope.join(RBACScope_.resources);</span>
+<span class="fc" id="L56">			Join&lt;RBACAssignment, RBACScope&gt; joinScope = root.join(RBACAssignment_.scope);</span>
+<span class="fc" id="L57">			Join&lt;RBACScope, RBACResource&gt; joinResource = joinScope.join(RBACScope_.resources);</span>
 
-<span class="fc" id="L58">			return criteriaBuilder.and(</span>
-<span class="fc" id="L59">			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),</span>
-<span class="fc" id="L60">			    joinResource.get(RBACResource_.id).in((Object[]) resourceIds)</span>
+<span class="fc" id="L59">			return criteriaBuilder.and(</span>
+<span class="fc" id="L60">			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),</span>
+<span class="fc" id="L61">			    joinResource.get(RBACResource_.id).in((Object[]) resourceIds)</span>
 			);
 		};
 	}

@@ -5,10 +5,11 @@ import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
+import java.util.UUID;
 
 @StaticMetamodel(RBACRole.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L11">public abstract class RBACRole_ {</span>
+<span class="nc" id="L12">public abstract class RBACRole_ {</span>
 
 	public static final String PERMISSIONS = &quot;permissions&quot;;
 	public static final String NAME = &quot;name&quot;;
@@ -34,7 +35,7 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACRole#id
 	 **/
-	public static volatile SingularAttribute&lt;RBACRole, Long&gt; id;
+	public static volatile SingularAttribute&lt;RBACRole, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACRole

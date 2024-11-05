@@ -4,10 +4,11 @@ import jakarta.annotation.Generated;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
+import java.util.UUID;
 
 @StaticMetamodel(RBACResource.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L10">public abstract class RBACResource_ {</span>
+<span class="nc" id="L11">public abstract class RBACResource_ {</span>
 
 	public static final String SELECTOR = &quot;selector&quot;;
 	public static final String ID = &quot;id&quot;;
@@ -22,7 +23,7 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACResource#id
 	 **/
-	public static volatile SingularAttribute&lt;RBACResource, Long&gt; id;
+	public static volatile SingularAttribute&lt;RBACResource, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACResource

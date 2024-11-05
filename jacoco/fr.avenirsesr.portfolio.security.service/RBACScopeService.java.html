@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACScopeService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.service</a> &gt; <span class="el_source">RBACScopeService.java</span></div><h1>RBACScopeService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.service;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
  * 16/10/2024
  */
 
-<span class="fc" id="L32">@Slf4j</span>
+<span class="fc" id="L33">@Slf4j</span>
 @Service
-<span class="fc" id="L34">public class RBACScopeService {</span>
+<span class="fc" id="L35">public class RBACScopeService {</span>
 	
 	/** Scope repository. */
 	@Autowired
@@ -43,9 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 	 * @return The Optional of scope with id scopeId.
 	 */
 	@Transactional(readOnly = true)
-	public Optional&lt;RBACScope&gt; getScopeById(final Long scopeId){
-<span class="fc" id="L47">		log.trace(&quot;getScopeById scopeId: {}&quot;, scopeId);</span>
-<span class="fc" id="L48">		return scopeRepository.findById(scopeId);</span>
+	public Optional&lt;RBACScope&gt; getScopeById(final UUID scopeId){
+<span class="fc" id="L48">		log.trace(&quot;getScopeById scopeId: {}&quot;, scopeId);</span>
+<span class="fc" id="L49">		return scopeRepository.findById(scopeId);</span>
 	}
 
 	/**
@@ -55,8 +56,8 @@ import org.springframework.transaction.annotation.Transactional;
 	 */
 	@Transactional(readOnly = true)
 	public Optional&lt;RBACScope&gt; getScopeByName(final String scopeName) {
-<span class="fc" id="L58">		log.trace(&quot;getScopeByName scopeName: {}&quot;, scopeName);</span>
-<span class="fc" id="L59">		return this.scopeRepository.findByName(scopeName);</span>
+<span class="fc" id="L59">		log.trace(&quot;getScopeByName scopeName: {}&quot;, scopeName);</span>
+<span class="fc" id="L60">		return this.scopeRepository.findByName(scopeName);</span>
 	}
 
 	/**
@@ -65,8 +66,8 @@ import org.springframework.transaction.annotation.Transactional;
 	 */
 	@Transactional(readOnly = true)
 	public List&lt;RBACScope&gt; getAllScopes() {
-<span class="fc" id="L68">		log.trace(&quot;getAllScopes&quot;);</span>
-<span class="fc" id="L69">		return this.scopeRepository.findAll();</span>
+<span class="fc" id="L69">		log.trace(&quot;getAllScopes&quot;);</span>
+<span class="fc" id="L70">		return this.scopeRepository.findAll();</span>
 	}
 
 
@@ -78,8 +79,8 @@ import org.springframework.transaction.annotation.Transactional;
 	 */
 	@Transactional(readOnly = true)
 	public List&lt;RBACScope&gt; getAllScopesBySpecification(Specification&lt;RBACScope&gt; specification) {
-<span class="fc" id="L81">		log.trace(&quot;getAllScopesByPredicate, specification: {}&quot;, specification);</span>
-<span class="fc" id="L82">		return scopeRepository.findAll(specification);</span>
+<span class="fc" id="L82">		log.trace(&quot;getAllScopesByPredicate, specification: {}&quot;, specification);</span>
+<span class="fc" id="L83">		return scopeRepository.findAll(specification);</span>
 	}
 
 	/**
@@ -89,8 +90,8 @@ import org.springframework.transaction.annotation.Transactional;
 	 */
 	@Transactional
 	public RBACScope createScope(RBACScope scope) {
-<span class="fc" id="L92">		log.trace(&quot;createScope, scope: {}&quot;, scope);</span>
-<span class="fc" id="L93">		return this.scopeRepository.save(scope);</span>
+<span class="fc" id="L93">		log.trace(&quot;createScope, scope: {}&quot;, scope);</span>
+<span class="fc" id="L94">		return this.scopeRepository.save(scope);</span>
 	}
 
 	/**
@@ -100,16 +101,16 @@ import org.springframework.transaction.annotation.Transactional;
 	 */
 	@Transactional
 	public RBACScope  updateScope(RBACScope scope) {
-<span class="fc" id="L103">		log.trace(&quot;updateScope, scope: {}&quot;, scope);</span>
-<span class="fc" id="L104">		return this.scopeRepository.findById(scope.getId())</span>
-<span class="fc" id="L105">				.map(storedScope -&gt; {</span>
-<span class="pc bpc" id="L106" title="1 of 2 branches missed.">					if (!storedScope.equals(scope)) {</span>
-<span class="fc" id="L107">						storedScope.setName(scope.getName());</span>
-<span class="fc" id="L108">						storedScope.setResources(scope.getResources());</span>
+<span class="fc" id="L104">		log.trace(&quot;updateScope, scope: {}&quot;, scope);</span>
+<span class="fc" id="L105">		return this.scopeRepository.findById(scope.getId())</span>
+<span class="fc" id="L106">				.map(storedScope -&gt; {</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">					if (!storedScope.equals(scope)) {</span>
+<span class="fc" id="L108">						storedScope.setName(scope.getName());</span>
+<span class="fc" id="L109">						storedScope.setResources(scope.getResources());</span>
 					}
-<span class="fc" id="L110">					return storedScope;</span>
+<span class="fc" id="L111">					return storedScope;</span>
 				})
-<span class="pc" id="L112">				.orElseThrow(() -&gt; new EntityNotFoundException(&quot;Entity not found with ID: &quot; + scope.getId()));</span>
+<span class="pc" id="L113">				.orElseThrow(() -&gt; new EntityNotFoundException(&quot;Entity not found with ID: &quot; + scope.getId()));</span>
 	}
 
 	/**
@@ -117,10 +118,10 @@ import org.springframework.transaction.annotation.Transactional;
 	 * @param scopeId The id of the scope to delete.
 	 */
 	@Transactional
-	public void deleteScope(Long scopeId) {
-<span class="fc" id="L121">		log.trace(&quot;deleteScope, scopeId: {}&quot;, scopeId);</span>
-<span class="fc" id="L122">		this.scopeRepository.deleteById(scopeId);</span>
-<span class="fc" id="L123">	}</span>
+	public void deleteScope(UUID scopeId) {
+<span class="fc" id="L122">		log.trace(&quot;deleteScope, scopeId: {}&quot;, scopeId);</span>
+<span class="fc" id="L123">		this.scopeRepository.deleteById(scopeId);</span>
+<span class="fc" id="L124">	}</span>
 
 
 	

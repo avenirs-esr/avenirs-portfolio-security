@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * 
@@ -23,19 +24,19 @@ import java.util.Arrays;
  * 17 Oct 2024
  */
 
-<span class="fc" id="L26">@Slf4j</span>
-<span class="nc" id="L27">public abstract class RBACResourceSpecificationHelper {</span>
+<span class="fc" id="L27">@Slf4j</span>
+<span class="nc" id="L28">public abstract class RBACResourceSpecificationHelper {</span>
 		
 	/**
 	 * Generates a Specification to filter Resources from a list of  ids.
 	 * @param ids The ids of the resources.
 	 * @return The Specification .
 	 */
-	public static Specification&lt;RBACResource&gt; filterByIds(Long...ids) {
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">		if (log.isTraceEnabled()) {</span>
-<span class="fc" id="L36">            log.trace(&quot;filterByIds ids: {}&quot;, Arrays.toString(ids));</span>
+	public static Specification&lt;RBACResource&gt; filterByIds(UUID...ids) {
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">		if (log.isTraceEnabled()) {</span>
+<span class="fc" id="L37">            log.trace(&quot;filterByIds ids: {}&quot;, Arrays.toString(ids));</span>
 		}
-<span class="fc" id="L38">		return (root, query, criteriaBuilder) -&gt; root.get(&quot;id&quot;).in(Arrays.asList(ids));</span>
+<span class="fc" id="L39">		return (root, query, criteriaBuilder) -&gt; root.get(&quot;id&quot;).in(Arrays.asList(ids));</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
