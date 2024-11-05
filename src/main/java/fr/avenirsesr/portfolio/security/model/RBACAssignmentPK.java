@@ -4,6 +4,7 @@
 package fr.avenirsesr.portfolio.security.model;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,15 +21,15 @@ import lombok.experimental.Accessors;
 public class RBACAssignmentPK implements Serializable {
 
 	/** Role id. */
-	private Long role;
+	private UUID role;
 
 	/** Principal id. */
-	private Long principal;
+	private UUID principal;
 
 	/** Scope id. */
-	private Long scope;
+	private UUID scope;
 
 	/** Context id. */
-	private Long context;
+	private UUID context;
 
 }

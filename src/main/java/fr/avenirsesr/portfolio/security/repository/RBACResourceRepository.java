@@ -4,6 +4,8 @@ import fr.avenirsesr.portfolio.security.model.RBACResource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.UUID;
+
 /**
  * <h1>RBACResourceRepository</h1>
  * <p>
@@ -20,6 +22,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * 07/10/2024
  */
 
-public interface RBACResourceRepository extends JpaRepository<RBACResource, Long>, JpaSpecificationExecutor<RBACResource> {
+public interface RBACResourceRepository extends JpaRepository<RBACResource, UUID>, JpaSpecificationExecutor<RBACResource> {
 
 }

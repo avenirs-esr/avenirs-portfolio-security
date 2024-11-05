@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.repository;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,7 +23,7 @@ import fr.avenirsesr.portfolio.security.model.RBACAction;
  * <h2>Since:</h2>
  * 1 Oct 2024
  */
-public interface RBACActionRepository extends JpaRepository<RBACAction, Long>, JpaSpecificationExecutor<RBACAction>   {
+public interface RBACActionRepository extends JpaRepository<RBACAction, UUID>, JpaSpecificationExecutor<RBACAction>   {
 	
   /**
    * Find an action by its name.

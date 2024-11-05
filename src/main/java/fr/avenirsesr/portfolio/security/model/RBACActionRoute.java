@@ -14,6 +14,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.util.UUID;
+
 /**
  * Represents the association between an HTTP route (URI + HTTP method) and an RBAC Action.
  */
@@ -25,8 +27,8 @@ public class RBACActionRoute {
 	
 	/** Database Id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	/** URI associated to the route. */
 	private String uri;

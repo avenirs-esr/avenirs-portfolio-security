@@ -14,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RBACResourceServiceTest {
 
     @Value("${avenirs.test.rbac.resource.service.resource.id}")
-    private Long resourceId;
+    private UUID resourceId;
 
     @Value("${avenirs.test.rbac.resource.service.resource.selector}")
     private String resourceSelector;
@@ -37,11 +38,11 @@ class RBACResourceServiceTest {
     private String newResourceSelector;
 
     @Value("${avenirs.test.rbac.resource.service.new.resource.type.id}")
-    private Long newResourceTypeId;
+    private UUID newResourceTypeId;
 
 
     @Value("${avenirs.test.rbac.resource.service.filtered.resource.ids}")
-    private Long[] filteredResourceIds;
+    private UUID[] filteredResourceIds;
 
 
     @Autowired
@@ -58,7 +59,7 @@ class RBACResourceServiceTest {
 
         assertEquals(resourceSelector, resource.getSelector(), "resource selector");
 
-        Optional<RBACResource> response = resourceService.getResourceById((long) allResourceSelectors.length + 1);
+        Optional<RBACResource> response = resourceService.getResourceById(UUID.fromString("00000000-0000-0000-0000-000000000100"));
         assertTrue(response.isEmpty());
     }
 

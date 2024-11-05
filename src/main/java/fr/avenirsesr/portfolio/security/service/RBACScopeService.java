@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.security.service;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,7 @@ public class RBACScopeService {
 	 * @return The Optional of scope with id scopeId.
 	 */
 	@Transactional(readOnly = true)
-	public Optional<RBACScope> getScopeById(final Long scopeId){
+	public Optional<RBACScope> getScopeById(final UUID scopeId){
 		log.trace("getScopeById scopeId: {}", scopeId);
 		return scopeRepository.findById(scopeId);
 	}
@@ -117,7 +118,7 @@ public class RBACScopeService {
 	 * @param scopeId The id of the scope to delete.
 	 */
 	@Transactional
-	public void deleteScope(Long scopeId) {
+	public void deleteScope(UUID scopeId) {
 		log.trace("deleteScope, scopeId: {}", scopeId);
 		this.scopeRepository.deleteById(scopeId);
 	}

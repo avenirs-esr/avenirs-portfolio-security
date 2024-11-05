@@ -3,6 +3,8 @@ package fr.avenirsesr.portfolio.security.repository;
 import fr.avenirsesr.portfolio.security.model.RBACResourceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.UUID;
+
 /**
  * <h1>RBACResourceRepository</h1>
  * <p>
@@ -19,6 +21,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 07/10/2024
  */
 
-public interface RBACResourceTypeRepository extends JpaRepository<RBACResourceType, Long>  {
+public interface RBACResourceTypeRepository extends JpaRepository<RBACResourceType, UUID>  {
 
 }

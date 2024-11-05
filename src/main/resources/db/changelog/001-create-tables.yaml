@@ -9,8 +9,8 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
@@ -41,8 +41,8 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
@@ -75,8 +75,8 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
@@ -109,8 +109,8 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
@@ -143,14 +143,14 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
            - column:
                name: id_action
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: action_route_id_action_fk 
@@ -193,8 +193,8 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
@@ -227,8 +227,8 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
@@ -240,7 +240,7 @@ databaseChangeLog:
                    unique: false
            - column:
                name: id_resource_type
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: resource_id_resource_type_fk 
@@ -266,8 +266,8 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
@@ -295,7 +295,7 @@ databaseChangeLog:
            columns:
            - column:
                name: id_scope
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: scope_resource_id_scope_fk 
@@ -305,7 +305,7 @@ databaseChangeLog:
                    deferrable: false               
            - column:
                name: id_resource
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: scope_resource_id_resource_fk 
@@ -331,8 +331,8 @@ databaseChangeLog:
            columns:
            - column:
                name: id
-               type: BIGSERIAL
-               autoIncrement: true
+               type: UUID
+               defaultValueComputed: "gen_random_uuid()"
                constraints:
                    primaryKey:  true
                    nullable:  false                   
@@ -360,7 +360,7 @@ databaseChangeLog:
            columns:             
            - column:
                name: id_action
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: action_permission_id_action_fk 
@@ -370,7 +370,7 @@ databaseChangeLog:
                    deferrable: false               
            - column:
                name: id_permission
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: action_permission_id_permission_fk 
@@ -400,7 +400,7 @@ databaseChangeLog:
            columns:             
            - column:
                name: id_role
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: role_permission_id_role_fk 
@@ -410,7 +410,7 @@ databaseChangeLog:
                    deferrable: false               
            - column:
                name: id_permission
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: role_permission_id_permission_fk 
@@ -442,7 +442,7 @@ databaseChangeLog:
            columns:             
            - column:
                name: id_role
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: assignment_id_role_fk 
@@ -452,7 +452,7 @@ databaseChangeLog:
                    deferrable: false               
            - column:
                name: id_principal
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: assignment_id_principal_fk 
@@ -462,7 +462,7 @@ databaseChangeLog:
                    deferrable: false              
            - column:
                name: id_scope
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: assignment_id_scope_fk 
@@ -472,7 +472,7 @@ databaseChangeLog:
                    deferrable: false              
            - column:
                name: id_context
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: assignment_id_context_fk 

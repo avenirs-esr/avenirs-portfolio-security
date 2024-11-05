@@ -14,6 +14,8 @@ import fr.avenirsesr.portfolio.security.repository.RBACActionRouteSpecificationH
 import fr.avenirsesr.portfolio.security.service.AccessControlService;
 import fr.avenirsesr.portfolio.security.service.RBACActionRouteService;
 
+import java.util.UUID;
+
 /**
  * <h1>AccessControlController</h1>
  * <p>
@@ -73,7 +75,7 @@ public class AccessControlController {
     @GetMapping("${avenirs.access.control}")
     public ResponseEntity<AccessControlResponse> isAuthorized(@RequestParam String uri,
                                                               @RequestParam String method,
-                                                              @RequestParam(required = false, name = "resourceId") Long resourceId) {
+                                                              @RequestParam(required = false, name = "resourceId") UUID resourceId) {
         String login = securityDelegate.getAuthenticatedUserLogin();
         log.trace("hasAccess, login: {} ", login);
 

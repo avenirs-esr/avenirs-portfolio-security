@@ -9,9 +9,11 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 /**
  * Resources type.
- * The tyoe is used to determine if a resource is a portfolio, a SAE , etc.
+ * The type is used to determine if a resource is a portfolio, a SAE , etc.
  */
 @Data
 @Accessors(chain=true)
@@ -21,8 +23,8 @@ public class RBACResourceType {
 	
 	/** Database id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	/** Name of the resource type.*/
 	@Column(unique=true)

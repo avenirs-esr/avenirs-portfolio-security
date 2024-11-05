@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 class RBACRoleServiceTest {
 
     @Value("${avenirs.test.rbac.role.service.role.id}")
-    private Long roleId;
+    private UUID roleId;
 
     @Value("${avenirs.test.rbac.role.service.role.name}")
     private String roleName;
@@ -59,7 +60,7 @@ class RBACRoleServiceTest {
         assertEquals(roleName, role.getName());
         assertEquals(roleDescription, role.getDescription());
 
-        Optional<RBACRole> response = roleService.getRoleById((long)allRoleNames.length + 1);
+        Optional<RBACRole> response = roleService.getRoleById(UUID.fromString("00000000-0000-0000-0000-000000000100"));
         assertTrue(response.isEmpty());
     }
 

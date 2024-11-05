@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.model;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,8 +32,8 @@ public class RBACContext {
 	
 	/** Database Id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	/** Start of  validity. */
 	@Column(columnDefinition="TIMESTAMP")

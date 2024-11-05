@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.security.repository;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -46,7 +47,7 @@ public abstract class RBACAssignmentSpecificationHelper {
 	 * @return The assignments for the principal and the resources.
 	 */
 
-	public static Specification<RBACAssignment> filterByPrincipalAndResources(String login, Long... resourceIds) {
+	public static Specification<RBACAssignment> filterByPrincipalAndResources(String login, UUID... resourceIds) {
 		return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
 
 			log.trace("filterByPrincipalAndResources, login: {}", login);

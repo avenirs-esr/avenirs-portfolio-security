@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 /**
  * <h1>AccessControlGrantRequest</h1>
  * <p>
@@ -30,10 +32,10 @@ public class AccessControlGrantRequest {
     private String login;
 
     /** The id of the role to grant. */
-    private Long roleId;
+    private UUID roleId;
 
     /** The ids of the resources (optional). */
-    private Long[] resourceIds;
+    private UUID[] resourceIds;
 
     /** Application context: the start date of the validity period (optional). */
     private String validityStart;
@@ -42,6 +44,6 @@ public class AccessControlGrantRequest {
     private String validityEnd;
 
     /**  Application context: the ids of the structures (optional).*/
-    private Long[] structureIds;
+    private UUID[] structureIds;
 
 }

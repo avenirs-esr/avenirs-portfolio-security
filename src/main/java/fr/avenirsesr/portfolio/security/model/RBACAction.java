@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -28,8 +29,8 @@ public class RBACAction {
 	
 	/** Database Id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	/** Name associated to the context.*/
 	private String name;

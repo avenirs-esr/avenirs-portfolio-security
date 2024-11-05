@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 /**
  * <h1>AccessControlRevokeRequest</h1>
  * <p>
@@ -30,12 +32,12 @@ public class AccessControlRevokeRequest {
     private String login;
 
     /** The id of the role to grant. */
-    private Long roleId;
+    private UUID roleId;
 
     /** The id of the scope */
-    private Long scopeId;
+    private UUID scopeId;
 
     /** The id of the context. */
-    private Long contextId;
+    private UUID contextId;
 
 }

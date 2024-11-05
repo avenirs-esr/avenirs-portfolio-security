@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * <h1>StructureRepository</h1>
@@ -22,7 +23,7 @@ import java.util.Optional;
  * 17/10/2024
  */
 
-public interface StructureRepository extends JpaRepository<Structure, Long>, JpaSpecificationExecutor<Structure> {
+public interface StructureRepository extends JpaRepository<Structure, UUID>, JpaSpecificationExecutor<Structure> {
     /**
      * Find a structure by its name.
      * @param name The name of the structure to retrieve.

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -21,15 +22,15 @@ import jakarta.transaction.Transactional;
 @Transactional
 class RBACActionServiceTest {
 	
-	private static final Long SHARE_READ_RESOURCE_ID = 1L;
+	private static final UUID SHARE_READ_RESOURCE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 	private static final String SHARE_READ_RESOURCE_NAME = "ACT_SHARE_READ_RESOURCE";
 	private static final String[] SHARE_READ_RESOURCE_PERMS= {"PERM_SEE", "PERM_SHARE"};
 	
-	private static final Long DO_FEEDBACK_ID = 5L;
+	private static final UUID DO_FEEDBACK_ID = UUID.fromString("00000000-0000-0000-0000-000000000005");
 	private static final String DO_FEEDBACK_NAME = "ACT_DO_FEEDBACK";
 	private static final String[] DO_FEEDBACK_PERMS={"PERM_SEE", "PERM_READ", "PERM_COMMENT"};
 
-	private static final Long DELETE_ID = 6L;
+	private static final UUID DELETE_ID = UUID.fromString("00000000-0000-0000-0000-000000000006");
 	private static final String DELETE_NAME = "ACT_DELETE";
 	private static final String[] DELETE_PERMS={"PERM_SEE", "PERM_READ", "PERM_DELETE"};
 	

@@ -3,6 +3,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import fr.avenirsesr.portfolio.security.model.RBACContext;
 
+import java.util.UUID;
+
 /**
  * 
  * <h1>RBACContextRepository</h1>
@@ -20,6 +22,6 @@ import fr.avenirsesr.portfolio.security.model.RBACContext;
  * <h2>Since:</h2>
  * 1 Oct 2024
  */
-public interface RBACContextRepository extends JpaRepository<RBACContext, Long>, JpaSpecificationExecutor<RBACContext>   {
+public interface RBACContextRepository extends JpaRepository<RBACContext, UUID>, JpaSpecificationExecutor<RBACContext>   {
 	
 }

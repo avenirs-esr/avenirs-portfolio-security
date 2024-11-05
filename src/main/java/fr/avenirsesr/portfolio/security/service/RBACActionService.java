@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.security.service;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class RBACActionService {
 	 * @param actionId The id of the role to retrieve.
 	 * @return The action with id actionId.
 	 */
-	public Optional<RBACAction> getActionById(final Long actionId){
+	public Optional<RBACAction> getActionById(final UUID actionId){
 		log.trace("getAction");
 		return this.actionRepository.findById(actionId);
 	}
@@ -58,7 +59,7 @@ public class RBACActionService {
 	 */
 		public List<RBACAction> getAllActionsBySpecification(Specification<RBACAction> specification) {
 		
-		log.trace("getAllActionsByPredicate, specification: {}" + specification);
+		log.trace("getAllActionsByPredicate, specification: {}", specification);
 		return actionRepository.findAll(specification);
 	}
 	

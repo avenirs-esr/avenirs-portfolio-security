@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.security.service;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import fr.avenirsesr.portfolio.security.model.RBACAssignmentPK;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import fr.avenirsesr.portfolio.security.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.repository.RBACAssignmentRepository;
 import org.springframework.transaction.annotation.Transactional;
+
 
 
 @Slf4j
@@ -63,8 +65,16 @@ public class RBACAssignmentService {
 	@Transactional
 	public RBACAssignment createAssignment(RBACAssignment assignment) {
 		log.trace("createAssignment, assignment: {}", assignment);
+		if (assignment.getScope().getId()==null){
+			assignment.getScope().setId(UUID.randomUUID());
+		}
+		if (assignment.getContext().getId()==null){
+			assignment.getContext().setId(UUID.randomUUID());
+		}
 		return this.assignmentRepository.save(assignment);
 	}
+
+
 
 	/**
 	 * Updates an assignment.

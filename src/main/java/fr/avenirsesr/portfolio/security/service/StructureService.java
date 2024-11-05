@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 /**
@@ -42,7 +43,7 @@ public class StructureService {
 	 * @return The Optional of structure with id structureId.
 	 */
 	@Transactional(readOnly = true)
-	public Optional<Structure> getStructureById(final Long structureId){
+	public Optional<Structure> getStructureById(final UUID structureId){
 		log.trace("getStructureById structureId: {}", structureId);
 		return this.structureRepository.findById(structureId);
 	}
@@ -115,7 +116,7 @@ public class StructureService {
 	 * @param structureId The id of the structure to delete.
 	 */
 	@Transactional
-	public void deleteStructure(Long structureId) {
+	public void deleteStructure(UUID structureId) {
 			log.trace("deleteStructure, structureId: {}", structureId);
 		this.structureRepository.deleteById(structureId);
 	}

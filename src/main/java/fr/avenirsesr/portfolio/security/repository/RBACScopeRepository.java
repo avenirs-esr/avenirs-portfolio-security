@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import fr.avenirsesr.portfolio.security.model.RBACScope;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * <h1>RBACScopeRepository</h1>
@@ -21,7 +22,7 @@ import java.util.Optional;
  * <h2>Since:</h2>
  * 16/10/2024
  */
-public interface RBACScopeRepository extends JpaRepository<RBACScope, Long>, JpaSpecificationExecutor<RBACScope> {
+public interface RBACScopeRepository extends JpaRepository<RBACScope, UUID>, JpaSpecificationExecutor<RBACScope> {
     /**
      * Find a scope by its name.
      * @param name The name of the scope to retrieve.

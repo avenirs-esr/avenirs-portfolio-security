@@ -12,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -26,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class RBACScopeServiceTest {
 
     @Value("${avenirs.test.rbac.scope.service.scope.id}")
-    private Long scopeId;
+    private UUID scopeId;
 
     @Value("${avenirs.test.rbac.scope.service.scope.name}")
     private String scopeName;
 
     @Value("${avenirs.test.rbac.scope.service.scope.resource.id}")
-    private Long scopeResourceId;
+    private UUID scopeResourceId;
 
     @Value("${avenirs.test.rbac.scope.service.new.scope.name}")
     private String newScopeName;
@@ -40,17 +41,17 @@ class RBACScopeServiceTest {
     @Value("${avenirs.test.rbac.scope.service.new.scope.resources.number}")
     private int newScopeResourcesNumber;
 
-    @Value("${avenirs.test.rbac.scope.service.new.scope.resources.type}")
-    private int newScopeResourcesType;
+    @Value("${avenirs.test.rbac.scope.service.new.scope.resources.type.id}")
+    private UUID newScopeResourcesTypeId;
 
     @Value("${avenirs.test.rbac.scope.service.all.scope.names}")
     private String[] allScopeNames;
 
     @Value("${avenirs.test.rbac.scope.service.resources.filter}")
-    private Long[] resourcesFilter;
+    private UUID[] resourcesFilter;
 
     @Value("${avenirs.test.rbac.scope.service.filtered.scope.ids}")
-    private Long[] filteredScopeIds;
+    private UUID[] filteredScopeIds;
 
 
     @Autowired
@@ -65,7 +66,7 @@ class RBACScopeServiceTest {
         assertEquals(1, scope.getResources().size());
         assertEquals(scopeResourceId, scope.getResources().getFirst().getId());
 
-        Optional<RBACScope> response = scopeService.getScopeById((long) allScopeNames.length + 1);
+        Optional<RBACScope> response = scopeService.getScopeById(UUID.fromString("00000000-0000-0000-0000-000000000100"));
         assertTrue(response.isEmpty());
     }
 
@@ -106,7 +107,7 @@ class RBACScopeServiceTest {
                 .setResources(IntStream.range(0, newScopeResourcesNumber)
                         .mapToObj(i -> new RBACResource()
                                 .setSelector("*")
-                                .setResourceType(new RBACResourceType().setId(newScopeResourcesType)))
+                                .setResourceType(new RBACResourceType().setId(newScopeResourcesTypeId)))
                         .collect(Collectors.toList()));
         RBACScope savedScope = scopeService.createScope(newScope);
         assertNotNull(savedScope);
@@ -127,7 +128,7 @@ class RBACScopeServiceTest {
                 .setResources(IntStream.range(0, newScopeResourcesNumber)
                         .mapToObj(i -> new RBACResource()
                                 .setSelector("*")
-                                .setResourceType(new RBACResourceType().setId(newScopeResourcesType)))
+                                .setResourceType(new RBACResourceType().setId(newScopeResourcesTypeId)))
                         .collect(Collectors.toList()));
         RBACScope savedScope = scopeService.createScope(newScope);
         assertNotNull(savedScope);
@@ -153,7 +154,7 @@ class RBACScopeServiceTest {
                 .setResources(IntStream.range(0, newScopeResourcesNumber)
                         .mapToObj(i -> new RBACResource()
                                 .setSelector("*")
-                                .setResourceType(new RBACResourceType().setId(newScopeResourcesType)))
+                                .setResourceType(new RBACResourceType().setId(newScopeResourcesTypeId)))
                         .collect(Collectors.toList()));
         RBACScope savedScope = scopeService.createScope(newScope);
         assertNotNull(savedScope);

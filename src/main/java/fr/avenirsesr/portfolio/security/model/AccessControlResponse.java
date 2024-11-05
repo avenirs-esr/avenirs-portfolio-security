@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 
 /**
  * Access control response
@@ -23,8 +25,8 @@ public class AccessControlResponse {
 	/** Name of the action. */
 	private String actionName;
 	
-	/** Id of the resource. */
-	private Long resourceId;
+	/** ID of the resource. */
+	private UUID resourceId;
 	
 	/** Access granted or not. */
 	private boolean granted;

@@ -11,6 +11,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * 
@@ -37,7 +38,7 @@ public abstract class RBACScopeSpecificationHelper {
 	 * @param resourceIds The Resource ids.
 	 * @return The Specification of RBACScope.
 	 */
-	public static Specification<RBACScope> filterByResources(Long...resourceIds) {
+	public static Specification<RBACScope> filterByResources(UUID...resourceIds) {
 		log.trace("filterByResources resourceIds: {}", Arrays.toString(resourceIds));
 		return (Root<RBACScope> root, CriteriaQuery<?> query,  CriteriaBuilder criteriaBuilder) -> {
 			return root.join(RBACScope_.resources).get(RBACResource_.id).in((Object[]) resourceIds);

@@ -9,7 +9,7 @@ databaseChangeLog:
            columns:             
            - column:
                name: id_principal
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: principal_structure_id_principal_fk 
@@ -19,7 +19,7 @@ databaseChangeLog:
                    deferrable: false               
            - column:
                name: id_structure
-               type: BIGSERIAL
+               type: UUID
                constraints:
                    nullable:  false
                    foreignKeyName: principal_structure_id_structure_fk 

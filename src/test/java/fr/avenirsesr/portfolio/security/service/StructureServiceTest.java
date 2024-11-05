@@ -12,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StructureServiceTest {
 
     @Value("${avenirs.test.rbac.structure.service.structure.id}")
-    private Long structureId;
+    private UUID structureId;
 
     @Value("${avenirs.test.rbac.structure.service.structure.name}")
     private String structureName;
@@ -41,7 +42,7 @@ class StructureServiceTest {
     private String[] allStructureNames;
 
     @Value("${avenirs.test.rbac.structure.service.filtered.structure.ids}")
-    private Long[] filteredStructureIds;
+    private UUID[] filteredStructureIds;
 
     @Autowired
     private StructureService structureService;
@@ -55,7 +56,7 @@ class StructureServiceTest {
         assertEquals(structureName, structure.getName());
         assertEquals(structureDescription, structure.getDescription());
 
-        Optional<Structure> response = structureService.getStructureById((long) allStructureNames.length + 1);
+        Optional<Structure> response = structureService.getStructureById(UUID.fromString("00000000-0000-0000-0000-000000000100"));
         assertTrue(response.isEmpty());
     }
 

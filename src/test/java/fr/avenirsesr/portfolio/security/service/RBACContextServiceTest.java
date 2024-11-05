@@ -14,10 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +46,7 @@ class RBACContextServiceTest {
     private String newContextValidityEndString;
 
     @Value("${avenirs.test.rbac.context.service.context.id}")
-    private Long contextId;
+    private UUID contextId;
 
 
     @Value("${avenirs.test.rbac.context.service.new.context.structure.names}")

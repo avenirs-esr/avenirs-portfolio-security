@@ -35,6 +35,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 /**
@@ -94,17 +95,23 @@ class AccessControlControllerTest {
         closeable = MockitoAnnotations.openMocks(this);
 
         grantRequest = new AccessControlGrantRequest()
-                .setRoleId(1L)
-                .setResourceIds(new Long[]{1L, 2L})
+                .setRoleId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+                .setResourceIds(new UUID[]{
+                        UUID.fromString("00000000-0000-0000-0000-000000000001"),
+                        UUID.fromString("00000000-0000-0000-0000-000000000002")
+                })
                 .setValidityStart("2024-10-01")
                 .setValidityEnd("2024-12-31")
-                .setStructureIds(new Long[]{1L, 2L});
+                .setStructureIds(new UUID[]{
+                        UUID.fromString("00000000-0000-0000-0000-000000000001"),
+                        UUID.fromString("00000000-0000-0000-0000-000000000002")
+                });
 
         revokeRequest = new AccessControlRevokeRequest()
                 .setLogin("user123")
-                .setRoleId(1L)
-                .setScopeId(1L)
-                .setContextId(1L);
+                .setRoleId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+                .setScopeId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+                .setContextId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
     }
 
     @AfterEach

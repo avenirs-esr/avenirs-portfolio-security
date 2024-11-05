@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * 
@@ -31,7 +32,7 @@ public abstract class StructureSpecificationHelper {
 	 * @param ids The ids of the structures.
 	 * @return The Specification .
 	 */
-	public static Specification<Structure> filterByIds(Long...ids) {
+	public static Specification<Structure> filterByIds(UUID...ids) {
 		if (log.isTraceEnabled()) {
 			log.trace("filterByIds ids: {}", Arrays.toString(ids));
 		}

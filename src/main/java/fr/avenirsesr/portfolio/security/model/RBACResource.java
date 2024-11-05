@@ -10,6 +10,8 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 /**
  * Resources selector.
  * This class is used to determine one or several resources involved in a Role assignment.
@@ -22,8 +24,8 @@ public class RBACResource {
 	
 	/** Database id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	/** Selector for one or several resources.*/
 	private String selector;

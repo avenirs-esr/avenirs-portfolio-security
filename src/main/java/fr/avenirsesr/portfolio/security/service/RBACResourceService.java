@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 /**
@@ -42,7 +43,7 @@ public class RBACResourceService {
 	 * @return The Optional of resource with id resourceId.
 	 */
 	@Transactional(readOnly = true)
-	public Optional<RBACResource> getResourceById(final Long resourceId){
+	public Optional<RBACResource> getResourceById(final UUID resourceId){
 		log.trace("getResourceById resourceId: {}", resourceId);
 		return this.resourceRepository.findById(resourceId);
 	}
@@ -104,7 +105,7 @@ public class RBACResourceService {
 	 * @param resourceId The id of the resource to delete.
 	 */
 	@Transactional
-	public void deleteResource(Long resourceId) {
+	public void deleteResource(UUID resourceId) {
 			log.trace("deleteResource, resourceId: {}", resourceId);
 		this.resourceRepository.deleteById(resourceId);
 	}

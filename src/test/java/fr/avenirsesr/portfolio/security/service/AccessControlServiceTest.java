@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,30 +58,30 @@ class AccessControlServiceTest {
     private String userLogin;
 
     @Value("${avenirs.test.rbac.case2.authorized.resource.id}")
-    private Long authorizedResourceId;
+    private UUID authorizedResourceId;
 
     @Value("${avenirs.test.rbac.case2.unauthorized.resource.id}")
-    private Long unauthorizedResourceId;
+    private UUID unauthorizedResourceId;
 
     @Value("${avenirs.test.access.control.service.action.display.id}")
-    private Long displayActionId;
+    private UUID displayActionId;
     @Value("${avenirs.test.access.control.service.action.edit.id}")
-    private Long editActionId;
+    private UUID editActionId;
 
     @Value("${avenirs.test.access.control.service.action.feedback.id}")
-    private Long feedbackActionId;
+    private UUID feedbackActionId;
 
     @Value("${avenirs.test.rbac.case2.application.context.validity.start}")
     private String validityStartString;
 
     @Value("${avenirs.test.access.control.service.grant.resource.ids}")
-    private Long[] grantResourceIds;
+    private UUID[] grantResourceIds;
 
     @Value("${avenirs.test.access.control.service.grant.structure.ids}")
-    private Long[] grantStructureIds;
+    private UUID[] grantStructureIds;
 
     @Value("${avenirs.test.access.control.service.grant.role.id}")
-    private Long grantRoleId;
+    private UUID grantRoleId;
 
 
     /**
@@ -214,12 +215,12 @@ class AccessControlServiceTest {
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
                 .setResourceIds(grantResourceIds)
-                .setRoleId(123L);
+                .setRoleId(UUID.fromString("00000000-0000-0000-0000-000000000123"));
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
                 () -> accessControlService.grantAccess(grantRequest));
 
-        assertEquals("Role not found, ID: 123", exception.getMessage(), "Exception message");
+        assertEquals("Role not found, ID: 00000000-0000-0000-0000-000000000123", exception.getMessage(), "Exception message");
     }
 
     @Sql(scripts = {
@@ -262,18 +263,18 @@ class AccessControlServiceTest {
         List<RBACAssignment> assignments = assignmentService.getAllAssignments();
         assertTrue(assignments.isEmpty(), "No assignment at startup");
 
-        List<Long> invalidResourceIds = new ArrayList<>(Arrays.asList(grantResourceIds));
-        invalidResourceIds.add(100L);
+        List<UUID> invalidResourceIds = new ArrayList<>(Arrays.asList(grantResourceIds));
+        invalidResourceIds.add(UUID.fromString("00000000-0000-0000-0000-000000000100"));
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
                 .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
                 .setStructureIds(grantStructureIds)
-                .setResourceIds(invalidResourceIds.toArray(new Long[0]))
+                .setResourceIds(invalidResourceIds.toArray(new UUID[0]))
                 .setRoleId(grantRoleId);
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> accessControlService.grantAccess(grantRequest));
-        assertEquals("Missing resources, IDs : [100]", exception.getMessage(), "Exception message for missing resources");
+        assertEquals("Missing resources, IDs : [00000000-0000-0000-0000-000000000100]", exception.getMessage(), "Exception message for missing resources");
     }
 
     @Test
@@ -312,18 +313,18 @@ class AccessControlServiceTest {
         List<RBACAssignment> assignments = assignmentService.getAllAssignments();
         assertTrue(assignments.isEmpty(), "No assignment at startup");
 
-        List<Long> invalidStructureIds = new ArrayList<>(Arrays.asList(grantStructureIds));
-        invalidStructureIds.add(100L);
+        List<UUID> invalidStructureIds = new ArrayList<>(Arrays.asList(grantStructureIds));
+        invalidStructureIds.add(UUID.fromString("00000000-0000-0000-0000-000000000100"));
         AccessControlGrantRequest grantRequest = new AccessControlGrantRequest()
                 .setLogin(userLogin)
                 .setValidityStart(validityStart.format(formatter))
                 .setValidityEnd(validityEnd.format(formatter))
-                .setStructureIds(invalidStructureIds.toArray(new Long[0]))
+                .setStructureIds(invalidStructureIds.toArray(new UUID[0]))
                 .setResourceIds(grantResourceIds)
                 .setRoleId(grantRoleId);
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> accessControlService.grantAccess(grantRequest));
-        assertEquals("Missing structures, IDs : [100]", exception.getMessage(), "Exception message for missing resources");
+        assertEquals("Missing structures, IDs : [00000000-0000-0000-0000-000000000100]", exception.getMessage(), "Exception message for missing resources");
     }
 
 
@@ -413,9 +414,9 @@ class AccessControlServiceTest {
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> accessControlService.revokeAccess(new AccessControlRevokeRequest()
                 .setLogin("user123")
-                .setContextId(1L)
-                .setRoleId(1L)
-                .setScopeId(1L)));
+                .setContextId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+                .setRoleId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+                .setScopeId(UUID.fromString("00000000-0000-0000-0000-000000000001"))));
 
         assertEquals("Principal not found, UID: user123", exception.getMessage(), "Revoke exception message");
 

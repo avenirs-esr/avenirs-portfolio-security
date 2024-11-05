@@ -5,6 +5,7 @@ package fr.avenirsesr.portfolio.security.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +56,7 @@ public class RBACContextService {
      * @return The Optional of context with id contextId.
      */
     @Transactional(readOnly = true)
-    public Optional<RBACContext> getContextById(final Long contextId){
+    public Optional<RBACContext> getContextById(final UUID contextId){
         log.trace("getContextById contextId: {}", contextId);
         return contextRepository.findById(contextId);
     }
@@ -93,7 +94,7 @@ public class RBACContextService {
    * @param contextId The id of the context to delete.
    */
   @Transactional
-  public void deleteContext(Long contextId) {
+  public void deleteContext(UUID contextId) {
       log.trace("deleteAssignment, contextId: {}", contextId);
        this.contextRepository.deleteById(contextId);
   }

@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 /**
  * Permission.
  * A permission is mainly a label and can be required to perform actions.
@@ -24,8 +26,8 @@ public class RBACPermission {
 	
 	/** Database id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	/** Name of the permission.*/
 	private String name;

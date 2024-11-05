@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.security.service;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ public class RBACRoleService {
 	 * @return The Optional of role with id roleId.
 	 */
 	@Transactional(readOnly = true)
-	public Optional<RBACRole> getRoleById(final Long roleId){
+	public Optional<RBACRole> getRoleById(final UUID roleId){
 		log.trace("getRoleById roleId: {}", roleId);
 		return this.roleRepository.findById(roleId);
 	}
@@ -102,7 +103,7 @@ public class RBACRoleService {
 	 * @param roleId The id of the role to delete.
 	 */
 	@Transactional
-	public void deleteRole(Long roleId) {
+	public void deleteRole(UUID roleId) {
 			log.trace("deleteRole, roleId: {}", roleId);
 		this.roleRepository.deleteById(roleId);
 	}

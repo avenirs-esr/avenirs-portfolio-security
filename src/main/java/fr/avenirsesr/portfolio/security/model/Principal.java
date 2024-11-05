@@ -5,6 +5,7 @@ package fr.avenirsesr.portfolio.security.model;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -35,8 +36,8 @@ public class Principal {
 	
 	/** Database Id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	/** Login of the user. */
 	private String login;

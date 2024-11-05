@@ -80,7 +80,7 @@ public class AccessControlService {
     /**
      * Cache for the permissions.
      */
-    private final Map<Long, List<RBACPermission>> permissionsByActionId = new HashMap<>();
+    private final Map<UUID, List<RBACPermission>> permissionsByActionId = new HashMap<>();
 
 
     @PostConstruct
@@ -114,11 +114,11 @@ public class AccessControlService {
             resources = resourceService.getAllResourcesBySpecification(
                     RBACResourceSpecificationHelper.filterByIds(grantRequest.getResourceIds()));
 
-            List<Long> foundIds = resources.stream()
+            List<UUID> foundIds = resources.stream()
                     .map(RBACResource::getId)
                     .toList();
 
-            List<Long> missingIds = Arrays.stream(grantRequest.getResourceIds())
+            List<UUID> missingIds = Arrays.stream(grantRequest.getResourceIds())
                     .filter(id -> !foundIds.contains(id))
                     .collect(Collectors.toList());
 
@@ -155,11 +155,11 @@ public class AccessControlService {
         if (!ObjectUtils.isEmpty(grantRequest.getStructureIds())) {
             List<Structure> structures = structureService.getAllStructuresBySpecification(StructureSpecificationHelper.filterByIds(grantRequest.getStructureIds()));
 
-            List<Long> foundIds = structures.stream()
+            List<UUID> foundIds = structures.stream()
                     .map(Structure::getId)
                     .toList();
 
-            List<Long> missingIds = Arrays.stream(grantRequest.getStructureIds())
+            List<UUID> missingIds = Arrays.stream(grantRequest.getStructureIds())
                     .filter(id -> !foundIds.contains(id))
                     .collect(Collectors.toList());
 
@@ -236,7 +236,7 @@ public class AccessControlService {
      * @param resourceId The id of the accessed resource.
      * @return True if the principal has access to the resource.
      */
-    public boolean isAuthorized(String login, Long actionId, Long resourceId) {
+    public boolean isAuthorized(String login, UUID actionId, UUID resourceId) {
         log.trace("hasAccess, login: {}", login);
         log.trace("hasAccess, actionId: {}", actionId);
         log.trace("hasAccess, resourceId: {}", resourceId);
@@ -255,7 +255,7 @@ public class AccessControlService {
      * @param resourceId          The resource id.
      * @return True if the permissions granted to the user for the resource contains all the required permissions.
      */
-    private boolean checkGrantedPermissions(List<RBACPermission> requiredPermissions, String login, Long resourceId) {
+    private boolean checkGrantedPermissions(List<RBACPermission> requiredPermissions, String login, UUID resourceId) {
         if (requiredPermissions != null && !requiredPermissions.isEmpty()) {
 
             List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(
@@ -351,7 +351,7 @@ public class AccessControlService {
      * @return The permission associated to the action or null if the action is not
      * found.
      */
-    private List<RBACPermission> fetchPermissions(Long actionId) {
+    private List<RBACPermission> fetchPermissions(UUID actionId) {
 
         if (actionId != null && !this.permissionsByActionId.containsKey(actionId)) {
 

@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,16 +40,16 @@ class RBACAssignmentServiceTest {
     private RBACResourceRepository resourceRepository;
 
     @Value("${avenirs.test.rbac.assignment.service.role.owner.id}")
-    private Long roleOwnerId;
+    private UUID roleOwnerId;
 
     @Value("${avenirs.test.rbac.assignment.service.resource.id.1}")
-    private Long resourceId1;
+    private UUID resourceId1;
 
     @Value("${avenirs.test.rbac.assignment.service.resource.id.2}")
-    private Long resourceId2;
+    private UUID resourceId2;
 
     @Value("${avenirs.test.rbac.assignment.service.resource.id.3}")
-    private Long resourceId3;
+    private UUID resourceId3;
 
     @Value("${avenirs.test.rbac.assignment.service.user.login.1}")
     private String principalLogin1;
@@ -94,8 +95,9 @@ class RBACAssignmentServiceTest {
 
         RBACScope scope = new RBACScope()
                 .setName("createAssignment Scope")
+                //.setId(UUID.fromString("00000000-0000-0000-0000-000000000100"))
                 .setResources(Collections.singletonList(resource1));
-        RBACContext context = new RBACContext();
+        RBACContext context = new RBACContext().setId(UUID.fromString("00000000-0000-0000-0000-000000000100"));
 
         RBACAssignment assignment = new RBACAssignment()
                 .setContext(context)
@@ -313,7 +315,7 @@ class RBACAssignmentServiceTest {
                 .allMatch(login -> login.equals(principalLogin1));
 
         // Checks resources
-        List<Long> expectedResourceIds = Arrays.asList(resourceId1, resourceId2);
+        List<UUID> expectedResourceIds = Arrays.asList(resourceId1, resourceId2);
         assertThat(fetchedAssignments)
                 .as("Checks that all assignments are for resource 1 or 2")
                 .extracting(assignment -> assignment.getScope().getResources())
