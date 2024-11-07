@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,11 +32,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenAPIConfig {
 
+    @Value("${app.server.url}")
+    private String serverUrl;
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .addServersItem(new Server().url("http://localhost:12000"))
-                .addServersItem(new Server().url("http://localhost/avenirs-portfolio-security"))
+                .addServersItem(new Server().url(serverUrl))
               .info(new Info()
                         .title("Avenirs Portfolio Security - API Documentation")
                         .version("v1")
