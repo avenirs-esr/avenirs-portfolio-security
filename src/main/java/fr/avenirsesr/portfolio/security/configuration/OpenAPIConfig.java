@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenAPIConfig {
 
-    @Value("${app.server.url}")
+    @Value("${server.url}")
     private String serverUrl;
 
     @Bean
