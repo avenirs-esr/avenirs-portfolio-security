@@ -18,13 +18,25 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Configuration for spring security.
+ * &lt;h1&gt;SpringSecurityConfig&lt;/h1&gt;
+ * &lt;p&gt;
+ * &lt;b&gt;Description:&lt;/b&gt; Configuration for spring security.
+ * &lt;/p&gt;
+ *
+ * &lt;h2&gt;Version:&lt;/h2&gt;
+ * 1.0.0
+ *
+ * &lt;h2&gt;Author:&lt;/h2&gt;
+ * Arnaud Deman
+ *
+ * &lt;h2&gt;Since:&lt;/h2&gt;
+ * 07/11/2024
  */
 
-<span class="fc" id="L24">@Slf4j</span>
+<span class="fc" id="L36">@Slf4j</span>
 @Configuration
 @EnableWebSecurity
-<span class="fc" id="L27">public class SpringSecurityConfig {</span>
+<span class="fc" id="L39">public class SpringSecurityConfig {</span>
 
     @Value(&quot;${avenirs.authentication.oidc.login}&quot;)
     private String login;
@@ -41,6 +53,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
     @Value(&quot;${avenirs.authentication.oidc.callback.redirect}&quot;)
     private String oidcRedirect;
 
+    /**
+     * Swagger API Doc path.
+     */
+    @Value(&quot;${springdoc.api-docs.path}&quot;)
+    private String swaggerAPIDocPath;
+
+    /**
+     * Swagger UI path.
+     */
+    @Value(&quot;${springdoc.swagger-ui.path}&quot;)
+    private String swaggerUIPath;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -48,29 +71,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
     @Bean
     SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L51">        return httpSecurity</span>
-<span class="fc" id="L52">                .securityMatcher(&quot;/v3/**&quot;,</span>
-                        &quot;/swagger-ui/**&quot;,
+<span class="fc" id="L74">        return httpSecurity</span>
+<span class="fc" id="L75">                .securityMatcher(swaggerUIPath + &quot;/**&quot;,</span>
+                        swaggerAPIDocPath + &quot;/**&quot;,
                         login,
                         oidcCallback,
                         oidcRedirect)
-<span class="fc" id="L57">                .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L58">                .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
-<span class="fc" id="L59">                .build();</span>
+<span class="fc" id="L80">                .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L81">                .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
+<span class="fc" id="L82">                .build();</span>
     }
 
     @Bean
     SecurityFilterChain protectedFilterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L64">        return httpSecurity</span>
-<span class="fc" id="L65">                .securityMatcher(&quot;/**&quot;)</span>
-<span class="fc" id="L66">                .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L67">                .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
-<span class="fc" id="L68">                .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
-<span class="fc" id="L69">                .build();</span>
+<span class="fc" id="L87">        return httpSecurity</span>
+<span class="fc" id="L88">                .securityMatcher(&quot;/**&quot;)</span>
+<span class="fc" id="L89">                .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L90">                .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
+<span class="fc" id="L91">                .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L92">                .build();</span>
     }
 
     Filter casTokenAuthenticationFilter(){
-<span class="fc" id="L73">        return new CASTokenAuthenticationFilter(authenticationService);</span>
+<span class="fc" id="L96">        return new CASTokenAuthenticationFilter(authenticationService);</span>
     }
 
 }
