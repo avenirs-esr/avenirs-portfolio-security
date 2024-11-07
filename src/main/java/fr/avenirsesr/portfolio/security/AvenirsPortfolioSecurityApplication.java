@@ -22,21 +22,6 @@ import jakarta.transaction.Transactional;
 @Slf4j
 @SpringBootApplication
 @EnableEncryptableProperties
-@OpenAPIDefinition(
-		info = @Info(
-				title = "API Documentation",
-				version = "v1",
-				description = "API Documentation for Avenirs Portfolio Security"
-		)
-)
-@SecurityScheme(
-		name = "bearerAuth",
-		type = SecuritySchemeType.APIKEY,
-		scheme = "bearer",
-		bearerFormat = "JWT",
-		paramName = "x-authorization",
-		in = SecuritySchemeIn.HEADER
-)
 public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {
 	
 	public static void main(String[] args) {
