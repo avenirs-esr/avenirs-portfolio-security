@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,26 +30,28 @@ import org.springframework.context.annotation.Configuration;
  * 07/11/2024
  */
 @Configuration
-<span class="fc" id="L32">public class OpenAPIConfig {</span>
+<span class="fc" id="L33">public class OpenAPIConfig {</span>
+
+    @Value(&quot;${app.server.url}&quot;)
+    private String serverUrl;
 
     @Bean
     public OpenAPI customOpenAPI() {
-<span class="fc" id="L36">        return new OpenAPI()</span>
-<span class="fc" id="L37">                .addServersItem(new Server().url(&quot;http://localhost:12000&quot;))</span>
-<span class="fc" id="L38">                .addServersItem(new Server().url(&quot;http://localhost/avenirs-portfolio-security&quot;))</span>
-<span class="fc" id="L39">              .info(new Info()</span>
-<span class="fc" id="L40">                        .title(&quot;Avenirs Portfolio Security - API Documentation&quot;)</span>
-<span class="fc" id="L41">                        .version(&quot;v1&quot;)</span>
-<span class="fc" id="L42">                        .description(&quot;API Documentation for Avenirs Portfolio Security&quot;))</span>
-<span class="fc" id="L43">                .addSecurityItem(new SecurityRequirement().addList(&quot;bearerAuth&quot;))</span>
-<span class="fc" id="L44">                .components(new io.swagger.v3.oas.models.Components()</span>
-<span class="fc" id="L45">                        .addSecuritySchemes(&quot;bearerAuth&quot;,</span>
+<span class="fc" id="L40">        return new OpenAPI()</span>
+<span class="fc" id="L41">                .addServersItem(new Server().url(serverUrl))</span>
+<span class="fc" id="L42">              .info(new Info()</span>
+<span class="fc" id="L43">                        .title(&quot;Avenirs Portfolio Security - API Documentation&quot;)</span>
+<span class="fc" id="L44">                        .version(&quot;v1&quot;)</span>
+<span class="fc" id="L45">                        .description(&quot;API Documentation for Avenirs Portfolio Security&quot;))</span>
+<span class="fc" id="L46">                .addSecurityItem(new SecurityRequirement().addList(&quot;bearerAuth&quot;))</span>
+<span class="fc" id="L47">                .components(new io.swagger.v3.oas.models.Components()</span>
+<span class="fc" id="L48">                        .addSecuritySchemes(&quot;bearerAuth&quot;,</span>
                                 new SecurityScheme()
-<span class="fc" id="L47">                                        .type(Type.APIKEY)</span>
-<span class="fc" id="L48">                                        .scheme(&quot;bearer&quot;)</span>
-<span class="fc" id="L49">                                        .bearerFormat(&quot;JWT&quot;)</span>
-<span class="fc" id="L50">                                        .in(In.HEADER)</span>
-<span class="fc" id="L51">                                        .name(&quot;x-authorization&quot;)));</span>
+<span class="fc" id="L50">                                        .type(Type.APIKEY)</span>
+<span class="fc" id="L51">                                        .scheme(&quot;bearer&quot;)</span>
+<span class="fc" id="L52">                                        .bearerFormat(&quot;JWT&quot;)</span>
+<span class="fc" id="L53">                                        .in(In.HEADER)</span>
+<span class="fc" id="L54">                                        .name(&quot;x-authorization&quot;)));</span>
     }
 }
 
