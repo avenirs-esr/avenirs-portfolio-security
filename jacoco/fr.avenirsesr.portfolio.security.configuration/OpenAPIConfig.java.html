@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OpenAPIConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.configuration</a> &gt; <span class="el_source">OpenAPIConfig.java</span></div><h1>OpenAPIConfig.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.configuration;
+
+
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityScheme.In;
+import io.swagger.v3.oas.models.security.SecurityScheme.Type;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+
+/**
+ * &lt;h1&gt;OpenAPIConfig&lt;/h1&gt;
+ * &lt;p&gt;
+ * Description: OpenAPIConfig is used to configure swagger
+ * &lt;/p&gt;
+ *
+ * &lt;h2&gt;Version:&lt;/h2&gt;
+ * 1.0.0
+ *
+ * &lt;h2&gt;Author:&lt;/h2&gt;
+ * Arnaud Deman
+ *
+ * &lt;h2&gt;Since:&lt;/h2&gt;
+ * 07/11/2024
+ */
+@Configuration
+<span class="fc" id="L32">public class OpenAPIConfig {</span>
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+<span class="fc" id="L36">        return new OpenAPI()</span>
+<span class="fc" id="L37">                .addServersItem(new Server().url(&quot;http://localhost:12000&quot;))</span>
+<span class="fc" id="L38">                .addServersItem(new Server().url(&quot;http://localhost/avenirs-portfolio-security&quot;))</span>
+<span class="fc" id="L39">              .info(new Info()</span>
+<span class="fc" id="L40">                        .title(&quot;Avenirs Portfolio Security - API Documentation&quot;)</span>
+<span class="fc" id="L41">                        .version(&quot;v1&quot;)</span>
+<span class="fc" id="L42">                        .description(&quot;API Documentation for Avenirs Portfolio Security&quot;))</span>
+<span class="fc" id="L43">                .addSecurityItem(new SecurityRequirement().addList(&quot;bearerAuth&quot;))</span>
+<span class="fc" id="L44">                .components(new io.swagger.v3.oas.models.Components()</span>
+<span class="fc" id="L45">                        .addSecuritySchemes(&quot;bearerAuth&quot;,</span>
+                                new SecurityScheme()
+<span class="fc" id="L47">                                        .type(Type.APIKEY)</span>
+<span class="fc" id="L48">                                        .scheme(&quot;bearer&quot;)</span>
+<span class="fc" id="L49">                                        .bearerFormat(&quot;JWT&quot;)</span>
+<span class="fc" id="L50">                                        .in(In.HEADER)</span>
+<span class="fc" id="L51">                                        .name(&quot;x-authorization&quot;)));</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

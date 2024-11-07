@@ -22,32 +22,17 @@ import jakarta.transaction.Transactional;
 <span class="fc" id="L22">@Slf4j</span>
 @SpringBootApplication
 @EnableEncryptableProperties
-@OpenAPIDefinition(
-		info = @Info(
-				title = &quot;API Documentation&quot;,
-				version = &quot;v1&quot;,
-				description = &quot;API Documentation for Avenirs Portfolio Security&quot;
-		)
-)
-@SecurityScheme(
-		name = &quot;bearerAuth&quot;,
-		type = SecuritySchemeType.APIKEY,
-		scheme = &quot;bearer&quot;,
-		bearerFormat = &quot;JWT&quot;,
-		paramName = &quot;x-authorization&quot;,
-		in = SecuritySchemeIn.HEADER
-)
-<span class="fc" id="L40">public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {</span>
+<span class="fc" id="L25">public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {</span>
 	
 	public static void main(String[] args) {
-<span class="fc" id="L43">		log.info(&quot;Starting Avenirs Portfolio Security Module&quot;);</span>
-<span class="fc" id="L44">		/* ApplicationContext app = */SpringApplication.run(AvenirsPortfolioSecurityApplication.class, args);</span>
-<span class="fc" id="L45">	}</span>
+<span class="fc" id="L28">		log.info(&quot;Starting Avenirs Portfolio Security Module&quot;);</span>
+<span class="fc" id="L29">		/* ApplicationContext app = */SpringApplication.run(AvenirsPortfolioSecurityApplication.class, args);</span>
+<span class="fc" id="L30">	}</span>
 
 	@Transactional
 	@Override
 	public void run(String... args) throws Exception {
-<span class="fc" id="L50">		log.info(&quot;AvenirsPortfolioSecurityApplication running&quot;);</span>
-<span class="fc" id="L51">	}</span>
+<span class="fc" id="L35">		log.info(&quot;AvenirsPortfolioSecurityApplication running&quot;);</span>
+<span class="fc" id="L36">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
