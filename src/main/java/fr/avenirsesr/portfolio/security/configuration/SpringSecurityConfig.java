@@ -18,7 +18,19 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Configuration for spring security.
+ * <h1>SpringSecurityConfig</h1>
+ * <p>
+ * <b>Description:</b> Configuration for spring security.
+ * </p>
+ *
+ * <h2>Version:</h2>
+ * 1.0.0
+ *
+ * <h2>Author:</h2>
+ * Arnaud Deman
+ *
+ * <h2>Since:</h2>
+ * 07/11/2024
  */
 
 @Slf4j
@@ -41,6 +53,17 @@ public class SpringSecurityConfig {
     @Value("${avenirs.authentication.oidc.callback.redirect}")
     private String oidcRedirect;
 
+    /**
+     * Swagger API Doc path.
+     */
+    @Value("${springdoc.api-docs.path}")
+    private String swaggerAPIDocPath;
+
+    /**
+     * Swagger UI path.
+     */
+    @Value("${springdoc.swagger-ui.path}")
+    private String swaggerUIPath;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -49,8 +72,8 @@ public class SpringSecurityConfig {
     @Bean
     SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .securityMatcher("/v3/**",
-                        "/swagger-ui/**",
+                .securityMatcher(swaggerUIPath + "/**",
+                        swaggerAPIDocPath + "/**",
                         login,
                         oidcCallback,
                         oidcRedirect)
