@@ -57,6 +57,7 @@ public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
             log.trace("doFilterInternal introspectResponse: {}", introspectResponse);
 
             if (introspectResponse.isActive()) {
+                log.trace("doFilterInternal introspectResponse is active, updating SecurityContext with new authentication");
                 String username = introspectResponse.getUniqueSecurityName();
                 SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, token, new ArrayList<>()));
             }
