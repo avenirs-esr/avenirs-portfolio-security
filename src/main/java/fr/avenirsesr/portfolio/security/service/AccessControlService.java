@@ -261,18 +261,18 @@ public class AccessControlService {
 
             List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(
                     RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(login, resourceId));
-            log.trace("hasAccess, principalAssignments: {}", principalAssignments);
+            log.trace("checkGrantedPermissions, principalAssignments: {}", principalAssignments);
 
             List<RBACAssignment> validAssignment = filterByApplicationContext(principalAssignments);
-            log.trace("hasAccess, validAssignment: {}", validAssignment);
+            log.trace("checkGrantedPermissions, validAssignment: {}", validAssignment);
 
             HashSet<RBACPermission> principalPermissions = validAssignment.stream().map(a -> a.getRole().getPermissions())
                     .flatMap(Collection::stream)
                     .collect(Collectors.toCollection(HashSet::new));
-            log.trace("hasAccess, principalPermissions: {}", principalPermissions);
+            log.trace("checkGrantedPermissions, principalPermissions: {}", principalPermissions);
 
             boolean accessGranted = principalPermissions.containsAll(requiredPermissions);
-            log.trace("hasAccess, accessGranted: {}", accessGranted);
+            log.trace("checkGrantedPermissions, accessGranted: {}", accessGranted);
 
             return accessGranted;
         }
