@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.controller;
 
 import fr.avenirsesr.portfolio.security.delegate.SecurityDelegate;
 import fr.avenirsesr.portfolio.security.model.RBACAssignment;
+import fr.avenirsesr.portfolio.security.model.RBACRole;
 import fr.avenirsesr.portfolio.security.repository.RBACAssignmentSpecificationHelper;
 import fr.avenirsesr.portfolio.security.service.RBACAssignmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -50,7 +51,7 @@ public class RoleController {
      */
     @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
     @GetMapping("${avenirs.access.control.roles}")
-    public List<String> getRoles() {
+    public List<RBACRole> getRoles() {
 
         String login =securityDelegate.getAuthenticatedUserLogin();
 
@@ -58,12 +59,14 @@ public class RoleController {
 
         List<RBACAssignment> assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(login));
 
-        List<String> roles = assignments.stream()
-                .map(assignment -> assignment.getRole().getName())
+        List<RBACRole> roles = assignments.stream()
+                .map(RBACAssignment::getRole)
                 .toList();
         log.trace("Role for {}: {}", login, roles);
         return roles;
 
     }
+
+
 
 }
