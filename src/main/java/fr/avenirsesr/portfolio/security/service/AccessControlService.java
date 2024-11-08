@@ -178,11 +178,12 @@ public class AccessControlService {
                 .setPrincipal(principal)
                 .setContext(applicationContext);
 
-        assignmentService.createAssignment(assignment);
+        RBACAssignment registeredAssignment = assignmentService.createAssignment(assignment);
 
 
         return new AccessControlGrantResponse()
                 .setLogin(grantRequest.getLogin())
+                .setAssignmentId(registeredAssignment.getId())
                 .setGranted(true);
     }
 

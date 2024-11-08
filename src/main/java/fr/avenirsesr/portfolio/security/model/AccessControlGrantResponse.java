@@ -35,6 +35,9 @@ public class AccessControlGrantResponse {
 	/** Access granted or not. */
 	private boolean granted;
 
+	/** Assignment ID. */
+	private RBACAssignmentPK assignmentId;
+
 	/** Message if an error occurs. */
 	private String error;
 }
