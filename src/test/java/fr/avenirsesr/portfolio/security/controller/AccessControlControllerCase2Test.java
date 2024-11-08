@@ -73,8 +73,8 @@ class AccessControlControllerCase2Test {
     @Value("${avenirs.test.rbac.case2.unauthorized.resource.id}")
     private String unauthorizedResourceId;
 	
-	@Value("${avenirs.access.control}")
-	private String accessControlEndPoint;
+	@Value("${avenirs.access.control.authorize}")
+	private String authorizeEndPoint;
 	
 	@Value("${avenirs.access.control.share.read}")
 	private String accessControlShareReadEndPoint;
@@ -138,7 +138,7 @@ class AccessControlControllerCase2Test {
 
 	  
 	  
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -159,7 +159,7 @@ class AccessControlControllerCase2Test {
 
       
       
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -180,7 +180,7 @@ class AccessControlControllerCase2Test {
 
       
       
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -201,7 +201,7 @@ class AccessControlControllerCase2Test {
       }).when(accessControlService).createExecutionContext(any(Principal.class));
 
             
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -222,7 +222,7 @@ class AccessControlControllerCase2Test {
 
       
       
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -243,7 +243,7 @@ class AccessControlControllerCase2Test {
 
       
       
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -264,7 +264,7 @@ class AccessControlControllerCase2Test {
 
     
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -273,7 +273,7 @@ class AccessControlControllerCase2Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -292,7 +292,7 @@ class AccessControlControllerCase2Test {
             .setEffectiveDate(effectiveDateInValidityRange);  
       }).when(accessControlService).createExecutionContext(any(Principal.class));
 
-	  mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+	  mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 	      .contentType(MediaType.APPLICATION_JSON)
 	      .accept(MediaType.APPLICATION_JSON)
 	      .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -301,7 +301,7 @@ class AccessControlControllerCase2Test {
 	      .param("method", HttpMethod.POST.name()))//.andDo(print())
 	  .andExpect(status().is2xxSuccessful());
 	  
-	  mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+	  mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 	      .contentType(MediaType.APPLICATION_JSON)
 	      .accept(MediaType.APPLICATION_JSON)
 	      .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -320,7 +320,7 @@ class AccessControlControllerCase2Test {
             .setEffectiveDate(effectiveDateInValidityRange);  
       }).when(accessControlService).createExecutionContext(any(Principal.class));
 
-      mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+      mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON)
           .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -329,7 +329,7 @@ class AccessControlControllerCase2Test {
           .param("method", HttpMethod.POST.name()))//.andDo(print())
       .andExpect(status().isForbidden());
       
-      mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+      mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
           .contentType(MediaType.APPLICATION_JSON)
           .accept(MediaType.APPLICATION_JSON)
           .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -351,7 +351,7 @@ class AccessControlControllerCase2Test {
 
     
 
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -360,7 +360,7 @@ class AccessControlControllerCase2Test {
                 .param("method", HttpMethod.POST.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
         
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -381,7 +381,7 @@ class AccessControlControllerCase2Test {
 
     
 
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -390,7 +390,7 @@ class AccessControlControllerCase2Test {
                 .param("method", HttpMethod.POST.name()))//.andDo(print())
                 .andExpect(status().is2xxSuccessful());
         
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -412,7 +412,7 @@ class AccessControlControllerCase2Test {
 
     
 
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -421,7 +421,7 @@ class AccessControlControllerCase2Test {
                 .param("method", HttpMethod.POST.name()))//.andDo(print())
                 .andExpect(status().isForbidden());
         
-        mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+        mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -444,7 +444,7 @@ class AccessControlControllerCase2Test {
       }).when(accessControlService).createExecutionContext(any(Principal.class));
 
       
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -453,7 +453,7 @@ class AccessControlControllerCase2Test {
 				.param("method", HttpMethod.POST.name()))
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -462,7 +462,7 @@ class AccessControlControllerCase2Test {
 				.param("method", HttpMethod.PUT.name()))
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -471,7 +471,7 @@ class AccessControlControllerCase2Test {
 				.param("method", HttpMethod.POST.name()))
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -480,7 +480,7 @@ class AccessControlControllerCase2Test {
 				.param("method", HttpMethod.PUT.name()))
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -489,7 +489,7 @@ class AccessControlControllerCase2Test {
 				.param("method", HttpMethod.POST.name()))
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -498,7 +498,7 @@ class AccessControlControllerCase2Test {
 				.param("method", HttpMethod.PUT.name()))
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))

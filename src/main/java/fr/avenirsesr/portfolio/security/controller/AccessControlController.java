@@ -72,7 +72,7 @@ public class AccessControlController {
      * @return The AccessControlResponse that contains the flag to determine if the action is authorized.
      */
     @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
-    @GetMapping("${avenirs.access.control}")
+    @GetMapping("${avenirs.access.control.authorize}")
     public ResponseEntity<AccessControlResponse> isAuthorized(@RequestParam String uri,
                                                               @RequestParam String method,
                                                               @RequestParam(required = false, name = "resourceId") UUID resourceId) {
@@ -128,12 +128,14 @@ public class AccessControlController {
         AccessControlGrantResponse response;
         try {
             response = this.accessControlService.grantAccess(request.setLogin(login));
-        } catch (Exception e) {
+        } catch (Exception exception) {
+            log.error("grantAccess, exception:  {}", exception.getMessage());
             response = new AccessControlGrantResponse()
                     .setLogin(login)
                     .setGranted(false)
-                    .setError(e.getMessage());
+                    .setError(exception.getMessage());
         }
+        log.debug("grantAccess, response: {}", response);
         return response.isGranted() ? ResponseEntity.ok(response)
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
 
@@ -160,12 +162,15 @@ public class AccessControlController {
         AccessControlRevokeResponse response;
         try {
             response = this.accessControlService.revokeAccess(request.setLogin(login));
-        } catch (Exception e) {
+        } catch (Exception exception) {
+            log.error("revokeAccess, exception:  {}", exception.getMessage());
+
             response = new AccessControlRevokeResponse()
                     .setLogin(login)
                     .setRevoked(false)
-                    .setError(e.getMessage());
+                    .setError(exception.getMessage());
         }
+        log.debug("revokeAccess, response: {}", response);
         return response.isRevoked() ? ResponseEntity.ok(response)
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }

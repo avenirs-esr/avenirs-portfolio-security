@@ -68,8 +68,8 @@ class AccessControlControllerCase1Test {
 	@Value("${avenirs.test.rbac.unprivileged.user.password}")
 	private String unprivilegedUserPassword;
 	
-	@Value("${avenirs.access.control}")
-	private String accessControlEndPoint;
+	@Value("${avenirs.access.control.authorize}")
+	private String authorizeEndPoint;
 	
 	@Value("${avenirs.access.control.share.read}")
 	private String accessControlShareReadEndPoint;
@@ -98,7 +98,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCanShareReadAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -107,7 +107,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -120,7 +120,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCannotShareReadUnauthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -129,7 +129,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -142,7 +142,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testUnprivilegedCannotShareReadAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -150,7 +150,7 @@ class AccessControlControllerCase1Test {
 				 .param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -162,7 +162,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCanShareWriteAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -171,7 +171,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -184,7 +184,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCannotShareWriteUnauthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -193,7 +193,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -206,7 +206,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testUnprivilegedCannotShareWriteAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -215,7 +215,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -229,7 +229,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCanDisplayAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -242,7 +242,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCannotDisplayUnauthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -255,7 +255,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testUnprivilegedCannotDisplayAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -268,7 +268,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCanEditAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -277,7 +277,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -290,7 +290,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCannotEditUnauthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -299,7 +299,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -312,7 +312,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testUnprivilegedCannotEditAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -321,7 +321,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -336,7 +336,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCanFeedbackAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -345,7 +345,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().is2xxSuccessful());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -358,7 +358,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCannotFeedbackUnauthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -367,7 +367,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -380,7 +380,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testUnprivilegedCannotFeedbackAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -389,7 +389,7 @@ class AccessControlControllerCase1Test {
 				.param("method", HttpMethod.POST.name()))//.andDo(print())
 				.andExpect(status().isForbidden());
 		
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))
@@ -403,7 +403,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCanDeleteAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON)
 						.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -416,7 +416,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testOwnerCannotDeleteUnauthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON)
 						.header("x-authorization", accessTokenHelper.provideAccessToken(userLogin, userPassword))
@@ -430,7 +430,7 @@ class AccessControlControllerCase1Test {
 	@Test
 	void testUnprivilegedCannotDeleteAuthorizedResource() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get(accessControlEndPoint)
+		mockMvc.perform(MockMvcRequestBuilders.get(authorizeEndPoint)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON)
 						.header("x-authorization", accessTokenHelper.provideAccessToken(unprivilegedUserLogin, unprivilegedUserPassword))

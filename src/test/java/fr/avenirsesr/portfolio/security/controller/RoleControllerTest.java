@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.security.controller;
 
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
+import fr.avenirsesr.portfolio.security.model.RBACRole;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,14 +61,14 @@ class RoleControllerTest {
     @Test
     void getRolesWithValidTokenWithoutFixtures() {
         try {
-            List<String> roles = roleController.getRoles();
+            List<RBACRole> roles = roleController.getRoles();
             assertTrue(roles.isEmpty(), "Valid token, No role");
         } catch (Exception e) {
             fail("Exception should not be thrown: " + e.getMessage());
         }
     }
 
-    @Sql(scripts={
+    @Sql(scripts = {
             "classpath:db/test-fixtures-commons.sql",
             "classpath:db/test-fixtures-role-controller.sql"
     })
@@ -75,9 +76,12 @@ class RoleControllerTest {
     @Test
     void getRolesWithValidTokenWithFixtures() {
         try {
-            List<String> roles = roleController.getRoles();
+            List<RBACRole> roles = roleController.getRoles();
             assertEquals(expectedRoles.length, roles.size(), "Roles number");
-            assertTrue(roles.containsAll(Arrays.asList(expectedRoles)), "Role list");
+            List<String> roleNames = roles.stream()
+                    .map(RBACRole::getName)
+                    .toList();
+            assertTrue(roleNames.containsAll(Arrays.asList(expectedRoles)), "Role list");
 
         } catch (Exception e) {
             fail("Exception should not be thrown: " + e.getMessage());
@@ -90,7 +94,7 @@ class RoleControllerTest {
         SecurityContextHolder.clearContext();
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () ->roleController.getRoles(),
+                () -> roleController.getRoles(),
                 "Invalid token throws exception"
         );
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
