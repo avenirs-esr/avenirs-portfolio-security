@@ -77,11 +77,11 @@ public class AccessControlController {
                                                               @RequestParam String method,
                                                               @RequestParam(required = false, name = "resourceId") UUID resourceId) {
         String login = securityDelegate.getAuthenticatedUserLogin();
-        log.trace("hasAccess, login: {} ", login);
+        log.trace("isAuthorized, login: {} ", login);
 
-        log.trace("hasAccess, uri: {} ", uri);
-        log.trace("hasAccess, method: {} ", method);
-        log.trace("hasAccess, resourceId: {} ", resourceId);
+        log.trace("isAuthorized, uri: {} ", uri);
+        log.trace("isAuthorized, method: {} ", method);
+        log.trace("isAuthorized, resourceId: {} ", resourceId);
 
 
         AccessControlResponse response = new AccessControlResponse()
@@ -92,23 +92,23 @@ public class AccessControlController {
         if (StringUtils.hasLength(uri) && StringUtils.hasLength(method)) {
             RBACActionRoute actionRoute = actionRouteService.getAllActionRoutesBySpecification(
                     RBACActionRouteSpecificationHelper.filterByURIAndMethod(uri, method.toLowerCase())).orElse(null);
-            log.trace("hasAccess, actionRoute: {} ", actionRoute);
+            log.trace("isAuthorized, actionRoute: {} ", actionRoute);
 
             if (actionRoute != null) {
 
                 RBACAction action = actionRoute.getAction();
-                log.trace("hasAccess, action: {}", action);
+                log.trace("isAuthorized, action: {}", action);
                 response.setActionName(action.getName());
 
                 boolean granted = accessControlService.isAuthorized(login, action.getId(), resourceId);
-                log.trace("hasAccess, granted: {}", granted);
+                log.trace("isAuthorized, granted: {}", granted);
 
                 response.setGranted(granted);
                 return response.isGranted() ? ResponseEntity.ok(response)
                         : ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
         }
-        log.trace("hasAccess, response: {}", response);
+        log.trace("isAuthorized, response: {}", response);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
     }
 
