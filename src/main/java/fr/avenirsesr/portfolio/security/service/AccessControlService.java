@@ -238,12 +238,12 @@ public class AccessControlService {
      * @return True if the principal has access to the resource.
      */
     public boolean isAuthorized(String login, UUID actionId, UUID resourceId) {
-        log.trace("hasAccess, login: {}", login);
-        log.trace("hasAccess, actionId: {}", actionId);
-        log.trace("hasAccess, resourceId: {}", resourceId);
+        log.trace("isAuthorized, login: {}", login);
+        log.trace("isAuthorized, actionId: {}", actionId);
+        log.trace("isAuthorized, resourceId: {}", resourceId);
 
         List<RBACPermission> requiredPermissions = this.fetchPermissions(actionId);
-        log.trace("hasAccess, requiredPermissions: {}", requiredPermissions);
+        log.trace("isAuthorized, requiredPermissions: {}", requiredPermissions);
 
         return checkGrantedPermissions(requiredPermissions, login, resourceId);
     }
