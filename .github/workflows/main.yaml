@@ -75,12 +75,12 @@ jobs:
               echo "Application failed to start after 10 attempts."
               exit 1
             fi
+
       - name: Load Test Data
         run: |
           echo "Loading test data..."
           psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f src/test/resources/db/load-test-fixtures.sql
-        env:
-          PGPASSWORD: $POSTGRES_PASSWORD
+      
 
       - name: Set up Python
         uses: actions/setup-python@v4
