@@ -80,7 +80,7 @@ jobs:
       - name: Load Test Data
         run: |
           echo "Loading test data..."
-          psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f src/test/resources/db/load-test-fixtures.sql
+          psql -h localhost -p 65432  -U $POSTGRES_USER -d $POSTGRES_DB -f src/test/resources/db/load-test-fixtures.sql
       
 
       - name: Set up Python
