@@ -84,9 +84,14 @@ public class AuthenticationService {
 	public String generateAuthorizeURL(String host, String code) {
 
 		String oidcAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, code);
-		log.trace("generateAuthorizeURL, host: {}", host);
-		log.trace("generateAuthorizeURL, code: {}", code);
-		log.debug("generateAuthorizeURL, oidcAuthorizeURL: {}", oidcAuthorizeURL);
+		if (log.isTraceEnabled()) {
+			String maskedCode = code == null ? "null" : "*".repeat(code.length());
+			String maskedOIDCAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, maskedCode);
+			log.trace("generateAuthorizeURL, host: {}", host);
+			log.trace("generateAuthorizeURL, code: {}", maskedCode);
+
+			log.trace("generateAuthorizeURL, oidcAuthorizeURL: {}", maskedOIDCAuthorizeURL);
+		}
 		return oidcAuthorizeURL;
 	}
 
@@ -101,7 +106,7 @@ public class AuthenticationService {
 		String oidcAccessTokenURL = String.format(oidcAccessTokenTemplate, login, password);
 
 		if (log.isDebugEnabled()) {
-			String maskedPassword = "*".repeat(password.length());
+			String maskedPassword = password == null ? "null": "*".repeat(password.length());
 			String maskedOIDCAccessTokenURL = String.format(oidcAccessTokenTemplate, login, maskedPassword);
 			log.debug("generateAccessTokenURL, maskedOIDCAccessTokenURL: {}", maskedOIDCAccessTokenURL);
 		}
@@ -146,12 +151,11 @@ public class AuthenticationService {
 	public String generateIntrospectURL(String token) {
 
 		String introspectURL = String.format(oidcProviderIntrospectURL, token);
-		if (log.isDebugEnabled()) {
+		if (log.isTraceEnabled()) {
 			String maskedIntrospectURL = String.format(oidcProviderIntrospectURL, token.substring(0, 4) + "****" + token.substring(token.length() - 4));
-			log.debug("generateIntrospectURL, maskedIntrospectURL: {}", maskedIntrospectURL);
+			log.trace("generateIntrospectURL, maskedIntrospectURL: {}", maskedIntrospectURL);
 		}
 
-		log.trace("generateIntrospectURL, introspectURL: {}", introspectURL);
 		return introspectURL;
 	}
 
