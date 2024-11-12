@@ -109,10 +109,9 @@ class LoginUser(HttpUser):
 
             with self.client.get("/access-control/authorize", params=params, headers=headers, catch_response=True) as response:
                 if response.status_code == expected_status:
-                    response.success()
                     print(f"Authorization returned {expected_status} as expected.")
                 else:
                     print("Unexpected status:", response.status_code, response.text)
-
+                response.success()
         else:
             print("Error: empty access token")
