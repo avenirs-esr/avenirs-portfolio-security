@@ -9,6 +9,7 @@ import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -68,6 +69,8 @@ public class SpringSecurityConfig {
     @Autowired
     private AuthenticationService authenticationService;
 
+    @Value("${management.actuator.health.path}")
+    private String actuatorHealth;
 
     @Bean
     SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -75,6 +78,7 @@ public class SpringSecurityConfig {
                 .securityMatcher(swaggerUIPath + "/**",
                         swaggerAPIDocPath + "/**",
                         login,
+                        actuatorHealth,
                         oidcCallback,
                         oidcRedirect)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -87,12 +91,11 @@ public class SpringSecurityConfig {
         return httpSecurity
                 .securityMatcher("/**")
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated()).addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    Filter casTokenAuthenticationFilter(){
+    Filter casTokenAuthenticationFilter() {
         return new CASTokenAuthenticationFilter(authenticationService);
     }
 
