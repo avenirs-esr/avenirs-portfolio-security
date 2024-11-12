@@ -50,6 +50,19 @@ jobs:
         run: |
           docker logs avenirs-cas
 
+      - name: Start Spring Boot Application
+        run: |
+          ./mvnw spring-boot:run &
+        env:
+          SPRING_PROFILES_ACTIVE: test
+
+      - name: Wait for Application to Start
+        run: |
+          until curl --silent --fail http://localhost:8080/actuator/health; do
+            echo "Waiting for the application to start..."
+            sleep 5
+          done
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -62,7 +75,7 @@ jobs:
 
       - name: Run Locust Load Test
         run: |
-                locust -f locustfile.py --headless -u 100 -r 10 --run-time 1m --html locust_report.html
+                locust -f locustfile.py --host=http://localhost:12000 --headless -u 100 -r 10 --run-time 1m --html locust_report.html
               
 
       - name: Upload Locust report
@@ -70,7 +83,12 @@ jobs:
         with:
             name: locust-report
             path: locust_report.html
-       
+
+      - name: Stop Spring Boot Application
+        run: |
+            pkill -f 'java -jar' || pkill -f 'org.springframework.boot.loader.JarLauncher'
+      
+
       - name: Publish reports
         uses: ./.github/actions/publish-to-gh-pages
         with:
