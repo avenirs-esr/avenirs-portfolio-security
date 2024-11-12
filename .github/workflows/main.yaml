@@ -51,7 +51,7 @@ jobs:
           docker logs avenirs-cas
 
       - name: Run Locust Load Test
-        uses: lucperkins/locust-action@v1
+        uses: lucperkins/locust-action@v4
         with:
           locustfile: "locustfile.py"
           users: 100
