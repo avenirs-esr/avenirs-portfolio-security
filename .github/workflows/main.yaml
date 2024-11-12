@@ -18,6 +18,7 @@ jobs:
       LDAP_ADMIN: ${{ secrets.LDAP_ADMIN }}
       LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      AVENIRS_APP_URL: http://localhost:12000
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -94,7 +95,7 @@ jobs:
 
       - name: Run Locust Load Test
         run: |
-                locust -f locustfile.py --host=http://localhost:12000 --headless -u 100 -r 10 --run-time 1m --html locust_report.html
+                locust -f locustfile.py --host=$AVENIRS_APP_URL --headless -u 100 -r 10 --run-time 1m --html locust_report.html
               
 
       - name: Upload Locust report
