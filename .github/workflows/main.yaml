@@ -49,6 +49,20 @@ jobs:
         if: false  
         run: |
           docker logs avenirs-cas
+
+      - name: Run Locust Load Test
+        uses: lucperkins/locust-action@v1
+        with:
+          locustfile: "locustfile.py"
+          users: 100
+          spawn_rate: 10
+          run_time: "1m"                    
+
+      - name: Upload Locust report
+        uses: actions/upload-artifact@v2
+        with:
+          name: locust-report
+          path: "locust_report.html"
        
       - name: Publish reports
         uses: ./.github/actions/publish-to-gh-pages
