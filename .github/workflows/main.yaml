@@ -56,10 +56,10 @@ jobs:
           locustfile: "locustfile.py"
           users: 100
           spawn_rate: 10
-          run_time: "1m"                    
+          run_time: "1m"
 
       - name: Upload Locust report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: locust-report
           path: "locust_report.html"
