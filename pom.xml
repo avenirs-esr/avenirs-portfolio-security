@@ -125,6 +125,7 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -165,9 +166,11 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
+
                 <configuration>
                     <changeLogFile>
-                        src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
+                        src/main/resources/db/changelog/db.changelog-master.xml
+                    </changeLogFile>
                 </configuration>
             </plugin>
 
