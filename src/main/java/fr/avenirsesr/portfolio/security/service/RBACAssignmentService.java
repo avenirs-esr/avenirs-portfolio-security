@@ -46,7 +46,7 @@ public class RBACAssignmentService {
 	}
 
 	/**
-	 * Gives all the assignments associated to a principal.
+	 * Gives an assignment by its id.
 	 *
 	 * @param assignmentId The id of the assignment to retrieve.
 	 * @return The  Optional with the assignment if found.
