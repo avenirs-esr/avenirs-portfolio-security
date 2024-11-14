@@ -2,39 +2,41 @@ databaseChangeLog:
   - changeSet:
       id: "16"
       author: Deman
-      comment: Association context/structures  
       changes:
         - createTable:
-           tableName: context_structure
-           columns:             
-           - column:
-               name: id_context
-               type: UUID
-               constraints:
-                   nullable:  false
-                   foreignKeyName: context_structure_id_context_fk 
-                   referencedTableName: context
-                   referencedColumnNames: id
-                   onDelete: CASCADE
-                   deferrable: false               
-           - column:
-               name: id_structure
-               type: UUID
-               constraints:
-                   nullable:  false
-                   foreignKeyName: context_structure_id_structure_fk 
-                   referencedTableName: structure
-                   referencedColumnNames: id
-                   onDelete: CASCADE
-                   deferrable: false
+            tableName: context_structure
+            columns:
+              - column:
+                  name: id_context
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_structure
+                  type: UUID
+                  constraints:
+                    nullable: false
         - addPrimaryKey:
-           tableName:  context_structure
-           columnNames: id_context, id_structure    
-           constraintName: context_structure_pk  
+            tableName: context_structure
+            columnNames: id_context, id_structure
+            constraintName: context_structure_pk
+        - addForeignKeyConstraint:
+            baseTableName: context_structure
+            baseColumnNames: id_context
+            constraintName: context_structure_id_context_fk
+            referencedTableName: context
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: context_structure
+            baseColumnNames: id_structure
+            constraintName: context_structure_id_structure_fk
+            referencedTableName: structure
+            referencedColumnNames: id
+            onDelete: CASCADE
         - sql:
-           dbms:  'postgresql'
-           endDelimiter:  \nGO
-           splitStatements:  true
-           sql:  ALTER TABLE context_structure OWNER TO ${avenirs.admin.role}
-           stripComments:  true
-       
+            dbms: 'postgresql'
+            endDelimiter: \nGO
+            splitStatements: true
+            sql: ALTER TABLE context_structure OWNER TO ${avenirs.admin.role}
+            stripComments: true

@@ -2,39 +2,41 @@ databaseChangeLog:
   - changeSet:
       id: "17"
       author: Deman
-      comment: Association principal/structures  
       changes:
         - createTable:
-           tableName: principal_structure
-           columns:             
-           - column:
-               name: id_principal
-               type: UUID
-               constraints:
-                   nullable:  false
-                   foreignKeyName: principal_structure_id_principal_fk 
-                   referencedTableName: principal
-                   referencedColumnNames: id
-                   onDelete: CASCADE
-                   deferrable: false               
-           - column:
-               name: id_structure
-               type: UUID
-               constraints:
-                   nullable:  false
-                   foreignKeyName: principal_structure_id_structure_fk 
-                   referencedTableName: structure
-                   referencedColumnNames: id
-                   onDelete: CASCADE
-                   deferrable: false
+            tableName: principal_structure
+            columns:
+              - column:
+                  name: id_principal
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_structure
+                  type: UUID
+                  constraints:
+                    nullable: false
         - addPrimaryKey:
-           tableName:  principal_structure
-           columnNames: id_principal, id_structure    
-           constraintName: principal_structure_pk  
+            tableName: principal_structure
+            columnNames: id_principal, id_structure
+            constraintName: principal_structure_pk
+        - addForeignKeyConstraint:
+            baseTableName: principal_structure
+            baseColumnNames: id_principal
+            constraintName: principal_structure_id_principal_fk
+            referencedTableName: principal
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: principal_structure
+            baseColumnNames: id_structure
+            constraintName: principal_structure_id_structure_fk
+            referencedTableName: structure
+            referencedColumnNames: id
+            onDelete: CASCADE
         - sql:
-           dbms:  'postgresql'
-           endDelimiter:  \nGO
-           splitStatements:  true
-           sql:  ALTER TABLE principal_structure OWNER TO ${avenirs.admin.role}
-           stripComments:  true
-       
+            dbms: 'postgresql'
+            endDelimiter: \nGO
+            splitStatements: true
+            sql: ALTER TABLE principal_structure OWNER TO ${avenirs.admin.role}
+            stripComments: true
