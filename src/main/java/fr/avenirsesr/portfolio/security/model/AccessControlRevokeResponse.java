@@ -37,4 +37,7 @@ public class AccessControlRevokeResponse {
 
 	/** Message if an error occurs. */
 	private String error;
+
+	/** Assignment ID. */
+	private RBACAssignmentPK assignmentId;
 }

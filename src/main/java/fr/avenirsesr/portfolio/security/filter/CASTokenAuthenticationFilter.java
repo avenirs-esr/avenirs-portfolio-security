@@ -49,17 +49,19 @@ public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         log.trace("doFilterInternal, requested end point: {}", request.getRequestURI());
         String token = getTokenFromRequest(request);
-
+        OIDCIntrospectResponse introspectResponse;
         if (StringUtils.hasText(token)) {
             log.trace("doFilterInternal hasText(token) is true");
 
-            OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);
+           introspectResponse = authenticationService.introspectAccessToken(token);
             log.trace("doFilterInternal introspectResponse: {}", introspectResponse);
 
             if (introspectResponse.isActive()) {
                 log.trace("doFilterInternal introspectResponse is active, updating SecurityContext with new authentication");
                 String username = introspectResponse.getUniqueSecurityName();
                 SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, token, new ArrayList<>()));
+            } else {
+                log.trace("doFilterInternal introspectResponse is not active");
             }
         }
 

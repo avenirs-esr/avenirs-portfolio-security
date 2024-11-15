@@ -1,9 +1,11 @@
 package fr.avenirsesr.portfolio.security.service;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import fr.avenirsesr.portfolio.security.model.RBACAssignmentPK;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class RBACAssignmentService {
-	
+
 	@Autowired
 	private RBACAssignmentRepository assignmentRepository;
 	
@@ -29,7 +31,7 @@ public class RBACAssignmentService {
 	@Transactional(readOnly = true)
 	public List<RBACAssignment> getAllAssignments() {
 		log.trace("getAllAssignments");
-		return this.assignmentRepository.findAll();
+		return assignmentRepository.findAll();
 	}
 	
 	
@@ -43,6 +45,7 @@ public class RBACAssignmentService {
 	public List<RBACAssignment> getAllAssignmentsBySpecification(Specification<RBACAssignment> specification) {
 		log.trace("getAllAssignmentsByPredicate, specification: {}", specification);
 		return assignmentRepository.findAll(specification);
+
 	}
 
 	/**
@@ -51,6 +54,7 @@ public class RBACAssignmentService {
 	 * @param assignmentId The id of the assignment to retrieve.
 	 * @return The  Optional with the assignment if found.
 	 */
+	@SuppressWarnings("unused")
 	@Transactional(readOnly = true)
 	public Optional<RBACAssignment> getAssignmentsById(RBACAssignmentPK assignmentId) {
 		log.trace("getAssignmentsById, assignmentId: {}", assignmentId);

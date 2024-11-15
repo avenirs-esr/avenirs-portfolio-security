@@ -6,8 +6,10 @@ import fr.avenirsesr.portfolio.security.model.RBACRole;
 import fr.avenirsesr.portfolio.security.repository.RBACAssignmentSpecificationHelper;
 import fr.avenirsesr.portfolio.security.service.RBACAssignmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,13 +59,15 @@ public class RoleController {
 
         log.trace("getRoles, login: {}", login);
 
-        List<RBACAssignment> assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(login));
+
+            List<RBACAssignment> assignments = assignmentService.getAllAssignmentsBySpecification(RBACAssignmentSpecificationHelper.filterByPrincipal(login));
 
         List<RBACRole> roles = assignments.stream()
                 .map(RBACAssignment::getRole)
                 .toList();
         log.trace("Role for {}: {}", login, roles);
         return roles;
+
 
     }
 

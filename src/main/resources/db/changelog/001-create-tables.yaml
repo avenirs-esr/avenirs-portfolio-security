@@ -446,11 +446,13 @@ databaseChangeLog:
                   type: UUID
                   constraints:
                     nullable: false
+                    unique: false
               - column:
                   name: id_context
                   type: UUID
                   constraints:
                     nullable: false
+                    unique: false
         - addPrimaryKey:
             tableName: assignment
             columnNames: id_role, id_principal, id_scope, id_context

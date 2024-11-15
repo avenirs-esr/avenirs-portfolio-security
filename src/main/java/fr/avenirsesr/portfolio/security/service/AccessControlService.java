@@ -199,15 +199,16 @@ public class AccessControlService {
         Principal principal = principalService.getPrincipalByLogin(revokeRequest.getLogin())
                 .orElseThrow(() -> new EntityNotFoundException("Principal not found, UID: " + revokeRequest.getLogin()));
 
-        RBACAssignmentPK key = new RBACAssignmentPK()
+        RBACAssignmentPK assignmentId = new RBACAssignmentPK()
                 .setPrincipal(principal.getId())
                 .setContext(revokeRequest.getContextId())
                 .setScope(revokeRequest.getScopeId())
                 .setRole(revokeRequest.getRoleId());
 
-        assignmentService.deleteAssignment(key);
+        assignmentService.deleteAssignment(assignmentId);
         return new AccessControlRevokeResponse()
                 .setLogin(revokeRequest.getLogin())
+                .setAssignmentId(assignmentId)
                 .setRevoked(true);
     }
 

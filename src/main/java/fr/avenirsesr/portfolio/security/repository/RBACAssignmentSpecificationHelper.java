@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.repository;
 import java.util.Arrays;
 import java.util.UUID;
 
+import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -13,10 +14,6 @@ import fr.avenirsesr.portfolio.security.model.RBACResource;
 import fr.avenirsesr.portfolio.security.model.RBACResource_;
 import fr.avenirsesr.portfolio.security.model.RBACScope;
 import fr.avenirsesr.portfolio.security.model.RBACScope_;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
 
 /**
  * Assignment specification for Assignment model. Used to make queries based on
@@ -34,6 +31,10 @@ public abstract class RBACAssignmentSpecificationHelper {
 	 */
 	public static Specification<RBACAssignment> filterByPrincipal(String login) {
 		return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
+			root.fetch(RBACAssignment_.principal, JoinType.LEFT);
+			root.fetch(RBACAssignment_.role, JoinType.LEFT);
+			root.fetch(RBACAssignment_.scope, JoinType.LEFT);
+			root.fetch(RBACAssignment_.context, JoinType.LEFT);
 			return criteriaBuilder.equal(root.get(RBACAssignment_.principal).get(Principal_.login), login);
 		};
 	}

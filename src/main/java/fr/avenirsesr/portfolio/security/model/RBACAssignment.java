@@ -55,15 +55,15 @@ public class RBACAssignment {
 	@JoinColumn(name="id_principal", referencedColumnName = "id")
 	private Principal principal;
 	
-	/** The scope, which determine the resources involved in the assignment. */
+	/** The scope, which determines the resources involved in the assignment. */
 	@Id
-	@ManyToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id_scope", referencedColumnName = "id")
 	private RBACScope scope;
 	
 	/** The context, which determines some limits of the assignment. */
 	@Id
-	@ManyToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id_context", referencedColumnName = "id")
 	private RBACContext context;
 	
