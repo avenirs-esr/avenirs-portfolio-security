@@ -29,7 +29,7 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
 
 
     @task
-    def login_and_fetch_roles(self):
+    def run_load_test(self):
 
         self.executed_once = True
         login_payload = {
@@ -37,28 +37,24 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
             "password": "Azerty123"
         }
         response = self.client.post("/oidc/login", json=login_payload)
-        print("!!!!!!!!!!!!! DEBUT")
-        logger.debug("debug message")
-        logger.info("info message")
-        print("!!!!!!!!!!!!! FIN")
+
 
         if response.status_code == 200:
             self.token = response.text
             logger.debug("Access token: %s",  "null" if not self.token else f"{self.token[:4]}(...)")
-            logger.info("Access token: %s",  "null" if not self.token else f"{self.token[:4]}(...)")
 
             grant_response = self.grant_access()
             self.fetch_roles()
 
-            # self.is_authorized(200)
+            self.is_authorized(200)
 
             if grant_response and grant_response.status_code == 200:
                 self.revoke_access(grant_response.json())
 
-            # self.fetch_roles()
-            # self.is_authorized(403)
+            self.fetch_roles()
+            self.is_authorized(403)
         else:
-            print("Error:", response.status_code, response.text)
+            logger.error("Error during authentication, status code: %s, response: %s", response.status_code, response.text)
 
     def fetch_roles(self):
         if self.token:
@@ -69,13 +65,12 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
 
             if response.status_code == 200:
                 # print("Roles:", response.json())
-                print("get /roles: OK")
+                logger.debug("get /roles: OK")
                 # print("Roles:", json.dumps(response.json(), indent=4))
             else:
-                print ("!!!! get /roles error !!!!")
-                print("Error while fetching roles:", response.status_code, response.text)
+                logger.error("Error while fetching roles, status code: %s, response: %s", response.status_code, response.text)
         else:
-            print("Error: No access token")
+            logger.error("Error: No access token")
 
     def grant_access(self):
         if self.token:
@@ -96,13 +91,13 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
             response = self.client.post("/access-control/grant", json=grant_payload, headers=headers)
 
             if response.status_code == 200:
-                print("FILE Access granted:", response.json())
+                logger.debug("Access granted, response:", response.json())
             else:
-                print("Error while granting access:", response.status_code, response.text)
+                logger.error("Error while granting access, status code: %s, response: %s", response.status_code, response.text)
 
             return  response
         else:
-            print("Error: empty access token")
+            logger.error("Error: empty access token")
             return None
 
 
@@ -118,15 +113,14 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
                 "scopeId": grant_response["assignmentId"]["scope"],
                 "contextId": grant_response["assignmentId"]["context"]
             }
-            print("FILE Revoking access, contextId: ", grant_response["assignmentId"]["context"], "scopeId",  grant_response["assignmentId"]["scope"])
             response = self.client.delete("/access-control/grant", json=revoke_payload, headers=headers)
 
             if response.status_code == 200:
-                print("Access revoked:", response.json())
+                logger.debug("Access revoked: %s", response.json())
             else:
-                print("Error while revoking access:", response.status_code, response.text)
+                logger.Error("Error while revoking access, status code: %s, response: %s", response.status_code, response.text)
         else:
-            print("Error: empty access token")
+            logger.error("Error: empty access token")
 
     def is_authorized(self, expected_status=200):
         if self.token:
@@ -141,9 +135,9 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
 
             with self.client.get("/access-control/authorize", params=params, headers=headers, catch_response=True) as response:
                 if response.status_code == expected_status:
-                    print(f"Authorization returned {expected_status} as expected.")
+                    logger.debug("Authorization returned %s as expected.", expected_status)
+                    response.success()
                 else:
-                    print("Unexpected status:", response.status_code, response.text)
-                response.success()
+                    logger.error("Authorization, unexpected status: %s, response: %s", response.status_code, response.text)
         else:
-            print("Error: empty access token")
+            logger.error("Error: empty access token")
