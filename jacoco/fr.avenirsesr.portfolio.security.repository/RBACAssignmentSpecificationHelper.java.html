@@ -3,6 +3,7 @@
 import java.util.Arrays;
 import java.util.UUID;
 
+import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -13,17 +14,13 @@ import fr.avenirsesr.portfolio.security.model.RBACResource;
 import fr.avenirsesr.portfolio.security.model.RBACResource_;
 import fr.avenirsesr.portfolio.security.model.RBACScope;
 import fr.avenirsesr.portfolio.security.model.RBACScope_;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
 
 /**
  * Assignment specification for Assignment model. Used to make queries based on
  * predicates.
  */
-<span class="fc" id="L25">@Slf4j</span>
-<span class="nc" id="L26">public abstract class RBACAssignmentSpecificationHelper {</span>
+<span class="fc" id="L22">@Slf4j</span>
+<span class="nc" id="L23">public abstract class RBACAssignmentSpecificationHelper {</span>
 
 	/**
 	 * Specification to generate predicate to select the assignments associated to a
@@ -33,8 +30,12 @@ import jakarta.persistence.criteria.Root;
 	 * @return The assignments for the principal.
 	 */
 	public static Specification&lt;RBACAssignment&gt; filterByPrincipal(String login) {
-<span class="fc" id="L36">		return (Root&lt;RBACAssignment&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
-<span class="fc" id="L37">			return criteriaBuilder.equal(root.get(RBACAssignment_.principal).get(Principal_.login), login);</span>
+<span class="fc" id="L33">		return (Root&lt;RBACAssignment&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
+<span class="fc" id="L34">			root.fetch(RBACAssignment_.principal, JoinType.LEFT);</span>
+<span class="fc" id="L35">			root.fetch(RBACAssignment_.role, JoinType.LEFT);</span>
+<span class="fc" id="L36">			root.fetch(RBACAssignment_.scope, JoinType.LEFT);</span>
+<span class="fc" id="L37">			root.fetch(RBACAssignment_.context, JoinType.LEFT);</span>
+<span class="fc" id="L38">			return criteriaBuilder.equal(root.get(RBACAssignment_.principal).get(Principal_.login), login);</span>
 		};
 	}
 
@@ -48,17 +49,17 @@ import jakarta.persistence.criteria.Root;
 	 */
 
 	public static Specification&lt;RBACAssignment&gt; filterByPrincipalAndResources(String login, UUID... resourceIds) {
-<span class="fc" id="L51">		return (Root&lt;RBACAssignment&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
+<span class="fc" id="L52">		return (Root&lt;RBACAssignment&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder) -&gt; {</span>
 
-<span class="fc" id="L53">			log.trace(&quot;filterByPrincipalAndResources, login: {}&quot;, login);</span>
-<span class="fc" id="L54">			log.trace(&quot;filterByPrincipalAndResources, resourceIds: {}&quot;, Arrays.toString(resourceIds));</span>
+<span class="fc" id="L54">			log.trace(&quot;filterByPrincipalAndResources, login: {}&quot;, login);</span>
+<span class="fc" id="L55">			log.trace(&quot;filterByPrincipalAndResources, resourceIds: {}&quot;, Arrays.toString(resourceIds));</span>
 
-<span class="fc" id="L56">			Join&lt;RBACAssignment, RBACScope&gt; joinScope = root.join(RBACAssignment_.scope);</span>
-<span class="fc" id="L57">			Join&lt;RBACScope, RBACResource&gt; joinResource = joinScope.join(RBACScope_.resources);</span>
+<span class="fc" id="L57">			Join&lt;RBACAssignment, RBACScope&gt; joinScope = root.join(RBACAssignment_.scope);</span>
+<span class="fc" id="L58">			Join&lt;RBACScope, RBACResource&gt; joinResource = joinScope.join(RBACScope_.resources);</span>
 
-<span class="fc" id="L59">			return criteriaBuilder.and(</span>
-<span class="fc" id="L60">			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),</span>
-<span class="fc" id="L61">			    joinResource.get(RBACResource_.id).in((Object[]) resourceIds)</span>
+<span class="fc" id="L60">			return criteriaBuilder.and(</span>
+<span class="fc" id="L61">			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),</span>
+<span class="fc" id="L62">			    joinResource.get(RBACResource_.id).in((Object[]) resourceIds)</span>
 			);
 		};
 	}

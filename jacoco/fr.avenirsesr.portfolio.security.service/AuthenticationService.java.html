@@ -84,10 +84,15 @@ import io.jsonwebtoken.Claims;
 	public String generateAuthorizeURL(String host, String code) {
 
 <span class="fc" id="L86">		String oidcAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, code);</span>
-<span class="fc" id="L87">		log.trace(&quot;generateAuthorizeURL, host: {}&quot;, host);</span>
-<span class="fc" id="L88">		log.trace(&quot;generateAuthorizeURL, code: {}&quot;, code);</span>
-<span class="fc" id="L89">		log.debug(&quot;generateAuthorizeURL, oidcAuthorizeURL: {}&quot;, oidcAuthorizeURL);</span>
-<span class="fc" id="L90">		return oidcAuthorizeURL;</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">		if (log.isTraceEnabled()) {</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">			String maskedCode = code == null ? &quot;null&quot; : &quot;*&quot;.repeat(code.length());</span>
+<span class="fc" id="L89">			String maskedOIDCAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, maskedCode);</span>
+<span class="fc" id="L90">			log.trace(&quot;generateAuthorizeURL, host: {}&quot;, host);</span>
+<span class="fc" id="L91">			log.trace(&quot;generateAuthorizeURL, code: {}&quot;, maskedCode);</span>
+
+<span class="fc" id="L93">			log.trace(&quot;generateAuthorizeURL, oidcAuthorizeURL: {}&quot;, maskedOIDCAuthorizeURL);</span>
+		}
+<span class="fc" id="L95">		return oidcAuthorizeURL;</span>
 	}
 
 	/**
@@ -98,14 +103,14 @@ import io.jsonwebtoken.Claims;
 	 * @return The authorize URL.
 	  */
 	protected String generateAccessTokenURL(String login, String password) {
-<span class="fc" id="L101">		String oidcAccessTokenURL = String.format(oidcAccessTokenTemplate, login, password);</span>
+<span class="fc" id="L106">		String oidcAccessTokenURL = String.format(oidcAccessTokenTemplate, login, password);</span>
 
-<span class="pc bpc" id="L103" title="1 of 2 branches missed.">		if (log.isDebugEnabled()) {</span>
-<span class="fc" id="L104">			String maskedPassword = &quot;*&quot;.repeat(password.length());</span>
-<span class="fc" id="L105">			String maskedOIDCAccessTokenURL = String.format(oidcAccessTokenTemplate, login, maskedPassword);</span>
-<span class="fc" id="L106">			log.debug(&quot;generateAccessTokenURL, maskedOIDCAccessTokenURL: {}&quot;, maskedOIDCAccessTokenURL);</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">		if (log.isDebugEnabled()) {</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">			String maskedPassword = password == null ? &quot;null&quot;: &quot;*&quot;.repeat(password.length());</span>
+<span class="fc" id="L110">			String maskedOIDCAccessTokenURL = String.format(oidcAccessTokenTemplate, login, maskedPassword);</span>
+<span class="fc" id="L111">			log.debug(&quot;generateAccessTokenURL, maskedOIDCAccessTokenURL: {}&quot;, maskedOIDCAccessTokenURL);</span>
 		}
-<span class="fc" id="L108">		return oidcAccessTokenURL;</span>
+<span class="fc" id="L113">		return oidcAccessTokenURL;</span>
 	}
 
 	/**
@@ -116,9 +121,9 @@ import io.jsonwebtoken.Claims;
 	  */
 	public String generateServiceURL(String host) {
 
-<span class="fc" id="L119">		String serviceURL = String.format(serviceTemplate, host);</span>
-<span class="fc" id="L120">		log.debug(&quot;generateServiceURL, serviceURL: {}&quot;, serviceURL);</span>
-<span class="fc" id="L121">		return serviceURL;</span>
+<span class="fc" id="L124">		String serviceURL = String.format(serviceTemplate, host);</span>
+<span class="fc" id="L125">		log.debug(&quot;generateServiceURL, serviceURL: {}&quot;, serviceURL);</span>
+<span class="fc" id="L126">		return serviceURL;</span>
 	}
 
 	/**
@@ -129,12 +134,12 @@ import io.jsonwebtoken.Claims;
 	 */
 	public String generateProfileURL(String token) {
 
-<span class="fc" id="L132">		String profileURL = String.format(oidcProviderProfileURL, token);</span>
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">		if (log.isDebugEnabled()) {</span>
-<span class="fc" id="L134">			String maskedProfileURL = String.format(oidcProviderProfileURL, token.substring(0, 4) + &quot;****&quot; + token.substring(token.length() - 4));</span>
-<span class="fc" id="L135">			log.debug(&quot;generateProfileURL, maskedProfileURL: {}&quot;, maskedProfileURL);</span>
+<span class="fc" id="L137">		String profileURL = String.format(oidcProviderProfileURL, token);</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">		if (log.isDebugEnabled()) {</span>
+<span class="fc" id="L139">			String maskedProfileURL = String.format(oidcProviderProfileURL, token.substring(0, 4) + &quot;****&quot; + token.substring(token.length() - 4));</span>
+<span class="fc" id="L140">			log.debug(&quot;generateProfileURL, maskedProfileURL: {}&quot;, maskedProfileURL);</span>
 		}
-<span class="fc" id="L137">		return profileURL;</span>
+<span class="fc" id="L142">		return profileURL;</span>
 	}
 
 	/**
@@ -145,14 +150,13 @@ import io.jsonwebtoken.Claims;
 	 */
 	public String generateIntrospectURL(String token) {
 
-<span class="fc" id="L148">		String introspectURL = String.format(oidcProviderIntrospectURL, token);</span>
-<span class="pc bpc" id="L149" title="1 of 2 branches missed.">		if (log.isDebugEnabled()) {</span>
-<span class="fc" id="L150">			String maskedIntrospectURL = String.format(oidcProviderIntrospectURL, token.substring(0, 4) + &quot;****&quot; + token.substring(token.length() - 4));</span>
-<span class="fc" id="L151">			log.debug(&quot;generateIntrospectURL, maskedIntrospectURL: {}&quot;, maskedIntrospectURL);</span>
+<span class="fc" id="L153">		String introspectURL = String.format(oidcProviderIntrospectURL, token);</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">		if (log.isTraceEnabled()) {</span>
+<span class="fc" id="L155">			String maskedIntrospectURL = String.format(oidcProviderIntrospectURL, token.substring(0, 4) + &quot;****&quot; + token.substring(token.length() - 4));</span>
+<span class="fc" id="L156">			log.trace(&quot;generateIntrospectURL, maskedIntrospectURL: {}&quot;, maskedIntrospectURL);</span>
 		}
 
-<span class="fc" id="L154">		log.trace(&quot;generateIntrospectURL, introspectURL: {}&quot;, introspectURL);</span>
-<span class="fc" id="L155">		return introspectURL;</span>
+<span class="fc" id="L159">		return introspectURL;</span>
 	}
 
 	/**
@@ -163,19 +167,19 @@ import io.jsonwebtoken.Claims;
 	 */
 	public OIDCProfileResponse profile(String token) {
 
-<span class="fc" id="L166">		log.trace(&quot;profile&quot;);</span>
+<span class="fc" id="L170">		log.trace(&quot;profile&quot;);</span>
 
-<span class="fc" id="L168">OIDCProfileResponse profileResponse = restClient.post()</span>
-<span class="fc" id="L169">				.uri(generateProfileURL(token))</span>
-<span class="fc" id="L170">				.header(&quot;Authorization&quot;, basicAuthentication())</span>
-<span class="fc" id="L171">				.contentType(MediaType.APPLICATION_FORM_URLENCODED)</span>
-<span class="fc" id="L172">				.accept(MediaType.APPLICATION_JSON)</span>
-<span class="fc" id="L173">				.retrieve()</span>
-<span class="fc" id="L174">				.body(OIDCProfileResponse.class);</span>
+<span class="fc" id="L172">OIDCProfileResponse profileResponse = restClient.post()</span>
+<span class="fc" id="L173">				.uri(generateProfileURL(token))</span>
+<span class="fc" id="L174">				.header(&quot;Authorization&quot;, basicAuthentication())</span>
+<span class="fc" id="L175">				.contentType(MediaType.APPLICATION_FORM_URLENCODED)</span>
+<span class="fc" id="L176">				.accept(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L177">				.retrieve()</span>
+<span class="fc" id="L178">				.body(OIDCProfileResponse.class);</span>
 
-<span class="fc" id="L176">		log.debug(&quot;profile, profileResponse: {}&quot;, profileResponse);</span>
+<span class="fc" id="L180">		log.debug(&quot;profile, profileResponse: {}&quot;, profileResponse);</span>
 
-<span class="fc" id="L178">		return profileResponse;</span>
+<span class="fc" id="L182">		return profileResponse;</span>
 	}
 
 	/**
@@ -186,20 +190,20 @@ import io.jsonwebtoken.Claims;
 	 */
 	public OIDCIntrospectResponse introspectAccessToken(String token) {
 
-<span class="fc" id="L189">		log.debug(&quot;introspectAccessToken&quot;);</span>
+<span class="fc" id="L193">		log.debug(&quot;introspectAccessToken&quot;);</span>
 
-<span class="fc" id="L191">		OIDCIntrospectResponse introspectResponse = restClient</span>
-<span class="fc" id="L192">				.post()</span>
-<span class="fc" id="L193">				.uri(generateIntrospectURL(token))</span>
-<span class="fc" id="L194">				.header(&quot;Authorization&quot;, basicAuthentication())</span>
-<span class="fc" id="L195">				.contentType(MediaType.APPLICATION_FORM_URLENCODED)</span>
-<span class="fc" id="L196">				.accept(MediaType.APPLICATION_JSON)</span>
-<span class="fc" id="L197">				.retrieve()</span>
-<span class="fc" id="L198">				.body(OIDCIntrospectResponse.class);</span>
+<span class="fc" id="L195">		OIDCIntrospectResponse introspectResponse = restClient</span>
+<span class="fc" id="L196">				.post()</span>
+<span class="fc" id="L197">				.uri(generateIntrospectURL(token))</span>
+<span class="fc" id="L198">				.header(&quot;Authorization&quot;, basicAuthentication())</span>
+<span class="fc" id="L199">				.contentType(MediaType.APPLICATION_FORM_URLENCODED)</span>
+<span class="fc" id="L200">				.accept(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L201">				.retrieve()</span>
+<span class="fc" id="L202">				.body(OIDCIntrospectResponse.class);</span>
 
-<span class="fc" id="L200">		log.debug(&quot;introspect, introspectResponse: {}&quot;, introspectResponse);</span>
+<span class="fc" id="L204">		log.debug(&quot;introspect, introspectResponse: {}&quot;, introspectResponse);</span>
 
-<span class="fc" id="L202">		return introspectResponse;</span>
+<span class="fc" id="L206">		return introspectResponse;</span>
 	}
 
 	/**
@@ -212,27 +216,27 @@ import io.jsonwebtoken.Claims;
 	public Optional&lt;OIDCAccessTokenResponse&gt; getAccessToken(String login, String password) {
 		try {
 
-<span class="fc" id="L215">			String query = generateAccessTokenURL(login, password);</span>
-<span class="fc" id="L216">			OIDCAccessTokenResponse response = restClient.post().uri(query).retrieve()</span>
-<span class="fc" id="L217">					.body(OIDCAccessTokenResponse.class);</span>
+<span class="fc" id="L219">			String query = generateAccessTokenURL(login, password);</span>
+<span class="fc" id="L220">			OIDCAccessTokenResponse response = restClient.post().uri(query).retrieve()</span>
+<span class="fc" id="L221">					.body(OIDCAccessTokenResponse.class);</span>
 
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">			if (response == null) {</span>
-<span class="nc" id="L220">				return Optional.empty();</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">			if (response == null) {</span>
+<span class="nc" id="L224">				return Optional.empty();</span>
 			}
 
-<span class="fc" id="L223">			final Optional&lt;Claims&gt; claims = this.jwtService.parseAndCheckSignature(response);</span>
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">			if (claims.isEmpty()) {</span>
-<span class="nc" id="L225">				log.error(&quot;Invalid access token response: {}&quot;, response);</span>
-<span class="nc" id="L226">				return Optional.empty();</span>
+<span class="fc" id="L227">			final Optional&lt;Claims&gt; claims = this.jwtService.parseAndCheckSignature(response);</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">			if (claims.isEmpty()) {</span>
+<span class="nc" id="L229">				log.error(&quot;Invalid access token response: {}&quot;, response);</span>
+<span class="nc" id="L230">				return Optional.empty();</span>
 			}
 			
-<span class="fc" id="L229">			log.trace(&quot;Claims: {}&quot;, claims.get());</span>
-<span class="fc" id="L230">			response.setClaims(new HashMap&lt;&gt;(claims.get()));</span>
-<span class="fc" id="L231">			return Optional.of(response);</span>
-<span class="fc" id="L232">		} catch (HttpClientErrorException e) {</span>
-<span class="fc" id="L233">			log.error(&quot;getAccessToken, error while retrieving access token for {}: {}&quot;, login,</span>
-<span class="fc" id="L234">					+e.getStatusCode().value());</span>
-<span class="fc" id="L235">			return Optional.empty();</span>
+<span class="fc" id="L233">			log.trace(&quot;Claims: {}&quot;, claims.get());</span>
+<span class="fc" id="L234">			response.setClaims(new HashMap&lt;&gt;(claims.get()));</span>
+<span class="fc" id="L235">			return Optional.of(response);</span>
+<span class="fc" id="L236">		} catch (HttpClientErrorException e) {</span>
+<span class="fc" id="L237">			log.error(&quot;getAccessToken, error while retrieving access token for {}: {}&quot;, login,</span>
+<span class="fc" id="L238">					+e.getStatusCode().value());</span>
+<span class="fc" id="L239">			return Optional.empty();</span>
 		}
 	}
 
@@ -243,16 +247,16 @@ import io.jsonwebtoken.Claims;
 	 * @return The basic authentication header.
 	 */
 	private String basicAuthentication() {
-<span class="fc bfc" id="L246" title="All 2 branches covered.">		if (basicAuthenticationHeader == null) {</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">		if (basicAuthenticationHeader == null) {</span>
 
-<span class="fc" id="L248">			log.trace(&quot;basicAuthentication generating authentication header. &quot;);</span>
-<span class="fc" id="L249">			final String auth = clientId + &quot;:&quot; + clientSecret;</span>
+<span class="fc" id="L252">			log.trace(&quot;basicAuthentication generating authentication header. &quot;);</span>
+<span class="fc" id="L253">			final String auth = clientId + &quot;:&quot; + clientSecret;</span>
 
-<span class="fc" id="L251">			final byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.US_ASCII));</span>
-<span class="fc" id="L252">			basicAuthenticationHeader = &quot;Basic &quot; + new String(encodedAuth);</span>
+<span class="fc" id="L255">			final byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.US_ASCII));</span>
+<span class="fc" id="L256">			basicAuthenticationHeader = &quot;Basic &quot; + new String(encodedAuth);</span>
 		}
-<span class="fc" id="L254">		log.trace(&quot;basicAuthentication, basicAuthenticationHeader: {}&quot;, basicAuthenticationHeader);</span>
-<span class="fc" id="L255">		return basicAuthenticationHeader;</span>
+<span class="fc" id="L258">		log.trace(&quot;basicAuthentication, basicAuthenticationHeader: {}&quot;, basicAuthenticationHeader);</span>
+<span class="fc" id="L259">		return basicAuthenticationHeader;</span>
 	}
 
 }

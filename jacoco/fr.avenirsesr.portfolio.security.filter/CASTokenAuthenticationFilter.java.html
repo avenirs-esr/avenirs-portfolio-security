@@ -49,22 +49,24 @@ public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 <span class="fc" id="L50">        log.trace(&quot;doFilterInternal, requested end point: {}&quot;, request.getRequestURI());</span>
 <span class="fc" id="L51">        String token = getTokenFromRequest(request);</span>
-
+        OIDCIntrospectResponse introspectResponse;
 <span class="fc bfc" id="L53" title="All 2 branches covered.">        if (StringUtils.hasText(token)) {</span>
 <span class="fc" id="L54">            log.trace(&quot;doFilterInternal hasText(token) is true&quot;);</span>
 
-<span class="fc" id="L56">            OIDCIntrospectResponse introspectResponse = authenticationService.introspectAccessToken(token);</span>
+<span class="fc" id="L56">           introspectResponse = authenticationService.introspectAccessToken(token);</span>
 <span class="fc" id="L57">            log.trace(&quot;doFilterInternal introspectResponse: {}&quot;, introspectResponse);</span>
 
 <span class="fc bfc" id="L59" title="All 2 branches covered.">            if (introspectResponse.isActive()) {</span>
 <span class="fc" id="L60">                log.trace(&quot;doFilterInternal introspectResponse is active, updating SecurityContext with new authentication&quot;);</span>
 <span class="fc" id="L61">                String username = introspectResponse.getUniqueSecurityName();</span>
 <span class="fc" id="L62">                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, token, new ArrayList&lt;&gt;()));</span>
+<span class="fc" id="L63">            } else {</span>
+<span class="fc" id="L64">                log.trace(&quot;doFilterInternal introspectResponse is not active&quot;);</span>
             }
         }
 
-<span class="fc" id="L66">        filterChain.doFilter(request, response);</span>
-<span class="fc" id="L67">    }</span>
+<span class="fc" id="L68">        filterChain.doFilter(request, response);</span>
+<span class="fc" id="L69">    }</span>
 
     /**
      * Retrieves the token from the request.
@@ -73,10 +75,10 @@ public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
      * @return The access token if found, null otherwise.
      */
     private String getTokenFromRequest(HttpServletRequest request) {
-<span class="fc" id="L76">        log.trace(&quot;getTokenFromRequest &quot;);</span>
-<span class="fc" id="L77">        String bearerToken = request.getHeader(&quot;x-authorization&quot;);</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        log.trace(&quot;getTokenFromRequest bearerToken: {}&quot;, StringUtils.hasLength(bearerToken) ? &quot;****&quot;: bearerToken);</span>
-<span class="fc" id="L79">       return bearerToken;</span>
+<span class="fc" id="L78">        log.trace(&quot;getTokenFromRequest &quot;);</span>
+<span class="fc" id="L79">        String bearerToken = request.getHeader(&quot;x-authorization&quot;);</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        log.trace(&quot;getTokenFromRequest bearerToken: {}&quot;, StringUtils.hasLength(bearerToken) ? &quot;****&quot;: bearerToken);</span>
+<span class="fc" id="L81">       return bearerToken;</span>
     }
 }
 
