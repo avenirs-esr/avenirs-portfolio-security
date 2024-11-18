@@ -62,14 +62,14 @@ runs:
 
     - name: Run Locust Load Test
       run: |
-        locust -f ${{env.locust_file}} \
-          --host=${{env.host}} \
+        locust -f ${{inputs.locust_file}} \
+          --host=${{inputs.host}} \
           --headless \
-          -u ${{env.locust_users}} \
-          -r ${{env.locust_ramp_rate }} \
-          --run-time ${{env.locust_duration}} \
-          --html ${{env.locust_report}} \
-          --csv ${{env.locust_csv_reports}}
+          -u ${{inputs.locust_users}} \
+          -r ${{inputs.locust_ramp_rate }} \
+          --run-time ${{inputs.locust_duration}} \
+          --html ${{inputs.locust_report}} \
+          --csv ${{inputs.locust_csv_reports}}
 
       shell: bash
 
