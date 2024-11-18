@@ -28,7 +28,7 @@ runs:
       run: |
         mkdir -p ${{ inputs.publish_dir }}/assets/images
         cp .github/actions/publish-to-gh-pages/index.html ${{ inputs.publish_dir }}/index.html
-        cp .github/actions/publish-to-gh-pages/assets/images/avenir-esr-logo_medium.jpg ${{ inputs.publish_dir }}/assets/images/avenir-esr-logo_medium.jpg
+        cp .github/actions/publish-to-gh-pages/assets/images/avenirs-esr-logo_medium.jpg ${{ inputs.publish_dir }}/assets/images/avenirs-esr-logo_medium.jpg
         cp .github/actions/publish-to-gh-pages/assets/images/favicon.ico ${{ inputs.publish_dir }}/assets/images/favicon.ico
         echo "Index file copied."
       shell: bash
