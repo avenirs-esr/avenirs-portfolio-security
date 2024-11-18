@@ -24,12 +24,16 @@ runs:
 
     - name: Run Locust Load Test
       run: |
-        locust -f locustfile.py --host=$AVENIRS_APP_URL --headless -u 100 -r 10 --run-time 1m --html ./target/site/locust_report.html
+        locust -f locustfile.py --host=$AVENIRS_APP_URL --headless -u 100 -r 10 --run-time 1m --html ./target/site/locust_report.html --csv ./target/site/locust_report
       shell: bash
 
     - name: Upload Locust report
       uses: actions/upload-artifact@v4
       with:
         name: locust-report
-        path: ./target/site/locust_report.html
+        path: |
+          ./target/site/locust_report.html
+          ./target/site/locust_report_stats.csv
+          ./target/site/locust_report_failures.csv
+
 
