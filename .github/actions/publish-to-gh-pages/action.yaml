@@ -1,5 +1,5 @@
 name: "Publish Javadoc and Jacoco Reports"
-description: "Publish the Javadoc and coverage reports to GitHub Pages using peaceiris/actions-gh-pages@v4"
+description: "Publish the Javadoc and coverage reports to GitHub Pages"
 
 inputs:
   github_token:
