@@ -9,6 +9,26 @@ inputs:
     description: "Fixtures sql file"
     required: true
 
+  postgres_host:
+    description: "Postgres host"
+    required: false
+    default: "localhost"
+
+  postgres_port:
+    description: "Postgres port"
+    required: false
+    default: "65432"
+
+  postgres_user:
+    description: "Postgres user"
+    required: false
+    default: $POSTGRES_USER
+
+  postgres_db:
+    description: "Postgres database"
+    required: false
+    default: "$POSTGRES_DB"
+
   locust_file:
     description: "Locust file name"
     required: false
@@ -45,7 +65,7 @@ runs:
     - name: Load Test Data
       run: |
         echo "Loading test data..."
-        psql -h localhost -p 65432  -U $POSTGRES_USER -d $POSTGRES_DB -f ${{ inputs.fixtures }}
+        psql -h ${{inputs.postgres_host}} -p ${{inputs.postgres_port}}  -U ${{inputs.postgres_user}} -d ${{inputs.postgres_db}} -f ${{ inputs.fixtures }}
       shell: bash
 
     - name: Set up Python
