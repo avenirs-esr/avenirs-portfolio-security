@@ -1,35 +1,36 @@
-name: "Load tests"
-description: "Executes load test"
+name: "Run Tests"
+description: "Compiles and runs Spring tests"
 
 runs:
   using: "composite"
   steps:
-    - name: Load Test Data
-      run: |
-        echo "Loading test data..."
-        psql -h localhost -p 65432  -U $POSTGRES_USER -d $POSTGRES_DB -f src/test/resources/db/load-test-fixtures.sql
-      shell: bash
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Set up Java
+      uses: actions/setup-java@v4
       with:
-        python-version: '3.x'
-
-
-    - name: Install dependencies
+            distribution: 'temurin'
+            java-version: '21'
+    
+           
+    - name: Generate env.properties to Ignore SSL Verification
       run: |
-        python -m pip install --upgrade pip
-        pip install locust
+        echo "spring.security.oauth2.client.registration.custom-client-provider.provider.ssl-verification=false" > src/main/resources/env.properties
+        echo "spring.ssl.ignore=true" >> src/main/resources/env.properties
+        echo "spring.cloud.openfeign.ssl.skip-ssl-validation=true" >> src/main/resources/env.properties
+        echo "server.ssl.enabled=false" >> src/main/resources/env.properties
+        echo "avenirs.authentication.oidc.provider=localhost" >> src/main/resources/env.properties
+        
+        cat src/main/resources/env.properties
       shell: bash
 
-    - name: Run Locust Load Test
+    - name: Import Certificate into JVM TrustStore
       run: |
-        locust -f locustfile.py --host=$AVENIRS_APP_URL --headless -u 100 -r 10 --run-time 1m --html ./target/site/locust_report.html
+          keytool -printcert -rfc -sslserver localhost:443 > /tmp/localhost.crt
+          keytool -printcert -file /tmp/localhost.crt
+          sudo keytool -importcert -file /tmp/localhost.crt -alias localhost -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit -noprompt
+
       shell: bash
 
-    - name: Upload Locust report
-      uses: actions/upload-artifact@v4
-      with:
-        name: locust-report
-        path: ./target/site/locust_report.html
-
+    - name: Build and Test
+      run: |
+         ./mvnw clean compile javadoc:javadoc test jacoco:report
+      shell: bash 
