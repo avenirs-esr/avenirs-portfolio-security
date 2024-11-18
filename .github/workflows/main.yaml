@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  setup-and-test:
+  avenir-portfolio-security:
     runs-on: ubuntu-latest
     env: 
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
@@ -42,8 +42,8 @@ jobs:
         run: docker ps -a
         
   
-      - name: Run Tests
-        uses: ./.github/actions/run-tests
+      - name: Unit and coverage Tests
+        uses: ./.github/actions/unit-and-coverage-tests
         if: true
         
       - name: (DEBUG) Display cas logs after tests
@@ -76,7 +76,7 @@ jobs:
               echo "Application failed to start after 10 attempts."
               exit 1
             fi
-      - name: Run Tests
+      - name: Load Tests
         uses: ./.github/actions/load-tests
         if: true
 #      - name: Load Test Data
