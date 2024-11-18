@@ -1,8 +1,8 @@
 name: "Load tests"
 description: "Executes load test with locust"
 inputs:
-  host:
-    description: "Host to test"
+  app_url:
+    description: "Application url to test"
     required: true
 
   fixtures:
@@ -83,7 +83,7 @@ runs:
     - name: Run Locust Load Test
       run: |
         locust -f ${{inputs.locust_file}} \
-          --host=${{inputs.host}} \
+          --host=${{inputs.app_url}} \
           --headless \
           -u ${{inputs.locust_users}} \
           -r ${{inputs.locust_ramp_rate }} \

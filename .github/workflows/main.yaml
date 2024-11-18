@@ -52,36 +52,48 @@ jobs:
         run: |
           docker logs avenirs-cas
 
-      - name: Start Spring Boot Application
-        run: |
-          ./mvnw spring-boot:run & echo $! > spring-boot.pid
-        env:
-          SPRING_PROFILES_ACTIVE: dev
+#      - name: Start Spring Boot Application
+#        run: |
+#          ./mvnw spring-boot:run & echo $! > spring-boot.pid
+#        env:
+#          SPRING_PROFILES_ACTIVE: dev
+#
+#      - name: Wait for Application to be Ready
+#        run: |
+#            echo "Waiting for Application to be ready..."
+#            sleep 20
+#            set +e
+#            for i in {1..10}; do
+#              STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:12000/actuator/health)
+#              if [ "$STATUS" -eq 200 ]; then
+#                echo "Application is ready."
+#                break
+#              fi
+#              echo "Application is not ready yet... retrying in 10 seconds. Current status: $STATUS"
+#              sleep 10
+#            done
+#
+#            if [ "$STATUS" -ne 200 ]; then
+#              echo "Application failed to start after 10 attempts."
+#              exit 1
+#            fi
+      - name: Start application
+        uses: ./.github/actions/spring-boot-app/start
+        with:
+          app_url: $AVENIRS_APP_URL
+        if: true
 
-      - name: Wait for Application to be Ready
-        run: |
-            echo "Waiting for Application to be ready..."
-            sleep 20
-            set +e
-            for i in {1..10}; do
-              STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:12000/actuator/health)
-              if [ "$STATUS" -eq 200 ]; then
-                echo "Application is ready."
-                break
-              fi
-              echo "Application is not ready yet... retrying in 10 seconds. Current status: $STATUS"
-              sleep 10
-            done
-            
-            if [ "$STATUS" -ne 200 ]; then
-              echo "Application failed to start after 10 attempts."
-              exit 1
-            fi
       - name: Load Tests
         uses: ./.github/actions/load-tests
         with:
           fixtures: $AVENIRS_LOAD_TESTS_FIXTURES
-          host: $AVENIRS_APP_URL
+          app_url: $AVENIRS_APP_URL
+        if: true
+
+      - name: Stop application
+        uses: ./.github/actions/spring-boot-app/stop
+        with:
+          app_url: $AVENIRS_APP_URL
         if: true
 
       - name: Publish reports
