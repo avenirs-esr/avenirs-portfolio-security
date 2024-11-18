@@ -85,3 +85,6 @@ liquibase-keyring.gpg
 
 # Python
 __pycache__/
+
+# Logs dir
+logs/**
