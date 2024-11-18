@@ -19,6 +19,7 @@ jobs:
       LDAP_BASE_DN: ${{ secrets.LDAP_BASE_DN }}
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       AVENIRS_APP_URL: http://localhost:12000
+      AVENIRS_LOAD_TESTS_FIXTURES: src/test/resources/db/load-test-fixtures.sql
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -78,6 +79,8 @@ jobs:
             fi
       - name: Load Tests
         uses: ./.github/actions/load-tests
+        with:
+          fixtures: $AVENIRS_LOAD_TESTS_FIXTURES
         if: true
 
       - name: Publish reports

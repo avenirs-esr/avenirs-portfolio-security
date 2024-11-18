@@ -1,5 +1,9 @@
 name: "Load tests"
-description: "Executes load test"
+description: "Executes load test with locust"
+inputs:
+  fixtures:
+    description: "Fixtures sql file"
+    required: true
 
 runs:
   using: "composite"
@@ -7,7 +11,7 @@ runs:
     - name: Load Test Data
       run: |
         echo "Loading test data..."
-        psql -h localhost -p 65432  -U $POSTGRES_USER -d $POSTGRES_DB -f src/test/resources/db/load-test-fixtures.sql
+        psql -h localhost -p 65432  -U $POSTGRES_USER -d $POSTGRES_DB -f ${{ inputs.fixtures }}
       shell: bash
 
     - name: Set up Python
