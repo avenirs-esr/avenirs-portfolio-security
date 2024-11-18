@@ -4,13 +4,16 @@ inputs:
   host:
     description: "Host to test"
     required: true
+
   fixtures:
     description: "Fixtures sql file"
     required: true
-  locustfile:
+
+  locust_file:
     description: "Locust file name"
     required: false
     default: "locustfile.py"
+
   locust_report:
     description: "Locust report file"
     required: false
@@ -59,7 +62,7 @@ runs:
 
     - name: Run Locust Load Test
       run: |
-        locust -f ${{env.locustfile}} \
+        locust -f ${{env.locust_file}} \
           --host=${{env.host}} \
           --headless \
           -u ${{env.locust_users}} \
