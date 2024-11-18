@@ -56,7 +56,7 @@ jobs:
         run: |
           ./mvnw spring-boot:run & echo $! > spring-boot.pid
         env:
-          SPRING_PROFILES_ACTIVE: test
+          SPRING_PROFILES_ACTIVE: dev
 
       - name: Wait for Application to be Ready
         run: |
