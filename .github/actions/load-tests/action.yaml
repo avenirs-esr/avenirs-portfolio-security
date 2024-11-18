@@ -14,7 +14,7 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.x'
-      shell: bash
+      
 
     - name: Install dependencies
       run: |
@@ -32,4 +32,4 @@ runs:
       with:
         name: locust-report
         path: ./target/site/locust_report.html
-      shell: bash
+
