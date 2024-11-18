@@ -81,6 +81,7 @@ jobs:
         uses: ./.github/actions/load-tests
         with:
           fixtures: $AVENIRS_LOAD_TESTS_FIXTURES
+          host: $AVENIRS_APP_URL
         if: true
 
       - name: Publish reports

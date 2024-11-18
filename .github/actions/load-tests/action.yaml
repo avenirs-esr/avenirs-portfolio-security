@@ -1,9 +1,40 @@
 name: "Load tests"
 description: "Executes load test with locust"
 inputs:
+  host:
+    description: "Host to test"
+    required: true
   fixtures:
     description: "Fixtures sql file"
     required: true
+  locustfile:
+    description: "Locust file name"
+    required: false
+    default: "locustfile.py"
+  locust_report:
+    description: "Locust report file"
+    required: false
+    default: "./target/site/locust_report.html"
+
+  locust_csv_reports:
+    description: "Locust csv reports base name"
+    required: false
+    default: "./target/site/locust_report"
+
+  locust_duration:
+      description: "Duration of the test"
+      required: false
+      default: "1m"
+
+  locust_users:
+      description: "Number of users for the load test"
+      required: false
+      default: "100"
+
+  locust_ramp_rate:
+      description: "User ramp rate"
+      required: false
+      default: "10"
 
 runs:
   using: "composite"
@@ -28,7 +59,15 @@ runs:
 
     - name: Run Locust Load Test
       run: |
-        locust -f locustfile.py --host=$AVENIRS_APP_URL --headless -u 100 -r 10 --run-time 1m --html ./target/site/locust_report.html --csv ./target/site/locust_report
+        locust -f ${{env.locustfile}} \
+          --host=${{env.host}} \
+          --headless \
+          -u ${{env.locust_users}} \
+          -r ${{env.locust_ramp_rate }} \
+          --run-time ${{env.locust_duration}} \
+          --html ${{env.locust_report}} \
+          --csv ${{env.locust_csv_reports}}
+
       shell: bash
 
     - name: Upload Locust report
