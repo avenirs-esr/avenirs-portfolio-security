@@ -53,7 +53,7 @@ jobs:
 
       - name: Start Spring Boot Application
         run: |
-          ./mvnw spring-boot:run &
+          ./mvnw spring-boot:run & echo $! > spring-boot.pid
         env:
           SPRING_PROFILES_ACTIVE: test
 
@@ -106,7 +106,9 @@ jobs:
 
       - name: Stop Spring Boot Application
         run: |
-            pkill -f 'java -jar' || pkill -f 'org.springframework.boot.loader.JarLauncher'
+          if [ -f spring-boot.pid ]; then
+            kill $(cat spring-boot.pid) && rm spring-boot.pid
+          fi
       
 
       - name: Publish reports
