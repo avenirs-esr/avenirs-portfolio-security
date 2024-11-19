@@ -22,12 +22,14 @@ inputs:
       description: "LDAP Log level"
       required: false
       default: "256"
-
   ldap_fixtures:
     description: "LDAP fixtures"
     required: false
     default: ".github/actions/setup-openldap/settings/openldap-fixtures.ldif"
-
+  docker_image_version:
+    description: "LDAP docker image version"
+    required: false
+    default: "latest"
 
 runs:
   using: "composite"
@@ -59,14 +61,14 @@ runs:
 
     - name: Check for Updates or Missing OpenLDAP Image
       run: |
-        LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' osixia/openldap:latest 2>/dev/null || echo "none")
-        REMOTE_DIGEST=$(docker manifest inspect osixia/openldap:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
+        LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' osixia/openldap:${{inputs.docker_image_version}} 2>/dev/null || echo "none")
+        REMOTE_DIGEST=$(docker manifest inspect osixia/openldap:${{inputs.docker_image_version}} | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
         echo "Local Digest: $LOCAL_DIGEST"
         echo "Remote Digest: $REMOTE_DIGEST"
         if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
           echo "Pulling updated OpenLDAP Docker image..."
-          docker pull osixia/openldap:latest
-          docker save osixia/openldap:latest -o /tmp/.docker-cache-openldap/openldap.tar
+          docker pull osixia/openldap:${{inputs.docker_image_version}}
+          docker save osixia/openldap:${{inputs.docker_image_version}} -o /tmp/.docker-cache-openldap/openldap.tar
           echo "OpenLDAP image pulled and saved to cache."
         else
           echo "OpenLDAP image is up-to-date and loaded from cache."
@@ -75,8 +77,8 @@ runs:
 
     - name: Verify Image Loaded from Cache
       run: |
-        if docker image inspect osixia/openldap:latest > /dev/null 2>&1; then
-          echo "OpenLDAP image successfully loaded from cache and available as 'osixia/openldap:latest'."
+        if docker image inspect osixia/openldap:${{inputs.docker_image_version}} > /dev/null 2>&1; then
+          echo "OpenLDAP image successfully loaded from cache and available as 'osixia/openldap:${{inputs.docker_image_version}}'."
         else
           echo "OpenLDAP image not found after loading. Check the load step."
           exit 1
@@ -95,7 +97,7 @@ runs:
           -p 389:389 -p 636:636 \
           --env LDAP_TLS_VERIFY_CLIENT=never \
           --env LDAP_LOG_LEVEL=${{inputs.ldap_log_level}} \
-        osixia/openldap:latest
+        osixia/openldap:${{inputs.docker_image_version}}
       shell: bash
 
     - name: Copy LDIF File to Container
