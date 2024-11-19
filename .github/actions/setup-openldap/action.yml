@@ -106,7 +106,7 @@ runs:
       run: |
         echo "Waiting for OpenLDAP to be ready..."
         for i in {1..10}; do
-          if docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "${{inputs.ldap_admin}}" -w ${{inputs.ldap_admin_password}} -b ${{inputs.ldap_ba*}} -s base "(objectclass=*)" > /dev/null 2>&1; then
+          if docker exec avenirs-openldap ldapsearch -x -H ldap://localhost:389 -D "${{inputs.ldap_admin}}" -w ${{inputs.ldap_admin_password}} -b ${{inputs.ldap_base_dn}} -s base "(objectclass=*)" > /dev/null 2>&1; then
             echo "OpenLDAP is ready."
             break
           fi
