@@ -1,5 +1,5 @@
 CREATE ROLE avenirs_security_admin_role_test SUPERUSER;
-CREATE ROLE avenirs_security_admin_test PASSWORD 's4dfHty@DHTpa' NOSUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;
+CREATE ROLE avenirs_security_admin_test PASSWORD 'ENC(OM27UAhhkz1dkcCO0baltMazrxwY0Kox)' NOSUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;
 GRANT avenirs_security_admin_role_test to avenirs_security_admin_test;
 
 CREATE DATABASE avenirs_access_control_test OWNER avenirs_security_admin_test;
