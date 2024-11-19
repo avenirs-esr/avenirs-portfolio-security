@@ -34,7 +34,7 @@ jobs:
         uses: ./.github/actions/setup-openldap
 
       - name: Setup CAS
-        uses: ./.github/actions/setup-cas
+        uses: ./.github/actions/cas
         with:
           rebuild: false
 
