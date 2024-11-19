@@ -5,6 +5,14 @@ inputs:
       description: "Force Docker image rebuild"
       required: false
       default: "false"
+    version:
+      description: "cas version"
+      required: false
+      default: "6.6"
+    docker-label:
+      description: "Label for the docker image"
+      required: false
+      default: "avenirs-cas-custom:6.6.15.2"
 runs:
   using: "composite"
 
@@ -46,7 +54,7 @@ runs:
     - name: Check if CAS Docker Image Exists
       id: check-image
       run: |
-        if docker image inspect avenirs-cas-custom:6.6.15.2 > /dev/null 2>&1; then
+        if docker image inspect ${{inputs.docker_image}} > /dev/null 2>&1; then
           echo "Docker inspect image: Valid image found"
           echo "exists=true" >> $GITHUB_ENV
         else
@@ -70,17 +78,17 @@ runs:
       run: |
         git clone https://github.com/apereo/cas-overlay-template.git
         cd cas-overlay-template
-        git checkout remotes/origin/6.6
+        git checkout remotes/origin/${{inputs.version}}
         cp ../.github/actions/cas/settings/build.gradle build.gradle
         cp ../.github/actions/cas/settings/Dockerfile Dockerfile
         cp -r ../.github/actions/cas/settings/etc/* etc/
-        docker build -t avenirs-cas-custom:6.6.15.2 .
+        docker build -t ${{inputs.docker_image}} .
       shell: bash
 
     - name: Save Docker image to Cache
       if: ${{ env.exists == 'false' }}
       run: |
-        docker save avenirs-cas-custom:6.6.15.2 -o /tmp/.docker-cache-cas/avenirs-cas-custom.tar
+        docker save ${{inputs.docker_image}} -o /tmp/.docker-cache-cas/avenirs-cas-custom.tar
         echo "Docker image saved to cache."
         ls -alh /tmp/.docker-cache-cas
       shell: bash
@@ -90,7 +98,7 @@ runs:
         docker run -d --name avenirs-cas \
         --network avenirs-network \
         -p 443:8443 -p 8080:8080 \
-        avenirs-cas-custom:6.6.15.2
+        ${{inputs.docker_image}}
       shell: bash
 
     - name: Wait for CAS to be ready
