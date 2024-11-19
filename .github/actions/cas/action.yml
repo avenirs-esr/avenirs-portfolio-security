@@ -9,7 +9,7 @@ inputs:
       description: "cas version"
       required: false
       default: "6.6"
-    docker-label:
+    docker_image:
       description: "Label for the docker image"
       required: false
       default: "avenirs-cas-custom:6.6.15.2"
