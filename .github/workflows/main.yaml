@@ -32,6 +32,10 @@ jobs:
       
       - name: Setup OpenLDAP
         uses: ./.github/actions/setup-openldap
+        with:
+          ldap_base_dn: $LDAP_BASE_DN
+          ldap_admin: LDAP_ADMIN
+          ldap_admin_password: LDAP_ADMIN_PASSWORD
 
       - name: Setup CAS
         uses: ./.github/actions/setup-cas

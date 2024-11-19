@@ -174,3 +174,20 @@ givenName: julien
 userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
 mail:gribonvald@univ.fr
 
+dn: uid=dugat,ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: DUGAT Ghislain
+uidNumber: 2010
+gidNumber: 3000
+homeDirectory: /home/perso/dugat
+sn: DUGAT
+uid: dugat
+gecos:  DUGAT Ghislain
+givenName: ghislain
+userPassword:{ssha}Ke8lVwbkuJcEbWdCur8XLG9QwggNciz6UlwH/w==
+mail:dugat@univ.fr
+
