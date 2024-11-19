@@ -119,5 +119,5 @@ runs:
 
     - name: Inject LDIF into LDAP
       run: |
-        docker exec avenirs-openldap ldapadd -x -D "${{inputs.ldap_admin}}" -w ${{inputs.ldap_password}} -f /tmp/openldap-fixtures.ldif
+        docker exec avenirs-openldap ldapadd -x -D "${{inputs.ldap_admin}}" -w ${{inputs.ldap_admin_password}} -f /tmp/openldap-fixtures.ldif
       shell: bash
