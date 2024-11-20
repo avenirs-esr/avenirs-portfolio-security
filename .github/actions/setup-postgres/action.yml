@@ -79,7 +79,7 @@ runs:
           if [ -f "$FILE" ]; then \
             encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' "$FILE" | sed -E 's/ENC\((.*)\)/\1/'); \
             if [ -n "$encrypted" ]; then \
-              decrypted=$(java -cp .github/lib/jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input="$encrypted" password=$JASYPT_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
+              decrypted=$(java -cp .github/lib/jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input="$encrypted" password=${{inputs.jasypt_password}} algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
               if [ -n "$decrypted" ]; then \
                 echo "Decryption successful for $FILE"; \
                 sed "s|ENC($encrypted)|$decrypted|" "$FILE" | docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d template1; \
@@ -97,4 +97,4 @@ runs:
         done
       shell: bash
       env:
-        JASYPT_PASSWORD:${{ inputs.jasypt_password }}
+        JASYPT_ENCRYPTOR_PASSWORD=${{inputs.jasypt_password}}
