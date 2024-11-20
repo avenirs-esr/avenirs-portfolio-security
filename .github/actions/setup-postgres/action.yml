@@ -70,6 +70,10 @@ runs:
         done
       shell: bash
 
+    - name: Debug environment
+      if: ${{ true }}
+      run: env
+      shell: bash
     - name: Initialize Database
       run: |
         set -x
@@ -95,5 +99,3 @@ runs:
           fi; \
         done
       shell: bash
-      env:
-        JASYPT_ENCRYPTOR_PASSWORD: ${{ env.JASYPT_ENCRYPTOR_PASSWORD }}
