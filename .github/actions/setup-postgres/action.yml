@@ -70,15 +70,9 @@ runs:
         done
       shell: bash
 
-    - name: Copy SQL Files to Container
-      run: |
-        docker cp src/main/resources/db/init-db.sql avenirs-postgres:/tmp/init-db.sql
-        docker cp src/test/resources/db/init-test-db.sql avenirs-postgres:/tmp/init-test-db.sql
-      shell: bash
-
     - name: Initialize Database
       run: |
-        for FILE in src/main/resources/db/init-db.sql src/main/resources/db/init-test-db.sql; do \
+        for FILE in src/main/resources/db/init-db.sql src/test/resources/db/init-test-db.sql; do \
           encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' $FILE | sed -E 's/ENC\\((.*)\\)/\\1/'); \
           decrypted=$(java -cp .github/lib/jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
           sed "s|ENC($encrypted)|$decrypted|" $FILE | docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d template1; \
