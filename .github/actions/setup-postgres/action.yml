@@ -76,32 +76,13 @@ runs:
         docker cp src/test/resources/db/init-test-db.sql avenirs-postgres:/tmp/init-test-db.sql
       shell: bash
 
-
-    - name: Install Java in Container
-      run: |
-        docker exec -i avenirs-postgres bash -c "\
-        apt-get update && \
-        apt-get install -y openjdk-11-jre-headless"
-      shell: bash
-
-    - name: Copy Jar dependency to Container
-      run: |
-        JASYPT_JAR=".github/lib/jasypt-1.9.3.jar"
-        [ -f "$JASYPT_JAR" ] || { echo -ne "\n\nError : JAR Jasypt not found in .github/lib\n\n"; exit 1; }
-
-        docker cp $JASYPT_JAR avenirs-postgres:/tmp/jasypt.jar
-      shell: bash
-
     - name: Initialize Database
       run: |
-        docker exec -i avenirs-postgres bash -c "\
-        encrypted=\$(grep -o 'ENC([A-Za-z0-9+/=]*)' /tmp/init-db.sql | sed -E 's/ENC\\((.*)\\)/\\1/'); \
-        decrypted=\$(java -cp /tmp/jasypt.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=\$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
-        sed \"s|ENC(\$encrypted)|\$decrypted|\" /tmp/init-db.sql | psql -U $POSTGRES_USER -d template1; \
-        encrypted=\$(grep -o 'ENC([A-Za-z0-9+/=]*)' /tmp/init-test-db.sql | sed -E 's/ENC\\((.*)\\)/\\1/'); \
-        decrypted=\$(java -cp /tmp/jasypt.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=\$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
-        sed \"s|ENC(\$encrypted)|\$decrypted|\" /tmp/init-test-db.sql\
-        sed \"s|ENC(\$encrypted)|\$decrypted|\" /tmp/init-test-db.sql | psql -U $POSTGRES_USER -d template1;"
+        for FILE in src/main/resources/db/init-db.sql src/main/resources/db/init-test-db.sql; do \
+          encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' $FILE | sed -E 's/ENC\\((.*)\\)/\\1/'); \
+          decrypted=$(java -cp .github/lib/jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
+          sed "s|ENC($encrypted)|$decrypted|" $FILE | docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d template1; \
+        done
       shell: bash
       env:
         JASYPT_ENCRYPTOR_PASSWORD: ${{ env.JASYPT_ENCRYPTOR_PASSWORD }}
