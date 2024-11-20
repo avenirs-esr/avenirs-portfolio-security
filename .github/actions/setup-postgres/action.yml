@@ -96,5 +96,5 @@ runs:
           echo "File $FILE not found"; \
           exit 1; \
         fi; \
-      done
+        done
       shell: bash
