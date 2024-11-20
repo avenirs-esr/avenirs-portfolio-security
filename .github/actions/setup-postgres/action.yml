@@ -70,16 +70,10 @@ runs:
         done
       shell: bash
 
-    - name: Debug environment
-      if: ${{ true }}
-      run: env
-      shell: bash
     - name: Initialize Database
       run: |
-        set -x
         for FILE in src/main/resources/db/init-db.sql src/test/resources/db/init-test-db.sql; do \
           if [ -f "$FILE" ]; then \
-            echo "Processing $FILE"; \
             encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' "$FILE" | sed -E 's/ENC\((.*)\)/\1/'); \
             if [ -n "$encrypted" ]; then \
               decrypted=$(java -cp .github/lib/jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input="$encrypted" password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
