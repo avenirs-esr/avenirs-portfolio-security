@@ -35,8 +35,7 @@ runs:
         if [ -f /tmp/.docker-cache-postgres/postgres.tar ]; then
           echo "Loading Postgresql image from cache..."
           docker load -i /tmp/.docker-cache-postgres/postgres.tar
-          docker pull postgres:latest
-          echo "Postgresql image loaded from cache."
+           echo "Postgresql image loaded from cache."
         else
           echo "No cached Postgresql image found."
         fi
@@ -44,13 +43,15 @@ runs:
 
     - name: Check for Updates or Missing Postgresql Image
       run: |
-        LOCAL_DIGEST=$(docker images --digests --format '{{.Digest}}' postgres:latest 2>/dev/null || echo "none")
+        LOCAL_DIGEST=$(cat /tmp/.docker-cache-postgres/digest 2>/dev/null || echo "none")
         REMOTE_DIGEST=$(docker manifest inspect postgres:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
         echo "Local Digest: $LOCAL_DIGEST"
         echo "Remote Digest: $REMOTE_DIGEST"
         if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
           echo "Pulling updated Postgresql Docker image..."
           docker pull postgres:latest
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' postgres:latest | awk -F '@' '{print $2}')
+          echo "$DIGEST" > /tmp/.docker-cache-postgres/digest
           docker save postgres:latest -o /tmp/.docker-cache-postgres/postgres.tar
           echo "Postgresql image pulled and saved to cache."
         else
