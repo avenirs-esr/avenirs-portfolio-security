@@ -28,7 +28,7 @@ jobs:
         run: docker network create avenirs-network
 
 
-      - name: Setup PostgreSQL
+      - name: Setup Postgresql
         uses: ./.github/actions/setup-postgres
       
       - name: Setup OpenLDAP
@@ -56,32 +56,6 @@ jobs:
         if: false  
         run: |
           docker logs avenirs-cas
-
-#      - name: Start Spring Boot Application
-#        run: |
-#          ./mvnw spring-boot:run & echo $! > spring-boot.pid
-#        env:
-#          SPRING_PROFILES_ACTIVE: dev
-#
-#      - name: Wait for Application to be Ready
-#        run: |
-#            echo "Waiting for Application to be ready..."
-#            sleep 20
-#            set +e
-#            for i in {1..10}; do
-#              STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:12000/actuator/health)
-#              if [ "$STATUS" -eq 200 ]; then
-#                echo "Application is ready."
-#                break
-#              fi
-#              echo "Application is not ready yet... retrying in 10 seconds. Current status: $STATUS"
-#              sleep 10
-#            done
-#
-#            if [ "$STATUS" -ne 200 ]; then
-#              echo "Application failed to start after 10 attempts."
-#              exit 1
-#            fi
       - name: Start application
         uses: ./.github/actions/spring-boot-app/start
         with:
