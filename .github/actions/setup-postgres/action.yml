@@ -96,4 +96,4 @@ runs:
         sed \"s|ENC(\$encrypted)|\$decrypted|\" /tmp/init-test-db.sql | psql -U $POSTGRES_USER -d $POSTGRES_DB;"
       shell: bash
       env:
-        JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
+        JASYPT_ENCRYPTOR_PASSWORD: ${{ env.JASYPT_ENCRYPTOR_PASSWORD }}
