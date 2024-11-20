@@ -77,25 +77,24 @@ runs:
     - name: Initialize Database
       run: |
         set -x
-        for FILE in src/main/resources/db/init-db.sql src/test/resources/db/init-test-db.sql; do \
-          if [ -f "$FILE" ]; then \
-            echo "Processing $FILE"; \
-            encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' $FILE | sed -E 's/ENC\\((.*)\\)/\\1/'); \
-            if [ -n "$encrypted" ]; then \
-              decrypted=$(java -cp .github/lib/jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input="$encrypted" password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
-              if [ -n "$decrypted" ]; then \
-                echo "Decryption successful for $FILE"; \
-                sed "s|ENC($encrypted)|$decrypted|" $FILE | docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d template1; \
-              else \
-                echo "Decryption failed for $FILE: No decrypted value returned. Please check the encrypted string or password."; \
-                exit 1; \
-              fi; \
+        if [ -f "$FILE" ]; then \
+          echo "Processing $FILE"; \
+          encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' "$FILE" | sed -E 's/ENC\((.*)\)/\1/'); \
+          if [ -n "$encrypted" ]; then \
+            decrypted=$(java -cp .github/lib/jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input="$encrypted" password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
+            if [ -n "$decrypted" ]; then \
+              echo "Decryption successful for $FILE"; \
+              sed "s|ENC($encrypted)|$decrypted|" "$FILE" | docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d template1; \
             else \
-              echo "No encrypted value found in $FILE"; \
+              echo "Decryption failed for $FILE: No decrypted value returned. Please check the encrypted string or password."; \
+              exit 1; \
             fi; \
           else \
-            echo "File $FILE not found"; \
-            exit 1; \
+            echo "No encrypted value found in $FILE"; \
           fi; \
-        done
+        else \
+          echo "File $FILE not found"; \
+          exit 1; \
+        fi; \
+      done
       shell: bash
