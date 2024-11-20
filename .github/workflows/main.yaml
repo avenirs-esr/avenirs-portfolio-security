@@ -27,7 +27,6 @@ jobs:
       - name: Create Docker network
         run: docker network create avenirs-network
 
-
       - name: Setup Postgresql
         uses: ./.github/actions/setup-postgres
       
