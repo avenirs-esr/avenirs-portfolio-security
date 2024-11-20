@@ -93,7 +93,6 @@ runs:
             exit 1; \
           fi; \
         done
-        shell: bash
       shell: bash
       env:
         JASYPT_ENCRYPTOR_PASSWORD: ${{ env.JASYPT_ENCRYPTOR_PASSWORD }}
