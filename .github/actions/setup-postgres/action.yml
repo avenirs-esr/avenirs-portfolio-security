@@ -43,8 +43,9 @@ runs:
 
     - name: Check for Updates or Missing Postgresql Image
       run: |
-        LOCAL_DIGEST=$(docker images --digests --format '{{.Digest}}' postgres:latest 2>/dev/null || echo "none")
-        REMOTE_DIGEST=$(docker manifest inspect postgres:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
+        LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' postgres:latest 2>/dev/null | awk -F '@' '{print $2}' || echo "none")
+        REMOTE_DIGEST=$(curl -s -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+        https://registry.hub.docker.com/v2/library/postgres/manifests/latest | jq -r '.config.digest' || echo "none")
         echo "Local Digest: $LOCAL_DIGEST"
         echo "Remote Digest: $REMOTE_DIGEST"
         if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
