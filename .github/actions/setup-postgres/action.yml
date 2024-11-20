@@ -68,7 +68,7 @@ runs:
           echo "PostgreSQL is not ready yet... retrying in 5 seconds."
           sleep 5
         done
-      shell: bash 
+      shell: bash
 
     - name: Copy SQL Files to Container
       run: |
@@ -76,17 +76,24 @@ runs:
         docker cp src/test/resources/db/init-test-db.sql avenirs-postgres:/tmp/init-test-db.sql
       shell: bash
 
-    - name: Initialize Database
+    - name: Copy Jar dependency to Container
       run: |
         JASYPT_JAR=".github/lib/jasypt-1.9.3.jar"
         [ -f "$JASYPT_JAR" ] || { echo -ne "\n\nError : JAR Jasypt not found in .github/lib\n\n"; exit 1; }
 
-        for FILE in /tmp/init-db.sql /tmp/init-test-db.sql; do \
-          encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' $FILE | sed -E 's/ENC\((.*)\)/\1/'); \
-          decrypted=$(java -cp "$JASYPT_JAR" org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
-          sed -i "s|ENC($encrypted)|$decrypted|" $FILE; \
-        done \
-        && docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /tmp/init-db.sql \
-        && docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d $POSTGRES_DB -f /tmp/init-test-db.sql \
-        && rm -f /tmp/init-db.sql /tmp/init-test-db.sql
+        docker cp $JASYPT_JAR avenirs-postgres:/tmp/jasypt.jar
       shell: bash
+
+
+    - name: Initialize Database
+      run: |
+        docker exec -i avenirs-postgres bash -c "\
+        encrypted=\$(grep -o 'ENC([A-Za-z0-9+/=]*)' /tmp/init-db.sql | sed -E 's/ENC\\((.*)\\)/\\1/'); \
+        decrypted=\$(java -cp /tmp/jasypt.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=\$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
+        sed \"s|ENC(\$encrypted)|\$decrypted|\" /tmp/init-db.sql | psql -U $POSTGRES_USER -d $POSTGRES_DB; \
+        encrypted=\$(grep -o 'ENC([A-Za-z0-9+/=]*)' /tmp/init-test-db.sql | sed -E 's/ENC\\((.*)\\)/\\1/'); \
+        decrypted=\$(java -cp /tmp/jasypt.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=\$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
+        sed \"s|ENC(\$encrypted)|\$decrypted|\" /tmp/init-test-db.sql | psql -U $POSTGRES_USER -d $POSTGRES_DB;"
+      shell: bash
+      env:
+        JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
