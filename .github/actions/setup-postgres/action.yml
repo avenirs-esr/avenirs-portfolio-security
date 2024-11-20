@@ -4,6 +4,15 @@ inputs:
   jasypt_password:
     description: "Jasypt encryption password"
     required: true
+  postgres_db:
+      description: "Postgres database"
+      required: true
+  postgres_user:
+    description: "Postgres user"
+    required: true
+  postgres_password:
+    description: "Postgres user password"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -53,9 +62,9 @@ runs:
         echo "Starting Postgresql Docker container..."
         docker run -d --name avenirs-postgres \
           --network avenirs-network \
-          -e POSTGRES_USER=$POSTGRES_USER \
-          -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-          -e POSTGRES_DB=$POSTGRES_DB \
+          -e POSTGRES_USER=${{inputs.postgres_user}} \
+          -e POSTGRES_PASSWORD=${{inputs.postgres_password}} \
+          -e POSTGRES_DB=${{inputs.postgres_db}} \
           -p 65432:5432 \
           postgres:latest
       shell: bash
@@ -64,7 +73,7 @@ runs:
       run: |
         echo "Waiting for Postgresql to be ready..."
         for i in {1..4}; do
-          if docker exec avenirs-postgres pg_isready -U $POSTGRES_USER -h localhost -p 5432; then
+          if docker exec avenirs-postgres pg_isready -U ${{inputs.postgres_user}} -h localhost -p 5432; then
             echo "Postgresql is ready."
             break
           fi
@@ -83,7 +92,7 @@ runs:
 
               if [ -n "$decrypted" ]; then \
                 echo "Decryption successful for $FILE"; \
-                sed "s|ENC($encrypted)|$decrypted|" "$FILE" | docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d template1; \
+                sed "s|ENC($encrypted)|$decrypted|" "$FILE" | docker exec -i avenirs-postgres psql -U ${{inputs.postgres_user}} -d template1; \
               else \
                 echo "Decryption failed for $FILE: No decrypted value returned. Please check the encrypted string or password."; \
                 exit 1; \
