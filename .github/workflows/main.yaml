@@ -29,6 +29,10 @@ jobs:
 
       - name: Setup Postgresql
         uses: ./.github/actions/setup-postgres
+
+      - name: Stop Workflow
+        run: |
+          exit 1
       
       - name: Setup OpenLDAP
         uses: ./.github/actions/setup-openldap
