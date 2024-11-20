@@ -76,6 +76,14 @@ runs:
         docker cp src/test/resources/db/init-test-db.sql avenirs-postgres:/tmp/init-test-db.sql
       shell: bash
 
+
+    - name: Install Java in Container
+      run: |
+        docker exec -i avenirs-postgres bash -c "\
+        apt-get update && \
+        apt-get install -y openjdk-11-jre-headless"
+      shell: bash
+
     - name: Copy Jar dependency to Container
       run: |
         JASYPT_JAR=".github/lib/jasypt-1.9.3.jar"
@@ -83,7 +91,6 @@ runs:
 
         docker cp $JASYPT_JAR avenirs-postgres:/tmp/jasypt.jar
       shell: bash
-
 
     - name: Initialize Database
       run: |
