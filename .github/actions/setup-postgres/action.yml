@@ -1,5 +1,9 @@
 name: "Setup Postgresql"
 description: "Initializes Postgresql environment"
+inputs:
+  jasypt_password:
+    description: "Jasypt encryption password"
+    required: true
 runs:
   using: "composite"
   steps:

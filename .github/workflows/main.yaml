@@ -29,6 +29,7 @@ jobs:
 
       - name: Setup Postgresql
         uses: ./.github/actions/setup-postgres
+        with: jasypt_password=${{secrets.JASYPT_ENCRYPTOR_PASSWORD}}
 
       - name: Setup OpenLDAP
         uses: ./.github/actions/setup-openldap
