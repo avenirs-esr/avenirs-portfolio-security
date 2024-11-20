@@ -72,6 +72,7 @@ runs:
 
     - name: Initialize Database
       run: |
+        set -x
         for FILE in src/main/resources/db/init-db.sql src/test/resources/db/init-test-db.sql; do \
           if [ -f "$FILE" ]; then \
             echo "Processing $FILE"; \
@@ -82,7 +83,7 @@ runs:
                 echo "Decryption successful for $FILE"; \
                 sed "s|ENC($encrypted)|$decrypted|" $FILE | docker exec -i avenirs-postgres psql -U $POSTGRES_USER -d template1; \
               else \
-                echo "Decryption failed for $FILE: No decrypted value returned"; \
+                echo "Decryption failed for $FILE: No decrypted value returned. Please check the encrypted string or password."; \
                 exit 1; \
               fi; \
             else \
