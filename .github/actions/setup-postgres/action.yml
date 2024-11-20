@@ -1,9 +1,5 @@
 name: "Setup Postgresql"
 description: "Initializes Postgresql environment"
-inputs:
-  jasypt_password:
-    description: "Jasypt encryption password"
-    required: true
 runs:
   using: "composite"
   steps:
@@ -97,5 +93,4 @@ runs:
           fi; \
         done
       shell: bash
-      env:
-        JASYPT_ENCRYPTOR_PASSWORD=${{inputs.jasypt_password}}
+
