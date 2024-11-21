@@ -17,6 +17,14 @@ inputs:
     description: "Path to the cache directory"
     required: false
     default: "/tmp/.cache-postgres"
+  cache_key:
+    description: "Cache key"
+    required: false
+    default: "postgres-cache-v1"
+  cache_restore_key:
+    description: "Cache key"
+    required: false
+    default: "postgres-cache-"
 runs:
   using: "composite"
  
@@ -29,14 +37,14 @@ runs:
            || { mkdir -p $cache_dir; echo "Cache directory created: $cache_dir"; }
         echo "Cache directory ensured: $cache_dir"
       shell: bash
-      
+
     - name: Cache Docker Images for Postgresql
       uses: actions/cache@v4
       with:
         path: ${{inputs.cache_dir}}
-        key: docker-postgres-cache
+        key: ${{inputs.cache_key}}
         restore-keys: |
-          docker-postgres-
+         ${{inputs.cache_restore_key}}
 
 
     - name: (DEBUG) Check Cache Restoration
@@ -86,7 +94,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{inputs.cache_dir}}
-        key: docker-postgres-cache
+        key: ${{inputs.cache_key}}
 
     - name: Verify Digest in Cache After Save
       run: |
