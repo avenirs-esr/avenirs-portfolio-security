@@ -13,53 +13,37 @@ inputs:
   postgres_password:
     description: "Postgres user password"
     required: true
-  cache_dir:
-    description: "Path to the cache directory"
-    required: false
-    default: "/tmp/.cache-postgres"
 runs:
   using: "composite"
-
   steps:
-    - name: Ensure Cache Directory Exists
-      run: |
-        cache_dir=${{inputs.cache_dir}}
-        [ -e $cache_dir ] && echo "Cache directory found: $cache_dir" || { mkdir -p $cache_dir; echo "Cache directory created: $cache_dir"; }
-        echo "Cache directory ensured: $cache_dir"
-      shell: bash
-
     - name: Cache Docker Images for Postgresql
       uses: actions/cache@v4
       with:
-        path: ${{inputs.cache_dir}}
-        key: postgres-cache-${{ runner.os }}-${{ hashFiles('${{inputs.cache_dir}}/digest', '${{inputs.cache_dir}}/postgres.tar') }}
+        path: /tmp/.docker-cache-postgres
+        key: docker-postgres-cache
         restore-keys: |
-          postgres-cache-${{ runner.os }}-
-          postgres-cache-
+          docker-postgres-
 
-    - name: Check Cache Restoration
+    - name: Ensure Cache Directory Exists
       run: |
-        echo "Checking restored cache:"
-        ls -la ${{inputs.cache_dir}}
+        mkdir -p /tmp/.docker-cache-postgres
+        echo "Cache directory ensured: /tmp/.docker-cache-postgres"
       shell: bash
 
-    - name: Debug Cache Before Save
+    - name: Load Postgresql Image from Cache
       run: |
-        echo "Contents of cache directory before save:"
-        ls -la ${{inputs.cache_dir}}
-        echo "Hash of files:"
-        if [ -n "$(ls -A ${{inputs.cache_dir}} 2>/dev/null)" ]; then
-          echo "Hash of files:"
-          sha256sum ${{inputs.cache_dir}}/*
+        if [ -f /tmp/.docker-cache-postgres/postgres.tar ]; then
+          echo "Loading Postgresql image from cache..."
+          docker load -i /tmp/.docker-cache-postgres/postgres.tar
+           echo "Postgresql image loaded from cache."
         else
-          echo "No files to hash."
+          echo "No cached Postgresql image found."
         fi
       shell: bash
 
     - name: Check for Updates or Missing Postgresql Image
-      id: CheckForUpdates
       run: |
-        LOCAL_DIGEST=$(cat ${{inputs.cache_dir}}/digest 2>/dev/null || echo "none")
+        LOCAL_DIGEST=$(cat /tmp/.docker-cache-postgres/digest 2>/dev/null || echo "none")
         REMOTE_DIGEST=$(docker manifest inspect postgres:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
         echo "Local Digest: $LOCAL_DIGEST"
         echo "Remote Digest: $REMOTE_DIGEST"
@@ -67,40 +51,60 @@ runs:
           echo "Pulling updated Postgresql Docker image..."
           docker pull postgres:latest
           DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' postgres:latest | awk -F '@' '{print $2}')
-          echo "$DIGEST" > ${{inputs.cache_dir}}/digest
-          docker save postgres:latest -o ${{inputs.cache_dir}}/postgres.tar
+          echo "$DIGEST" > /tmp/.docker-cache-postgres/digest
+          docker save postgres:latest -o /tmp/.docker-cache-postgres/postgres.tar
           echo "Postgresql image pulled and saved to cache."
-          echo "::set-output name=cache-updated::true"
         else
           echo "Postgresql image is up-to-date and loaded from cache."
-          echo "::set-output name=cache-updated::false"
         fi
       shell: bash
 
-
-    - name: Debug Cache Before Save
+    - name: Start Postgresql Container
       run: |
-        echo "Contents of cache directory before save:"
-        ls -la ${{inputs.cache_dir}}
-        echo "Hash of files:"
-        if [ -n "$(ls -A ${{inputs.cache_dir}} 2>/dev/null)" ]; then
-          echo "Hash of files:"
-          sha256sum ${{inputs.cache_dir}}/*
-        else
-          echo "No files to hash."
-        fi
+        echo "Starting Postgresql Docker container..."
+        docker run -d --name avenirs-postgres \
+          --network avenirs-network \
+          -e POSTGRES_USER=${{inputs.postgres_user}} \
+          -e POSTGRES_PASSWORD=${{inputs.postgres_password}} \
+          -e POSTGRES_DB=${{inputs.postgres_db}} \
+          -p 65432:5432 \
+          postgres:latest
       shell: bash
 
-    - name: Save Cache After Update
-      if: steps.CheckForUpdates.outputs.cache-updated == 'true'
-      uses: actions/cache@v4
-      with:
-        path: ${{inputs.cache_dir}}
-        key: postgres-cache-${{ runner.os }}-${{ hashFiles('${{inputs.cache_dir}}/digest', '${{inputs.cache_dir}}/postgres.tar') }}
-
-    - name: Verify Cache After Save
+    - name: Wait for Postgresql to be ready
       run: |
-        echo "Verifying cache after save:"
-        ls -la ${{inputs.cache_dir}}
-        cat ${{inputs.cache_dir}}/digest || echo "No digest found in cache"
+        echo "Waiting for Postgresql to be ready..."
+        for i in {1..4}; do
+          if docker exec avenirs-postgres pg_isready -U ${{inputs.postgres_user}} -h localhost -p 5432; then
+            echo "Postgresql is ready."
+            break
+          fi
+          echo "Postgresql is not ready yet... retrying in 5 seconds."
+          sleep 5
+        done
+      shell: bash
+
+    - name: Initialize Database
+      run: |
+        for FILE in src/main/resources/db/init-db.sql src/test/resources/db/init-test-db.sql; do \
+          if [ -f "$FILE" ]; then \
+            encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' "$FILE" | sed -E 's/ENC\((.*)\)/\1/'); \
+            if [ -n "$encrypted" ]; then \
+              decrypted=$(java -cp .github/lib/jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input="$encrypted" password=${{inputs.jasypt_password}} algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1); \
+
+              if [ -n "$decrypted" ]; then \
+                echo "Decryption successful for $FILE"; \
+                sed "s|ENC($encrypted)|$decrypted|" "$FILE" | docker exec -i avenirs-postgres psql -U ${{inputs.postgres_user}} -d template1; \
+              else \
+                echo "Decryption failed for $FILE: No decrypted value returned. Please check the encrypted string or password."; \
+                exit 1; \
+              fi; \
+            else \
+              echo "No encrypted value found in $FILE"; \
+            fi; \
+          else \
+            echo "File $FILE not found"; \
+            exit 1; \
+          fi; \
+        done
       shell: bash
