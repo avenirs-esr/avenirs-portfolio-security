@@ -54,7 +54,7 @@ runs:
           echo "DIGEST: $DIGEST" 
           echo "Local DIGEST: $LOCAL_DIGEST" 
           echo "Remote DIGEST: $REMOTE_DIGEST" 
-          echo "$DIGEST" > /tmp/.docker-cache-postgres/digest
+          echo "$REMOTE_DIGEST" > /tmp/.docker-cache-postgres/digest
           docker save postgres:latest -o /tmp/.docker-cache-postgres/postgres.tar
           echo "Postgresql image pulled and saved to cache."
         else
