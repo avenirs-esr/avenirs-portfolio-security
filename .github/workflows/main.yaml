@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENABLE_POSTGRES_ACTION: true
-      ENABLE_OPENLDAP_ACTION: false
-      ENABLE_CAS_ACTION: false
-      ENABLE_UNIT_TESTS_ACTION: false
-      ENABLE_LOAD_TESTS_ACTION: false
-      ENABLE_PUBLISH_ACTION: false
+      ENABLE_OPENLDAP_ACTION: true
+      ENABLE_CAS_ACTION: true
+      ENABLE_UNIT_TESTS_ACTION: true
+      ENABLE_LOAD_TESTS_ACTION: true
+      ENABLE_PUBLISH_ACTION: true
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
