@@ -8,7 +8,9 @@ on:
 jobs:
   avenir-portfolio-security:
     runs-on: ubuntu-latest
-    env: 
+    env:
+      ENABLE_POSTGRES_ACTION: false
+      ENABLE_OPENLDAP_ACTION: true
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -28,6 +30,7 @@ jobs:
         run: docker network create avenirs-network
 
       - name: Setup Postgresql
+        if: $ENABLE_POSTGRES_ACTION
         uses: ./.github/actions/setup-postgres
         with:
           jasypt_password: ${{secrets.JASYPT_ENCRYPTOR_PASSWORD}}
@@ -38,10 +41,11 @@ jobs:
       - name: Stop workflow after postgres
         uses: ./.github/actions/gh-action-utils/stop-workflow
         with:
-          disabled: true
+          disabled: false
 
 
       - name: Setup OpenLDAP
+        if: $ENABLE_OPENLDAP_ACTION
         uses: ./.github/actions/setup-openldap
         with:
           ldap_base_dn: ${{env.LDAP_BASE_DN}}
@@ -53,7 +57,7 @@ jobs:
         with:
           rebuild: false
 
-   
+
 
       - name: (DEBUG) Check Docker containers
         if : false
