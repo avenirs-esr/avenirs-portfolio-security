@@ -20,7 +20,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-postgres
-        key: docker-postgres-cache
+        key: docker-postgres-cache-${{ hashFiles('/tmp/.docker-cache-postgres/digest') || 'none' }}
         restore-keys: |
           docker-postgres-
 
