@@ -37,7 +37,7 @@ jobs:
 
       - name: Stop workflow
         uses: ./.github/actions/gh-action-utils/stop-workflow
-        
+
       - name: Setup OpenLDAP
         uses: ./.github/actions/setup-openldap
         with:
