@@ -30,6 +30,13 @@ runs:
         echo "Cache directory ensured: /tmp/.docker-cache-postgres"
       shell: bash
 
+    - name: (DEBUG) Check Cache Restoration
+      if: ${{true}}
+      run: |
+           echo "Checking restored cache:"
+           ls /tmp/.docker-cache-postgres/
+      shell: bash
+
     - name: Load Postgresql Image from Cache
       run: |
         if [ -f /tmp/.docker-cache-postgres/postgres.tar ]; then
