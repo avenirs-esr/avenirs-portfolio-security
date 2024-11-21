@@ -13,20 +13,25 @@ inputs:
   postgres_password:
     description: "Postgres user password"
     required: true
+  cache_dir:
+    description: "Path to the cache directory"
+    required: false
+    default: "/tmp/.cache-postgres"
 runs:
   using: "composite"
+ 
   steps:
     - name: Cache Docker Images for Postgresql
       uses: actions/cache@v4
       with:
-        path: /tmp/.docker-cache-postgres
+        path: ${{inputs.cache_dir}}
         key: docker-postgres-cache
         restore-keys: |
           docker-postgres-
 
     - name: Ensure Cache Directory Exists
       run: |
-        cache_dir=/tmp/.docker-cache-postgres
+        cache_dir=${{inputs.cache_dir}}
         [ -e $cache_dir ] && echo "Cache directory found: $cache_dir"  \
            || { mkdir -p $cache_dir; echo "Cache directory created: $cache_dir"; }
         echo "Cache directory ensured: $cache_dir"
@@ -36,14 +41,14 @@ runs:
       if: ${{true}}
       run: |
            echo "Checking restored cache:"
-           ls /tmp/.docker-cache-postgres/
+           ls ${{inputs.cache_dir}}/
       shell: bash
 
     - name: Load Postgresql Image from Cache
       run: |
-        if [ -f /tmp/.docker-cache-postgres/postgres.tar ]; then
+        if [ -f ${{inputs.cache_dir}}/postgres.tar ]; then
           echo "Loading Postgresql image from cache..."
-          docker load -i /tmp/.docker-cache-postgres/postgres.tar
+          docker load -i ${{inputs.cache_dir}}/postgres.tar
            echo "Postgresql image loaded from cache."
         else
           echo "No cached Postgresql image found."
@@ -52,7 +57,7 @@ runs:
 
     - name: Check for Updates or Missing Postgresql Image
       run: |
-        LOCAL_DIGEST=$(cat /tmp/.docker-cache-postgres/digest 2>/dev/null || echo "none")
+        LOCAL_DIGEST=$(cat ${{inputs.cache_dir}}/digest 2>/dev/null || echo "none")
         REMOTE_DIGEST=$(docker manifest inspect postgres:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
         echo "Local Digest: $LOCAL_DIGEST"
         echo "Remote Digest: $REMOTE_DIGEST"
@@ -63,12 +68,12 @@ runs:
           echo "Valeur du digest: $DIGEST"
         
           echo "LS avant"
-          ls /tmp/.docker-cache-postgres/
-          echo "$DIGEST" > /tmp/.docker-cache-postgres/digest
+          ls ${{inputs.cache_dir}}/
+          echo "$DIGEST" > ${{inputs.cache_dir}}/digest
           echo "LS après"
-          ls /tmp/.docker-cache-postgres/
+          ls ${{inputs.cache_dir}}/
         
-          docker save postgres:latest -o /tmp/.docker-cache-postgres/postgres.tar
+          docker save postgres:latest -o ${{inputs.cache_dir}}/postgres.tar
           echo "Postgresql image pulled and saved to cache."
         else
           echo "Postgresql image is up-to-date and loaded from cache."
@@ -78,17 +83,24 @@ runs:
     - name: Save Updated Cache
       uses: actions/cache@v4
       with:
-        path: /tmp/.docker-cache-postgres
+        path: ${{inputs.cache_dir}}
         key: docker-postgres-cache
 
     - name: Verify Digest in Cache After Save
       run: |
         echo "Verifying cache contents:"
-        ls -la /tmp/.docker-cache-postgres/
-        if [ ! -f /tmp/.docker-cache-postgres/digest ]; then
+        ls -la ${{inputs.cache_dir}}/
+        if [ ! -f ${{inputs.cache_dir}}/digest ]; then
           echo "Error: Digest file was not saved to the cache!"
           exit 1
         fi
+      shell: bash
+
+    - name: Verify Cache After Save
+      run: |
+          echo "Verifying cache after save:"
+          ls -la ${{inputs.cache_dir}}/
+          cat ${{inputs.cache_dir}}/digest || echo "No digest found in cache"
       shell: bash
 
     - name: Start Postgresql Container
