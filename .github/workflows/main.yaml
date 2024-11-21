@@ -9,8 +9,12 @@ jobs:
   avenir-portfolio-security:
     runs-on: ubuntu-latest
     env:
-      ENABLE_POSTGRES_ACTION: false
-      ENABLE_OPENLDAP_ACTION: true
+      ENABLE_POSTGRES_ACTION: true
+      ENABLE_OPENLDAP_ACTION: false
+      ENABLE_CAS_ACTION: false
+      ENABLE_UNIT_TESTS_ACTION: false
+      ENABLE_LOAD_TESTS_ACTION: false
+      ENABLE_PUBLISH_ACTION: false
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -59,6 +63,7 @@ jobs:
           disabled: false
 
       - name: Setup CAS
+        if: ${{env.ENABLE_CAS_ACTION == 'true' }}
         uses: ./.github/actions/setup-cas
         with:
           rebuild: false
@@ -71,35 +76,37 @@ jobs:
         
   
       - name: Unit and coverage Tests
+        if: ${{env.ENABLE_UNIT_TESTS_ACTION == 'true' }}
         uses: ./.github/actions/unit-and-coverage-tests
-        if: true
-        
+
       - name: (DEBUG) Display cas logs after tests
         if: false  
         run: |
           docker logs avenirs-cas
+
       - name: Start application
+        if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
         uses: ./.github/actions/spring-boot-app/start
         with:
           app_url: $AVENIRS_APP_URL
-        if: true
+
 
       - name: Load Tests
+        if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
         uses: ./.github/actions/load-tests
         with:
           fixtures: $AVENIRS_LOAD_TESTS_FIXTURES
           app_url: $AVENIRS_APP_URL
-        if: true
 
       - name: Stop application
+        if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
         uses: ./.github/actions/spring-boot-app/stop
         with:
           app_url: $AVENIRS_APP_URL
-        if: true
 
       - name: Publish reports
+        if: ${{env.ENABLE_PUBLISH_ACTION == 'true' }}
         uses: ./.github/actions/publish-to-gh-pages
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./target/site
-        if: true
