@@ -73,6 +73,13 @@ runs:
         fi
       shell: bash
 
+    - name: Save Updated Cache
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.docker-cache-postgres
+        key: docker-postgres-cache
+
+
     - name: Start Postgresql Container
       run: |
         echo "Starting Postgresql Docker container..."
