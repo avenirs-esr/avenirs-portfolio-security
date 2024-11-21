@@ -9,7 +9,14 @@ runs:
       with:
             distribution: 'temurin'
             java-version: '21'
-    
+
+    - name: Cache Maven Dependencies
+      uses: actions/cache@v4
+      with:
+          path: ~/.m2/repository
+          key: maven-cache-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-cache-
            
     - name: Generate env.properties to Ignore SSL Verification
       run: |
