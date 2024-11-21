@@ -80,7 +80,6 @@ jobs:
         with:
           app_url: $AVENIRS_APP_URL
 
-
       - name: Load Tests
         if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
         uses: ./.github/actions/load-tests
