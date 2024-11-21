@@ -48,7 +48,12 @@ runs:
         echo "Contents of cache directory before save:"
         ls -la ${{inputs.cache_dir}}
         echo "Hash of files:"
-        sha256sum ${{inputs.cache_dir}}/*
+        if [ -n "$(ls -A ${{inputs.cache_dir}} 2>/dev/null)" ]; then
+          echo "Hash of files:"
+          sha256sum ${{inputs.cache_dir}}/*
+        else
+          echo "No files to hash."
+        fi
       shell: bash
 
     - name: Check for Updates or Missing Postgresql Image
@@ -69,6 +74,20 @@ runs:
         else
           echo "Postgresql image is up-to-date and loaded from cache."
           echo "::set-output name=cache-updated::false"
+        fi
+      shell: bash
+
+
+    - name: Debug Cache Before Save
+      run: |
+        echo "Contents of cache directory before save:"
+        ls -la ${{inputs.cache_dir}}
+        echo "Hash of files:"
+        if [ -n "$(ls -A ${{inputs.cache_dir}} 2>/dev/null)" ]; then
+          echo "Hash of files:"
+          sha256sum ${{inputs.cache_dir}}/*
+        else
+          echo "No files to hash."
         fi
       shell: bash
 

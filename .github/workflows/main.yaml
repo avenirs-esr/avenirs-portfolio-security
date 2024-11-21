@@ -35,8 +35,11 @@ jobs:
           postgres_user: ${{secrets.POSTGRES_USER}}
           postgres_password: ${{secrets.POSTGRES_PASSWORD}}
 
-      - name: Stop workflow
+      - name: Stop workflow after postgres
         uses: ./.github/actions/gh-action-utils/stop-workflow
+        with:
+          disabled: true
+
 
       - name: Setup OpenLDAP
         uses: ./.github/actions/setup-openldap
@@ -49,6 +52,12 @@ jobs:
         uses: ./.github/actions/setup-cas
         with:
           rebuild: false
+
+      - name: Stop workflow after CAS
+        uses: ./.github/actions/gh-action-utils/stop-workflow
+        with:
+          disabled: false
+
 
       - name: (DEBUG) Check Docker containers
         if : false
