@@ -53,11 +53,7 @@ jobs:
         with:
           rebuild: false
 
-      - name: Stop workflow after CAS
-        uses: ./.github/actions/gh-action-utils/stop-workflow
-        with:
-          disabled: false
-
+   
 
       - name: (DEBUG) Check Docker containers
         if : false
