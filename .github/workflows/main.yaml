@@ -47,7 +47,6 @@ jobs:
         with:
           disabled: true
 
-
       - name: Setup OpenLDAP
         if: ${{env.ENABLE_OPENLDAP_ACTION=='true'}}
         uses: ./.github/actions/setup-openldap
@@ -56,25 +55,16 @@ jobs:
           ldap_admin: ${{env.LDAP_ADMIN}}
           ldap_admin_password: ${{env.LDAP_ADMIN_PASSWORD}}
 
-
-      - name: Stop workflow after openldap
-        uses: ./.github/actions/gh-action-utils/stop-workflow
-        with:
-          disabled: false
-
       - name: Setup CAS
         if: ${{env.ENABLE_CAS_ACTION == 'true' }}
         uses: ./.github/actions/setup-cas
         with:
           rebuild: false
 
-
-
       - name: (DEBUG) Check Docker containers
         if : false
         run: docker ps -a
-        
-  
+
       - name: Unit and coverage Tests
         if: ${{env.ENABLE_UNIT_TESTS_ACTION == 'true' }}
         uses: ./.github/actions/unit-and-coverage-tests
