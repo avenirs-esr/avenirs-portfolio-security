@@ -35,6 +35,9 @@ jobs:
           postgres_user: ${{secrets.POSTGRES_USER}}
           postgres_password: ${{secrets.POSTGRES_PASSWORD}}
 
+      - name: Stop workflow
+        uses: ./.github/actions/gh-action-utils/stop-workflow
+        
       - name: Setup OpenLDAP
         uses: ./.github/actions/setup-openldap
         with:

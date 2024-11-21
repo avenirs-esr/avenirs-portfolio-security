@@ -1,0 +1,34 @@
+name: "Stop Workflow"
+description: "Stops the workflow"
+inputs:
+  stop_on_error:
+    description: "Determines if the workflow should stop on error"
+    required: false
+    default: "true"
+  disabled:
+    description: "Determines if the stop workflow action is disabled"
+    required: false
+    default: "false"
+  message:
+    description: "Message to display"
+    required: false
+    default: "Stopping the workflow"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Execute stop workflow logic
+      if: ${{ inputs.disabled == 'false' }}
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        STOP_ON_ERROR: ${{ inputs.stop_on_error }}
+        MESSAGE: ${{ inputs.message }}
+      run: |
+        if [ "$STOP_ON_ERROR" == "true" ]; then
+          echo "ERROR: $MESSAGE"
+          exit 1
+        else
+          echo "SUCCESS: $MESSAGE"
+          exit 0
+        fi
