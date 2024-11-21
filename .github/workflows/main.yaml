@@ -30,7 +30,7 @@ jobs:
         run: docker network create avenirs-network
 
       - name: Setup Postgresql
-        if: ${{env.ENABLE_POSTGRES_ACTION}}
+        if: ${{env.ENABLE_POSTGRES_ACTION == 'true' }}
         uses: ./.github/actions/setup-postgres
         with:
           jasypt_password: ${{secrets.JASYPT_ENCRYPTOR_PASSWORD}}
