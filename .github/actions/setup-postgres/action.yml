@@ -26,8 +26,10 @@ runs:
 
     - name: Ensure Cache Directory Exists
       run: |
-        mkdir -p /tmp/.docker-cache-postgres
-        echo "Cache directory ensured: /tmp/.docker-cache-postgres"
+        cache_dir=/tmp/.docker-cache-postgres
+        [ -e $cache_dir ] && echo "Cache directory found: $cache_dir"  \
+           || { mkdir -p $cache_dir; echo "Cache directory created: $cache_dir"; }
+        echo "Cache directory ensured: $cache_dir"
       shell: bash
 
     - name: (DEBUG) Check Cache Restoration
@@ -78,7 +80,7 @@ runs:
       with:
         path: /tmp/.docker-cache-postgres
         key: docker-postgres-cache
-        
+
     - name: Verify Digest in Cache After Save
       run: |
         echo "Verifying cache contents:"
