@@ -45,7 +45,7 @@ jobs:
 
 
       - name: Setup OpenLDAP
-        if: ${{env.ENABLE_OPENLDAP_ACTION}}
+        if: ${{env.ENABLE_OPENLDAP_ACTION=='true'}}
         uses: ./.github/actions/setup-openldap
         with:
           ldap_base_dn: ${{env.LDAP_BASE_DN}}
