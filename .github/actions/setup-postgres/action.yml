@@ -78,7 +78,16 @@ runs:
       with:
         path: /tmp/.docker-cache-postgres
         key: docker-postgres-cache
-
+        
+    - name: Verify Digest in Cache After Save
+      run: |
+        echo "Verifying cache contents:"
+        ls -la /tmp/.docker-cache-postgres/
+        if [ ! -f /tmp/.docker-cache-postgres/digest ]; then
+          echo "Error: Digest file was not saved to the cache!"
+          exit 1
+        fi
+      shell: bash
 
     - name: Start Postgresql Container
       run: |
