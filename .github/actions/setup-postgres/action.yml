@@ -42,9 +42,10 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{inputs.cache_dir}}
-        key: ${{inputs.cache_key}}
+        key: postgres-cache-${{ runner.os }}-${{ hashFiles('${{inputs.cache_dir}}/digest', '${{inputs.cache_dir}}/postgres.tar') }}
         restore-keys: |
-         ${{inputs.cache_restore_key}}
+          postgres-cache-${{ runner.os }}-
+          postgres-cache-
 
 
     - name: (DEBUG) Check Cache Restoration
@@ -94,7 +95,10 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{inputs.cache_dir}}
-        key: ${{inputs.cache_key}}
+        key: postgres-cache-${{ runner.os }}-${{ hashFiles('${{inputs.cache_dir}}/digest', '${{inputs.cache_dir}}/postgres.tar') }}
+        restore-keys: |
+          postgres-cache-${{ runner.os }}-
+          postgres-cache-
 
     - name: Verify Digest in Cache After Save
       run: |
