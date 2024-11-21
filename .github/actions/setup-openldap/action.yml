@@ -61,12 +61,13 @@ runs:
 
     - name: Check for Updates or Missing OpenLDAP Image
       run: |
-        LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' osixia/openldap:${{inputs.docker_image_version}} 2>/dev/null || echo "none")
+        LOCAL_DIGEST=$(cat /tmp/.docker-cache-openldap/digest 2>/dev/null || echo "none")
         REMOTE_DIGEST=$(docker manifest inspect osixia/openldap:${{inputs.docker_image_version}} | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
         echo "Local Digest: $LOCAL_DIGEST"
         echo "Remote Digest: $REMOTE_DIGEST"
         if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
           echo "Pulling updated OpenLDAP Docker image..."
+          echo "$REMOTE_DIGEST" > /tmp/.docker-cache-openldap/digest
           docker pull osixia/openldap:${{inputs.docker_image_version}}
           docker save osixia/openldap:${{inputs.docker_image_version}} -o /tmp/.docker-cache-openldap/openldap.tar
           echo "OpenLDAP image pulled and saved to cache."
