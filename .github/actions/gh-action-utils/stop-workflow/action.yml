@@ -1,10 +1,7 @@
 name: "Stop Workflow"
 description: "Stops the workflow"
 inputs:
-  stop_on_error:
-    description: "Determines if the workflow should stop on error"
-    required: false
-    default: "false"
+
   disabled:
     description: "Determines if the stop workflow action is disabled"
     required: false
@@ -25,11 +22,6 @@ runs:
         STOP_ON_ERROR: ${{ inputs.stop_on_error }}
         MESSAGE: ${{ inputs.message }}
       run: |
-        if [ "$STOP_ON_ERROR" == "true" ]; then
           echo "Stopping workflow on error: $MESSAGE"
-          echo "WARNING: the cache are not created/updated"
+          echo "!!!! WARNING: the cache are not created/updated"
           exit 1
-        else
-          echo "Stopping workflow with success: $MESSAGE"
-          exit 0
-        fi
