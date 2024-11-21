@@ -26,9 +26,9 @@ runs:
         MESSAGE: ${{ inputs.message }}
       run: |
         if [ "$STOP_ON_ERROR" == "true" ]; then
-          echo "ERROR: $MESSAGE"
+          echo "Stopping workflow on error: $MESSAGE"
           exit 1
         else
-          echo "SUCCESS: $MESSAGE"
+          echo "Stopping workflow with success: $MESSAGE"
           exit 0
         fi
