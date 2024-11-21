@@ -51,8 +51,14 @@ runs:
           echo "Pulling updated Postgresql Docker image..."
           docker pull postgres:latest
           DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' postgres:latest | awk -F '@' '{print $2}')
+          echo "Valeur du digest: $DIGEST"
+        
+          echo "LS avant"
           ls /tmp/.docker-cache-postgres/
           echo "$DIGEST" > /tmp/.docker-cache-postgres/digest
+          echo "LS après"
+          ls /tmp/.docker-cache-postgres/
+        
           docker save postgres:latest -o /tmp/.docker-cache-postgres/postgres.tar
           echo "Postgresql image pulled and saved to cache."
         else
