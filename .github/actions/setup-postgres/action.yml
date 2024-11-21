@@ -50,10 +50,6 @@ runs:
         if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
           echo "Pulling updated Postgresql Docker image..."
           docker pull postgres:latest
-          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' postgres:latest | awk -F '@' '{print $2}')
-          echo "DIGEST: $DIGEST" 
-          echo "Local DIGEST: $LOCAL_DIGEST" 
-          echo "Remote DIGEST: $REMOTE_DIGEST" 
           echo "$REMOTE_DIGEST" > /tmp/.docker-cache-postgres/digest
           docker save postgres:latest -o /tmp/.docker-cache-postgres/postgres.tar
           echo "Postgresql image pulled and saved to cache."
