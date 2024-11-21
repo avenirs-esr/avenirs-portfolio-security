@@ -21,13 +21,6 @@ runs:
   using: "composite"
  
   steps:
-    - name: Cache Docker Images for Postgresql
-      uses: actions/cache@v4
-      with:
-        path: ${{inputs.cache_dir}}
-        key: docker-postgres-cache
-        restore-keys: |
-          docker-postgres-
 
     - name: Ensure Cache Directory Exists
       run: |
@@ -36,6 +29,15 @@ runs:
            || { mkdir -p $cache_dir; echo "Cache directory created: $cache_dir"; }
         echo "Cache directory ensured: $cache_dir"
       shell: bash
+      
+    - name: Cache Docker Images for Postgresql
+      uses: actions/cache@v4
+      with:
+        path: ${{inputs.cache_dir}}
+        key: docker-postgres-cache
+        restore-keys: |
+          docker-postgres-
+
 
     - name: (DEBUG) Check Cache Restoration
       if: ${{true}}
