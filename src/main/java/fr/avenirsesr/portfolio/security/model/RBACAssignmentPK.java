@@ -3,6 +3,7 @@
  */
 package fr.avenirsesr.portfolio.security.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -19,6 +20,9 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RBACAssignmentPK implements Serializable {
+
+	@Serial
+	private static final long serialVersionUID = -5520708663812175497L;
 
 	/** Role id. */
 	private UUID role;
