@@ -1,0 +1,46 @@
+#! /bin/bash
+
+
+# Decrypt an encrypted string in a file using jasypt
+#
+# Prerequisites  and limitations:
+# - Only one encrypted string in the file.
+# - No '|' in the password, or change the sed delimiter, for instance with '§'.
+#   Don't use the character '/' as it can be in the encrypted string.
+# - The jasypt jar must be in the local maven repository or specified via the variable JASYPT_JAR.
+#
+# Example: jasypt src/main/resources/db/init-db.sql | psql -p 65432 -h localhost -U pguser template1
+#
+# Example with an inline command if the script cannot be used:
+#
+# [ -n "$JASYPT_JAR" ] || JASYPT_JAR=$(find ~/.m2 -type f -name 'jasypt-*.jar' | head -n 1) \
+# && [ -n "$JASYPT_JAR" ] || { echo -ne "\n\nError : JAR Jasypt not found in ~/.m2\n\n"; false; } \
+# && encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' src/main/resources/db/init-db.sql | sed -E 's/ENC\((.*)\)/\1/') \
+# && decrypted=$(java -cp "$JASYPT_JAR" org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1) \
+# && sed "s|ENC($encrypted)|$decrypted|" src/main/resources/db/init-db.sql \
+# | psql -p 65432 -h localhost -U pguser template1
+
+
+# Checks input file
+file=$1
+[ -e $file ] || { echo "Error file not found: $file"; exit 1; }
+[ -r $file ] || { echo "Error file not readable: $file"; exit 1; }
+[ -f $file ] || { echo "Error not a file: $file"; exit 1; }
+
+# Checks environment
+[ -n "$JASYPT_ENCRYPTOR_PASSWORD" ] || { echo "Error environment variable JASYPT_ENCRYPTOR_PASSWORD no set"; exit 1; } 
+
+# Jasypt library
+[ -n "$JASYPT_JAR" ] || JASYPT_JAR=$(find ~/.m2 -type f -name 'jasypt-*.jar' | head -n 1) 
+[ -n "$JASYPT_JAR" ] || { echo -ne "\n\nErreur : JAR Jasypt not found in ~/.m2\n\n\n"; exit 1; }
+
+# Get encrypted string from file
+encrypted=$(grep -o 'ENC([A-Za-z0-9+/=]*)' $file | sed -E 's/ENC\((.*)\)/\1/')
+[ -n "$encrypted" ] || { echo -ne "\n\nErreur : unable to get encrypted string from file: $file\n\n"; exit 1; } 
+
+# Decryption
+decrypted=$(java -cp "$JASYPT_JAR" org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI input=$encrypted password=$JASYPT_ENCRYPTOR_PASSWORD algorithm=PBEWithMD5AndDES | grep -v '^$' | tail -n 1) 
+[ -n "$decrypted" ] || { echo -ne "\n\nErreur : unable to decrypt string: $encrypted\n\n"; exit 1; } 
+
+
+sed "s|ENC($encrypted)|$decrypted|" $file
