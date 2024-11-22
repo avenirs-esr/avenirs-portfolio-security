@@ -53,7 +53,8 @@ public abstract class RBACAssignmentSpecificationHelper {
 
 			log.trace("filterByPrincipalAndResources, login: {}", login);
 			log.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
-
+			root.fetch(RBACAssignment_.principal, JoinType.LEFT);
+			root.fetch(RBACAssignment_.role, JoinType.LEFT);
 			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope);
 			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources);
 
