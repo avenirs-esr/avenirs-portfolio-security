@@ -53,13 +53,14 @@ import fr.avenirsesr.portfolio.security.model.RBACScope_;
 
 <span class="fc" id="L54">			log.trace(&quot;filterByPrincipalAndResources, login: {}&quot;, login);</span>
 <span class="fc" id="L55">			log.trace(&quot;filterByPrincipalAndResources, resourceIds: {}&quot;, Arrays.toString(resourceIds));</span>
+<span class="fc" id="L56">			root.fetch(RBACAssignment_.principal, JoinType.LEFT);</span>
+<span class="fc" id="L57">			root.fetch(RBACAssignment_.role, JoinType.LEFT);</span>
+<span class="fc" id="L58">			Join&lt;RBACAssignment, RBACScope&gt; joinScope = root.join(RBACAssignment_.scope);</span>
+<span class="fc" id="L59">			Join&lt;RBACScope, RBACResource&gt; joinResource = joinScope.join(RBACScope_.resources);</span>
 
-<span class="fc" id="L57">			Join&lt;RBACAssignment, RBACScope&gt; joinScope = root.join(RBACAssignment_.scope);</span>
-<span class="fc" id="L58">			Join&lt;RBACScope, RBACResource&gt; joinResource = joinScope.join(RBACScope_.resources);</span>
-
-<span class="fc" id="L60">			return criteriaBuilder.and(</span>
-<span class="fc" id="L61">			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),</span>
-<span class="fc" id="L62">			    joinResource.get(RBACResource_.id).in((Object[]) resourceIds)</span>
+<span class="fc" id="L61">			return criteriaBuilder.and(</span>
+<span class="fc" id="L62">			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),</span>
+<span class="fc" id="L63">			    joinResource.get(RBACResource_.id).in((Object[]) resourceIds)</span>
 			);
 		};
 	}
