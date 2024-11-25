@@ -34,11 +34,20 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Get Remote digest
+      id: get_remote_digest
+      run: |
+        REMOTE_DIGEST=$(docker manifest inspect osixia/openldap:${{inputs.docker_image_version}} | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
+        echo "REMOTE_DIGEST: $REMOTE_DIGEST"
+        echo "REMOTE_DIGEST=$REMOTE_DIGEST" >> $GITHUB_ENV
+        echo "REMOTE_DIGEST=$REMOTE_DIGEST" >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: Cache Docker Images for OpenLDAP
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-openldap
-        key: docker-openldap-cache
+        key: docker-openldap-cache-${{ steps.get_remote_digest.outputs.REMOTE_DIGEST }}-${{ hashFiles('.github/actions/setup-openldap/settings/**') }}
         restore-keys: |
           docker-openldap-
 
@@ -62,7 +71,6 @@ runs:
     - name: Check for Updates or Missing OpenLDAP Image
       run: |
         LOCAL_DIGEST=$(cat /tmp/.docker-cache-openldap/digest 2>/dev/null || echo "none")
-        REMOTE_DIGEST=$(docker manifest inspect osixia/openldap:${{inputs.docker_image_version}} | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
         echo "Local Digest: $LOCAL_DIGEST"
         echo "Remote Digest: $REMOTE_DIGEST"
         if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
