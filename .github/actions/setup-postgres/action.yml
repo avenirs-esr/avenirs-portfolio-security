@@ -16,6 +16,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Debug Cache Directory
+      run: ls -la /tmp/.docker-cache-postgres
+      shell: bash
     - name: Cache Docker Images for Postgresql
       uses: actions/cache@v4
       with:
