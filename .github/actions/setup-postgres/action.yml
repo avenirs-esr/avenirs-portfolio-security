@@ -16,14 +16,18 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Debug Cache Directory
-      run: ls -la /tmp/.docker-cache-postgres
+    - name: Computes Remote digest
+      run: |
+            REMOTE_DIGEST=$(docker manifest inspect postgres:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
+            echo "REMOTE_DIGEST: $REMOTE_DIGEST"
+            echo "REMOTE_DIGEST=$REMOTE_DIGEST" >> $GITHUB_ENV
       shell: bash
+
     - name: Cache Docker Images for Postgresql
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-postgres
-        key: docker-postgres-cache-${{ hashFiles('/tmp/.docker-cache-postgres/digest') || 'none' }}
+        key: docker-postgres-cache-${{REMOTE_DIGEST || 'none' }}
         restore-keys: |
           docker-postgres-
 
@@ -47,7 +51,6 @@ runs:
     - name: Check for Updates or Missing Postgresql Image
       run: |
         LOCAL_DIGEST=$(cat /tmp/.docker-cache-postgres/digest 2>/dev/null || echo "none")
-        REMOTE_DIGEST=$(docker manifest inspect postgres:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
         echo "Local Digest: $LOCAL_DIGEST"
         echo "Remote Digest: $REMOTE_DIGEST"
         if [ "$LOCAL_DIGEST" != "$REMOTE_DIGEST" ] || [ "$LOCAL_DIGEST" == "none" ]; then
