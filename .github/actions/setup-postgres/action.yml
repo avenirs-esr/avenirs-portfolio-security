@@ -16,18 +16,20 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Computes Remote digest
+    - name: Get Remote digest
+      id: get_remote_digest
       run: |
             REMOTE_DIGEST=$(docker manifest inspect postgres:latest | jq -r '.manifests[0].digest' 2>/dev/null || echo "none")
             echo "REMOTE_DIGEST: $REMOTE_DIGEST"
             echo "REMOTE_DIGEST=$REMOTE_DIGEST" >> $GITHUB_ENV
+            echo "REMOTE_DIGEST=$REMOTE_DIGEST" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Cache Docker Images for Postgresql
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-postgres
-        key: docker-postgres-cache-${{REMOTE_DIGEST || 'none' }}
+        key: docker-postgres-cache-${{ steps.get_remote_digest.outputs.digest }}
         restore-keys: |
           docker-postgres-
 

@@ -333,6 +333,14 @@ databaseChangeLog:
               - column:
                   name: validity_end
                   type: datetime
+        - createIndex:
+            tableName: context
+            column:
+              name: validity_start
+        - createIndex:
+            tableName: context
+            column:
+              name: validity_end
         - sql:
             dbms: 'postgresql'
             endDelimiter: \nGO
