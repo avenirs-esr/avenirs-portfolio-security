@@ -68,7 +68,7 @@ public abstract class RBACAssignmentSpecificationHelper {
 	 * @param resourceIds The id of the resources.
 	 * @return The assignments for the principal, the resources and the context.
 	 */
-	public static Specification<RBACAssignment> filterByPrincipalResourcesAndContext(String login,
+	public static Specification<RBACAssignment> filterByPrincipalContextAndResources(String login,
 																					 RBACContext executionContext,
 																					 UUID... resourceIds) {
 		return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
