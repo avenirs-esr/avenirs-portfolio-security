@@ -21,7 +21,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: /tmp/.docker-cache-cas
-        key: docker-cas-cache-{{inputs.version}}-${{ hashFiles('.github/actions/setup-cas/settings/**') }}
+        key: docker-cas-cache-${{inputs.version}}-${{ hashFiles('.github/actions/setup-cas/settings/**') }}
         restore-keys: |
           docker-cas-
 
