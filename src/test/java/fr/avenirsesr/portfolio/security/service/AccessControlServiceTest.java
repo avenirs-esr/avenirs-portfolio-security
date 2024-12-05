@@ -142,12 +142,12 @@ class AccessControlServiceTest {
         }).when(accessControlService).createExecutionContext(any(Principal.class));
 
 
-        assertTrue(accessControlService.isAuthorized(principal, display, authorizedResource), "Display access on authorized resource.");
-        assertFalse(accessControlService.isAuthorized(principal, display, unauthorizedResource), "Display access on unauthorized resource.");
-        assertFalse(accessControlService.isAuthorized(principal, edit, authorizedResource), "Edit access on authorized resource.");
-        assertFalse(accessControlService.isAuthorized(principal, edit, unauthorizedResource), "Edit access on unauthorized resource.");
-        assertTrue(accessControlService.isAuthorized(principal, feedback, authorizedResource), "Feedback access on authorized resource.");
-        assertFalse(accessControlService.isAuthorized(principal, feedback, unauthorizedResource), "Feedback access on unauthorized resource.");
+        assertTrue(accessControlService.isAuthorized(principal.getLogin(), display.getId(), authorizedResource.getId()), "Display access on authorized resource.");
+        assertFalse(accessControlService.isAuthorized(principal.getLogin(), display.getId(), unauthorizedResource.getId()), "Display access on unauthorized resource.");
+        assertFalse(accessControlService.isAuthorized(principal.getLogin(), edit.getId(), authorizedResource.getId()), "Edit access on authorized resource.");
+        assertFalse(accessControlService.isAuthorized(principal.getLogin(), edit.getId(), unauthorizedResource.getId()), "Edit access on unauthorized resource.");
+        assertTrue(accessControlService.isAuthorized(principal.getLogin(), feedback.getId(), authorizedResource.getId()), "Feedback access on authorized resource.");
+        assertFalse(accessControlService.isAuthorized(principal.getLogin(), feedback.getId(), unauthorizedResource.getId()), "Feedback access on unauthorized resource.");
 
     }
 

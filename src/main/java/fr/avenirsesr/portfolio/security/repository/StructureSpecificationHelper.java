@@ -28,7 +28,7 @@ import java.util.UUID;
 public abstract class StructureSpecificationHelper {
 		
 	/**
-	 * Specification to filter Structure from a list of  ids.
+	 * Specification to filter Structures from a list of  ids.
 	 * @param ids The ids of the structures.
 	 * @return The Specification .
 	 */

@@ -49,8 +49,8 @@ public abstract class RBACAssignmentSpecificationHelper {
 			root.fetch(RBACAssignment_.principal, JoinType.LEFT);
 			root.fetch(RBACAssignment_.role, JoinType.LEFT);
 
-			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope);
-			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources);
+			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope, JoinType.INNER);
+			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources, JoinType.INNER);
 
 			return criteriaBuilder.and(
 			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),
@@ -73,15 +73,17 @@ public abstract class RBACAssignmentSpecificationHelper {
 																					 UUID... resourceIds) {
 		return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
 
-			log.trace("filterByPrincipalAndResources, login: {}", login);
-			log.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
-
+			if (log.isTraceEnabled()) {
+				log.trace("filterByPrincipalAndResources, login: {}", login);
+				log.trace("filterByPrincipalAndResources, executionContext: {}", executionContext);
+				log.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
+			}
 			root.fetch(RBACAssignment_.principal, JoinType.LEFT);
 			root.fetch(RBACAssignment_.role, JoinType.LEFT);
 
-			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope);
-			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources);
-			Join<RBACAssignment, RBACContext> joinContext = root.join(RBACAssignment_.context, JoinType.LEFT);
+			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope, JoinType.INNER);
+			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources, JoinType.INNER);
+			Join<RBACAssignment, RBACContext> joinContext = root.join(RBACAssignment_.context, JoinType.INNER);
 
 			Predicate principalPredicate = filterByPrincipal(login).toPredicate(root, query, criteriaBuilder);
 			Predicate resourcesPredicate = joinResource.get(RBACResource_.id).in((Object[]) resourceIds);
@@ -99,11 +101,11 @@ public abstract class RBACAssignmentSpecificationHelper {
 					)
 			);
 
-			// Structure filtering. No limitation of the structure in the application context or
-			// all the structures are contained in the execution context.
+			// Filter by structure: no structure specified in application context or all structures specified
+			// are in the execution context.
 			Predicate contextStructuresPredicate = criteriaBuilder.or(
 					criteriaBuilder.isEmpty(joinContext.get(RBACContext_.structures)),
-					joinContext.join(RBACContext_.structures).in(executionContext.getStructures())
+					joinContext.join(RBACContext_.structures, JoinType.LEFT).in(executionContext.getStructures())
 			);
 
 			return criteriaBuilder.and(

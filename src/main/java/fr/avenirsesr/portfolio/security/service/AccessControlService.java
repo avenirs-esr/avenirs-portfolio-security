@@ -4,7 +4,6 @@
 package fr.avenirsesr.portfolio.security.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -19,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import fr.avenirsesr.portfolio.security.repository.RBACAssignmentSpecificationHelper;
 import org.springframework.util.ObjectUtils;
@@ -68,9 +66,6 @@ public class AccessControlService {
 
     @Autowired
     StructureService structureService;
-
-    @Autowired
-    RBACContextService contextService;
 
     @Value("${avenirs.access.control.date.format}")
     private String dateFormat;
@@ -151,7 +146,7 @@ public class AccessControlService {
             }
         }
 
-        // Retrieve and checks the structures.
+        // Retrieves and checks the structures.
         if (!ObjectUtils.isEmpty(grantRequest.getStructureIds())) {
             List<Structure> structures = structureService.getAllStructuresBySpecification(StructureSpecificationHelper.filterByIds(grantRequest.getStructureIds()));
 
@@ -216,23 +211,6 @@ public class AccessControlService {
      * Checks that a principal has access to a resource to perform an action,
      * without application context.
      *
-     * @param principal The principal.
-     * @param action    The action to perform.
-     * @param resource  The accessed resource.
-     * @return True if the principal has access to the resource.
-     */
-    public boolean isAuthorized(Principal principal, RBACAction action, RBACResource resource) {
-        log.trace("hasAccess, principal: {}", principal);
-        log.trace("hasAccess, action: {}", action);
-        log.trace("hasAccess, resource: {}", resource);
-
-        return isAuthorized(principal.getLogin(), action.getId(), resource.getId());
-    }
-
-    /**
-     * Checks that a principal has access to a resource to perform an action,
-     * without application context.
-     *
      * @param login      The login of the principal.
      * @param actionId   The id of the action to perform.
      * @param resourceId The id of the accessed resource.
@@ -243,54 +221,39 @@ public class AccessControlService {
         log.trace("isAuthorized, actionId: {}", actionId);
         log.trace("isAuthorized, resourceId: {}", resourceId);
 
+       Optional<Principal> response = this.principalService.getPrincipalByLogin(login);
+
+         if (response.isEmpty()){
+             log.debug("isAuthorized, principal not found for login: {}", login);
+             return false;
+         }
+         Principal principal = response.get();
+         log.trace("isAuthorized, principal: {}", principal);
+
+         RBACContext executionContext = createExecutionContext(principal);
+        log.trace("isAuthorized, executionContext: {}", executionContext);
+
+        List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(
+                RBACAssignmentSpecificationHelper.filterByPrincipalContextAndResources(login, executionContext, resourceId));
+        log.trace("isAuthorized, principalAssignments: {}", principalAssignments);
+
+
+        HashSet<RBACPermission> principalPermissions = principalAssignments.stream().map(a -> a.getRole().getPermissions())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(HashSet::new));
+        log.trace("isAuthorized, principalPermissions: {}", principalPermissions);
+        if (principalPermissions.isEmpty()){
+            log.debug("isAuthorized,  principal {} has no permission", login);
+            return false;
+        }
         List<RBACPermission> requiredPermissions = this.fetchPermissions(actionId);
         log.trace("isAuthorized, requiredPermissions: {}", requiredPermissions);
 
-        return checkGrantedPermissions(requiredPermissions, login, resourceId);
-    }
+        boolean accessGranted = principalPermissions.containsAll(requiredPermissions);
+        log.trace("isAuthorized, accessGranted: {}", accessGranted);
 
-    /**
-     * Checks the granted permission for a user regarding the required ones.
-     *
-     * @param requiredPermissions The required permissions.
-     * @param login               The login of the user.
-     * @param resourceId          The resource id.
-     * @return True if the permissions granted to the user for the resource contains all the required permissions.
-     */
-    private boolean checkGrantedPermissions(List<RBACPermission> requiredPermissions, String login, UUID resourceId) {
-        if (requiredPermissions != null && !requiredPermissions.isEmpty()) {
+        return accessGranted;
 
-            List<RBACAssignment> principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(
-                    RBACAssignmentSpecificationHelper.filterByPrincipalAndResources(login, resourceId));
-            log.trace("checkGrantedPermissions, principalAssignments: {}", principalAssignments);
-
-            List<RBACAssignment> validAssignment = filterByApplicationContext(principalAssignments);
-            log.trace("checkGrantedPermissions, validAssignment: {}", validAssignment);
-
-            HashSet<RBACPermission> principalPermissions = validAssignment.stream().map(a -> a.getRole().getPermissions())
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toCollection(HashSet::new));
-            log.trace("checkGrantedPermissions, principalPermissions: {}", principalPermissions);
-
-            boolean accessGranted = principalPermissions.containsAll(requiredPermissions);
-            log.trace("checkGrantedPermissions, accessGranted: {}", accessGranted);
-
-            return accessGranted;
-        }
-        return false;
-    }
-
-    private List<RBACAssignment> filterByApplicationContext(List<RBACAssignment> principalAssignments) {
-        log.trace("filterByApplicationContext, principalAssignments: {}", principalAssignments);
-
-        if (CollectionUtils.isEmpty(principalAssignments)) {
-            return new ArrayList<>();
-        }
-        Principal principal = principalAssignments.getFirst().getPrincipal();
-        RBACContext executionContext = createExecutionContext(principal);
-        return principalAssignments.stream()
-                .filter(a -> checkExecutionContext(a.getContext(), executionContext))
-                .collect(Collectors.toList());
     }
 
     /**
@@ -303,48 +266,6 @@ public class AccessControlService {
         return new RBACContext().setStructures(principal.getStructures());
     }
 
-    private boolean checkExecutionContext(RBACContext applicationContext, RBACContext executionContext) {
-        log.trace("checkExecutionContext, applicationContext: {}", applicationContext);
-        log.trace("checkExecutionContext, executionContext: {}", executionContext);
-
-        if (applicationContext != null) {
-            LocalDateTime validityStart = applicationContext.getValidityStart();
-            LocalDateTime validityEnd = applicationContext.getValidityEnd();
-
-            log.trace("checkExecutionContext, validityStart: {}", validityStart);
-            log.trace("checkExecutionContext, validityEnd: {}", validityEnd);
-            log.trace("checkExecutionContext, executionContext.getEffectiveDate(): {}", executionContext.getEffectiveDate());
-
-            if (validityStart != null && executionContext.getEffectiveDate().isBefore(validityStart)) {
-                log.trace("checkExecutionContext, validityStart not respected");
-                return false;
-            }
-
-            if (validityEnd != null && executionContext.getEffectiveDate().isAfter(validityEnd)) {
-                log.trace("checkExecutionContext, validityEnd not respected");
-                return false;
-            }
-            Set<Structure> exContextStructures = executionContext.getStructures();
-            Set<Structure> appContextStructures = applicationContext.getStructures();
-            log.trace("checkExecutionContext, exContextStructures: {}", exContextStructures);
-            log.trace("checkExecutionContext, appContextStructures: {}", appContextStructures);
-
-            if (CollectionUtils.isEmpty(appContextStructures)) {
-                log.trace("checkExecutionContext, no structure in application context");
-                return true;
-            }
-
-            if (CollectionUtils.isEmpty(exContextStructures) || !exContextStructures.containsAll(appContextStructures)) {
-                log.trace("checkExecutionContext, structures of application context not respected");
-                return false;
-            }
-
-            log.trace("checkExecutionContext, structures of application context respected");
-            return true;
-        }
-
-        return true;
-    }
 
     /**
      * Fetches the permissions associated to an action.
