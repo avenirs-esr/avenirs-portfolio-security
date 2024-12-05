@@ -1,5 +1,5 @@
-name: "Run Tests"
-description: "Compiles and runs Spring tests"
+name: "Unit tests and code coverage"
+description: "Compiles and runs Spring tests with coverage analysis"
 inputs:
   ignore_ssl_verification:
     description: "Flag to determine if an env file should be generated to ignore ssl verification"

@@ -65,9 +65,9 @@ jobs:
         if : false
         run: docker ps -a
 
-      - name: Unit and coverage Tests
+      - name: Unit tests and code coverage
         if: ${{env.ENABLE_UNIT_TESTS_ACTION == 'true' }}
-        uses: ./.github/actions/unit-and-coverage-tests
+        uses: ./.github/actions/unit-tests-and-code-coverage
 
       - name: (DEBUG) Display cas logs after tests
         if: false  
