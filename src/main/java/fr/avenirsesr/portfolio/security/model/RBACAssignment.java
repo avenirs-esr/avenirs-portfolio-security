@@ -5,12 +5,14 @@ package fr.avenirsesr.portfolio.security.model;
 
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicUpdate;
 
 
 /**
@@ -40,29 +42,33 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@IdClass(RBACAssignmentPK.class)
+@DynamicUpdate
+
+// @IdClass(RBACAssignmentPK.class)
 @Table(name="assignment")
 public class RBACAssignment {
-	/** Role in the assignment. */
+	/** Database Id. */
 	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
+
+	/** Role in the assignment. */
+
 	@ManyToOne
 	@JoinColumn(name="id_role", referencedColumnName = "id")
 	private RBACRole role;
 
 	/** Principal to which the role is assigned. */
-	@Id
 	@ManyToOne
 	@JoinColumn(name="id_principal", referencedColumnName = "id")
 	private Principal principal;
 	
 	/** The scope, which determines the resources involved in the assignment. */
-	@Id
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id_scope", referencedColumnName = "id")
 	private RBACScope scope;
 	
 	/** The context, which determines some limits of the assignment. */
-	@Id
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id_context", referencedColumnName = "id")
 	private RBACContext context;
@@ -70,10 +76,5 @@ public class RBACAssignment {
 	/** Date of the assignment. */
 	@Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
 	private LocalDateTime timestamp;
-
-
-	public RBACAssignmentPK getId() {
-		return new RBACAssignmentPK(this.role.getId(), this.principal.getId(), this.scope.getId(), this.context.getId());
-	}
 
 }

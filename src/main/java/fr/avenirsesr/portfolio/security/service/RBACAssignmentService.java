@@ -1,11 +1,13 @@
 package fr.avenirsesr.portfolio.security.service;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import fr.avenirsesr.portfolio.security.model.RBACAssignmentPK;
 
+import fr.avenirsesr.portfolio.security.model.RBACResource;
+import fr.avenirsesr.portfolio.security.model.Structure;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,7 +25,9 @@ public class RBACAssignmentService {
 
 	@Autowired
 	private RBACAssignmentRepository assignmentRepository;
-	
+
+	@PersistenceContext
+	private EntityManager entityManager;
 	/**
 	 * Gives all the assignments.
 	 * @return All assignments.
@@ -56,7 +60,7 @@ public class RBACAssignmentService {
 	 */
 	@SuppressWarnings("unused")
 	@Transactional(readOnly = true)
-	public Optional<RBACAssignment> getAssignmentsById(RBACAssignmentPK assignmentId) {
+	public Optional<RBACAssignment> getAssignmentsById(UUID assignmentId) {
 		log.trace("getAssignmentsById, assignmentId: {}", assignmentId);
 		return assignmentRepository.findById(assignmentId);
 	}
@@ -75,7 +79,23 @@ public class RBACAssignmentService {
 		if (assignment.getContext().getId()==null){
 			assignment.getContext().setId(UUID.randomUUID());
 		}
-		return this.assignmentRepository.save(assignment);
+
+//		List<RBACResource> managedResources = assignment.getScope().getResources().stream()
+//				.map(resource -> entityManager.contains(resource) ? resource : entityManager.merge(resource))
+//				.toList();
+//		assignment.getScope().setResources(managedResources);
+//
+//		Set<Structure> managedStructures = assignment.getContext().getStructures().stream()
+//				.map(structure -> entityManager.contains(structure) ? structure : entityManager.merge(structure))
+//				.collect(Collectors.toSet());
+//		assignment.getContext().setStructures(managedStructures);
+//		if (!entityManager.contains(assignment.getScope())) {
+//			assignment.setScope(entityManager.merge(assignment.getScope()));
+//		}
+//		if (!entityManager.contains(assignment.getContext())) {
+//			assignment.setContext(entityManager.merge(assignment.getContext()));
+//		}
+		return this.assignmentRepository.saveWithRelations(assignment);
 	}
 
 
@@ -87,7 +107,7 @@ public class RBACAssignmentService {
 	@Transactional
 	public void updateAssignment(RBACAssignment assignment) {
 		log.trace("updateAssignment, assignment: {}", assignment);
-		this.assignmentRepository.save(assignment);
+		this.assignmentRepository.saveWithRelations(assignment);
 	}
 
 
@@ -96,7 +116,7 @@ public class RBACAssignmentService {
 	 * @param assignmentId The id of the assignment to delete.
 	 */
 	@Transactional
-	public void deleteAssignment(RBACAssignmentPK assignmentId) {
+	public void deleteAssignment(UUID assignmentId) {
 		log.trace("deleteAssignment, assignmentId: {}", assignmentId);
 		this.assignmentRepository.deleteById(assignmentId);
 	}

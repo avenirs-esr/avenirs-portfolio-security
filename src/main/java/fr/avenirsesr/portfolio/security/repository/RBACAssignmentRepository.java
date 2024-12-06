@@ -1,10 +1,10 @@
 package fr.avenirsesr.portfolio.security.repository;
 
-import fr.avenirsesr.portfolio.security.model.RBACAssignmentPK;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
 import fr.avenirsesr.portfolio.security.model.RBACAssignment;
+
+import java.util.UUID;
 
 /**
  * <h1>RBACAssignmentRepository</h1>
@@ -22,6 +22,6 @@ import fr.avenirsesr.portfolio.security.model.RBACAssignment;
  * 14/10/2024
  */
 
-public interface RBACAssignmentRepository extends JpaRepository<RBACAssignment, RBACAssignmentPK>, JpaSpecificationExecutor<RBACAssignment>  {
+public interface RBACAssignmentRepository extends JpaRepository<RBACAssignment, UUID>, JpaSpecificationExecutor<RBACAssignment>, RBACAssignmentRepositoryCustom  {
 
 }

@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 
 /**
  * <h1>AccessControlRevokeResponse</h1>
@@ -39,5 +41,5 @@ public class AccessControlRevokeResponse {
 	private String error;
 
 	/** Assignment ID. */
-	private RBACAssignmentPK assignmentId;
+	private UUID assignmentId;
 }

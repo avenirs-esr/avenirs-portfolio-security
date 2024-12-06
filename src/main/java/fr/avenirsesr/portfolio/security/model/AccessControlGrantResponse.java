@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 
 /**
  * <h1>AccessControlGrantResponse</h1>
@@ -36,7 +38,7 @@ public class AccessControlGrantResponse {
 	private boolean granted;
 
 	/** Assignment ID. */
-	private RBACAssignmentPK assignmentId;
+	private UUID assignmentId;
 
 	/** Message if an error occurs. */
 	private String error;

@@ -150,6 +150,7 @@ class RBACAssignmentServiceTest {
                 .setResources(assignment.getScope().getResources());
 
         RBACAssignment updatedAssignment = new RBACAssignment()
+                .setId(assignment.getId())
                 .setContext(assignment.getContext())
                 .setRole(assignment.getRole())
                 .setPrincipal(assignment.getPrincipal())

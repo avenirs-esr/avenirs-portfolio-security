@@ -31,13 +31,7 @@ public class AccessControlRevokeRequest {
     /** The login of the principal. */
     private String login;
 
-    /** The id of the role to grant. */
-    private UUID roleId;
-
-    /** The id of the scope */
-    private UUID scopeId;
-
-    /** The id of the context. */
-    private UUID contextId;
+    /** The id of the assignment to revoke. */
+    private UUID assignmentId;
 
 }

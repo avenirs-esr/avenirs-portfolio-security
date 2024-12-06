@@ -8,7 +8,6 @@ import static org.mockito.Mockito.*;
 import fr.avenirsesr.portfolio.security.delegate.SecurityDelegate;
 import fr.avenirsesr.portfolio.security.model.*;
 import fr.avenirsesr.portfolio.security.service.AccessControlService;
-import fr.avenirsesr.portfolio.security.service.AuthenticationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,9 +68,6 @@ class AccessControlControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private AuthenticationService authenticationService;
-
-    @Mock
     private AccessControlService accessControlService;
 
     @Autowired
@@ -109,9 +105,7 @@ class AccessControlControllerTest {
 
         revokeRequest = new AccessControlRevokeRequest()
                 .setLogin("user123")
-                .setRoleId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
-                .setScopeId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
-                .setContextId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+                .setAssignmentId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
     }
 
     @AfterEach

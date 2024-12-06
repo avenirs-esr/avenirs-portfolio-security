@@ -394,32 +394,13 @@ class AccessControlServiceTest {
 
         AccessControlRevokeResponse response = accessControlService.revokeAccess(new AccessControlRevokeRequest()
                 .setLogin(userLogin)
-                .setContextId(assignment.getContext().getId())
-                .setRoleId(assignment.getRole().getId())
-                .setScopeId(assignment.getScope().getId()));
+                .setAssignmentId(assignment.getId()));
         assertEquals(userLogin, response.getLogin(), "Response user login");
         assertTrue(response.isRevoked(), "Response revoked flag");
         assertNull(response.getError(), "Response without error");
 
         assignments = assignmentService.getAllAssignments();
         assertTrue(assignments.isEmpty(), "Assignment deleted");
-    }
-
-    @Sql(scripts = {
-            "classpath:db/test-fixtures-commons.sql"
-    })
-    @Test
-    void revokeAccessWithInvalidPrincipal() {
-
-
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> accessControlService.revokeAccess(new AccessControlRevokeRequest()
-                .setLogin("user123")
-                .setContextId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
-                .setRoleId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
-                .setScopeId(UUID.fromString("00000000-0000-0000-0000-000000000001"))));
-
-        assertEquals("Principal not found, UID: user123", exception.getMessage(), "Revoke exception message");
-
     }
 
 }
