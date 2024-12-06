@@ -79,22 +79,7 @@ public class RBACAssignmentService {
 		if (assignment.getContext().getId()==null){
 			assignment.getContext().setId(UUID.randomUUID());
 		}
-
-//		List<RBACResource> managedResources = assignment.getScope().getResources().stream()
-//				.map(resource -> entityManager.contains(resource) ? resource : entityManager.merge(resource))
-//				.toList();
-//		assignment.getScope().setResources(managedResources);
-//
-//		Set<Structure> managedStructures = assignment.getContext().getStructures().stream()
-//				.map(structure -> entityManager.contains(structure) ? structure : entityManager.merge(structure))
-//				.collect(Collectors.toSet());
-//		assignment.getContext().setStructures(managedStructures);
-//		if (!entityManager.contains(assignment.getScope())) {
-//			assignment.setScope(entityManager.merge(assignment.getScope()));
-//		}
-//		if (!entityManager.contains(assignment.getContext())) {
-//			assignment.setContext(entityManager.merge(assignment.getContext()));
-//		}
+		
 		return this.assignmentRepository.saveWithRelations(assignment);
 	}
 
