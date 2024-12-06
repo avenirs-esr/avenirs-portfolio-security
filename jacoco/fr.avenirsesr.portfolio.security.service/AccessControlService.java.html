@@ -191,20 +191,13 @@ import org.springframework.util.StringUtils;
     public AccessControlRevokeResponse revokeAccess(AccessControlRevokeRequest revokeRequest) {
 <span class="fc" id="L192">        log.trace(&quot;revokeAccess, revokeRequest: {}&quot;, revokeRequest);</span>
 
-<span class="fc" id="L194">        Principal principal = principalService.getPrincipalByLogin(revokeRequest.getLogin())</span>
-<span class="fc" id="L195">                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Principal not found, UID: &quot; + revokeRequest.getLogin()));</span>
 
-<span class="fc" id="L197">        RBACAssignmentPK assignmentId = new RBACAssignmentPK()</span>
-<span class="fc" id="L198">                .setPrincipal(principal.getId())</span>
-<span class="fc" id="L199">                .setContext(revokeRequest.getContextId())</span>
-<span class="fc" id="L200">                .setScope(revokeRequest.getScopeId())</span>
-<span class="fc" id="L201">                .setRole(revokeRequest.getRoleId());</span>
 
-<span class="fc" id="L203">        assignmentService.deleteAssignment(assignmentId);</span>
-<span class="fc" id="L204">        return new AccessControlRevokeResponse()</span>
-<span class="fc" id="L205">                .setLogin(revokeRequest.getLogin())</span>
-<span class="fc" id="L206">                .setAssignmentId(assignmentId)</span>
-<span class="fc" id="L207">                .setRevoked(true);</span>
+<span class="fc" id="L196">        assignmentService.deleteAssignment(revokeRequest.getAssignmentId());</span>
+<span class="fc" id="L197">        return new AccessControlRevokeResponse()</span>
+<span class="fc" id="L198">                .setLogin(revokeRequest.getLogin())</span>
+<span class="fc" id="L199">                .setAssignmentId(revokeRequest.getAssignmentId())</span>
+<span class="fc" id="L200">                .setRevoked(true);</span>
     }
 
     /**
@@ -217,42 +210,42 @@ import org.springframework.util.StringUtils;
      * @return True if the principal has access to the resource.
      */
     public boolean isAuthorized(String login, UUID actionId, UUID resourceId) {
-<span class="fc" id="L220">        log.trace(&quot;isAuthorized, login: {}&quot;, login);</span>
-<span class="fc" id="L221">        log.trace(&quot;isAuthorized, actionId: {}&quot;, actionId);</span>
-<span class="fc" id="L222">        log.trace(&quot;isAuthorized, resourceId: {}&quot;, resourceId);</span>
+<span class="fc" id="L213">        log.trace(&quot;isAuthorized, login: {}&quot;, login);</span>
+<span class="fc" id="L214">        log.trace(&quot;isAuthorized, actionId: {}&quot;, actionId);</span>
+<span class="fc" id="L215">        log.trace(&quot;isAuthorized, resourceId: {}&quot;, resourceId);</span>
 
-<span class="fc" id="L224">       Optional&lt;Principal&gt; response = this.principalService.getPrincipalByLogin(login);</span>
+<span class="fc" id="L217">       Optional&lt;Principal&gt; response = this.principalService.getPrincipalByLogin(login);</span>
 
-<span class="fc bfc" id="L226" title="All 2 branches covered.">         if (response.isEmpty()){</span>
-<span class="fc" id="L227">             log.debug(&quot;isAuthorized, principal not found for login: {}&quot;, login);</span>
-<span class="fc" id="L228">             return false;</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">         if (response.isEmpty()){</span>
+<span class="fc" id="L220">             log.debug(&quot;isAuthorized, principal not found for login: {}&quot;, login);</span>
+<span class="fc" id="L221">             return false;</span>
          }
-<span class="fc" id="L230">         Principal principal = response.get();</span>
-<span class="fc" id="L231">         log.trace(&quot;isAuthorized, principal: {}&quot;, principal);</span>
+<span class="fc" id="L223">         Principal principal = response.get();</span>
+<span class="fc" id="L224">         log.trace(&quot;isAuthorized, principal: {}&quot;, principal);</span>
 
-<span class="fc" id="L233">         RBACContext executionContext = createExecutionContext(principal);</span>
-<span class="fc" id="L234">        log.trace(&quot;isAuthorized, executionContext: {}&quot;, executionContext);</span>
+<span class="fc" id="L226">         RBACContext executionContext = createExecutionContext(principal);</span>
+<span class="fc" id="L227">        log.trace(&quot;isAuthorized, executionContext: {}&quot;, executionContext);</span>
 
-<span class="fc" id="L236">        List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(</span>
-<span class="fc" id="L237">                RBACAssignmentSpecificationHelper.filterByPrincipalContextAndResources(login, executionContext, resourceId));</span>
-<span class="fc" id="L238">        log.trace(&quot;isAuthorized, principalAssignments: {}&quot;, principalAssignments);</span>
+<span class="fc" id="L229">        List&lt;RBACAssignment&gt; principalAssignments = this.assignmentService.getAllAssignmentsBySpecification(</span>
+<span class="fc" id="L230">                RBACAssignmentSpecificationHelper.filterByPrincipalContextAndResources(login, executionContext, resourceId));</span>
+<span class="fc" id="L231">        log.trace(&quot;isAuthorized, principalAssignments: {}&quot;, principalAssignments);</span>
 
 
-<span class="fc" id="L241">        HashSet&lt;RBACPermission&gt; principalPermissions = principalAssignments.stream().map(a -&gt; a.getRole().getPermissions())</span>
-<span class="fc" id="L242">                .flatMap(Collection::stream)</span>
-<span class="fc" id="L243">                .collect(Collectors.toCollection(HashSet::new));</span>
-<span class="fc" id="L244">        log.trace(&quot;isAuthorized, principalPermissions: {}&quot;, principalPermissions);</span>
-<span class="fc bfc" id="L245" title="All 2 branches covered.">        if (principalPermissions.isEmpty()){</span>
-<span class="fc" id="L246">            log.debug(&quot;isAuthorized,  principal {} has no permission&quot;, login);</span>
-<span class="fc" id="L247">            return false;</span>
+<span class="fc" id="L234">        HashSet&lt;RBACPermission&gt; principalPermissions = principalAssignments.stream().map(a -&gt; a.getRole().getPermissions())</span>
+<span class="fc" id="L235">                .flatMap(Collection::stream)</span>
+<span class="fc" id="L236">                .collect(Collectors.toCollection(HashSet::new));</span>
+<span class="fc" id="L237">        log.trace(&quot;isAuthorized, principalPermissions: {}&quot;, principalPermissions);</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        if (principalPermissions.isEmpty()){</span>
+<span class="fc" id="L239">            log.debug(&quot;isAuthorized,  principal {} has no permission&quot;, login);</span>
+<span class="fc" id="L240">            return false;</span>
         }
-<span class="fc" id="L249">        List&lt;RBACPermission&gt; requiredPermissions = this.fetchPermissions(actionId);</span>
-<span class="fc" id="L250">        log.trace(&quot;isAuthorized, requiredPermissions: {}&quot;, requiredPermissions);</span>
+<span class="fc" id="L242">        List&lt;RBACPermission&gt; requiredPermissions = this.fetchPermissions(actionId);</span>
+<span class="fc" id="L243">        log.trace(&quot;isAuthorized, requiredPermissions: {}&quot;, requiredPermissions);</span>
 
-<span class="fc" id="L252">        boolean accessGranted = principalPermissions.containsAll(requiredPermissions);</span>
-<span class="fc" id="L253">        log.trace(&quot;isAuthorized, accessGranted: {}&quot;, accessGranted);</span>
+<span class="fc" id="L245">        boolean accessGranted = principalPermissions.containsAll(requiredPermissions);</span>
+<span class="fc" id="L246">        log.trace(&quot;isAuthorized, accessGranted: {}&quot;, accessGranted);</span>
 
-<span class="fc" id="L255">        return accessGranted;</span>
+<span class="fc" id="L248">        return accessGranted;</span>
 
     }
 
@@ -263,7 +256,7 @@ import org.springframework.util.StringUtils;
      * @return The execution context.
      */
     public RBACContext createExecutionContext(Principal principal) { // Need to be public to be mocked in tests.
-<span class="fc" id="L266">        return new RBACContext().setStructures(principal.getStructures());</span>
+<span class="fc" id="L259">        return new RBACContext().setStructures(principal.getStructures());</span>
     }
 
 
@@ -276,13 +269,13 @@ import org.springframework.util.StringUtils;
      */
     private List&lt;RBACPermission&gt; fetchPermissions(UUID actionId) {
 
-<span class="pc bpc" id="L279" title="1 of 4 branches missed.">        if (actionId != null &amp;&amp; !this.permissionsByActionId.containsKey(actionId)) {</span>
+<span class="pc bpc" id="L272" title="1 of 4 branches missed.">        if (actionId != null &amp;&amp; !this.permissionsByActionId.containsKey(actionId)) {</span>
 
-<span class="fc" id="L281">            RBACAction action = this.actionService.getActionById(actionId).orElse(null);</span>
-<span class="pc bpc" id="L282" title="1 of 2 branches missed.">            List&lt;RBACPermission&gt; permissions = action == null ? null : action.getPermissions();</span>
-<span class="fc" id="L283">            permissionsByActionId.put(actionId, permissions);</span>
+<span class="fc" id="L274">            RBACAction action = this.actionService.getActionById(actionId).orElse(null);</span>
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">            List&lt;RBACPermission&gt; permissions = action == null ? null : action.getPermissions();</span>
+<span class="fc" id="L276">            permissionsByActionId.put(actionId, permissions);</span>
         }
-<span class="fc" id="L285">        return permissionsByActionId.get(actionId);</span>
+<span class="fc" id="L278">        return permissionsByActionId.get(actionId);</span>
 
     }
 

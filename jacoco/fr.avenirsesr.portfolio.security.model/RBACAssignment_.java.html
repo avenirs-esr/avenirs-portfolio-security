@@ -5,15 +5,17 @@ import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @StaticMetamodel(RBACAssignment.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L11">public abstract class RBACAssignment_ {</span>
+<span class="nc" id="L12">public abstract class RBACAssignment_ {</span>
 
 	public static final String PRINCIPAL = &quot;principal&quot;;
 	public static final String ROLE = &quot;role&quot;;
 	public static final String SCOPE = &quot;scope&quot;;
 	public static final String CONTEXT = &quot;context&quot;;
+	public static final String ID = &quot;id&quot;;
 	public static final String TIMESTAMP = &quot;timestamp&quot;;
 
 	
@@ -36,6 +38,11 @@ import java.time.LocalDateTime;
 	 * @see fr.avenirsesr.portfolio.security.model.RBACAssignment#context
 	 **/
 	public static volatile SingularAttribute&lt;RBACAssignment, RBACContext&gt; context;
+	
+	/**
+	 * @see fr.avenirsesr.portfolio.security.model.RBACAssignment#id
+	 **/
+	public static volatile SingularAttribute&lt;RBACAssignment, UUID&gt; id;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.model.RBACAssignment
