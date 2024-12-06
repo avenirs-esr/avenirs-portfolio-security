@@ -107,11 +107,10 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
             headers = {
                 "x-authorization": self.token
             }
+
             revoke_payload = {
                 "login": grant_response["login"],
-                "roleId": grant_response["assignmentId"]["role"],
-                "scopeId": grant_response["assignmentId"]["scope"],
-                "contextId": grant_response["assignmentId"]["context"]
+                "assignmentId": grant_response["assignmentId"]
             }
             response = self.client.delete("/access-control/grant", json=revoke_payload, headers=headers)
 

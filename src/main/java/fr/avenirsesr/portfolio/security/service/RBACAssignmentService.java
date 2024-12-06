@@ -79,7 +79,7 @@ public class RBACAssignmentService {
 		if (assignment.getContext().getId()==null){
 			assignment.getContext().setId(UUID.randomUUID());
 		}
-		
+
 		return this.assignmentRepository.saveWithRelations(assignment);
 	}
 
