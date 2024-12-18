@@ -5,7 +5,7 @@ inputs:
   faker_file:
     description: "Faker file name"
     required: false
-    default: "faker.py"
+    default: "faker-fixtures.py"
 
 runs:
   using: "composite"
@@ -31,24 +31,8 @@ runs:
 
     - name: Run Faker
       run: |
-        locust -f ${{inputs.locust_file}} \
-          --host=${{inputs.app_url}} \
-          --headless \
-          -u ${{inputs.locust_users}} \
-          -r ${{inputs.locust_ramp_rate }} \
-          --run-time ${{inputs.locust_duration}} \
-          --html ${{inputs.locust_report}} \
-          --csv ${{inputs.locust_csv_reports}}
+        python faker-fixtures.py
 
       shell: bash
-
-    - name: Upload Locust report
-      uses: actions/upload-artifact@v4
-      with:
-        name: locust-report
-        path: |
-          ./target/site/locust_report.html
-          ./target/site/locust_report_stats.csv
-          ./target/site/locust_report_failures.csv
 
 

@@ -13,6 +13,8 @@ jobs:
       ENABLE_OPENLDAP_ACTION: true
       ENABLE_CAS_ACTION: true
       ENABLE_UNIT_TESTS_ACTION: true
+      ENABLE_START_APP_ACTION: true
+      ENABLE_FIXTURES_ACTION: true
       ENABLE_LOAD_TESTS_ACTION: true
       ENABLE_PUBLISH_ACTION: true
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
@@ -75,10 +77,14 @@ jobs:
           docker logs avenirs-cas
 
       - name: Start application
-        if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
+        if: ${{env.ENABLE_START_APP_ACTION == 'true' }}
         uses: ./.github/actions/spring-boot-app/start
         with:
           app_url: $AVENIRS_APP_URL
+
+      - name: Fixtures
+        if: ${{env.ENABLE_FIXTURES_ACTION == 'true' }}
+        uses: ./.github/actions/fixtures/faker
 
       - name: Load Tests
         if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
