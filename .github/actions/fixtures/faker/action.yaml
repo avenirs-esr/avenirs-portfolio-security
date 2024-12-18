@@ -57,9 +57,13 @@ runs:
     - name: Install Liquibase
       run: |
         wget https://github.com/liquibase/liquibase/releases/download/v4.23.2/liquibase-4.23.2.tar.gz
-        tar -xzf liquibase-4.23.2.tar.gz
-        sudo mv liquibase /usr/local/bin/liquibase
-        liquibase --version
+        mkdir -p $HOME/liquibase
+        tar -xzf liquibase-4.23.2.tar.gz -C $HOME/liquibase
+        echo "$HOME/liquibase" >> $GITHUB_PATH
+      shell: bash
+
+    - name: Verify Liquibase Installation
+      run: liquibase --version
       shell: bash
 
     - name: Load fixtures
