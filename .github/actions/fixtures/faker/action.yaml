@@ -2,6 +2,26 @@ name: "Fixtures"
 description: "Generate fixtures with faker"
 inputs:
 
+  postgres_host:
+    description: "Postgres host"
+    required: false
+    default: "localhost"
+
+  postgres_port:
+    description: "Postgres port"
+    required: false
+    default: "65432"
+
+  postgres_user:
+    description: "Postgres user"
+    required: false
+    default: $POSTGRES_USER
+
+  postgres_db:
+    description: "Postgres database"
+    required: false
+    default: "$POSTGRES_DB"
+
   faker_file:
     description: "Faker file name"
     required: false
@@ -32,7 +52,23 @@ runs:
     - name: Run Faker
       run: |
         python faker-fixtures.py
-
       shell: bash
 
+    - name: Install Liquibase
+      run: |
+        wget https://github.com/liquibase/liquibase/releases/download/v4.23.2/liquibase-4.23.2.tar.gz
+        tar -xzf liquibase-4.23.2.tar.gz
+        sudo mv liquibase /usr/local/bin/liquibase
+        liquibase --version
+      shell: bash
+
+    - name: Load fixtures
+      run: |
+        liquibase   --url="jdbc:postgresql://localhost:65432/avenirs_access_control"\
+          --username="avenirs_security_admin"\
+          --password="S33c@DM4avn"\
+          --driver="org.postgresql.Driver"\
+          --changeLogFile=fixtures-changelog.yaml\
+          --searchPath="target/fixtures/" update
+      shell: bash
 
