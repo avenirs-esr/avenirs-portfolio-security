@@ -22,6 +22,19 @@ inputs:
     required: false
     default: "$POSTGRES_DB"
 
+  ldap_admin:
+    description: "LDAP Admin"
+    required: true
+
+  ldap_admin_password:
+    description: "LDAP Admin password"
+    required: true
+
+  ldap_fixtures:
+    description: "LDAP fixtures"
+    required: false
+    default: "target/fixtures/principal.ldif"
+
   faker_file:
     description: "Faker file name"
     required: false
@@ -66,7 +79,7 @@ runs:
       run: liquibase --version
       shell: bash
 
-    - name: Load fixtures
+    - name: Load fixtures in DB
       run: |
         liquibase   --url="jdbc:postgresql://localhost:65432/avenirs_access_control"\
           --username="avenirs_security_admin"\
@@ -74,5 +87,17 @@ runs:
           --driver="org.postgresql.Driver"\
           --changeLogFile=fixtures-changelog.yaml\
           --searchPath="target/fixtures/" update
+      shell: bash
+
+    - name: Copy LDIF File to Container
+      run: docker cp ${{inputs.ldap_fixtures}} avenirs-openldap:/tmp/openldap-fixtures.ldif
+      shell: bash
+    - name: Copy LDIF File to Container
+      run: docker cp ${{inputs.ldap_fixtures}} avenirs-openldap:/tmp/faker-fixtures.ldif
+      shell: bash
+
+    - name: Load fixtures in LDAP
+      run: |
+        docker exec avenirs-openldap ldapadd -x -D "${{inputs.ldap_admin}}" -w ${{inputs.ldap_admin_password}} -f /tmp/faker-fixtures.ldif
       shell: bash
 
