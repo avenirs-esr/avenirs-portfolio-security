@@ -85,6 +85,9 @@ jobs:
       - name: Fixtures
         if: ${{env.ENABLE_FIXTURES_ACTION == 'true' }}
         uses: ./.github/actions/fixtures/faker
+        with:
+          ldap_admin: ${{env.LDAP_ADMIN}}
+          ldap_admin_password: ${{env.LDAP_ADMIN_PASSWORD}}
 
       - name: Load Tests
         if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
