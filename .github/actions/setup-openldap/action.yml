@@ -26,6 +26,10 @@ inputs:
     description: "LDAP fixtures"
     required: false
     default: ".github/actions/setup-openldap/settings/openldap-fixtures.ldif"
+  disable_fixtures:
+    description: "Flag to disable fixtures"
+    required: false
+    default: "false"
   docker_image_version:
     description: "LDAP docker image version"
     required: false
@@ -110,6 +114,7 @@ runs:
       shell: bash
 
     - name: Copy LDIF File to Container
+      if: ${{ inputs.disable_fixtures == 'false' }}
       run: docker cp ${{inputs.ldap_fixtures}} avenirs-openldap:/tmp/openldap-fixtures.ldif
       shell: bash
 
@@ -127,6 +132,7 @@ runs:
       shell: bash
 
     - name: Inject LDIF into LDAP
+      if: ${{ inputs.disable_fixtures == 'false' }}
       run: |
         docker exec avenirs-openldap ldapadd -x -D "${{inputs.ldap_admin}}" -w ${{inputs.ldap_admin_password}} -f /tmp/openldap-fixtures.ldif
       shell: bash

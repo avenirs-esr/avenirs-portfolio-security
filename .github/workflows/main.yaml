@@ -56,6 +56,7 @@ jobs:
           ldap_base_dn: ${{env.LDAP_BASE_DN}}
           ldap_admin: ${{env.LDAP_ADMIN}}
           ldap_admin_password: ${{env.LDAP_ADMIN_PASSWORD}}
+          disable_fixtures: true
 
       - name: Setup CAS
         if: ${{env.ENABLE_CAS_ACTION == 'true' }}
