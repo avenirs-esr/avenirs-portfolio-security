@@ -52,7 +52,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/pip
-        key: python-cache-${{ runner.os }}-${{ hashFiles(inputs.locust_file) }}
+        key: python-cache-${{ runner.os }}-${{ hashFiles(inputs.faker_file) }}
         restore-keys: |
           python-cache-${{ runner.os }}-
 
