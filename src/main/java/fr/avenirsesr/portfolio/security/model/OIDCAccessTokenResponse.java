@@ -41,6 +41,9 @@ public class OIDCAccessTokenResponse {
 	/** Claims of the access token. */
 	private  Map<String, Object> claims;
 
+	/** Flag to determine if the access token is a JWT. */
+	private boolean jwt;
+
 	@ToString.Include(name = "accessToken")
 	public String getMaskedAccessToken() {
 		return accessToken != null ? "****"  : null;
