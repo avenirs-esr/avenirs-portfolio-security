@@ -133,7 +133,6 @@ class AuthenticationServiceTest {
         }
         assertNotNull(oidcAccessTokenResponse.getAccessToken(), "Access Token in response");
         assertFalse(oidcAccessTokenResponse.getAccessToken().isEmpty(), "Access Token not empty");
-        System.out.println("====>" + response);
     }
 
     @Test
