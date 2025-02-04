@@ -47,9 +47,18 @@ public class AuthenticationService {
 	@Value("${avenirs.authentication.oidc.authorise.template.url}")
 	private String oidcAuthorizeTemplate;
 
-	/** Template to generate the Access Token URL. */
-	@Value("${avenirs.authentication.oidc.token.template.url}")
-	private String oidcAccessTokenTemplate;
+	/** Template to generate the Access Token query body. */
+	@Value("${avenirs.authentication.oidc.token.template.body}")
+	private String oidcAccessTokenBodyTemplate;
+
+	/** Template to generate the Access Token query body. */
+	@Value("${avenirs.authentication.oidc.code.exchange.template.body}")
+	private String oidcCodeExchangeBodyTemplate;
+
+	/** Access Token URL. */
+	@Value("${avenirs.authentication.oidc.token.url}")
+	private String oidcAccessTokenURL;
+
 
 	@Value("${avenirs.authentication.oidc.provider.introspect.url}")
 	private String oidcProviderIntrospectURL;
@@ -70,6 +79,9 @@ public class AuthenticationService {
 
 	@Value("${avenirs.authentication.oidc.client.secret}")
 	private String clientSecret;
+
+	@Value("${avenirs.authentication.oidc.token.is.jwt}")
+	private boolean jwtAccessToken;
 
 	@Autowired
 	private JWTService jwtService;
@@ -96,21 +108,38 @@ public class AuthenticationService {
 	}
 
 	/**
-	 * Generates the OIDC Access Token URL.
+	 * Generates the OIDC Access Token Body query.
 	 * 
 	 * @param login    The user login.
 	 * @param password The user password.
-	 * @return The authorize URL.
+	 * @return The access token body.
 	  */
-	protected String generateAccessTokenURL(String login, String password) {
-		String oidcAccessTokenURL = String.format(oidcAccessTokenTemplate, login, password);
+	protected String generateAccessTokenBody(String login, String password) {
+		String oidcAccessTokenBody = String.format(oidcAccessTokenBodyTemplate, login, password);
 
 		if (log.isDebugEnabled()) {
 			String maskedPassword = password == null ? "null": "*".repeat(password.length());
-			String maskedOIDCAccessTokenURL = String.format(oidcAccessTokenTemplate, login, maskedPassword);
-			log.debug("generateAccessTokenURL, maskedOIDCAccessTokenURL: {}", maskedOIDCAccessTokenURL);
+			String maskedOIDCAccessTokenBody = String.format(oidcAccessTokenBody, login, maskedPassword);
+			log.debug("generateAccessTokenBody, maskedOIDCAccessTokenBody: {}", maskedOIDCAccessTokenBody);
 		}
-		return oidcAccessTokenURL;
+		return oidcAccessTokenBody;
+	}
+	/**
+	 * Generates the OIDC code exchange Body query.
+	 *
+	 * @param host    The host associated to the service (for redirect_uri).
+	 * @param code The code given by the oidc provider.
+	 * @return The exchange query body.
+	  */
+	protected String generateCodeExchangeBody(String host, String code) {
+		String oidcCodeExchangeBody = String.format(oidcCodeExchangeBodyTemplate, host, code);
+
+		if (log.isDebugEnabled()) {
+			String maskedCode = code == null ? "null": "*".repeat(code.length());
+			String maskedOIDCCodeExchangeBody = String.format(oidcCodeExchangeBodyTemplate, host, maskedCode);
+			log.debug("generateCodeExchangeBody, maskedOIDCCodeExchangeBody: {}", maskedOIDCCodeExchangeBody);
+		}
+		return oidcCodeExchangeBody;
 	}
 
 	/**
@@ -159,6 +188,20 @@ public class AuthenticationService {
 		return introspectURL;
 	}
 
+	public OIDCAccessTokenResponse exchangeAuthorizationCodeForToken(String host, String code) {
+
+		String body = generateCodeExchangeBody(host, code);
+		OIDCAccessTokenResponse accessToken = restClient.post()
+				.uri(oidcAccessTokenURL)
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.body(body)
+				.retrieve()
+				.body(OIDCAccessTokenResponse.class);
+
+
+		return accessToken;
+	}
+
 	/**
 	 * Gets the profile associated to an access token.
 	 * 
@@ -169,7 +212,7 @@ public class AuthenticationService {
 
 		log.trace("profile");
 
-OIDCProfileResponse profileResponse = restClient.post()
+		OIDCProfileResponse profileResponse = restClient.post()
 				.uri(generateProfileURL(token))
 				.header("Authorization", basicAuthentication())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -216,22 +259,35 @@ OIDCProfileResponse profileResponse = restClient.post()
 	public Optional<OIDCAccessTokenResponse> getAccessToken(String login, String password) {
 		try {
 
-			String query = generateAccessTokenURL(login, password);
-			OIDCAccessTokenResponse response = restClient.post().uri(query).retrieve()
+			String body = generateAccessTokenBody(login, password);
+
+			OIDCAccessTokenResponse response = restClient.post()
+					.uri(oidcAccessTokenURL)
+					.header("Content-Type", "application/x-www-form-urlencoded")
+					.body(body)
+					.retrieve()
 					.body(OIDCAccessTokenResponse.class);
+
+
 
 			if (response == null) {
 				return Optional.empty();
 			}
 
-			final Optional<Claims> claims = this.jwtService.parseAndCheckSignature(response);
-			if (claims.isEmpty()) {
-				log.error("Invalid access token response: {}", response);
-				return Optional.empty();
+			log.debug("getAccessToken, jwtAccessToken: {}", jwtAccessToken);
+
+			if (jwtAccessToken) {
+				response.setJwt(true);
+
+
+				final Optional<Claims> claims = this.jwtService.parseAndCheckSignature(response);
+				if (claims.isEmpty()) {
+					log.error("Invalid access token response: {}", response);
+					return Optional.empty();
+				}
+				log.trace("Claims: {}", claims.get());
+				response.setClaims(new HashMap<>(claims.get()));
 			}
-			
-			log.trace("Claims: {}", claims.get());
-			response.setClaims(new HashMap<>(claims.get()));
 			return Optional.of(response);
 		} catch (HttpClientErrorException e) {
 			log.error("getAccessToken, error while retrieving access token for {}: {}", login,

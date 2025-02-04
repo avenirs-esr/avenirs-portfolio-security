@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +47,10 @@ public class JWTService {
 	/** OIDC provider JWKS end point. */
 	@Value("${avenirs.authentication.oidc.provider.jwks.url}")
 	private String oidcJWKSURL;
-	
+
+	@Value("${avenirs.authentication.oidc.iat.tolerance.seconds}")
+	private Long iatTolerance;
+
 	/** Public keys indexed by their corresponding kid in the JWKS. */
 	private final Map<String, PublicKey> keysRepository = new HashMap<>();
 
@@ -228,6 +232,20 @@ public class JWTService {
 					.verifyWith(publicKey.get())
 					.build()
 					.parseSignedClaims(accessTokenResponse.getAccessToken()).getPayload();
+			// Expiration check
+			long expiration = claims.getExpiration().getTime() / 1000;
+			long currentTime = Instant.now().getEpochSecond();
+			if (expiration < currentTime){
+				log.warn("Expired jwt expiration: {}, currentTime: {}", expiration, currentTime);
+				return Optional.empty();
+			}
+
+			// Checks that the token was not issued in the future.
+			long issuedAt = claims.getIssuedAt().getTime() / 1000;
+			if (issuedAt > currentTime + iatTolerance){
+				log.warn("Field iat of jwt is in the future iat: {}, currentTime: {}, iatTolerance: {}", issuedAt, currentTime, iatTolerance);
+				return Optional.empty();
+			}
 
 			return Optional.of(claims);
 		} catch (SignatureException e) {

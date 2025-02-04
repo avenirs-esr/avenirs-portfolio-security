@@ -44,9 +44,6 @@ class AuthenticationServiceTest {
     @Value("${avenirs.test.authentication.service.code}")
     private String code;
 
-    @Value("${avenirs.test.authentication.service.access.token.expected.url}")
-    private String accessTokenExpectedURL;
-
     @Value("${avenirs.test.authentication.service.profile.expected.url}")
     private String profileExpectedURL;
 
@@ -83,11 +80,6 @@ class AuthenticationServiceTest {
     @Test
     void generateAuthorizeURL() {
         assertEquals(authoriseExpectedURL, authenticationService.generateAuthorizeURL(host, code), "Generated authorize URL.");
-    }
-
-    @Test
-    void generateAccessTokenURL() {
-        assertEquals(accessTokenExpectedURL, authenticationService.generateAccessTokenURL(userLogin, userPassword), "Generated access token URL.");
     }
 
     @Test
@@ -134,12 +126,13 @@ class AuthenticationServiceTest {
         Optional<OIDCAccessTokenResponse> response = authenticationService.getAccessToken(userLogin, userPassword);
         assertFalse(response.isEmpty());
         OIDCAccessTokenResponse oidcAccessTokenResponse = response.get();
-        assertNotNull(oidcAccessTokenResponse.getIdToken(), "Id Token in response");
-        assertNotNull(oidcAccessTokenResponse.getClaims(),"Claims in response");
-        assertFalse(oidcAccessTokenResponse.getClaims().isEmpty(),"Claims not empty");
+        if (oidcAccessTokenResponse.isJwt()) {
+            assertNotNull(oidcAccessTokenResponse.getIdToken(), "Id Token in response");
+            assertNotNull(oidcAccessTokenResponse.getClaims(), "Claims in response");
+            assertFalse(oidcAccessTokenResponse.getClaims().isEmpty(), "Claims not empty");
+        }
         assertNotNull(oidcAccessTokenResponse.getAccessToken(), "Access Token in response");
         assertFalse(oidcAccessTokenResponse.getAccessToken().isEmpty(), "Access Token not empty");
-        System.out.println("====>" + response);
     }
 
     @Test

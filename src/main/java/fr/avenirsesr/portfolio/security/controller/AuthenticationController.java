@@ -51,19 +51,21 @@ public class AuthenticationController {
 	
 	/**
 	 * Callback after OIDC authentication.
-	 * @param forwardHost The header used to retrieve the current host. This is used to determine the end point from the current request. 
+	 * @param host The header used to retrieve the current host. This is used to determine the end point from the current request.
 	 * @param response The response instance used to redirect to the authorize end point.
 	 * @param code The session code used to issue an access token.
 	 * @throws IOException If an input or output exception occurs.
 	 */
 	@SuppressWarnings("SpringOmittedPathVariableParameterInspection")
 	@GetMapping("${avenirs.authentication.oidc.callback}")
-	public void oidcCallback(@RequestHeader(value="x-forwarded-host", required=false) String forwardHost,
+	public ResponseEntity<OIDCAccessTokenResponse> oidcCallback(@RequestHeader(value="x-forwarded-host", required=false) String host,
 			HttpServletResponse response,
 			@RequestParam(value="code", required=false) String code) throws IOException {
 		log.trace("oidcCallback");
-		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost == null ? "localhost":forwardHost,
-				code == null ? NO_PROVIDED_CODE : code));
+		OIDCAccessTokenResponse  accessToken = this.authenticationService.exchangeAuthorizationCodeForToken((host == null ? "localhost": host), code);
+		return ResponseEntity.ok(accessToken);
+//		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost == null ? "localhost":forwardHost,
+//				code == null ? NO_PROVIDED_CODE : code));
 	}
 
 	/**
