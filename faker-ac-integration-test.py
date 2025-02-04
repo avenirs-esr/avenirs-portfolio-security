@@ -377,7 +377,7 @@ def generate_fixtures(multiplicator=1):
     logger.info("Step : permissions (%s)", NUM_PERMISSIONS)
     permissions = data_gen.generate_permissions()
 
-    logger.info("Step : structure (%s)", BASE_NUM_STRUCTURES * multiplicator)
+    logger.info("Step : structure (%s)", min(BASE_NUM_STRUCTURES * multiplicator, MAX_NUM_STRUCTURES))
     structures = data_gen.generate_structures()
 
     logger.info("Step : resource types (%s)", NUM_RESOURCE_TYPES)
