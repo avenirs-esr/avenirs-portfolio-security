@@ -9,7 +9,8 @@ import argparse
 # Quantities
 BASE_NUM_PRINCIPALS = 100
 NUM_PERMISSIONS = 1000
-BASE_NUM_STRUCTURES = 50
+BASE_NUM_STRUCTURES = 4
+MAX_NUM_STRUCTURES=400
 NUM_RESOURCE_TYPES = 150
 BASE_NUM_RESOURCES = 1000
 NUM_ROLES_AND_ACTIONS = 400
@@ -85,7 +86,7 @@ class DataGenerator:
         return [{"id": str(uuid.uuid4()), "name": f"permission_{i}", "description": f"Description of permission {i}"} for i in range(NUM_PERMISSIONS)]
 
     def generate_structures(self):
-        return [{"id": str(uuid.uuid4()), "name": f"structure_{i}", "description": f"Description of structure {i}"} for i in range(self.scale(BASE_NUM_STRUCTURES))]
+        return [{"id": str(uuid.uuid4()), "name": f"structure_{i}", "description": f"Description of structure {i}"} for i in range(min(self.scale(BASE_NUM_STRUCTURES), MAX_NUM_STRUCTURES))]
 
     def generate_resources(self, resource_type_ids):
         return [
@@ -197,7 +198,7 @@ class DataGenerator:
         for id_context in context_ids:
             BASE_NUM_STRUCTURES = random.randint(1, MAX_CONTEXT_STRUCTURES)
 
-            for _ in range(self.scale(BASE_NUM_STRUCTURES)):
+            for _ in range(min(self.scale(BASE_NUM_STRUCTURES), MAX_NUM_STRUCTURES)):
                 id_structure = structure_ids[random.randint(0, len(structure_ids) - 1)]
 
                 combination = (id_context, id_structure)
@@ -361,7 +362,7 @@ def generate_fixtures(multiplicator=1):
     # Logs des tailles des données
     logger.info(f"Number of principals: {int(BASE_NUM_PRINCIPALS * multiplicator)}")
     logger.info(f"Number of permissions: {int(NUM_PERMISSIONS)}")
-    logger.info(f"Number of structures: {int(BASE_NUM_STRUCTURES * multiplicator)}")
+    logger.info(f"Number of structures: {int(min(BASE_NUM_STRUCTURES * multiplicator, MAX_NUM_STRUCTURES))}")
     logger.info(f"Number of resource types: {int(NUM_RESOURCE_TYPES )}")
     logger.info(f"Number of resources: {int(BASE_NUM_RESOURCES * multiplicator)}")
     logger.info(f"Number of roles and actions: {int(NUM_ROLES_AND_ACTIONS)}")
