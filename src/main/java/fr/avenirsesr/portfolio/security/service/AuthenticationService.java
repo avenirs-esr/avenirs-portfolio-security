@@ -123,6 +123,7 @@ public class AuthenticationService {
 			log.debug("generateAccessTokenBody, maskedOIDCAccessTokenBody: {}", maskedOIDCAccessTokenBody);
 		}
 		return oidcAccessTokenBody;
+
 	}
 	/**
 	 * Generates the OIDC code exchange Body query.
@@ -140,6 +141,7 @@ public class AuthenticationService {
 			log.debug("generateCodeExchangeBody, maskedOIDCCodeExchangeBody: {}", maskedOIDCCodeExchangeBody);
 		}
 		return oidcCodeExchangeBody;
+
 	}
 
 	/**
@@ -191,15 +193,12 @@ public class AuthenticationService {
 	public OIDCAccessTokenResponse exchangeAuthorizationCodeForToken(String host, String code) {
 
 		String body = generateCodeExchangeBody(host, code);
-		OIDCAccessTokenResponse accessToken = restClient.post()
+		return restClient.post()
 				.uri(oidcAccessTokenURL)
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.body(body)
 				.retrieve()
 				.body(OIDCAccessTokenResponse.class);
-
-
-		return accessToken;
 	}
 
 	/**
