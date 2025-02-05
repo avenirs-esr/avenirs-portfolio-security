@@ -1,4 +1,4 @@
-from locust import HttpUser, between, task
+from locust import HttpUser, between, task, events
 import sys
 from datetime import datetime, timedelta
 import os
@@ -6,15 +6,61 @@ import logging
 import random
 import csv
 
+@events.init_command_line_parser.add_listener
+def add_custom_arguments(parser):
+    parser.add_argument('--fixtures-directory', type=str, default='./target/fixtures')
 
+
+
+FIXTURES_DIRECTORY = './target/fixtures'
+PRINCIPAL_LOGINS=[]
+RESOURCE_IDS = []
+ROUTES = []
+
+
+
+def load_fixtures():
+    fixtures_directory = sys.argv[sys.argv.index('--fixtures-directory') + 1] if '--fixtures-directory' in sys.argv else './target/fixtures'
+    principal_csv_file = os.path.join(fixtures_directory, 'principal.csv')
+    resource_csv_file = os.path.join(fixtures_directory, 'resource.csv')
+    action_route_csv_file = os.path.join(fixtures_directory, 'action_route.csv')
+
+    with open(principal_csv_file, newline='') as csvfile:
+        print(f"final PRINCIPAL_CSV_FILE = {principal_csv_file}")
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            PRINCIPAL_LOGINS.append({"login": row["login"]})
+
+    if not PRINCIPAL_LOGINS:
+        print("Error: No data loaded in PRINCIPAL_LOGINS")
+        sys.exit(1)
+
+    with open(resource_csv_file, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            RESOURCE_IDS.append({"id": row["id"]})
+
+    if not RESOURCE_IDS:
+        print("Error: No data loaded in RESOURCE_IDS")
+        sys.exit(1)
+
+    with open(action_route_csv_file, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            ROUTES.append({"uri": row["uri"], "method": row["method"]})
+
+    if not ROUTES:
+        print("Error: No data loaded in ROUTES")
+        sys.exit(1)
+
+
+load_fixtures()
 # Logging setup. Don't forget the option --skip-log-setup to avoid specific locust settings.
 LOG_DIRECTORY = './logs'
 os.makedirs(LOG_DIRECTORY, exist_ok=True)
 
-FIXTURES_DIRECTORY = './target/fixtures'
-PRINCIPAL_CSV_FILE = os.path.join(FIXTURES_DIRECTORY, 'principal.csv')
-RESOURCE_CSV_FILE = os.path.join(FIXTURES_DIRECTORY, 'resource.csv')
-ACTION_ROUTE_CSV_FILE = os.path.join(FIXTURES_DIRECTORY, 'action_route.csv')
+#print(f"PRINCIPAL_CSV_FILE = {PRINCIPAL_CSV_FILE}")
+#sys.exit(0)
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -26,25 +72,6 @@ file_handler.setFormatter(formatter)
 console_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
-
-
-PRINCIPAL_LOGINS = []
-with open(PRINCIPAL_CSV_FILE, newline='') as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        PRINCIPAL_LOGINS.append({"login": row["login"]})
-
-RESOURCE_IDS = []
-with open(RESOURCE_CSV_FILE, newline='') as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        RESOURCE_IDS.append({"id": row["id"]})
-
-ROUTES = []
-with open(ACTION_ROUTE_CSV_FILE, newline='') as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        ROUTES.append({"uri": row["uri"], "method": row["method"]})
 
 
 class AvenirsPortfolioSecurityLoadTest(HttpUser):
