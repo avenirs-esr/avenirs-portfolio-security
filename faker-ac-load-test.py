@@ -67,6 +67,7 @@ class DataGenerator:
                 "uid": login,
                 "uidNumber": uid_number,
                 "gidNumber": gid_number,
+                "displayName": cn,
                 "cn": cn,
                 "sn": sn,
                 "givenName": given_name,
@@ -288,6 +289,7 @@ gidNumber: {gidNumber}
 homeDirectory: /home/perso/{uid}
 sn: {sn}
 uid: {uid}
+displayName: {displayName}
 gecos: {gecos}
 givenName: {givenName}
 userPassword: {userPassword}
@@ -299,6 +301,7 @@ mail: {mail}
         for principal in principals:
             ldif_entry = ldif_template.format(
                 uid=principal["uid"],
+                displayName=principal["displayName"],
                 cn=principal["cn"],
                 uidNumber=principal["uidNumber"],
                 gidNumber=principal["gidNumber"],
