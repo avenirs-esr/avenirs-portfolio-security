@@ -109,7 +109,7 @@ public class AccessControlController {
             }
         }
         log.trace("isAuthorized, response: {}", response);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
     /**
