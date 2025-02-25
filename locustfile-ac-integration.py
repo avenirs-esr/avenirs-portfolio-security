@@ -82,7 +82,8 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
     @task
     def run_load_test(self):
         #auth_host = "http://localhost:12000"
-        auth_host = "http://localhost/avenirs-portfolio-security"
+        #auth_host = "http://localhost/avenirs-portfolio-security"
+        auth_host = "http://srv-dev-avenir.srv-avenir.brgm.recia.net/avenirs-portfolio-security"
         user = random.choice(PRINCIPAL_LOGINS)
         login_payload = {
             "login": user["login"],
@@ -118,7 +119,8 @@ class AvenirsPortfolioSecurityLoadTest(HttpUser):
                         params=params,
                         headers=headers,
                         catch_response=True,
-                        name="/ac-inlined") as response:
+                        #name="/node-api/ac-inlined") as response:
+                    name="/apisix-gw/ac-in-apim") as response:
                     logger.debug("Result for login %s and resource %s returned: %s .", login, resource_id, response.status_code )
                     response.success()
             else:
