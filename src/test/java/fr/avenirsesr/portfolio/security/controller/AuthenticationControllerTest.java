@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.controller;
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
 import fr.avenirsesr.portfolio.security.model.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.model.OIDCProfileResponse;
+import fr.avenirsesr.portfolio.security.model.OIDCAccessTokenResponse;
 import fr.avenirsesr.portfolio.security.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -87,13 +89,17 @@ class AuthenticationControllerTest {
     void oidcCallbackWithHostAndCode() {
         String forwardHost = "test-host.com";
         String code = "testCode";
-        String expectedUrl = this.authenticationService.generateAuthorizeURL(forwardHost, code);
-
-        when(authenticationService.generateAuthorizeURL(forwardHost, code)).thenReturn(expectedUrl);
+        OIDCAccessTokenResponse expectedResponse = new OIDCAccessTokenResponse();
+        
+        when(authenticationService.exchangeAuthorizationCodeForToken(forwardHost, code)).thenReturn(expectedResponse);
 
         try {
-            authenticationController.oidcCallback(forwardHost, response, code);
-            verify(response).sendRedirect(expectedUrl);
+            ResponseEntity<?> responseEntity = authenticationController.oidcCallback(forwardHost, response, code);
+            
+            assertNotNull(responseEntity);
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertSame(expectedResponse, responseEntity.getBody());
+            verify(authenticationService).exchangeAuthorizationCodeForToken(forwardHost, code);
         } catch (IOException e) {
             fail("IOException should not be thrown: " + e.getMessage());
         }
