@@ -64,8 +64,6 @@ public class AuthenticationController {
 		log.trace("oidcCallback");
 		OIDCAccessTokenResponse  accessToken = this.authenticationService.exchangeAuthorizationCodeForToken((host == null ? "localhost": host), code);
 		return ResponseEntity.ok(accessToken);
-//		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost == null ? "localhost":forwardHost,
-//				code == null ? NO_PROVIDED_CODE : code));
 	}
 
 	/**
