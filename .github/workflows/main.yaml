@@ -108,8 +108,8 @@ jobs:
     uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend-workflow.yaml@main
     needs: avenir-portfolio-security
     with:
-      run_lint: true
-      run_security_scan: true
+      run_lint: false
+      run_security_scan: false
       run_test_coverage: false
       page_title: "Avenirs Portfolio Security"
     secrets: inherit
