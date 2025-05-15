@@ -132,7 +132,7 @@ runs:
       shell: bash
 
     - name: Inject LDIF into LDAP
-      if: ${{ inputs.disable_fixtures == 'false' }}
+      if: ${{ inputs.disable_fixtures != 'true' }}
       run: |
         docker exec avenirs-openldap ldapadd -x -D "${{inputs.ldap_admin}}" -w ${{inputs.ldap_admin_password}} -f /tmp/openldap-fixtures.ldif
       shell: bash
