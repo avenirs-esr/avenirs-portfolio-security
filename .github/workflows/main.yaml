@@ -105,7 +105,7 @@ jobs:
           app_url: $AVENIRS_APP_URL
 
   call-common-workflow:
-    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend.yml@main
+    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend-workflow.yaml@main
     needs: avenir-portfolio-security
     with:
       run_lint: true
