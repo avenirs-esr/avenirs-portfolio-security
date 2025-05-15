@@ -27,12 +27,12 @@ public class JWTToCryptographicKeyAlgoMapper{
      */
     public Optional&lt;String&gt; mapJWTToCryptographicKey(String jwtAlgo) {
     	
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">    	if (jwtAlgo == null) {</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">    	if (jwtAlgo == null) {</span>
 <span class="nc" id="L31">    		return Optional.empty();</span>
     	}
-<span class="fc" id="L33">    	final String key = jwtAlgo.toLowerCase();</span>
+<span class="nc" id="L33">    	final String key = jwtAlgo.toLowerCase();</span>
     	
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">    	return mapping.containsKey(key)? Optional.of(mapping.get(key)): Optional.empty();</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">    	return mapping.containsKey(key)? Optional.of(mapping.get(key)): Optional.empty();</span>
     }
 
 }

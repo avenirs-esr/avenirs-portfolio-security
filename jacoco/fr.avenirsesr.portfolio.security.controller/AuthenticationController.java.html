@@ -51,20 +51,20 @@ import jakarta.servlet.http.HttpServletResponse;
 	
 	/**
 	 * Callback after OIDC authentication.
-	 * @param forwardHost The header used to retrieve the current host. This is used to determine the end point from the current request. 
+	 * @param host The header used to retrieve the current host. This is used to determine the end point from the current request.
 	 * @param response The response instance used to redirect to the authorize end point.
 	 * @param code The session code used to issue an access token.
 	 * @throws IOException If an input or output exception occurs.
 	 */
 	@SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
 	@GetMapping(&quot;${avenirs.authentication.oidc.callback}&quot;)
-	public void oidcCallback(@RequestHeader(value=&quot;x-forwarded-host&quot;, required=false) String forwardHost,
+	public ResponseEntity&lt;OIDCAccessTokenResponse&gt; oidcCallback(@RequestHeader(value=&quot;x-forwarded-host&quot;, required=false) String host,
 			HttpServletResponse response,
 			@RequestParam(value=&quot;code&quot;, required=false) String code) throws IOException {
 <span class="fc" id="L64">		log.trace(&quot;oidcCallback&quot;);</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">		response.sendRedirect(this.authenticationService.generateAuthorizeURL(forwardHost == null ? &quot;localhost&quot;:forwardHost,</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">				code == null ? NO_PROVIDED_CODE : code));</span>
-<span class="fc" id="L67">	}</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		OIDCAccessTokenResponse  accessToken = this.authenticationService.exchangeAuthorizationCodeForToken((host == null ? &quot;localhost&quot;: host), code);</span>
+<span class="fc" id="L66">		return ResponseEntity.ok(accessToken);</span>
+	}
 
 	/**
 	 * Performs the redirection after the access token is retrieved.

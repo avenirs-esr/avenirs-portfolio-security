@@ -109,7 +109,7 @@ import java.util.UUID;
             }
         }
 <span class="nc" id="L111">        log.trace(&quot;isAuthorized, response: {}&quot;, response);</span>
-<span class="nc" id="L112">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+<span class="nc" id="L112">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);</span>
     }
 
     /**

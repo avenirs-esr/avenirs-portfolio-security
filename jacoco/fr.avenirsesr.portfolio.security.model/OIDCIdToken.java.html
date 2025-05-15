@@ -38,12 +38,12 @@ public class OIDCIdToken {
 
 	@ToString.Include(name = &quot;signature&quot;)
 	public String getMaskedSignature() {
-<span class="fc bfc" id="L41" title="All 2 branches covered.">		return signature != null ? &quot;****&quot;  : null;</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">		return signature != null ? &quot;****&quot;  : null;</span>
 	}
 
 	@ToString.Include(name = &quot;payload&quot;)
 	public String getMaskedPayload() {
-<span class="fc bfc" id="L46" title="All 2 branches covered.">		return payload != null ? &quot;****&quot;  : null;</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">		return payload != null ? &quot;****&quot;  : null;</span>
 	}
 
 }

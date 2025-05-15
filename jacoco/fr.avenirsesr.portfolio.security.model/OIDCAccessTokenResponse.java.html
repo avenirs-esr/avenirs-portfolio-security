@@ -41,9 +41,12 @@ public class OIDCAccessTokenResponse {
 	/** Claims of the access token. */
 	private  Map&lt;String, Object&gt; claims;
 
+	/** Flag to determine if the access token is a JWT. */
+	private boolean jwt;
+
 	@ToString.Include(name = &quot;accessToken&quot;)
 	public String getMaskedAccessToken() {
-<span class="fc bfc" id="L46" title="All 2 branches covered.">		return accessToken != null ? &quot;****&quot;  : null;</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">		return accessToken != null ? &quot;****&quot;  : null;</span>
 	}
 	
 
