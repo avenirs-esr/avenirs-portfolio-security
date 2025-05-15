@@ -61,7 +61,7 @@ jobs:
           rebuild: false
 
   call-common-workflow:
-    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend.yml@main
+    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend-workflow.yaml@main
     needs: setup-backend
     with:
       run_lint: true
