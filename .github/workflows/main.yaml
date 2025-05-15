@@ -80,27 +80,27 @@ jobs:
 
       - name: Start application
         if: ${{env.ENABLE_START_APP_ACTION == 'true' }}
-        uses: ./.github/actions/spring-boot-app/start
+        uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/start@main
         with:
           app_url: $AVENIRS_APP_URL
 
       - name: Fixtures
         if: ${{env.ENABLE_FIXTURES_ACTION == 'true' }}
-        uses: ./.github/actions/fixtures/faker
+        uses: avenirs-esr/avenirs-workflows/.github/actions/fixtures/faker@main
         with:
           ldap_admin: ${{env.LDAP_ADMIN}}
           ldap_admin_password: ${{env.LDAP_ADMIN_PASSWORD}}
 
       - name: Load Tests
         if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
-        uses: ./.github/actions/load-tests
+        uses: avenirs-esr/avenirs-workflows/.github/actions/load-tests@main
         with:
           fixtures: $AVENIRS_LOAD_TESTS_FIXTURES
           app_url: $AVENIRS_APP_URL
 
       - name: Stop application
         if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
-        uses: ./.github/actions/spring-boot-app/stop
+        uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/stop@main
         with:
           app_url: $AVENIRS_APP_URL
 
