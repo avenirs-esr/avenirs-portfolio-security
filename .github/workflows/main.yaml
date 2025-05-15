@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  avenir-portfolio-security:
+  setup-backend:
     runs-on: ubuntu-latest
     env:
       ENABLE_POSTGRES_ACTION: true
@@ -31,26 +31,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Create Docker network
         run: docker network create avenirs-network
 
       - name: Setup Postgresql
-        if: ${{env.ENABLE_POSTGRES_ACTION == 'true' }}
+        if: ${{env.ENABLE_POSTGRES_ACTION == 'true'}}
         uses: avenirs-esr/avenirs-workflows/.github/actions/setup-postgres@main
         with:
-          jasypt_password: ${{secrets.JASYPT_ENCRYPTOR_PASSWORD}}
-          postgres_db: ${{secrets.POSTGRES_DB}}
-          postgres_user: ${{secrets.POSTGRES_USER}}
-          postgres_password: ${{secrets.POSTGRES_PASSWORD}}
-
-      - name: Stop workflow after postgres
-        uses: avenirs-esr/avenirs-workflows/.github/actions/gh-action-utils/stop-workflow@main
-        with:
-          disabled: true
+          jasypt_password: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
+          postgres_db: ${{ secrets.POSTGRES_DB }}
+          postgres_user: ${{ secrets.POSTGRES_USER }}
+          postgres_password: ${{ secrets.POSTGRES_PASSWORD }}
 
       - name: Setup OpenLDAP
-        if: ${{env.ENABLE_OPENLDAP_ACTION=='true'}}
+        if: ${{env.ENABLE_OPENLDAP_ACTION == 'true'}}
         uses: avenirs-esr/avenirs-workflows/.github/actions/setup-openldap@main
         with:
           ldap_base_dn: ${{env.LDAP_BASE_DN}}
@@ -60,53 +55,17 @@ jobs:
           disable_fixtures: false
 
       - name: Setup CAS
-        if: ${{env.ENABLE_CAS_ACTION == 'true' }}
+        if: ${{env.ENABLE_CAS_ACTION == 'true'}}
         uses: avenirs-esr/avenirs-workflows/.github/actions/setup-cas@main
         with:
           rebuild: false
 
-      - name: (DEBUG) Check Docker containers
-        if : false
-        run: docker ps -a
-
-      - name: Unit tests and code coverage
-        if: ${{env.ENABLE_UNIT_TESTS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/unit-tests-and-code-coverage@main
-
-      - name: (DEBUG) Display cas logs after tests
-        if: false  
-        run: |
-          docker logs avenirs-cas
-
-      - name: Start application
-        if: ${{env.ENABLE_START_APP_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/start@main
-        with:
-          app_url: $AVENIRS_APP_URL
-
-      - name: Fixtures
-        if: ${{env.ENABLE_FIXTURES_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/fixtures/faker@main
-        with:
-          ldap_admin: ${{env.LDAP_ADMIN}}
-          ldap_admin_password: ${{env.LDAP_ADMIN_PASSWORD}}
-
-      - name: Load Tests
-        if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/load-tests@main
-        with:
-          fixtures: $AVENIRS_LOAD_TESTS_FIXTURES
-          app_url: $AVENIRS_APP_URL
-
-      - name: Stop application
-        if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/stop@main
-        with:
-          app_url: $AVENIRS_APP_URL
-
-      - name: Publish reports
-        if: ${{env.ENABLE_PUBLISH_ACTION == 'true' }}
-        uses: ./.github/actions/publish-to-gh-pages
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/site
+  call-common-workflow:
+    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend.yml@main
+    needs: setup-backend
+    with:
+      run_lint: true
+      run_security_scan: true
+      run_test_coverage: true
+      page_title: "Avenirs Portfolio Security"
+    secrets: inherit
