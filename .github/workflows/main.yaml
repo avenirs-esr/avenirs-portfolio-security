@@ -45,7 +45,7 @@ jobs:
           postgres_password: ${{secrets.POSTGRES_PASSWORD}}
 
       - name: Stop workflow after postgres
-        uses: avenirs-esr/avenirs-workflows/.github/actions/stop-workflow@main
+        uses: avenirs-esr/avenirs-workflows/.github/actions/gh-action-utils/stop-workflow@main
         with:
           disabled: true
 
