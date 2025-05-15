@@ -107,12 +107,17 @@ class AuthenticationControllerTest {
 
     @Test
     void oidcCallbackWithoutHostAndCode() {
-        String expectedUrl = this.authenticationService.generateAuthorizeURL("localhost", AuthenticationController.NO_PROVIDED_CODE);
-        when(authenticationService.generateAuthorizeURL(null, null)).thenReturn(expectedUrl);
+
+        OIDCAccessTokenResponse expectedResponse = new OIDCAccessTokenResponse();
+        when(authenticationService.exchangeAuthorizationCodeForToken("localhost", null)).thenReturn(expectedResponse);
 
         try {
-            authenticationController.oidcCallback(null, response, null);
-            verify(response).sendRedirect(expectedUrl);
+            ResponseEntity<?> responseEntity = authenticationController.oidcCallback(null, response, null);
+            
+            assertNotNull(responseEntity);
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertSame(expectedResponse, responseEntity.getBody());
+            verify(authenticationService).exchangeAuthorizationCodeForToken("localhost", null);
         } catch (IOException e) {
             fail("IOException should not be thrown: " + e.getMessage());
         }
