@@ -37,7 +37,7 @@ jobs:
 
       - name: Setup Postgresql
         if: ${{env.ENABLE_POSTGRES_ACTION == 'true' }}
-        uses: ./.github/actions/setup-postgres
+        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-postgres@main
         with:
           jasypt_password: ${{secrets.JASYPT_ENCRYPTOR_PASSWORD}}
           postgres_db: ${{secrets.POSTGRES_DB}}
