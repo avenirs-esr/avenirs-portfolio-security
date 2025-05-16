@@ -103,7 +103,11 @@ jobs:
         uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/stop@feat/core-actions-flexibility
         with:
           app_url: $AVENIRS_APP_URL
-
+      - name: 📥 Download Locust Report
+        uses: actions/download-artifact@v4
+        with:
+          name: locust-report
+          path: loading
 
       - name: Upload Templates
         uses: avenirs-esr/avenirs-workflows/.github/actions/upload-templates@feat/core-actions-flexibility
@@ -114,3 +118,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./target/site
+          page_title: "Avenirs Portfolio Security"
