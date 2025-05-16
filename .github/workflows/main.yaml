@@ -104,12 +104,9 @@ jobs:
         with:
           app_url: $AVENIRS_APP_URL
 
-  call-common-workflow:
-    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend-workflow.yaml@feat/core-actions-flexibility
-    needs: avenir-portfolio-security
-    with:
-      run_lint: true
-      run_security_scan: false
-      run_test_coverage: false
-      page_title: "Avenirs Portfolio Security"
-    secrets: inherit
+      - name: Publish reports
+        if: ${{env.ENABLE_PUBLISH_ACTION == 'true' }}
+        uses: avenirs-esr/avenirs-workflows/.github/actions/publish-to-gh-pages@feat/core-actions-flexibility
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/site
