@@ -37,7 +37,7 @@ jobs:
 
       - name: Setup Postgresql
         if: ${{env.ENABLE_POSTGRES_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-postgres@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-postgres@feat/core-actions-flexibility
         with:
           jasypt_password: ${{secrets.JASYPT_ENCRYPTOR_PASSWORD}}
           postgres_db: ${{secrets.POSTGRES_DB}}
@@ -45,13 +45,13 @@ jobs:
           postgres_password: ${{secrets.POSTGRES_PASSWORD}}
 
       - name: Stop workflow after postgres
-        uses: avenirs-esr/avenirs-workflows/.github/actions/gh-action-utils/stop-workflow@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/gh-action-utils/stop-workflow@feat/core-actions-flexibility
         with:
           disabled: true
 
       - name: Setup OpenLDAP
         if: ${{env.ENABLE_OPENLDAP_ACTION=='true'}}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-openldap@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-openldap@feat/core-actions-flexibility
         with:
           ldap_base_dn: ${{env.LDAP_BASE_DN}}
           ldap_admin: ${{env.LDAP_ADMIN}}
@@ -61,7 +61,7 @@ jobs:
 
       - name: Setup CAS
         if: ${{env.ENABLE_CAS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-cas@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-cas@feat/core-actions-flexibility
         with:
           rebuild: false
 
@@ -71,7 +71,7 @@ jobs:
 
       - name: Unit tests and code coverage
         if: ${{env.ENABLE_UNIT_TESTS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/unit-tests-and-code-coverage@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/unit-tests-and-code-coverage@feat/core-actions-flexibility
 
       - name: (DEBUG) Display cas logs after tests
         if: false
@@ -80,32 +80,32 @@ jobs:
 
       - name: Start application
         if: ${{env.ENABLE_START_APP_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/start@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/start@feat/core-actions-flexibility
         with:
           app_url: $AVENIRS_APP_URL
 
       - name: Fixtures
         if: ${{env.ENABLE_FIXTURES_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/fixtures/faker@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/fixtures/faker@feat/core-actions-flexibility
         with:
           ldap_admin: ${{env.LDAP_ADMIN}}
           ldap_admin_password: ${{env.LDAP_ADMIN_PASSWORD}}
 
       - name: Load Tests
         if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/load-tests@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/load-tests@feat/core-actions-flexibility
         with:
           fixtures: $AVENIRS_LOAD_TESTS_FIXTURES
           app_url: $AVENIRS_APP_URL
 
       - name: Stop application
         if: ${{env.ENABLE_LOAD_TESTS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/stop@core-actions-flexibility
+        uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/stop@feat/core-actions-flexibility
         with:
           app_url: $AVENIRS_APP_URL
 
   call-common-workflow:
-    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend-workflow.yaml@core-actions-flexibility
+    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend-workflow.yaml@feat/core-actions-flexibility
     needs: avenir-portfolio-security
     with:
       run_lint: true
