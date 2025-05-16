@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACAssignmentRepositoryImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.repository</a> &gt; <span class="el_source">RBACAssignmentRepositoryImpl.java</span></div><h1>RBACAssignmentRepositoryImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.repository;
+
+
+import fr.avenirsesr.portfolio.security.model.RBACAssignment;
+import fr.avenirsesr.portfolio.security.model.RBACResource;
+import fr.avenirsesr.portfolio.security.model.Structure;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ * &lt;h1&gt;RBACAssignmentRepositoryImpl&lt;/h1&gt;
+ * &lt;p&gt;
+ * Description: RBACAssignmentRepositoryImpl is used for [describe the main functionality of the class].
+ * It provides [summarize key features or expected behavior].
+ * &lt;/p&gt;
+ *
+ * &lt;h2&gt;Version:&lt;/h2&gt;
+ * 1.0.0
+ *
+ * &lt;h2&gt;Author:&lt;/h2&gt;
+ * Arnaud Deman
+ *
+ * &lt;h2&gt;Since:&lt;/h2&gt;
+ * 05/12/2024
+ */
+<span class="fc" id="L30">public class RBACAssignmentRepositoryImpl implements RBACAssignmentRepositoryCustom {</span>
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    /**
+     * Save an assignment. The entities collections in scope and context are handled.
+     * @param assignment The assignment to save.
+     * @return The persisted assignment.
+     */
+    public RBACAssignment saveWithRelations(RBACAssignment assignment) {
+
+<span class="fc" id="L42">        List&lt;RBACResource&gt; managedResources = assignment.getScope().getResources().stream()</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">                .map(resource -&gt; entityManager.contains(resource) ? resource : entityManager.merge(resource))</span>
+<span class="fc" id="L44">                .toList();</span>
+<span class="fc" id="L45">        assignment.getScope().setResources(managedResources);</span>
+
+<span class="fc" id="L47">        Set&lt;Structure&gt; managedStructures = assignment.getContext().getStructures().stream()</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                .map(structure -&gt; entityManager.contains(structure) ? structure : entityManager.merge(structure))</span>
+<span class="fc" id="L49">                .collect(Collectors.toSet());</span>
+<span class="fc" id="L50">        assignment.getContext().setStructures(managedStructures);</span>
+
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if (!entityManager.contains(assignment.getScope())) {</span>
+<span class="fc" id="L53">            assignment.setScope(entityManager.merge(assignment.getScope()));</span>
+        }
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (!entityManager.contains(assignment.getContext())) {</span>
+<span class="fc" id="L56">            assignment.setContext(entityManager.merge(assignment.getContext()));</span>
+        }
+
+<span class="fc" id="L59">        return entityManager.merge(assignment);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
