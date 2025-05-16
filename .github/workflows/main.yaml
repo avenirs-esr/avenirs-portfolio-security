@@ -103,6 +103,12 @@ jobs:
         uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/stop@feat/core-actions-flexibility
         with:
           app_url: $AVENIRS_APP_URL
+      - name: Checkout workflows repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          repository: avenirs-esr/avenirs-workflows
+          ref: feat/core-actions-flexibility
 
       - name: Publish reports
         if: ${{env.ENABLE_PUBLISH_ACTION == 'true' }}
