@@ -103,7 +103,7 @@ jobs:
         uses: avenirs-esr/avenirs-workflows/.github/actions/spring-boot-app/stop@feat/core-actions-flexibility
         with:
           app_url: $AVENIRS_APP_URL
-      - name: 📥 Download Locust Report
+      - name: Download Locust Report
         uses: actions/download-artifact@v4
         with:
           name: locust-report
