@@ -106,7 +106,7 @@ jobs:
 
 
       - name: Upload Templates
-        uses: avenirs-esr/avenirs-workflows/.github/actions/upload-templates@feat/core-actions-workflows
+        uses: avenirs-esr/avenirs-workflows/.github/actions/upload-templates@feat/core-actions-flexibility
 
       - name: Publish reports
         if: ${{env.ENABLE_PUBLISH_ACTION == 'true' }}
