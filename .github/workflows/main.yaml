@@ -74,6 +74,11 @@ jobs:
         if: ${{env.ENABLE_UNIT_TESTS_ACTION == 'true' }}
         uses: avenirs-esr/avenirs-workflows/.github/actions/unit-tests-and-code-coverage@main
 
+      - name: 🔎 Lint code
+        uses: avenirs-esr/avenirs-workflows/.github/actions/linting-scan@main
+        with:
+            fail_if_unformatted: false
+
       - name: (DEBUG) Display cas logs after tests
         if: false
         run: |
