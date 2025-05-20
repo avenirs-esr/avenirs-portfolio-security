@@ -120,3 +120,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./target/site
           page_title: "Avenirs Portfolio Security"
+          javadoc_dir: './apidocs'
