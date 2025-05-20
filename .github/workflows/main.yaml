@@ -29,6 +29,8 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       AVENIRS_APP_URL: http://localhost:12000
       AVENIRS_LOAD_TESTS_FIXTURES: src/test/resources/db/load-test-fixtures.sql
+      LINTER_FAIL_IF_UNFORMATTED: false
+      SECURITY_FAIL_ON_CRITICAL: false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -77,7 +79,12 @@ jobs:
       - name: 🔎 Lint code
         uses: avenirs-esr/avenirs-workflows/.github/actions/linting-scan@main
         with:
-            fail_if_unformatted: false
+            fail_if_unformatted: ${{env.LINTER_FAIL_IF_UNFORMATTED}}
+
+      - name: 🔒 Security scan
+        uses: avenirs-esr/avenirs-workflows/.github/actions/security-scan@main
+        with:
+          fail_on_critical: ${{env.SECURITY_FAIL_ON_CRITICAL}}
 
       - name: (DEBUG) Display cas logs after tests
         if: false
