@@ -76,6 +76,9 @@ jobs:
         if: ${{env.ENABLE_UNIT_TESTS_ACTION == 'true' }}
         uses: avenirs-esr/avenirs-workflows/.github/actions/unit-tests-and-code-coverage@main
 
+      - name: Upload Templates
+        uses: avenirs-esr/avenirs-workflows/.github/actions/upload-templates@main
+
       - name: 🔎 Lint code
         uses: avenirs-esr/avenirs-workflows/.github/actions/linting-scan@main
         with:
@@ -121,9 +124,6 @@ jobs:
         with:
           name: locust-report
           path: loading
-
-      - name: Upload Templates
-        uses: avenirs-esr/avenirs-workflows/.github/actions/upload-templates@main
 
       - name: Publish reports
         if: ${{env.ENABLE_PUBLISH_ACTION == 'true' }}
