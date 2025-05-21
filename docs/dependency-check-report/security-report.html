@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+      * {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      h1 {
+        text-align: center;
+      }
+      .group-header th {
+        font-size: 200%;
+      }
+      .sub-header th {
+        font-size: 150%;
+      }
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        white-space: nowrap;
+        padding: .3em;
+      }
+      table {
+        margin: 0 auto;
+      }
+      .severity {
+        text-align: center;
+        font-weight: bold;
+        color: #fafafa;
+      }
+      .severity-LOW .severity { background-color: #5fbb31; }
+      .severity-MEDIUM .severity { background-color: #e9c600; }
+      .severity-HIGH .severity { background-color: #ff8800; }
+      .severity-CRITICAL .severity { background-color: #e40000; }
+      .severity-UNKNOWN .severity { background-color: #747474; }
+      .severity-LOW { background-color: #5fbb3160; }
+      .severity-MEDIUM { background-color: #e9c60060; }
+      .severity-HIGH { background-color: #ff880060; }
+      .severity-CRITICAL { background-color: #e4000060; }
+      .severity-UNKNOWN { background-color: #74747460; }
+      table tr td:first-of-type {
+        font-weight: bold;
+      }
+      .links a,
+      .links[data-more-links=on] a {
+        display: block;
+      }
+      .links[data-more-links=off] a:nth-of-type(1n+5) {
+        display: none;
+      }
+      a.toggle-more-links { cursor: pointer; }
+    </style>
+    <title>pom.xml - Trivy Report - 2025-05-21 06:26:41.36235899 +0000 UTC m=+6.058515062 </title>
+    <script>
+      window.onload = function() {
+        document.querySelectorAll('td.links').forEach(function(linkCell) {
+          var links = [].concat.apply([], linkCell.querySelectorAll('a'));
+          [].sort.apply(links, function(a, b) {
+            return a.href > b.href ? 1 : -1;
+          });
+          links.forEach(function(link, idx) {
+            if (links.length > 3 && 3 === idx) {
+              var toggleLink = document.createElement('a');
+              toggleLink.innerText = "Toggle more links";
+              toggleLink.href = "#toggleMore";
+              toggleLink.setAttribute("class", "toggle-more-links");
+              linkCell.appendChild(toggleLink);
+            }
+            linkCell.appendChild(link);
+          });
+        });
+        document.querySelectorAll('a.toggle-more-links').forEach(function(toggleLink) {
+          toggleLink.onclick = function() {
+            var expanded = toggleLink.parentElement.getAttribute("data-more-links");
+            toggleLink.parentElement.setAttribute("data-more-links", "on" === expanded ? "off" : "on");
+            return false;
+          };
+        });
+      };
+    </script>
+  </head>
+  <body>
+    <h1>pom.xml - Trivy Report - 2025-05-21 06:26:41.362382915 +0000 UTC m=+6.058538987</h1>
+    <table>
+      <tr class="group-header"><th colspan="6">pom</th></tr>
+      <tr class="sub-header">
+        <th>Package</th>
+        <th>Vulnerability ID</th>
+        <th>Severity</th>
+        <th>Installed Version</th>
+        <th>Fixed Version</th>
+        <th>Links</th>
+      </tr>
+      <tr class="severity-CRITICAL">
+        <td class="pkg-name">org.apache.tomcat.embed:tomcat-embed-core</td>
+        <td>CVE-2025-24813</td>
+        <td class="severity">CRITICAL</td>
+        <td class="pkg-version">10.1.30</td>
+        <td>11.0.3, 10.1.35, 9.0.99</td>
+        <td class="links" data-more-links="off">
+          <a href="http://www.openwall.com/lists/oss-security/2025/03/10/5">http://www.openwall.com/lists/oss-security/2025/03/10/5</a>
+          <a href="https://access.redhat.com/errata/RHSA-2025:3645">https://access.redhat.com/errata/RHSA-2025:3645</a>
+          <a href="https://access.redhat.com/security/cve/CVE-2025-24813">https://access.redhat.com/security/cve/CVE-2025-24813</a>
+          <a href="https://bugzilla.redhat.com/2332817">https://bugzilla.redhat.com/2332817</a>
+          <a href="https://bugzilla.redhat.com/2351129">https://bugzilla.redhat.com/2351129</a>
+          <a href="https://errata.almalinux.org/9/ALSA-2025-3645.html">https://errata.almalinux.org/9/ALSA-2025-3645.html</a>
+          <a href="https://github.com/absholi7ly/POC-CVE-2025-24813/blob/main/README.md">https://github.com/absholi7ly/POC-CVE-2025-24813/blob/main/README.md</a>
+          <a href="https://github.com/apache/tomcat">https://github.com/apache/tomcat</a>
+          <a href="https://github.com/apache/tomcat/commit/0a668e0c27f2b7ca0cc7c6eea32253b9b5ecb29c">https://github.com/apache/tomcat/commit/0a668e0c27f2b7ca0cc7c6eea32253b9b5ecb29c</a>
+          <a href="https://github.com/apache/tomcat/commit/eb61aade8f8daccaecabf07d428b877975622f72">https://github.com/apache/tomcat/commit/eb61aade8f8daccaecabf07d428b877975622f72</a>
+          <a href="https://github.com/apache/tomcat/commit/f6c01d6577cf9a1e06792be47e623d36acc3b5dc">https://github.com/apache/tomcat/commit/f6c01d6577cf9a1e06792be47e623d36acc3b5dc</a>
+          <a href="https://linux.oracle.com/cve/CVE-2025-24813.html">https://linux.oracle.com/cve/CVE-2025-24813.html</a>
+          <a href="https://linux.oracle.com/errata/ELSA-2025-3683.html">https://linux.oracle.com/errata/ELSA-2025-3683.html</a>
+          <a href="https://lists.apache.org/thread/j5fkjv2k477os90nczf2v9l61fb0kkgq">https://lists.apache.org/thread/j5fkjv2k477os90nczf2v9l61fb0kkgq</a>
+          <a href="https://lists.debian.org/debian-lts-announce/2025/04/msg00003.html">https://lists.debian.org/debian-lts-announce/2025/04/msg00003.html</a>
+          <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-24813">https://nvd.nist.gov/vuln/detail/CVE-2025-24813</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250321-0001">https://security.netapp.com/advisory/ntap-20250321-0001</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250321-0001/">https://security.netapp.com/advisory/ntap-20250321-0001/</a>
+          <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">https://www.cisa.gov/known-exploited-vulnerabilities-catalog</a>
+          <a href="https://www.cve.org/CVERecord?id=CVE-2025-24813">https://www.cve.org/CVERecord?id=CVE-2025-24813</a>
+          <a href="https://www.vicarius.io/vsociety/posts/cve-2025-24813-detect-apache-tomcat-rce">https://www.vicarius.io/vsociety/posts/cve-2025-24813-detect-apache-tomcat-rce</a>
+          <a href="https://www.vicarius.io/vsociety/posts/cve-2025-24813-mitigate-apache-tomcat-rce">https://www.vicarius.io/vsociety/posts/cve-2025-24813-mitigate-apache-tomcat-rce</a>
+        </td>
+      </tr>
+      <tr class="severity-HIGH">
+        <td class="pkg-name">org.apache.tomcat.embed:tomcat-embed-core</td>
+        <td>CVE-2024-50379</td>
+        <td class="severity">HIGH</td>
+        <td class="pkg-version">10.1.30</td>
+        <td>11.0.2, 10.1.34, 9.0.98</td>
+        <td class="links" data-more-links="off">
+          <a href="http://www.openwall.com/lists/oss-security/2024/12/17/4">http://www.openwall.com/lists/oss-security/2024/12/17/4</a>
+          <a href="http://www.openwall.com/lists/oss-security/2024/12/18/2">http://www.openwall.com/lists/oss-security/2024/12/18/2</a>
+          <a href="https://access.redhat.com/errata/RHSA-2025:3645">https://access.redhat.com/errata/RHSA-2025:3645</a>
+          <a href="https://access.redhat.com/security/cve/CVE-2024-50379">https://access.redhat.com/security/cve/CVE-2024-50379</a>
+          <a href="https://bugzilla.redhat.com/2332817">https://bugzilla.redhat.com/2332817</a>
+          <a href="https://bugzilla.redhat.com/2351129">https://bugzilla.redhat.com/2351129</a>
+          <a href="https://errata.almalinux.org/9/ALSA-2025-3645.html">https://errata.almalinux.org/9/ALSA-2025-3645.html</a>
+          <a href="https://github.com/apache/tomcat">https://github.com/apache/tomcat</a>
+          <a href="https://github.com/apache/tomcat/commit/05ddeeaa54df1e2dc427d0164bedd6b79f78d81f">https://github.com/apache/tomcat/commit/05ddeeaa54df1e2dc427d0164bedd6b79f78d81f</a>
+          <a href="https://github.com/apache/tomcat/commit/05ddeeaa54df1e2dc427d0164bedd6b79f78d81f (10.1.34)">https://github.com/apache/tomcat/commit/05ddeeaa54df1e2dc427d0164bedd6b79f78d81f (10.1.34)</a>
+          <a href="https://github.com/apache/tomcat/commit/43b507ebac9d268b1ea3d908e296cc6e46795c00">https://github.com/apache/tomcat/commit/43b507ebac9d268b1ea3d908e296cc6e46795c00</a>
+          <a href="https://github.com/apache/tomcat/commit/43b507ebac9d268b1ea3d908e296cc6e46795c00 (9.0.98)">https://github.com/apache/tomcat/commit/43b507ebac9d268b1ea3d908e296cc6e46795c00 (9.0.98)</a>
+          <a href="https://github.com/apache/tomcat/commit/631500b0c9b2a2a2abb707e3de2e10a5936e5d41">https://github.com/apache/tomcat/commit/631500b0c9b2a2a2abb707e3de2e10a5936e5d41</a>
+          <a href="https://github.com/apache/tomcat/commit/631500b0c9b2a2a2abb707e3de2e10a5936e5d41 (9.0.98)">https://github.com/apache/tomcat/commit/631500b0c9b2a2a2abb707e3de2e10a5936e5d41 (9.0.98)</a>
+          <a href="https://github.com/apache/tomcat/commit/684247ae85fa633b9197b32391de59fc54703842">https://github.com/apache/tomcat/commit/684247ae85fa633b9197b32391de59fc54703842</a>
+          <a href="https://github.com/apache/tomcat/commit/8554f6b1722b33a2ce8b0a3fad37825f3a75f2d2">https://github.com/apache/tomcat/commit/8554f6b1722b33a2ce8b0a3fad37825f3a75f2d2</a>
+          <a href="https://github.com/apache/tomcat/commit/8554f6b1722b33a2ce8b0a3fad37825f3a75f2d2 (10.1.34)">https://github.com/apache/tomcat/commit/8554f6b1722b33a2ce8b0a3fad37825f3a75f2d2 (10.1.34)</a>
+          <a href="https://github.com/apache/tomcat/commit/cc7a98b57c6dc1df21979fcff94a36e068f4456c">https://github.com/apache/tomcat/commit/cc7a98b57c6dc1df21979fcff94a36e068f4456c</a>
+          <a href="https://linux.oracle.com/cve/CVE-2024-50379.html">https://linux.oracle.com/cve/CVE-2024-50379.html</a>
+          <a href="https://linux.oracle.com/errata/ELSA-2025-3683.html">https://linux.oracle.com/errata/ELSA-2025-3683.html</a>
+          <a href="https://lists.apache.org/thread/y6lj6q1xnp822g6ro70tn19sgtjmr80r">https://lists.apache.org/thread/y6lj6q1xnp822g6ro70tn19sgtjmr80r</a>
+          <a href="https://nvd.nist.gov/vuln/detail/CVE-2024-50379">https://nvd.nist.gov/vuln/detail/CVE-2024-50379</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250103-0003">https://security.netapp.com/advisory/ntap-20250103-0003</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250103-0003/">https://security.netapp.com/advisory/ntap-20250103-0003/</a>
+          <a href="https://tomcat.apache.org/security-10.html#Fixed_in_Apache_Tomcat_10.1.34">https://tomcat.apache.org/security-10.html#Fixed_in_Apache_Tomcat_10.1.34</a>
+          <a href="https://tomcat.apache.org/security-11.html#Fixed_in_Apache_Tomcat_11.0.2">https://tomcat.apache.org/security-11.html#Fixed_in_Apache_Tomcat_11.0.2</a>
+          <a href="https://tomcat.apache.org/security-9.html#Fixed_in_Apache_Tomcat_9.0.98">https://tomcat.apache.org/security-9.html#Fixed_in_Apache_Tomcat_9.0.98</a>
+          <a href="https://www.cve.org/CVERecord?id=CVE-2024-50379">https://www.cve.org/CVERecord?id=CVE-2024-50379</a>
+        </td>
+      </tr>
+      <tr class="severity-HIGH">
+        <td class="pkg-name">org.apache.tomcat.embed:tomcat-embed-core</td>
+        <td>CVE-2024-56337</td>
+        <td class="severity">HIGH</td>
+        <td class="pkg-version">10.1.30</td>
+        <td>11.0.2, 10.1.34, 9.0.98</td>
+        <td class="links" data-more-links="off">
+          <a href="https://access.redhat.com/security/cve/CVE-2024-56337">https://access.redhat.com/security/cve/CVE-2024-56337</a>
+          <a href="https://github.com/apache/tomcat">https://github.com/apache/tomcat</a>
+          <a href="https://lists.apache.org/thread/b2b9qrgjrz1kvo4ym8y2wkfdvwoq6qbp">https://lists.apache.org/thread/b2b9qrgjrz1kvo4ym8y2wkfdvwoq6qbp</a>
+          <a href="https://nvd.nist.gov/vuln/detail/CVE-2024-56337">https://nvd.nist.gov/vuln/detail/CVE-2024-56337</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250103-0002">https://security.netapp.com/advisory/ntap-20250103-0002</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250103-0002/">https://security.netapp.com/advisory/ntap-20250103-0002/</a>
+          <a href="https://tomcat.apache.org/security-10.html#Fixed_in_Apache_Tomcat_10.1.34">https://tomcat.apache.org/security-10.html#Fixed_in_Apache_Tomcat_10.1.34</a>
+          <a href="https://tomcat.apache.org/security-11.html#Fixed_in_Apache_Tomcat_11.0.2">https://tomcat.apache.org/security-11.html#Fixed_in_Apache_Tomcat_11.0.2</a>
+          <a href="https://tomcat.apache.org/security-9.html#Fixed_in_Apache_Tomcat_9.0.98">https://tomcat.apache.org/security-9.html#Fixed_in_Apache_Tomcat_9.0.98</a>
+          <a href="https://www.cve.org/CVERecord?id=CVE-2024-50379">https://www.cve.org/CVERecord?id=CVE-2024-50379</a>
+          <a href="https://www.cve.org/CVERecord?id=CVE-2024-56337">https://www.cve.org/CVERecord?id=CVE-2024-56337</a>
+        </td>
+      </tr>
+      <tr class="severity-HIGH">
+        <td class="pkg-name">org.springframework.boot:spring-boot</td>
+        <td>CVE-2025-22235</td>
+        <td class="severity">HIGH</td>
+        <td class="pkg-version">3.3.4</td>
+        <td>3.3.11, 3.4.5</td>
+        <td class="links" data-more-links="off">
+          <a href="https://access.redhat.com/security/cve/CVE-2025-22235">https://access.redhat.com/security/cve/CVE-2025-22235</a>
+          <a href="https://github.com/advisories/GHSA-rc42-6c7j-7h5r">https://github.com/advisories/GHSA-rc42-6c7j-7h5r</a>
+          <a href="https://github.com/spring-projects/spring-boot">https://github.com/spring-projects/spring-boot</a>
+          <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-22235">https://nvd.nist.gov/vuln/detail/CVE-2025-22235</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250516-0010">https://security.netapp.com/advisory/ntap-20250516-0010</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250516-0010/">https://security.netapp.com/advisory/ntap-20250516-0010/</a>
+          <a href="https://spring.io/security/cve-2025-22235">https://spring.io/security/cve-2025-22235</a>
+          <a href="https://www.cve.org/CVERecord?id=CVE-2025-22235">https://www.cve.org/CVERecord?id=CVE-2025-22235</a>
+        </td>
+      </tr>
+      <tr class="severity-HIGH">
+        <td class="pkg-name">org.springframework.security:spring-security-crypto</td>
+        <td>CVE-2025-22228</td>
+        <td class="severity">HIGH</td>
+        <td class="pkg-version">6.3.3</td>
+        <td>6.3.8, 6.4.4, 6.2.10, 6.1.14, 6.0.16, 5.8.18, 5.7.16</td>
+        <td class="links" data-more-links="off">
+          <a href="https://access.redhat.com/security/cve/CVE-2025-22228">https://access.redhat.com/security/cve/CVE-2025-22228</a>
+          <a href="https://github.com/spring-projects/spring-security">https://github.com/spring-projects/spring-security</a>
+          <a href="https://github.com/spring-projects/spring-security/commit/46f0dc6dfc8402cd556c598fdf2d31f9d46cdbf3">https://github.com/spring-projects/spring-security/commit/46f0dc6dfc8402cd556c598fdf2d31f9d46cdbf3</a>
+          <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-22228">https://nvd.nist.gov/vuln/detail/CVE-2025-22228</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250425-0009">https://security.netapp.com/advisory/ntap-20250425-0009</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250425-0009/">https://security.netapp.com/advisory/ntap-20250425-0009/</a>
+          <a href="https://spring.io/security/cve-2025-22228">https://spring.io/security/cve-2025-22228</a>
+          <a href="https://www.cve.org/CVERecord?id=CVE-2025-22228">https://www.cve.org/CVERecord?id=CVE-2025-22228</a>
+        </td>
+      </tr>
+      <tr class="severity-CRITICAL">
+        <td class="pkg-name">org.springframework.security:spring-security-web</td>
+        <td>CVE-2024-38821</td>
+        <td class="severity">CRITICAL</td>
+        <td class="pkg-version">6.3.3</td>
+        <td>5.7.13, 5.8.15, 6.2.7, 6.0.13, 6.1.11, 6.3.4</td>
+        <td class="links" data-more-links="off">
+          <a href="https://access.redhat.com/security/cve/CVE-2024-38821">https://access.redhat.com/security/cve/CVE-2024-38821</a>
+          <a href="https://github.com/spring-projects/spring-security">https://github.com/spring-projects/spring-security</a>
+          <a href="https://github.com/spring-projects/spring-security/commit/0e257b56ce35402558a260ffa6b368982f9a7934">https://github.com/spring-projects/spring-security/commit/0e257b56ce35402558a260ffa6b368982f9a7934</a>
+          <a href="https://github.com/spring-projects/spring-security/commit/4ce7cde15599c0447163fd46bac616e03318bf5b">https://github.com/spring-projects/spring-security/commit/4ce7cde15599c0447163fd46bac616e03318bf5b</a>
+          <a href="https://nvd.nist.gov/vuln/detail/CVE-2024-38821">https://nvd.nist.gov/vuln/detail/CVE-2024-38821</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250124-0006">https://security.netapp.com/advisory/ntap-20250124-0006</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250124-0006/">https://security.netapp.com/advisory/ntap-20250124-0006/</a>
+          <a href="https://spring.io/security/cve-2024-38821">https://spring.io/security/cve-2024-38821</a>
+          <a href="https://www.cve.org/CVERecord?id=CVE-2024-38821">https://www.cve.org/CVERecord?id=CVE-2024-38821</a>
+        </td>
+      </tr>
+      <tr class="severity-HIGH">
+        <td class="pkg-name">org.springframework:spring-webmvc</td>
+        <td>CVE-2024-38819</td>
+        <td class="severity">HIGH</td>
+        <td class="pkg-version">6.1.13</td>
+        <td>6.1.14</td>
+        <td class="links" data-more-links="off">
+          <a href="https://access.redhat.com/security/cve/CVE-2024-38819">https://access.redhat.com/security/cve/CVE-2024-38819</a>
+          <a href="https://github.com/spring-projects/spring-framework">https://github.com/spring-projects/spring-framework</a>
+          <a href="https://github.com/spring-projects/spring-framework/commit/3bfbe30a7814c9ea1556d40df9bd87ddb3ba372d">https://github.com/spring-projects/spring-framework/commit/3bfbe30a7814c9ea1556d40df9bd87ddb3ba372d</a>
+          <a href="https://github.com/spring-projects/spring-framework/commit/fb7890d73975a3d9e0763e0926df2bd0a608e87e">https://github.com/spring-projects/spring-framework/commit/fb7890d73975a3d9e0763e0926df2bd0a608e87e</a>
+          <a href="https://github.com/spring-projects/spring-framework/issues/33689">https://github.com/spring-projects/spring-framework/issues/33689</a>
+          <a href="https://nvd.nist.gov/vuln/detail/CVE-2024-38819">https://nvd.nist.gov/vuln/detail/CVE-2024-38819</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250110-0010">https://security.netapp.com/advisory/ntap-20250110-0010</a>
+          <a href="https://security.netapp.com/advisory/ntap-20250110-0010/">https://security.netapp.com/advisory/ntap-20250110-0010/</a>
+          <a href="https://spring.io/security/cve-2024-38819">https://spring.io/security/cve-2024-38819</a>
+          <a href="https://www.cve.org/CVERecord?id=CVE-2024-38819">https://www.cve.org/CVERecord?id=CVE-2024-38819</a>
+        </td>
+      </tr>
+      <tr><th colspan="6">No Misconfigurations found</th></tr>
+    </table>
+  </body>
+</html>
