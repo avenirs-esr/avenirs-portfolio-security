@@ -72,7 +72,7 @@ jobs:
 
       - name: Unit tests and code coverage
         if: ${{env.ENABLE_UNIT_TESTS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/unit-tests-and-code-coverage@main
+        uses: avenirs-esr/avenirs-workflows/.github/actions/tests-and-code-coverage@main
 
       - name: Upload Templates
         uses: avenirs-esr/avenirs-workflows/.github/actions/upload-templates@main

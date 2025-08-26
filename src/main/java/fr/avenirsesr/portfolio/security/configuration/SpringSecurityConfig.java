@@ -72,6 +72,10 @@ public class SpringSecurityConfig {
     @Value("${management.actuator.health.path}")
     private String actuatorHealth;
 
+
+    @Value("${avenirs.storage.path}")
+    private String storagePath;
+
     @Bean
     SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -80,7 +84,8 @@ public class SpringSecurityConfig {
                         login,
                         actuatorHealth,
                         oidcCallback,
-                        oidcRedirect)
+                        oidcRedirect,
+                        storagePath + "/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .build();
