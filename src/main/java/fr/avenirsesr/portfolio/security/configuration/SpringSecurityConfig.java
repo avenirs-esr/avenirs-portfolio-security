@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -77,6 +78,7 @@ public class SpringSecurityConfig {
     private String storagePath;
 
     @Bean
+    @Order(1)
     SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .securityMatcher(swaggerUIPath + "/**",
@@ -92,6 +94,7 @@ public class SpringSecurityConfig {
     }
 
     @Bean
+    @Order(2)
     SecurityFilterChain protectedFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .securityMatcher("/**")
