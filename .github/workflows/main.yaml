@@ -62,7 +62,7 @@ jobs:
 
       - name: Setup CAS
         if: ${{env.ENABLE_CAS_ACTION == 'true' }}
-        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-cas@fix/security-workflow
+        uses: avenirs-esr/avenirs-workflows/.github/actions/setup-cas@main
         with:
           rebuild: false
 
