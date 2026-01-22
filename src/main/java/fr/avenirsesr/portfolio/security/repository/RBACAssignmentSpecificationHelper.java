@@ -1,119 +1,116 @@
 package fr.avenirsesr.portfolio.security.repository;
 
-import java.util.Arrays;
-import java.util.UUID;
-
 import fr.avenirsesr.portfolio.security.model.*;
 import jakarta.persistence.criteria.*;
+import java.util.Arrays;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
-/**
- * Assignment specification for Assignment model. Used to make queries based on
- * predicates.
- */
+/** Assignment specification for Assignment model. Used to make queries based on predicates. */
 @Slf4j
 public abstract class RBACAssignmentSpecificationHelper {
 
-	/**
-	 * Specification to generate predicate to select the assignments associated to a
-	 * principal.
-	 * 
-	 * @param login The login used to select the assignments.
-	 * @return The assignments for the principal.
-	 */
-	public static Specification<RBACAssignment> filterByPrincipal(String login) {
-		return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-			root.fetch(RBACAssignment_.principal, JoinType.LEFT);
-			root.fetch(RBACAssignment_.role, JoinType.LEFT);
-			root.fetch(RBACAssignment_.scope, JoinType.LEFT);
-			root.fetch(RBACAssignment_.context, JoinType.LEFT);
-			return criteriaBuilder.equal(root.get(RBACAssignment_.principal).get(Principal_.login), login);
-		};
-	}
+  /**
+   * Specification to generate predicate to select the assignments associated to a principal.
+   *
+   * @param login The login used to select the assignments.
+   * @return The assignments for the principal.
+   */
+  public static Specification<RBACAssignment> filterByPrincipal(String login) {
+    return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
+      root.fetch(RBACAssignment_.principal, JoinType.LEFT);
+      root.fetch(RBACAssignment_.role, JoinType.LEFT);
+      root.fetch(RBACAssignment_.scope, JoinType.LEFT);
+      root.fetch(RBACAssignment_.context, JoinType.LEFT);
+      return criteriaBuilder.equal(
+          root.get(RBACAssignment_.principal).get(Principal_.login), login);
+    };
+  }
 
-	/**
-	 * Specification to generate predicate to select the assignments associated to a
-	 * principal and a list of resource id	.
-	 * 
-	 * @param login       The login of the principal.
-	 * @param resourceIds The id of the resources.
-	 * @return The assignments for the principal and the resources.
-	 */
-	public static Specification<RBACAssignment> filterByPrincipalAndResources(String login, UUID... resourceIds) {
-		return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
+  /**
+   * Specification to generate predicate to select the assignments associated to a principal and a
+   * list of resource id .
+   *
+   * @param login The login of the principal.
+   * @param resourceIds The id of the resources.
+   * @return The assignments for the principal and the resources.
+   */
+  public static Specification<RBACAssignment> filterByPrincipalAndResources(
+      String login, UUID... resourceIds) {
+    return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
+      log.trace("filterByPrincipalAndResources, login: {}", login);
+      log.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
 
-			log.trace("filterByPrincipalAndResources, login: {}", login);
-			log.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
+      root.fetch(RBACAssignment_.principal, JoinType.LEFT);
+      root.fetch(RBACAssignment_.role, JoinType.LEFT);
 
-			root.fetch(RBACAssignment_.principal, JoinType.LEFT);
-			root.fetch(RBACAssignment_.role, JoinType.LEFT);
+      Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope, JoinType.INNER);
+      Join<RBACScope, RBACResource> joinResource =
+          joinScope.join(RBACScope_.resources, JoinType.INNER);
 
-			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope, JoinType.INNER);
-			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources, JoinType.INNER);
+      return criteriaBuilder.and(
+          filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),
+          joinResource.get(RBACResource_.id).in((Object[]) resourceIds));
+    };
+  }
 
-			return criteriaBuilder.and(
-			    filterByPrincipal(login).toPredicate(root, query, criteriaBuilder),
-			    joinResource.get(RBACResource_.id).in((Object[]) resourceIds)
-			);
-		};
-	}
+  /**
+   * Specification to generate predicate to select the assignments associated to a principal, a list
+   * of resource id and an execution context.
+   *
+   * @param login The login of the principal.
+   * @param executionContext the execution context used to filter valid assignments.
+   * @param resourceIds The id of the resources.
+   * @return The assignments for the principal, the resources and the context.
+   */
+  public static Specification<RBACAssignment> filterByPrincipalContextAndResources(
+      String login, RBACContext executionContext, UUID... resourceIds) {
+    return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
+      if (log.isTraceEnabled()) {
+        log.trace("filterByPrincipalAndResources, login: {}", login);
+        log.trace("filterByPrincipalAndResources, executionContext: {}", executionContext);
+        log.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
+      }
+      root.fetch(RBACAssignment_.principal, JoinType.LEFT);
+      root.fetch(RBACAssignment_.role, JoinType.LEFT);
 
+      Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope, JoinType.INNER);
+      Join<RBACScope, RBACResource> joinResource =
+          joinScope.join(RBACScope_.resources, JoinType.INNER);
+      Join<RBACAssignment, RBACContext> joinContext =
+          root.join(RBACAssignment_.context, JoinType.INNER);
 
-	/**
-	 * Specification to generate predicate to select the assignments associated to a
-	 * principal, a list of resource id	and an execution context.
-	 * @param login The login of the principal.
-	 * @param executionContext the execution context used to filter valid assignments.
-	 * @param resourceIds The id of the resources.
-	 * @return The assignments for the principal, the resources and the context.
-	 */
-	public static Specification<RBACAssignment> filterByPrincipalContextAndResources(String login,
-																					 RBACContext executionContext,
-																					 UUID... resourceIds) {
-		return (Root<RBACAssignment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
+      Predicate principalPredicate =
+          filterByPrincipal(login).toPredicate(root, query, criteriaBuilder);
+      Predicate resourcesPredicate = joinResource.get(RBACResource_.id).in((Object[]) resourceIds);
 
-			if (log.isTraceEnabled()) {
-				log.trace("filterByPrincipalAndResources, login: {}", login);
-				log.trace("filterByPrincipalAndResources, executionContext: {}", executionContext);
-				log.trace("filterByPrincipalAndResources, resourceIds: {}", Arrays.toString(resourceIds));
-			}
-			root.fetch(RBACAssignment_.principal, JoinType.LEFT);
-			root.fetch(RBACAssignment_.role, JoinType.LEFT);
+      // Filter by validity period of application context.
+      Predicate contextDatePredicate =
+          criteriaBuilder.and(
+              criteriaBuilder.or(
+                  criteriaBuilder.isNull(joinContext.get(RBACContext_.validityStart)),
+                  criteriaBuilder.lessThanOrEqualTo(
+                      joinContext.get(RBACContext_.validityStart),
+                      executionContext.getEffectiveDate())),
+              criteriaBuilder.or(
+                  criteriaBuilder.isNull(joinContext.get(RBACContext_.validityEnd)),
+                  criteriaBuilder.greaterThanOrEqualTo(
+                      joinContext.get(RBACContext_.validityEnd),
+                      executionContext.getEffectiveDate())));
 
-			Join<RBACAssignment, RBACScope> joinScope = root.join(RBACAssignment_.scope, JoinType.INNER);
-			Join<RBACScope, RBACResource> joinResource = joinScope.join(RBACScope_.resources, JoinType.INNER);
-			Join<RBACAssignment, RBACContext> joinContext = root.join(RBACAssignment_.context, JoinType.INNER);
+      // Filter by structure: no structure specified in application context or all structures
+      // specified
+      // are in the execution context.
+      Predicate contextStructuresPredicate =
+          criteriaBuilder.or(
+              criteriaBuilder.isEmpty(joinContext.get(RBACContext_.structures)),
+              joinContext
+                  .join(RBACContext_.structures, JoinType.LEFT)
+                  .in(executionContext.getStructures()));
 
-			Predicate principalPredicate = filterByPrincipal(login).toPredicate(root, query, criteriaBuilder);
-			Predicate resourcesPredicate = joinResource.get(RBACResource_.id).in((Object[]) resourceIds);
-
-
-			// Filter by validity period of application context.
-			Predicate contextDatePredicate = criteriaBuilder.and(
-					criteriaBuilder.or(
-							criteriaBuilder.isNull(joinContext.get(RBACContext_.validityStart)),
-							criteriaBuilder.lessThanOrEqualTo(joinContext.get(RBACContext_.validityStart), executionContext.getEffectiveDate())
-					),
-					criteriaBuilder.or(
-							criteriaBuilder.isNull(joinContext.get(RBACContext_.validityEnd)),
-							criteriaBuilder.greaterThanOrEqualTo(joinContext.get(RBACContext_.validityEnd), executionContext.getEffectiveDate())
-					)
-			);
-
-			// Filter by structure: no structure specified in application context or all structures specified
-			// are in the execution context.
-			Predicate contextStructuresPredicate = criteriaBuilder.or(
-					criteriaBuilder.isEmpty(joinContext.get(RBACContext_.structures)),
-					joinContext.join(RBACContext_.structures, JoinType.LEFT).in(executionContext.getStructures())
-			);
-
-			return criteriaBuilder.and(
-					principalPredicate,
-					resourcesPredicate,
-					contextDatePredicate,
-					contextStructuresPredicate
-			);
-		};
-	}
+      return criteriaBuilder.and(
+          principalPredicate, resourcesPredicate, contextDatePredicate, contextStructuresPredicate);
+    };
+  }
 }

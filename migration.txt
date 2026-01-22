@@ -1,0 +1,210 @@
+Reste à faire — Couche PRESENTATION (alignement API: `application/adapter/*`)
+ 1) Repackager le controller dans `authentication/application/adapter/controller`
+    1.1 Déplacer `fr.avenirsesr.portfolio.security.authentication.application.adapter.AuthenticationController`
+        -> `authentication.application.adapter.AuthenticationController`
+    1.2 -> creer le test unitaire
+    1.3 -> creer un test IT
+ 
+ 2) Repackager les DTO d'entrée (requests) dans `authentication/application/adapter/request`
+    2.1 Déplacer `fr.avenirsesr.portfolio.security.model.LoginRequest`
+        -> `fr.avenirsesr.portfolio.security.authentication.application.adapter.request.LoginRequest`
+ 
+ 3) Créer des DTO API de sortie (responses) dans `authentication/application/adapter/dto`
+    3.1 Créer `OidcCallbackDTO` (retour de `${avenirs.authentication.oidc.callback}`)
+    3.2 Créer `OidcProfileDTO` (retour de `${avenirs.authentication.oidc.callback.profile}`)
+    3.3 Créer `OidcIntrospectionDTO` (retour de `${avenirs.authentication.oidc.callback.introspect}`)
+ 
+ 4) Créer des mappers API dans `authentication/application/adapter/mapper`
+    4.1 Créer `OidcCallbackMapper` : `OIDCAccessToken` -> `OidcCallbackDTO`
+    4.2 Créer `OidcProfileApiMapper` : `OIDCProfile` -> `OidcProfileDTO`
+    4.3 Créer `OidcIntrospectionApiMapper` : `OIDCIntrospection` -> `OidcIntrospectionDTO`
+ 
+ 5) Mettre à jour le controller pour ne plus exposer les payloads provider
+    5.1 Remplacer `OIDCAccessTokenResponse`/`OIDCProfileResponse`/`OIDCIntrospectResponse` (provider payloads)
+        par les DTO API correspondants dans les signatures
+    5.2 Le controller dépend uniquement du port input (`AuthenticationService`) + DTO/mappers API
+ 
+ 6) Conserver les payloads provider et leurs mappers côté infrastructure (ne pas les déplacer en application)
+    6.1 `authentication/infrastructure/adapter/model/*Response` restent des modèles d'intégration CAS/OIDC (Jackson etc.)
+    6.2 `authentication/infrastructure/adapter/mapper/*` restent les mappers "provider" (payload <-> domain)
+ 
+ 7) Tests (si nécessaire)
+    7.1 Ajouter/adapter un test `@WebMvcTest` sur le controller déplacé (contrat HTTP + payload)
+ 
+Reste à faire — Couche DOMAIN uniquement (alignement pattern API)
+ NA 1) Revoir le découpage des ports `domain/port/output/*` (pattern API: output est souvent structuré par type, ex: `output/repository`, `output/client`, etc.)
+    NA 1.1 - Objectif: éviter un port "fourre-tout" (ex: `AuthenticationPort`) si plusieurs responsabilités.
+    NA 1.2 - Option: scinder `AuthenticationPort` en ports plus fins côté domain (ex: `OidcTokenPort`, `OidcIntrospectionPort`, `OidcProfilePort`, `ServiceUrlPort`, etc.).
+ 
+ NA 2) Vérifier si le domaine a besoin d'un package `authentication/domain/exception` (pattern API: exceptions métier/domain dédiées)
+    - Objectif: ne pas exposer des exceptions techniques/infra au travers des ports input/output.
+ 
+ x 3) Vérifier si le domaine a besoin d'objets de données dédiés (`authentication/domain/data`) au lieu d'utiliser des structures infra/payload
+    - Objectif: ne retourner/consommer via `domain/*` que des modèles domain (records/classes domain).
+ 
+ x 4) Confirmer que les modèles domain restent "purs" (pas d'annotations Jackson/Lombok spécifiques payload)
+    - Statut actuel: OK, mais à revalider à chaque ajout/modif.
+
+Etapes (numérotées) — Domaine authentication (alignement hexa comme dans l'API)
+ x 1. Créer l'arborescence:
+    x 1.1 authentication/domain/port/input
+    x 1.2 authentication/domain/port/output
+    x 1.3 authentication/domain/service
+ x 2. Déplacer les ports sortants existants dans output:
+    x 2.1 AuthenticationPort -> authentication/domain/port/output/AuthenticationPort
+    x 2.2 JWTServicePort -> authentication/domain/port/output/JWTServicePort
+ x 3. Créer le port entrant (use case) dans input:
+    x 3.1 authentication/domain/port/input/AuthenticationService (ou AuthenticationUseCase)
+    x 3.2 ce port regroupe les cas d'usage appelés par controller + filter (login, introspect, profile, etc.)
+ x 4. Implémenter le port entrant dans domain/service:
+    x 4.1 authentication/domain/service/AuthenticationServiceImpl
+    x 4.2 dépend uniquement des ports output
+ x 5. Mettre à jour les usages:
+    x 5.1 Créer un objet de config dans la couche infra pour le wiring du service;
+    x 5.2 AuthenticationController et CASTokenAuthenticationFilter doivent dépendre du port input
+ x 6. Mettre à jour les tests unitaires:
+    x 6.1 Lister les tests unitaires à déplcer s'il y en a. -> aucun
+    x 6.2 deplacer les tests. NA.
+    x 6.3 ajuster imports/mocks suite aux nouveaux packages (input/output)
+ x 7. Contrôle hexa:
+    x 7.1 vérifier que domain/* n'importe jamais infrastructure/*
+
+X 1) Security config (filter chains)
+ - fr.avenirsesr.portfolio.security.configuration.SpringSecurityConfig
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.configuration.SpringSecurityConfig
+
+X 2) Swagger/OpenAPI config
+ - fr.avenirsesr.portfolio.security.configuration.OpenAPIConfig
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.configuration.OpenAPIConfig
+
+ X 3) Filtre Spring Security (extraction token + SecurityContext)
+ - fr.avenirsesr.portfolio.security.authentication.adapter.filter.CASTokenAuthenticationFilter
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.filter.CASTokenAuthenticationFilter
+
+ X 4) Client OIDC (RestClient) : échanges token / introspection / profile
+ - fr.avenirsesr.portfolio.security.authentication.adapter.oidc.client.AuthenticationService
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.oidc.client.AuthenticationService
+
+X 5) Vérification JWT + récupération JWKS
+ - fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.JWTService
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.JWTService
+
+X 6) ConfigurationProperties mapping JWT algo -> algo crypto
+ - fr.avenirsesr.portfolio.security.configuration.JWTToCryptographicKeyAlgoMapper
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.jwt.configuration.JWTToCryptographicKeyAlgoMapper
+
+ 7) Modèles OIDC (hexa strict: payloads infra -> modèle domaine)
+ x 7.1) Access token response
+ - Payload (CAS/OIDC): fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCAccessTokenResponse
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.model.OIDCAccessTokenResponse
+ - Modèle domaine (utilisé par ports): fr.avenirsesr.portfolio.authentication.domain.model.OIDCAccessToken
+ - Ops:
+  x - 7.1.1 déplacer OIDCAccessTokenResponse (payload) -> authentication.infrastructure.adapter.model
+  x - 7.1.2 créer OIDCAccessToken (modèle domaine)
+  x - 7.1.3 mapper OIDCAccessTokenResponse <-> OIDCAccessToken dans l'adapter OIDC
+  x - 7.1.4 modifier ports + usages (controller/service/JWT)
+
+ 7.2) Introspect response
+ - Payload (CAS/OIDC): fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCIntrospectResponse
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.model.OIDCIntrospectResponse
+ - Modèle domaine (utilisé par ports): fr.avenirsesr.portfolio.authentication.domain.model.OIDCIntrospection
+ - Ops:
+   x- 7.2.1 déplacer OIDCIntrospectResponse (payload) -> authentication.infrastructure.adapter.model
+   x - 7.2.2 créer OIDCIntrospection (modèle domaine)
+   x - 7.2.3 mapper OIDCIntrospectResponse <-> OIDCIntrospection dans l'adapter OIDC
+   x - 7.2.4 modifier ports + usages (filter/service/controller)
+
+ x 7.3) Profile response
+ - Payload (CAS/OIDC): fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCProfileResponse
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.model.OIDCProfileResponse
+ - Modèle domaine (utilisé par ports): fr.avenirsesr.portfolio.authentication.domain.model.OIDCProfile
+ - Ops:
+   x - 7.3.1 déplacer OIDCProfileResponse (payload) -> authentication.infrastructure.adapter.model
+   x - 7.3.2 créer OIDCProfile (modèle domaine)
+   x - 7.3.3 mapper OIDCProfileResponse <-> OIDCProfile dans l'adapter OIDC
+   - 7.3.4 modifier ports + usages (service/controller)
+
+ x 8) Contrat IdToken (utilisé par JWTService via le port)
+ - fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCIdToken
+ => fr.avenirsesr.portfolio.authentication.application.adapter.dto.OIDCIdToken
+
+ x 9) Modèles techniques JWT (modulus/exponent)
+ - fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.ModulusAndExponent
+ => fr.avenirsesr.portfolio.authentication.infrastructure.adapter.jwt.model.ModulusAndExponent
+
+
+
+ Notes - BDD Logger (pour structurer les tests)
+
+ Objectif
+ - Utilitaire de test pour rendre les scénarios lisibles en console avec un style Given/When/Then.
+ - Ne remplace pas SLF4J/Logback et ne pilote pas la verbosité des logs applicatifs.
+ - Sert uniquement à tracer le déroulé d'un test (arrange/act/assert) d'une manière standardisée.
+
+ Emplacement (référence dans l'API)
+ - Classe: fr.avenirsesr.portfolio.common.testutils.BddLogger
+ - Module: avenirs-portfolio-common (dans le repo avenirs-portfolio-api)
+ - Fichier: libs/avenirs-portfolio-common/src/main/java/fr/avenirsesr/portfolio/common/testutils/BddLogger.java
+
+ API (méthodes)
+ - BddLogger.given(String message)
+ - BddLogger.when(String message)
+ - BddLogger.and(String message)
+ - BddLogger.then(String message)
+
+ Comportement
+ - Chaque méthode écrit sur la sortie standard (System.out.println).
+ - Préfixes affichés (exact): "GIVEN" / "WHEN" / "AND" / "THEN" (avec symboles).
+ - Aucune dépendance Spring, aucune dépendance SLF4J: fonctionne dans tests unitaires purs et tests Spring Boot.
+
+ Pattern d'utilisation observé dans l'API
+ - Cas simple (test unitaire):
+   - given("...")
+   - when("...") + appel de la méthode
+   - then("...") + assertions/verify
+
+ - Cas service avec mocks:
+   - given("a <Service>...")
+   - préparation des mocks
+   - when("calling ...")
+   - then("it should ...")
+   - verify(...) + assertions
+
+ - Cas tests complexes: utilisation dans @Nested + @BeforeEach
+   - given/and/when peuvent être posés dans des @BeforeEach de classes @Nested
+   - then reste souvent dans la méthode @Test finale
+
+ Exemples d'usage (copier/coller)
+ - Exemple basique:
+   - BddLogger.given("a service X")
+   - BddLogger.when("calling doSomething")
+   - var result = service.doSomething();
+   - BddLogger.then("it should return ...")
+   - assertEquals(...)
+
+ - Exemple avec verify:
+   - BddLogger.given("a mocked dependency")
+   - when(dep.call()).thenReturn(...)
+   - BddLogger.when("executing method")
+   - service.execute();
+   - BddLogger.then("it should call dependency")
+   - verify(dep).call();
+
+ Points d'attention / intégration
+ - Pour l'utiliser dans un autre module (ex: security), il faut que la dépendance vers avenirs-portfolio-common
+   soit disponible au moins en scope test (ou copier l'utilitaire si c'est la stratégie).
+ - Ne pas confondre avec la configuration de logs (SLF4J/Logback). BddLogger n'empêchera pas l'affichage de log.error.
+ - C'est volontairement simple: pas de configuration, pas d'assertions, uniquement du marquage de scénario.
+
+Tests à revoir (fr.avenirsesr.portfolio.security.authentication)
+ x 1 - fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.OIDCClientAuthenticationServiceTest
+   - utilise @SpringBootTest
+   - à évaluer: remplacer par test unitaire (Mockito) ou un slice test plus ciblé si le besoin est uniquement config/wiring
+ x 2 - fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration.SpringSecurityConfigTest
+   - utilise @WebMvcTest (OK) mais à revalider si l'objectif est bien un test de filter chain / endpoints protégés
+ x 3 - fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.JWTServiceTest
+   - test unitaire (MockitoExtension) (OK) ; à revalider si le niveau attendu est bien unitaire (pas besoin de contexte Spring)
+ x 4 - fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter.CASTokenAuthenticationFilterTest
+   - test unitaire (OK) ; à revalider en cas d'évolution du câblage Spring Security
+ x5 - fr.avenirsesr.portfolio.security.authentication.domain.service.AuthenticationServiceImplTest
+   - test unitaire (OK)
