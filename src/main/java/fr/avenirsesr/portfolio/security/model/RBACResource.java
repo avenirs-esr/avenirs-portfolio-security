@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,31 +8,34 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.util.UUID;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
- * Resources selector.
- * This class is used to determine one or several resources involved in a Role assignment.
+ * Resources selector. This class is used to determine one or several resources involved in a Role
+ * assignment.
  */
 @Data
-@Accessors(chain=true)
+@Accessors(chain = true)
 @Entity
-@Table(name="resource")
+@Table(name = "resource")
 public class RBACResource {
-	
-	/** Database id. */
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID id;
-	
-	/** Selector for one or several resources.*/
-	private String selector;
-	
-	/** Type associated to the resource. */
-	@ManyToOne()
-	@JoinColumn(name="id_resource_type")
-	private RBACResourceType resourceType;
+
+  /** Database id. */
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
+
+  /** Selector for one or several resources. */
+  @Column(length = 255, nullable = false)
+  private String selector;
+
+  /** Type associated to the resource. */
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "id_resource_type", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private RBACResourceType resourceType;
 }
