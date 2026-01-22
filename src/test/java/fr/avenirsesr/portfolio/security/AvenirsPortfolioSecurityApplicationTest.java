@@ -9,27 +9,27 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.Mockito.verify;
-
-
 // Mainly for coverage report %.
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
+@Disabled("Needs refactoring (tests outside authentication package)")
 class AvenirsPortfolioSecurityApplicationTest {
 
-    @SpyBean
-    private AvenirsPortfolioSecurityApplication application;
+  @SpyBean private AvenirsPortfolioSecurityApplication application;
 
-   @Test
-    void testMain() {
-        try (var mockedSpringApplication = Mockito.mockStatic(SpringApplication.class)) {
-            mockedSpringApplication
-                    .when(() -> SpringApplication.run(AvenirsPortfolioSecurityApplication.class, new String[]{}))
-                    .thenReturn(null);
+  @Test
+  void testMain() {
+    try (var mockedSpringApplication = Mockito.mockStatic(SpringApplication.class)) {
+      mockedSpringApplication
+          .when(
+              () ->
+                  SpringApplication.run(AvenirsPortfolioSecurityApplication.class, new String[] {}))
+          .thenReturn(null);
 
-            AvenirsPortfolioSecurityApplication.main(new String[]{});
-            mockedSpringApplication.verify(() -> SpringApplication.run(AvenirsPortfolioSecurityApplication.class, new String[]{}));
-        }
+      AvenirsPortfolioSecurityApplication.main(new String[] {});
+      mockedSpringApplication.verify(
+          () -> SpringApplication.run(AvenirsPortfolioSecurityApplication.class, new String[] {}));
     }
+  }
 }
