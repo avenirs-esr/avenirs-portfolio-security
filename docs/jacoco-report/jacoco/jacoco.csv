@@ -33,7 +33,6 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructur
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCIntrospectionMapper,4,35,2,2,2,9,2,2,0,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCProfileMapper,4,49,2,2,2,15,2,2,0,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCAccessTokenMapper,23,63,6,4,4,19,6,2,1,2
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter,AuthenticationController,0,95,1,7,0,26,1,11,0,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data,DataGeneratorProvider,89,0,0,0,19,0,6,0,6,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data,SharedFakerDataGenerator,101,0,7,0,20,0,15,0,10,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data,ESeederSource,15,0,0,0,3,0,1,0,1,0
@@ -71,6 +70,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.domain,FetchGraph
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter,EntityGrapher,259,0,19,0,53,0,21,0,10,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseOpenApiConfiguration,22,0,0,0,9,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseSwaggerSchema,88,0,0,0,24,0,2,0,2,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,AuthenticationController,0,95,1,7,0,26,1,11,0,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.domain.model.enums,EExternalSkillType,27,0,0,0,5,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.domain.model.enums,EExternalSkillCategoryType,27,0,0,0,5,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.dependency.domain.model,EDependencyBehaviour,15,0,0,0,3,0,1,0,1,0
@@ -84,7 +84,6 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,Principal_,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACResource_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACPermission_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACResourceType_,3,0,0,0,1,0,1,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,LoginRequest,7,0,2,0,1,0,2,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACRole_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACScope_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.model,RBACAssignment_,3,0,0,0,1,0,1,0,1,0
@@ -105,6 +104,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infra
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.utils,FileReader,39,0,0,0,10,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.domain.model.enums,ELanguage,5,62,1,1,1,14,1,4,0,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.application.adapter.dto,PageInfoDTO,34,0,0,0,6,0,2,0,2,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.dto,LoginRequestDTO,7,0,2,0,1,0,2,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security,AvenirsPortfolioSecurityApplication,8,11,0,0,3,4,1,3,1,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.application.adapter.dto,ExternalSkillDetailsDTO,15,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.application.adapter.dto,ExternalSkillCategoryDTO,9,0,0,0,1,0,1,0,1,0
