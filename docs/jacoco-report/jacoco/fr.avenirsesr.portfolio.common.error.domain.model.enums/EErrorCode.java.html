@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EErrorCode.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.error.domain.model.enums</a> &gt; <span class="el_source">EErrorCode.java</span></div><h1>EErrorCode.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.error.domain.model.enums;
+
+import java.text.MessageFormat;
+import lombok.Getter;
+
+<span class="nc" id="L6">@Getter</span>
+public enum EErrorCode {
+<span class="nc" id="L8">  USER_NOT_FOUND(&quot;User not found&quot;),</span>
+<span class="nc" id="L9">  WRONG_CLASS_TYPE(&quot;The class type should be different&quot;),</span>
+<span class="nc" id="L10">  USER_ALREADY_EXISTS(&quot;User already exists&quot;),</span>
+<span class="nc" id="L11">  USER_NOT_AUTHORIZED(&quot;User not authorized&quot;),</span>
+<span class="nc" id="L12">  USER_CATEGORY_NOT_FOUND(&quot;User category not found&quot;),</span>
+<span class="nc" id="L13">  MAX_FILE_SIZE_EXCEEDED(&quot;Maximum upload size exceeded&quot;),</span>
+<span class="nc" id="L14">  UNKNOWN_FILE_TYPE(&quot;File type is not supported&quot;),</span>
+<span class="nc" id="L15">  PROGRAM_NOT_FOUND(&quot;Program not found&quot;),</span>
+<span class="nc" id="L16">  TRAINING_PATH_NOT_FOUND(&quot;Training path not found&quot;),</span>
+<span class="nc" id="L17">  SKILL_NOT_FOUND(&quot;Skill not found&quot;),</span>
+<span class="nc" id="L18">  SKILL_LEVEL_NOT_FOUND(&quot;Skill level not found&quot;),</span>
+<span class="nc" id="L19">  TRACE_NOT_FOUND(&quot;Trace not found&quot;),</span>
+<span class="nc" id="L20">  AMS_NOT_FOUND(&quot;AMS not found&quot;),</span>
+<span class="nc" id="L21">  USER_IS_NOT_STUDENT_EXCEPTION(&quot;User is not student&quot;),</span>
+<span class="nc" id="L22">  USER_IS_NOT_TEACHER_EXCEPTION(&quot;User is not teacher&quot;),</span>
+<span class="nc" id="L23">  LANGUAGE_NOT_SUPPORTED(&quot;Language not supported&quot;),</span>
+<span class="nc" id="L24">  INVALID_ARGUMENT_TYPE(&quot;The type of the argument is invalid&quot;),</span>
+<span class="nc" id="L25">  DECLARED_SKILL_NOT_AVAILABLE(&quot;Declared skill not available&quot;),</span>
+<span class="nc" id="L26">  DECLARED_SKILL_NOT_FOUND(&quot;Declared skill not found&quot;),</span>
+<span class="nc" id="L27">  DECLARED_SKILL_PROGRESS_NOT_FOUND(&quot;Declared skill progress not found&quot;),</span>
+<span class="nc" id="L28">  STUDENT_DECLARED_ALREADY_EXIST(&quot;This declared skill is already assigned to the student&quot;),</span>
+<span class="nc" id="L29">  STUDENT_PROGRESS_NOT_FOUND(&quot;Student progress not found&quot;),</span>
+<span class="nc" id="L30">  FILE_NOT_FOUND(&quot;File not found&quot;),</span>
+<span class="nc" id="L31">  CONFIGURATION_ERROR(&quot;Configuration error&quot;),</span>
+<span class="nc" id="L32">  TITLE_TOO_LONG(&quot;The length of the title is too long&quot;),</span>
+<span class="nc" id="L33">  DESCRIPTION_TOO_LONG(&quot;The length of the description is too long&quot;),</span>
+<span class="nc" id="L34">  RATING_OUT_OF_BOUNCE(&quot;Rating is out of bounce&quot;),</span>
+<span class="nc" id="L35">  ASSOCIATION_NOT_FOUND(&quot;Association not found&quot;),</span>
+<span class="nc" id="L36">  SELF_KNOWLEDGE_ELEMENT_NOT_FOUND(&quot;Self knowledge element not found&quot;),</span>
+<span class="nc" id="L37">  SELF_KNOWLEDGE_ELEMENTS_ARE_NOT_IN_SAME_CATEGORY(</span>
+      &quot;Self knowledge elements are not in the same category&quot;),
+<span class="nc" id="L39">  SELF_KNOWLEDGE_CATEGORY_LIST_EMPTY(&quot;Self knowledge category list is empty&quot;),</span>
+<span class="nc" id="L40">  SELF_KNOWLEDGE_CATEGORY_NOT_FOUND(&quot;Self knowledge category not found&quot;),</span>
+<span class="nc" id="L41">  SELF_KNOWLEDGE_CATEGORY_NOT_AVAILABLE(&quot;Self knowledge category not available&quot;),</span>
+<span class="nc" id="L42">  SELF_KNOWLEDGE_CATEGORY_IS_MANDATORY(&quot;Self knowledge category is mandatory&quot;),</span>
+<span class="nc" id="L43">  SELF_KNOWLEDGE_CATEGORY_NOT_LINKED(&quot;Self knowledge category is not linked to the student&quot;),</span>
+<span class="nc" id="L44">  DEPENDENCY_CHECK_TIMEOUT(&quot;Dependency check timeout&quot;),</span>
+<span class="nc" id="L45">  DEPENDENCY_CHECK_FAILED(&quot;Dependency check failed&quot;),</span>
+<span class="nc" id="L46">  NOT_BLANK(&quot;The field {0} cannot be blank&quot;),</span>
+<span class="nc" id="L47">  NOT_NULL(&quot;The field {0} cannot be null&quot;),</span>
+<span class="nc" id="L48">  TOO_LONG(&quot;The field {0} exceeds the maximum allowed length&quot;),</span>
+<span class="nc" id="L49">  NOT_URL(&quot;The field {0} is not a valid URL&quot;),</span>
+<span class="nc" id="L50">  END_DATE_BEFORE_START_DATE(&quot;The end date cannot be before the start date&quot;),</span>
+<span class="nc" id="L51">  DECLARED_EXPERIENCE_NOT_FOUND(&quot;Declared experience&quot;),</span>
+<span class="nc" id="L52">  DECLARED_PROGRAM_NOT_FOUND(&quot;Declared program not found&quot;),</span>
+<span class="nc" id="L53">  INSTITUTION_CONFIG_NOT_FOUND(&quot;Institution configuration not found&quot;),</span>
+<span class="nc" id="L54">  INSTITUTION_ID_NULL(&quot;Institution id cannot be null&quot;),</span>
+<span class="nc" id="L55">  FIRSTNAME_IS_NULL(&quot;First name cannot be null&quot;),</span>
+<span class="nc" id="L56">  LASTNAME_IS_NULL(&quot;Last name cannot be null&quot;),</span>
+<span class="nc" id="L57">  INVALID_DATE_FORMAT(&quot;Invalid date format. Expected format: yyyy-MM-dd.&quot;);</span>
+
+  private final String message;
+
+<span class="nc" id="L61">  EErrorCode(String message) {</span>
+<span class="nc" id="L62">    this.message = message;</span>
+<span class="nc" id="L63">  }</span>
+
+  public String formatMessage(Object... args) {
+<span class="nc" id="L66">    return MessageFormat.format(this.message, args);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

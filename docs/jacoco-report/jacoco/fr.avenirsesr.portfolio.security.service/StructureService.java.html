@@ -3,122 +3,131 @@
 import fr.avenirsesr.portfolio.security.model.Structure;
 import fr.avenirsesr.portfolio.security.repository.StructureRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-
 /**
+ *
+ *
  * &lt;h1&gt;StructureService&lt;/h1&gt;
- * &lt;p&gt;
- * &lt;b&gt;Description:&lt;/b&gt; Service used to manage Structures.
- * &lt;/p&gt;
+ *
+ * &lt;p&gt;&lt;b&gt;Description:&lt;/b&gt; Service used to manage Structures.
  *
  * &lt;h2&gt;Version:&lt;/h2&gt;
+ *
  * 1.0.0
  *
  * &lt;h2&gt;Author:&lt;/h2&gt;
+ *
  * Arnaud Deman
  *
  * &lt;h2&gt;Since:&lt;/h2&gt;
+ *
  * 17/10/2024
  */
-
-<span class="fc" id="L33">@Slf4j</span>
+<span class="nc" id="L34">@Slf4j</span>
 @Service
-<span class="fc" id="L35">public class StructureService {</span>
-	
-	@Autowired
-	private StructureRepository structureRepository;
+<span class="nc" id="L36">public class StructureService {</span>
 
-	/**
-	 * Gives a specific structure by its id.
-	 * @param structureId The id of the structure to retrieve.
-	 * @return The Optional of structure with id structureId.
-	 */
-	@Transactional(readOnly = true)
-	public Optional&lt;Structure&gt; getStructureById(final UUID structureId){
-<span class="fc" id="L47">		log.trace(&quot;getStructureById structureId: {}&quot;, structureId);</span>
-<span class="fc" id="L48">		return this.structureRepository.findById(structureId);</span>
-	}
+  @Autowired private StructureRepository structureRepository;
 
-	/**
-	 * Gives a specific structure by its name.
-	 * @param structureName The name of the structure to retrieve.
-	 * @return The Optional of structure with name structureName.
-	 */
-	@Transactional(readOnly = true)
-	public Optional&lt;Structure&gt; getStructureByName(final String structureName){
-<span class="fc" id="L58">		log.trace(&quot;getStructureById structureId: {}&quot;, structureName);</span>
-<span class="fc" id="L59">		return this.structureRepository.findByName(structureName);</span>
-	}
-	
-	/**
-	 * Gives all the structures.
-	 * @return All the structures.
-	 */
-	@Transactional(readOnly = true)
-	public List&lt;Structure&gt; getAllStructures() {
-<span class="fc" id="L68">		log.trace(&quot;getAllStructures&quot;);</span>
-<span class="fc" id="L69">		return this.structureRepository.findAll();</span>
-	}
+  /**
+   * Gives a specific structure by its id.
+   *
+   * @param structureId The id of the structure to retrieve.
+   * @return The Optional of structure with id structureId.
+   */
+  @Transactional(readOnly = true)
+  public Optional&lt;Structure&gt; getStructureById(final UUID structureId) {
+<span class="nc" id="L48">    log.trace(&quot;getStructureById structureId: {}&quot;, structureId);</span>
+<span class="nc" id="L49">    return this.structureRepository.findById(structureId);</span>
+  }
 
-	/**
-	 * Gives all the structures associated to a specification.
-	 *
-	 * @param specification The specification used to filter the strutures.
-	 * @return The filtered structures.
-	 */
-	@Transactional(readOnly = true)
-	public List&lt;Structure&gt; getAllStructuresBySpecification(Specification&lt;Structure&gt; specification) {
-<span class="fc" id="L80">		log.trace(&quot;getAllStructuresBySpecification, specification: {}&quot;, specification);</span>
-<span class="fc" id="L81">		return structureRepository.findAll(specification);</span>
-	}
-	
-	/**
-	 * Creates a structure.
-	 * @param structure The structure to create.
-	 * @return The new created structure.
-	 */
-	@Transactional
-	public Structure createStructure(Structure structure) {
-<span class="fc" id="L91">		log.trace(&quot;createStructure, structure: {}&quot;, structure);</span>
-<span class="fc" id="L92">		return this.structureRepository.save(structure);</span>
-	}
-	
-	/**
-	 * Updates a structure.
-	 * @param structure The structure to update.
-	 * @return The updated structure.
-	 */
-	@Transactional
-	public Structure  updateStructure(Structure structure) {
-<span class="fc" id="L102">		log.trace(&quot;updateStructure, structure: {}&quot;, structure);</span>
-<span class="fc" id="L103">		return this.structureRepository.findById(structure.getId())</span>
-<span class="fc" id="L104">				.map(storedStructure -&gt; {</span>
-<span class="pc bpc" id="L105" title="1 of 2 branches missed.">					if (! storedStructure.equals(structure)) {</span>
-<span class="fc" id="L106">                        storedStructure.setName(structure.getName());</span>
-<span class="fc" id="L107">                        storedStructure.setDescription(structure.getDescription());</span>
-					}
-<span class="fc" id="L109">					return storedStructure;</span>
-				})
-<span class="pc" id="L111">				.orElseThrow(() -&gt; new EntityNotFoundException(&quot;Entity not found with ID: &quot; + structure.getId()));</span>
-	}
-	
-	/**
-	 * Deletes a structure
-	 * @param structureId The id of the structure to delete.
-	 */
-	@Transactional
-	public void deleteStructure(UUID structureId) {
-<span class="fc" id="L120">			log.trace(&quot;deleteStructure, structureId: {}&quot;, structureId);</span>
-<span class="fc" id="L121">		this.structureRepository.deleteById(structureId);</span>
-<span class="fc" id="L122">	}</span>
+  /**
+   * Gives a specific structure by its name.
+   *
+   * @param structureName The name of the structure to retrieve.
+   * @return The Optional of structure with name structureName.
+   */
+  @Transactional(readOnly = true)
+  public Optional&lt;Structure&gt; getStructureByName(final String structureName) {
+<span class="nc" id="L60">    log.trace(&quot;getStructureById structureId: {}&quot;, structureName);</span>
+<span class="nc" id="L61">    return this.structureRepository.findByName(structureName);</span>
+  }
+
+  /**
+   * Gives all the structures.
+   *
+   * @return All the structures.
+   */
+  @Transactional(readOnly = true)
+  public List&lt;Structure&gt; getAllStructures() {
+<span class="nc" id="L71">    log.trace(&quot;getAllStructures&quot;);</span>
+<span class="nc" id="L72">    return this.structureRepository.findAll();</span>
+  }
+
+  /**
+   * Gives all the structures associated to a specification.
+   *
+   * @param specification The specification used to filter the strutures.
+   * @return The filtered structures.
+   */
+  @Transactional(readOnly = true)
+  public List&lt;Structure&gt; getAllStructuresBySpecification(Specification&lt;Structure&gt; specification) {
+<span class="nc" id="L83">    log.trace(&quot;getAllStructuresBySpecification, specification: {}&quot;, specification);</span>
+<span class="nc" id="L84">    return structureRepository.findAll(specification);</span>
+  }
+
+  /**
+   * Creates a structure.
+   *
+   * @param structure The structure to create.
+   * @return The new created structure.
+   */
+  @Transactional
+  public Structure createStructure(Structure structure) {
+<span class="nc" id="L95">    log.trace(&quot;createStructure, structure: {}&quot;, structure);</span>
+<span class="nc" id="L96">    return this.structureRepository.save(structure);</span>
+  }
+
+  /**
+   * Updates a structure.
+   *
+   * @param structure The structure to update.
+   * @return The updated structure.
+   */
+  @Transactional
+  public Structure updateStructure(Structure structure) {
+<span class="nc" id="L107">    log.trace(&quot;updateStructure, structure: {}&quot;, structure);</span>
+<span class="nc" id="L108">    return this.structureRepository</span>
+<span class="nc" id="L109">        .findById(structure.getId())</span>
+<span class="nc" id="L110">        .map(</span>
+            storedStructure -&gt; {
+<span class="nc bnc" id="L112" title="All 2 branches missed.">              if (!storedStructure.equals(structure)) {</span>
+<span class="nc" id="L113">                storedStructure.setName(structure.getName());</span>
+<span class="nc" id="L114">                storedStructure.setDescription(structure.getDescription());</span>
+              }
+<span class="nc" id="L116">              return storedStructure;</span>
+            })
+<span class="nc" id="L118">        .orElseThrow(</span>
+<span class="nc" id="L119">            () -&gt; new EntityNotFoundException(&quot;Entity not found with ID: &quot; + structure.getId()));</span>
+  }
+
+  /**
+   * Deletes a structure
+   *
+   * @param structureId The id of the structure to delete.
+   */
+  @Transactional
+  public void deleteStructure(UUID structureId) {
+<span class="nc" id="L129">    log.trace(&quot;deleteStructure, structureId: {}&quot;, structureId);</span>
+<span class="nc" id="L130">    this.structureRepository.deleteById(structureId);</span>
+<span class="nc" id="L131">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

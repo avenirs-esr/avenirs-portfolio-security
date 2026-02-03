@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.security.infrastructure.configuration</a> &gt; <span class="el_source">SecurityConfig.java</span></div><h1>SecurityConfig.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.security.infrastructure.configuration;
+
+import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums.ESecurityFilter;
+import fr.avenirsesr.portfolio.common.security.infrastructure.filter.ApiKeyAuthenticationFilter;
+import fr.avenirsesr.portfolio.common.security.infrastructure.filter.DevAuthenticationFilter;
+import fr.avenirsesr.portfolio.common.security.infrastructure.filter.DisabledAuthenticationFilter;
+import fr.avenirsesr.portfolio.common.security.infrastructure.filter.HmacAuthenticationFilter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+<span class="nc" id="L21">@Slf4j</span>
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+  private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+  @Value(&quot;${security.authentication.filter}&quot;)
+  private String securityFilter;
+
+  @Value(&quot;${security.authentication.api-key:default-api-key}&quot;)
+  private String expectedApiKey;
+
+  @Value(&quot;${security.permit-all-paths}&quot;)
+  private String[] permitAllPaths;
+
+  @Value(&quot;${cors.allowed-origins}&quot;)
+  private String allowedOriginsString;
+
+  @Value(&quot;${cors.allowed-methods}&quot;)
+  private String allowedMethodsString;
+
+  @Value(&quot;${cors.allowed-headers}&quot;)
+  private String allowedHeadersString;
+
+  @Value(&quot;${cors.allow-credentials}&quot;)
+  private boolean allowCredentials;
+
+<span class="nc" id="L49">  public SecurityConfig(CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {</span>
+<span class="nc" id="L50">    this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;</span>
+<span class="nc" id="L51">  }</span>
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+<span class="nc" id="L56">    boolean isSecurityEnabled = true;</span>
+<span class="nc bnc" id="L57" title="All 6 branches missed.">    switch (ESecurityFilter.fromValue(securityFilter)) {</span>
+      case HMAC:
+        {
+<span class="nc" id="L60">          log.info(</span>
+              &quot;Security enabled (signed header protection) using filter {}&quot;,
+<span class="nc" id="L62">              HmacAuthenticationFilter.class.getSimpleName());</span>
+<span class="nc" id="L63">          http.addFilterBefore(</span>
+<span class="nc" id="L64">              new HmacAuthenticationFilter(String.join(&quot;,&quot;, permitAllPaths)),</span>
+              UsernamePasswordAuthenticationFilter.class);
+        }
+<span class="nc" id="L67">        break;</span>
+      case DEV:
+        {
+<span class="nc" id="L70">          log.warn(</span>
+              &quot;Security is disabled, dev mode, using {}, do not use in production&quot;,
+<span class="nc" id="L72">              DevAuthenticationFilter.class.getSimpleName());</span>
+<span class="nc" id="L73">          http.addFilterBefore(</span>
+              new DevAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        }
+<span class="nc" id="L76">        break;</span>
+      case API_KEY:
+        {
+<span class="nc" id="L79">          log.info(</span>
+              &quot;Security is enabled (api key protection), using {}&quot;,
+<span class="nc" id="L81">              ApiKeyAuthenticationFilter.class.getSimpleName());</span>
+<span class="nc" id="L82">          http.addFilterBefore(</span>
+<span class="nc" id="L83">              new ApiKeyAuthenticationFilter(expectedApiKey, String.join(&quot;,&quot;, permitAllPaths)),</span>
+              UsernamePasswordAuthenticationFilter.class);
+        }
+<span class="nc" id="L86">        break;</span>
+
+      case API_KEY_OR_HMAC:
+        {
+<span class="nc" id="L90">          log.info(</span>
+              &quot;Security is enabled (api key protection or signed header protection), using {} and {}&quot;,
+<span class="nc" id="L92">              ApiKeyAuthenticationFilter.class.getSimpleName(),</span>
+<span class="nc" id="L93">              HmacAuthenticationFilter.class.getSimpleName());</span>
+<span class="nc" id="L94">          http.addFilterBefore(</span>
+<span class="nc" id="L95">              new ApiKeyAuthenticationFilter(expectedApiKey, String.join(&quot;,&quot;, permitAllPaths)),</span>
+              UsernamePasswordAuthenticationFilter.class);
+<span class="nc" id="L97">          http.addFilterBefore(</span>
+<span class="nc" id="L98">              new HmacAuthenticationFilter(String.join(&quot;,&quot;, permitAllPaths)),</span>
+              UsernamePasswordAuthenticationFilter.class);
+        }
+<span class="nc" id="L101">        break;</span>
+      case DISABLED:
+        {
+<span class="nc" id="L104">          isSecurityEnabled = false;</span>
+<span class="nc" id="L105">          log.warn(</span>
+              &quot;Security is disabled, using {}, do not use in production&quot;,
+<span class="nc" id="L107">              DisabledAuthenticationFilter.class.getSimpleName());</span>
+<span class="nc" id="L108">          http.addFilterBefore(</span>
+              new DisabledAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        }
+<span class="nc" id="L111">        break;</span>
+      default:
+        {
+<span class="nc" id="L114">          log.info(</span>
+              &quot;Security enabled by default (signed header protection) using filter {}&quot;,
+<span class="nc" id="L116">              HmacAuthenticationFilter.class.getSimpleName());</span>
+<span class="nc" id="L117">          http.addFilterBefore(</span>
+<span class="nc" id="L118">              new HmacAuthenticationFilter(String.join(&quot;,&quot;, permitAllPaths)),</span>
+              UsernamePasswordAuthenticationFilter.class);
+        }
+    }
+<span class="nc" id="L122">    http.csrf(AbstractHttpConfigurer::disable)</span>
+<span class="nc" id="L123">        .cors(cors -&gt; cors.configurationSource(corsConfigurationSource()))</span>
+<span class="nc" id="L124">        .authorizeHttpRequests(</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            isSecurityEnabled</span>
+<span class="nc" id="L126">                ? authz -&gt;</span>
+<span class="nc" id="L127">                    authz.requestMatchers(permitAllPaths).permitAll().anyRequest().authenticated()</span>
+<span class="nc" id="L128">                : authz -&gt; authz.anyRequest().permitAll())</span>
+<span class="nc" id="L129">        .exceptionHandling(</span>
+<span class="nc" id="L130">            exception -&gt; exception.authenticationEntryPoint(customAuthenticationEntryPoint));</span>
+
+<span class="nc" id="L132">    return http.build();</span>
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+<span class="nc" id="L137">    CorsConfiguration configuration = new CorsConfiguration();</span>
+
+<span class="nc bnc" id="L139" title="All 2 branches missed.">    for (String origin : allowedOriginsString.split(&quot;,&quot;)) {</span>
+<span class="nc" id="L140">      configuration.addAllowedOrigin(origin.trim());</span>
+    }
+
+<span class="nc bnc" id="L143" title="All 2 branches missed.">    for (String method : allowedMethodsString.split(&quot;,&quot;)) {</span>
+<span class="nc" id="L144">      configuration.addAllowedMethod(method.trim());</span>
+    }
+
+<span class="nc bnc" id="L147" title="All 2 branches missed.">    for (String header : allowedHeadersString.split(&quot;,&quot;)) {</span>
+<span class="nc" id="L148">      configuration.addAllowedHeader(header.trim());</span>
+    }
+
+<span class="nc" id="L151">    configuration.setAllowCredentials(allowCredentials);</span>
+<span class="nc" id="L152">    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
+<span class="nc" id="L153">    source.registerCorsConfiguration(&quot;/**&quot;, configuration);</span>
+<span class="nc" id="L154">    return source;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
