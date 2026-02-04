@@ -93,7 +93,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infra
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.dependency.application.adapter.config,DependencyCheckConfiguration,58,0,2,0,12,0,6,0,5,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration,AuthenticationServiceConfig,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration,JWTToCryptographicKeyAlgoMapper,21,0,4,0,4,0,3,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration,SpringSecurityConfig,0,102,0,0,0,16,0,7,0,7
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration,SpringSecurityConfig,0,90,0,0,0,16,0,7,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.testutils,BddLogger,0,22,0,0,0,10,0,5,0,5
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.web.infrastructure.configuration,WebConfig,94,0,6,0,12,0,5,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.validation.infrastructure.adapter.utils,ValidationUtils,14,0,4,0,4,0,4,0,2,0

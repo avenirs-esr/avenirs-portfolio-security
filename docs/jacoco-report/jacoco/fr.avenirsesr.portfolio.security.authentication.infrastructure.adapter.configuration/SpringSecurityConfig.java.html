@@ -62,47 +62,37 @@ public class SpringSecurityConfig {
   @Value(&quot;${management.actuator.health.path}&quot;)
   private String actuatorHealth;
 
-  // TODO Check why these properties are used. It is probably an error as it is used in
-  // avenirs-portfolio-api microservice.
-  @Value(&quot;${avenirs.storage.path}&quot;)
-  private String storagePath;
-
-  @Value(&quot;${avenirs.additionalskills.path}&quot;)
-  private String additionalSkillsPath;
-
-<span class="fc" id="L73">  public SpringSecurityConfig(AuthenticationService authenticationService) {</span>
-<span class="fc" id="L74">    this.authenticationService = authenticationService;</span>
-<span class="fc" id="L75">  }</span>
+<span class="fc" id="L65">  public SpringSecurityConfig(AuthenticationService authenticationService) {</span>
+<span class="fc" id="L66">    this.authenticationService = authenticationService;</span>
+<span class="fc" id="L67">  }</span>
 
   @Bean
   SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L79">    return httpSecurity</span>
-<span class="fc" id="L80">        .securityMatcher(</span>
+<span class="fc" id="L71">    return httpSecurity</span>
+<span class="fc" id="L72">        .securityMatcher(</span>
             swaggerUIPath + &quot;/**&quot;,
             swaggerAPIDocPath + &quot;/**&quot;,
             login,
             actuatorHealth,
             oidcCallback,
-            oidcRedirect,
-            storagePath + &quot;/**&quot;,
-            additionalSkillsPath + &quot;/**&quot;)
-<span class="fc" id="L89">        .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L90">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
-<span class="fc" id="L91">        .build();</span>
+            oidcRedirect)
+<span class="fc" id="L79">        .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L80">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
+<span class="fc" id="L81">        .build();</span>
   }
 
   @Bean
   SecurityFilterChain protectedFilterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L96">    return httpSecurity</span>
-<span class="fc" id="L97">        .securityMatcher(&quot;/**&quot;)</span>
-<span class="fc" id="L98">        .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L99">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
-<span class="fc" id="L100">        .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
-<span class="fc" id="L101">        .build();</span>
+<span class="fc" id="L86">    return httpSecurity</span>
+<span class="fc" id="L87">        .securityMatcher(&quot;/**&quot;)</span>
+<span class="fc" id="L88">        .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L89">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
+<span class="fc" id="L90">        .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L91">        .build();</span>
   }
 
   Filter casTokenAuthenticationFilter() {
-<span class="fc" id="L105">    return new CASTokenAuthenticationFilter(authenticationService);</span>
+<span class="fc" id="L95">    return new CASTokenAuthenticationFilter(authenticationService);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
