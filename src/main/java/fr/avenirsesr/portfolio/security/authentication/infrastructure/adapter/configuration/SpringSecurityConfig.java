@@ -38,8 +38,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-  @Value("${avenirs.authentication.oidc.login}")
-  private String login;
+  private static final String LOGIN = "/login";
 
   /** OIDC callback URI. */
   @Value("${avenirs.authentication.oidc.callback}")
@@ -72,7 +71,7 @@ public class SpringSecurityConfig {
         .securityMatcher(
             swaggerUIPath + "/**",
             swaggerAPIDocPath + "/**",
-            login,
+            LOGIN,
             actuatorHealth,
             oidcCallback,
             oidcRedirect)

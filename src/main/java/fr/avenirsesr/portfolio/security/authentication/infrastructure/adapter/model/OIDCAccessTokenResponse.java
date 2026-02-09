@@ -8,7 +8,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /** OIDC Response of a query to fetch an access token. */
-@Data()
+@Data
 @Accessors(chain = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OIDCAccessTokenResponse {

@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
     properties = {
       "springdoc.api-docs.path=/api-docs",
       "springdoc.swagger-ui.path=/swagger-ui",
-      "avenirs.authentication.oidc.login=/login",
       "avenirs.authentication.oidc.callback=/oidc/callback",
       "avenirs.authentication.oidc.callback.redirect=/oidc/redirect",
       "management.actuator.health.path=/actuator/health"

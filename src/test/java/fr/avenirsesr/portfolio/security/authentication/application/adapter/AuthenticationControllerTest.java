@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.MockMvc;
     properties = {
       "springdoc.api-docs.path=/api-docs",
       "springdoc.swagger-ui.path=/swagger-ui",
-      "avenirs.authentication.oidc.login=/oidc/login",
       "avenirs.authentication.oidc.callback=/oidc/callback",
       "avenirs.authentication.oidc.callback.redirect=/oidc/callback/redirect",
       "avenirs.authentication.oidc.callback.profile=/oidc/callback/profile",
@@ -59,7 +58,7 @@ class AuthenticationControllerTest {
 
     mockMvc
         .perform(
-            post("/oidc/login")
+            post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"login\":\"user\",\"password\":\"pass\"}"))
         .andExpect(status().isOk())
@@ -74,7 +73,7 @@ class AuthenticationControllerTest {
 
     mockMvc
         .perform(
-            post("/oidc/login")
+            post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"login\":\"user\",\"password\":\"bad\"}"))
         .andExpect(status().isUnauthorized());
