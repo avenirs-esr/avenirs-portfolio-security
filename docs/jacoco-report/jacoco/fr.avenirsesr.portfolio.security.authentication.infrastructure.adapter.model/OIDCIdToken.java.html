@@ -7,7 +7,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.util.StringUtils;
 
-@Data()
+@Data
 @Accessors(chain = true)
 public class OIDCIdToken {
   private String header;

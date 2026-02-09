@@ -35,7 +35,7 @@ import org.springframework.web.client.RestClientResponseException;
  * @implNote Only RSA algorithms are supported to generate the public keys.
  */
 <span class="fc" id="L37">@Slf4j</span>
-@Service()
+@Service
 public class JWTService implements JWTServicePort {
 
   /** Mapping between jwt and cryptographic key algorithm (e.g. RS256 -&gt; RSA). */

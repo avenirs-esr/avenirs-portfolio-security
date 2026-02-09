@@ -44,7 +44,7 @@ public class AuthenticationController {
    * @throws IOException If the access token could not be retrieved.
    */
   @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
-  @PostMapping(&quot;${avenirs.authentication.oidc.login}&quot;)
+  @PostMapping(&quot;/login&quot;)
   public ResponseEntity&lt;String&gt; login(@RequestBody LoginRequestDTO request) throws IOException {
 <span class="fc" id="L49">    log.trace(&quot;login, request: {}&quot;, request);</span>
 <span class="fc" id="L50">    OIDCAccessToken accessToken =</span>
