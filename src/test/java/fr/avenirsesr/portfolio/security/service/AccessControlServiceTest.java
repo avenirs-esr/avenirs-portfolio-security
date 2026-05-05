@@ -118,7 +118,8 @@ class AccessControlServiceTest {
       })
   @Test
   void isAuthorized() {
-    Principal principal = new Principal().setLogin(userLogin);
+    Principal principal = new Principal();
+    principal.setLogin(userLogin);
     RBACAction display = new RBACAction().setId(displayActionId);
     RBACAction edit = new RBACAction().setId(editActionId);
     RBACAction feedback = new RBACAction().setId(feedbackActionId);

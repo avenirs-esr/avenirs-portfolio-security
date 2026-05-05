@@ -57,7 +57,7 @@ class CASTokenAuthenticationFilterTest {
     FilterChain chain = mock(FilterChain.class);
 
     BddLogger.and("an introspect response indicating the token is active");
-    OIDCIntrospection introspection = new OIDCIntrospection(null, true, "deman");
+    OIDCIntrospection introspection = new OIDCIntrospection(null, true, "deman", null);
 
     when(authenticationService.introspectAccessToken("TEST_ACCESS_TOKEN"))
         .thenReturn(introspection);
@@ -88,7 +88,7 @@ class CASTokenAuthenticationFilterTest {
     FilterChain chain = mock(FilterChain.class);
 
     BddLogger.and("an introspect response indicating the token is inactive");
-    OIDCIntrospection introspection = new OIDCIntrospection(null, false, null);
+    OIDCIntrospection introspection = new OIDCIntrospection(null, false, null, null);
 
     when(authenticationService.introspectAccessToken("TEST_ACCESS_TOKEN"))
         .thenReturn(introspection);
@@ -117,7 +117,7 @@ class CASTokenAuthenticationFilterTest {
     FilterChain chain = mock(FilterChain.class);
 
     BddLogger.and("an introspect response indicating the token is active");
-    OIDCIntrospection introspection = new OIDCIntrospection(null, true, "deman");
+    OIDCIntrospection introspection = new OIDCIntrospection(null, true, "deman", null);
     when(authenticationService.introspectAccessToken("TEST_ACCESS_TOKEN"))
         .thenReturn(introspection);
 

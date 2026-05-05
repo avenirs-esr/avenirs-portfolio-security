@@ -1,15 +1,15 @@
 package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.IntrospectResponseDTO;
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.LoginRequestDTO;
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.IntrospectResponseMapper;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCAccessTokenMapper;
-import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCIntrospectionMapper;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCProfileMapper;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCAccessTokenResponse;
-import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCProfileResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -124,8 +124,7 @@ public class AuthenticationController {
    */
   @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
   @PostMapping("${avenirs.authentication.oidc.callback.introspect}")
-  public OIDCIntrospectResponse introspect(@RequestHeader(value = "x-authorization") String token) {
-    return OIDCIntrospectionMapper.fromDomain(
-        this.authenticationService.introspectAccessToken(token));
+  public IntrospectResponseDTO introspect(@RequestHeader(value = "x-authorization") String token) {
+    return IntrospectResponseMapper.toDTO(this.authenticationService.introspectAccessToken(token));
   }
 }

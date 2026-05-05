@@ -1,7 +1,5 @@
-/** */
 package fr.avenirsesr.portfolio.security.model;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,20 +15,28 @@ import jakarta.persistence.UniqueConstraint;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.Setter;
 
 /** Principal in the RBAC system. */
-@Data
-@Accessors(chain = true)
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(
     name = "principal",
-    indexes = {@Index(name = "principal_login_idx", columnList = "login")})
+    indexes = {
+      @Index(name = "principal_login_idx", columnList = "login"),
+      @Index(name = "principal_external_id_idx", columnList = "external_id"),
+      @Index(name = "principal_user_id_idx", columnList = "user_id")
+    },
+    uniqueConstraints = {
+      @UniqueConstraint(
+          name = "principal_provider_external_id_uk",
+          columnNames = {"provider", "external_id"}),
+      @UniqueConstraint(name = "principal_user_id_uk", columnNames = "user_id")
+    })
+@NoArgsConstructor
+@Getter
+@Setter
 public class Principal {
 
   /** Database Id. */
@@ -38,14 +44,24 @@ public class Principal {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  /** Login of the user. */
-  @Column(length = 255, nullable = false, unique = true)
+  /** Login of the principal. */
+  @Column(length = 255, nullable = false)
   private String login;
 
+  /** Authentication provider, for example CAS, OIDC, LDAP, or LOCAL. */
+  @Column(length = 100, nullable = false)
+  private String provider;
+
+  /** Stable external identifier, for example OIDC sub or LDAP uid. */
+  @Column(name = "external_id", length = 255, nullable = false)
+  private String externalId;
+
+  /** Business user identifier handled by the user domain/module. */
+  @Column(name = "user_id", nullable = false, unique = true)
+  private UUID userId;
+
   /** Structures associated to the principal. */
-  @ManyToMany(
-      fetch = FetchType.LAZY,
-      cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "principal_structure",
       joinColumns = @JoinColumn(name = "id_principal", nullable = false),
@@ -55,4 +71,34 @@ public class Principal {
               name = "principal_structure_pk",
               columnNames = {"id_principal", "id_structure"}))
   private Set<Structure> structures = new HashSet<>();
+
+  private Principal(
+      UUID id,
+      String login,
+      String provider,
+      String externalId,
+      UUID userId,
+      Set<Structure> structures) {
+    this.id = id;
+    this.login = login;
+    this.provider = provider;
+    this.externalId = externalId;
+    this.userId = userId;
+    this.structures = structures != null ? structures : new HashSet<>();
+  }
+
+  public static Principal of(
+      UUID id,
+      String login,
+      String provider,
+      String externalId,
+      UUID userId,
+      Set<Structure> structures) {
+    return new Principal(id, login, provider, externalId, userId, structures);
+  }
+
+  public static Principal of(
+      UUID id, String login, String provider, String externalId, UUID userId) {
+    return new Principal(id, login, provider, externalId, userId, new HashSet<>());
+  }
 }

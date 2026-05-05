@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.c
 
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthenticationPort;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.repository.PrincipalRepository;
 import fr.avenirsesr.portfolio.security.authentication.domain.service.AuthenticationServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,8 @@ import org.springframework.context.annotation.Configuration;
 public class AuthenticationServiceConfig {
 
   @Bean
-  AuthenticationService authenticationService(AuthenticationPort authenticationPort) {
-    return new AuthenticationServiceImpl(authenticationPort);
+  AuthenticationService authenticationService(
+      AuthenticationPort authenticationPort, PrincipalRepository principalRepository) {
+    return new AuthenticationServiceImpl(authenticationPort, principalRepository);
   }
 }

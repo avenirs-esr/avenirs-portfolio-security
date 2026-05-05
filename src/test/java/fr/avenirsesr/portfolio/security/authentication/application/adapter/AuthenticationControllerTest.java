@@ -137,7 +137,7 @@ class AuthenticationControllerTest {
     String token = "AT";
 
     when(authenticationService.introspectAccessToken(token))
-        .thenReturn(new OIDCIntrospection(token, true, "usn"));
+        .thenReturn(new OIDCIntrospection(token, true, "usn", null));
     when(authenticationService.profile(token))
         .thenReturn(new OIDCProfile("id", "svc", "fn", "ln", "mail"));
 
@@ -159,7 +159,7 @@ class AuthenticationControllerTest {
     String token = "inactive";
 
     when(authenticationService.introspectAccessToken(token))
-        .thenReturn(new OIDCIntrospection(token, false, null));
+        .thenReturn(new OIDCIntrospection(token, false, null, null));
 
     mockMvc
         .perform(post("/oidc/callback/profile").header("x-authorization", token))
@@ -173,7 +173,7 @@ class AuthenticationControllerTest {
     String token = "AT";
 
     when(authenticationService.introspectAccessToken(token))
-        .thenReturn(new OIDCIntrospection(token, true, "usn"));
+        .thenReturn(new OIDCIntrospection(token, true, "usn", null));
 
     mockMvc
         .perform(post("/oidc/callback/introspect").header("x-authorization", token))

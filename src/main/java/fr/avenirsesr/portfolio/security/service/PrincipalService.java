@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.service;
 
 import fr.avenirsesr.portfolio.security.model.Principal;
-import fr.avenirsesr.portfolio.security.repository.PrincipalRepository;
+import fr.avenirsesr.portfolio.security.repository.PrincipalJpaRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PrincipalService {
 
-  @Autowired private PrincipalRepository principalRepository;
+  @Autowired private PrincipalJpaRepository principalJpaRepository;
 
   /**
    * Gives all the principals.
@@ -22,7 +22,7 @@ public class PrincipalService {
    */
   public List<Principal> getAllPrincipals() {
     log.trace("getAllPrincipals");
-    return this.principalRepository.findAll();
+    return this.principalJpaRepository.findAll();
   }
 
   /**
@@ -32,6 +32,6 @@ public class PrincipalService {
    */
   public Optional<Principal> getPrincipalByLogin(String login) {
     log.trace("getPrincipalByLogin, login: {}", login);
-    return this.principalRepository.findByLogin(login);
+    return this.principalJpaRepository.findByLogin(login);
   }
 }
