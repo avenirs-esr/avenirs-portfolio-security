@@ -5,11 +5,11 @@ import static org.mockito.Mockito.*;
 
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.controller.AuthenticationController;
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.IntrospectResponseDTO;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCAccessTokenResponse;
-import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCProfileResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -151,7 +151,7 @@ class AuthenticationControllerTest {
   @Test
   void profileWithInactiveToken() {
     String token = "inactive-token";
-    OIDCIntrospection introspection = new OIDCIntrospection(null, false, null);
+    OIDCIntrospection introspection = new OIDCIntrospection(null, false, null, null);
 
     when(authenticationService.introspectAccessToken(token)).thenReturn(introspection);
 
@@ -201,12 +201,11 @@ class AuthenticationControllerTest {
 
     try {
       String token = accessTokenHelper.provideAccessToken(userLogin, userPassword);
-      OIDCIntrospectResponse response = notMockedAuthenticationController.introspect(token);
+      IntrospectResponseDTO response = notMockedAuthenticationController.introspect(token);
       assertNotNull(response, "Introspect response not nul vor valid token");
-      assertEquals(token, response.getToken(), "Introspect response token");
       assertEquals(
-          userLogin, response.getUniqueSecurityName(), "Introspect response uniqueSecurityName");
-      assertTrue(response.isActive(), "Introspect response active");
+          userLogin, response.uniqueSecurityName(), "Introspect response uniqueSecurityName");
+      assertTrue(response.active(), "Introspect response active");
 
     } catch (Exception e) {
       fail("Exception should not be thrown: " + e.getMessage());
@@ -218,10 +217,10 @@ class AuthenticationControllerTest {
 
     try {
       String token = "invalid-token";
-      OIDCIntrospectResponse response = notMockedAuthenticationController.introspect(token);
+      IntrospectResponseDTO response = notMockedAuthenticationController.introspect(token);
       assertNotNull(response, "Introspect response not nul vor valid token");
-      assertNull(response.getUniqueSecurityName(), "Introspect null security name");
-      assertFalse(response.isActive(), "Introspect not active");
+      assertNull(response.uniqueSecurityName(), "Introspect null security name");
+      assertFalse(response.active(), "Introspect not active");
     } catch (Exception e) {
       fail("Exception should not be thrown: " + e.getMessage());
     }

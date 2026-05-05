@@ -1,3 +1,6 @@
 package fr.avenirsesr.portfolio.security.authentication.domain.model;
 
-public record OIDCIntrospection(String token, boolean active, String uniqueSecurityName) {}
+import java.util.UUID;
+
+public record OIDCIntrospection(
+    String token, boolean active, String uniqueSecurityName, UUID userId) {}

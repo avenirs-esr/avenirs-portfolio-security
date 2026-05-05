@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /** Repository for Principal. */
-public interface PrincipalRepository extends JpaRepository<Principal, UUID> {
+public interface PrincipalJpaRepository extends JpaRepository<Principal, UUID> {
   Optional<Principal> findByLogin(String login);
+
+  Optional<Principal> findByProviderAndExternalId(String provider, String externalId);
 }

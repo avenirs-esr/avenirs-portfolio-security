@@ -28,7 +28,7 @@ class RBACAssignmentServiceTest {
 
   @Autowired private RBACRoleRepository roleRepository;
 
-  @Autowired private PrincipalRepository principalRepository;
+  @Autowired private PrincipalJpaRepository principalJpaRepository;
 
   @Autowired private RBACResourceRepository resourceRepository;
 
@@ -63,8 +63,8 @@ class RBACAssignmentServiceTest {
   public void setUp() {
     if (!initialized) {
       owner = roleRepository.findById(roleOwnerId).orElseThrow();
-      principal1 = principalRepository.findByLogin(principalLogin1).orElseThrow();
-      principal2 = principalRepository.findByLogin(principalLogin2).orElseThrow();
+      principal1 = principalJpaRepository.findByLogin(principalLogin1).orElseThrow();
+      principal2 = principalJpaRepository.findByLogin(principalLogin2).orElseThrow();
       resource1 = resourceRepository.findById(resourceId1).orElseThrow();
       resource2 = resourceRepository.findById(resourceId2).orElseThrow();
       resource3 = resourceRepository.findById(resourceId3).orElseThrow();

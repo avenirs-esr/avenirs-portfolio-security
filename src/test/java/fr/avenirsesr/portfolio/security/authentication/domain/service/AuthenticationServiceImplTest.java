@@ -7,6 +7,7 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessTo
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthenticationPort;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.repository.PrincipalRepository;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -18,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 class AuthenticationServiceImplTest {
 
   @Mock private AuthenticationPort authenticationPort;
+  @Mock private PrincipalRepository principalRepository;
 
   private AuthenticationServiceImpl service;
 
@@ -26,7 +28,7 @@ class AuthenticationServiceImplTest {
   @BeforeEach
   void setUp() {
     closeable = MockitoAnnotations.openMocks(this);
-    service = new AuthenticationServiceImpl(authenticationPort);
+    service = new AuthenticationServiceImpl(authenticationPort, principalRepository);
   }
 
   @AfterEach
@@ -86,7 +88,7 @@ class AuthenticationServiceImplTest {
   @Test
   void introspectAccessTokenDelegatesToPort() {
     String token = "token";
-    OIDCIntrospection expected = new OIDCIntrospection(token, true, "user");
+    OIDCIntrospection expected = new OIDCIntrospection(token, true, "user", null);
 
     when(authenticationPort.introspectAccessToken(token)).thenReturn(expected);
 
