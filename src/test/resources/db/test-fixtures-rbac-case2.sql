@@ -2,8 +2,8 @@
 INSERT INTO context (id, validity_start, validity_end)
 VALUES (
     '00000000-0000-0000-0000-000000000002',
-    to_timestamp('01/04/2025', 'DD/MM/YYYY'),
-    to_timestamp('15/04/2025', 'DD/MM/YYYY')
+    DATEADD('DAY', -1, CURRENT_TIMESTAMP),
+    DATEADD('DAY', 1, CURRENT_TIMESTAMP)
 );
 
 INSERT INTO assignment (id, id_role, id_principal, id_scope, id_context)

@@ -80,7 +80,7 @@ class DataGenerator:
         return [{"id": str(uuid.uuid4()), "name": f"permission_{i}", "description": f"Description of permission {i}"} for i in range(NUM_PERMISSIONS)]
 
     def generate_structures(self):
-        return [{"id": str(uuid.uuid4()), "name": f"structure_{i}", "description": f"Description of structure {i}"} for i in range(NUM_STRUCTURES)]
+        return [{"id": str(uuid.uuid4()), "name": f"structure_{i}", "description": f"Description of structureEntity {i}"} for i in range(NUM_STRUCTURES)]
 
     def generate_resources(self, resource_type_ids):
         return [
@@ -312,7 +312,7 @@ def generate_changelog(directory, changelog_file):
         "principal",
         "role",
         "permission",
-        "structure",
+        "structureEntity",
         "context",
         "resource_type",
         "resource",
@@ -357,7 +357,7 @@ def generate_fixtures():
     logger.info("Step : permissions (%s)", NUM_PERMISSIONS)
     permissions = data_gen.generate_permissions()
 
-    logger.info("Step : structure (%s)", NUM_STRUCTURES)
+    logger.info("Step : structureEntity (%s)", NUM_STRUCTURES)
     structures = data_gen.generate_structures()
 
     logger.info("Step : resource types (%s)", NUM_RESOURCE_TYPES)
@@ -389,7 +389,7 @@ def generate_fixtures():
     logger.info("Step : action_routes (max %s routes per action)", MAX_ACTION_ROUTES)
     action_routes = data_gen.generate_action_routes([a["id"] for a in actions])
 
-    logger.info("Step : principal_structures (max %s structure per principal)", MAX_PRINCIPAL_STRUCTURES)
+    logger.info("Step : principal_structures (max %s structureEntity per principal)", MAX_PRINCIPAL_STRUCTURES)
     principal_structures = data_gen.generate_principal_structures(
         [p["id"] for p in principals],
         [s["id"] for s in structures]
@@ -414,7 +414,7 @@ def generate_fixtures():
     write_to_csv(output_directory, "permission.csv", permissions, permissions[0].keys())
 
     logger.info("Writing permission.csv")
-    write_to_csv(output_directory, "structure.csv", structures, structures[0].keys())
+    write_to_csv(output_directory, "structureEntity.csv", structures, structures[0].keys())
 
     logger.info("Writing context.csv")
     write_to_csv(output_directory, "context.csv", contexts, contexts[0].keys())

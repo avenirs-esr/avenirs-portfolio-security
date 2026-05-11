@@ -7,9 +7,12 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessTo
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthenticationPort;
-import fr.avenirsesr.portfolio.security.authentication.domain.port.output.repository.PrincipalRepository;
+import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
+import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +22,7 @@ import org.mockito.MockitoAnnotations;
 class AuthenticationServiceImplTest {
 
   @Mock private AuthenticationPort authenticationPort;
-  @Mock private PrincipalRepository principalRepository;
+  @Mock private PrincipalService principalService;
 
   private AuthenticationServiceImpl service;
 
@@ -28,7 +31,7 @@ class AuthenticationServiceImplTest {
   @BeforeEach
   void setUp() {
     closeable = MockitoAnnotations.openMocks(this);
-    service = new AuthenticationServiceImpl(authenticationPort, principalRepository);
+    service = new AuthenticationServiceImpl(authenticationPort, principalService);
   }
 
   @AfterEach
@@ -86,17 +89,24 @@ class AuthenticationServiceImplTest {
   }
 
   @Test
-  void introspectAccessTokenDelegatesToPort() {
+  void introspectAccessTokenWithActiveTokenReturnsIntrospectionWithUserId() {
     String token = "token";
-    OIDCIntrospection expected = new OIDCIntrospection(token, true, "user", null);
+    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
-    when(authenticationPort.introspectAccessToken(token)).thenReturn(expected);
+    OIDCIntrospection introspection = new OIDCIntrospection(token, true, "user", null);
+    Principal principal = new Principal(null, "user", "OIDC", "user", userId, Set.of());
+
+    when(authenticationPort.introspectAccessToken(token)).thenReturn(introspection);
+    when(principalService.getPrincipalByProviderAndExternalId("OIDC", "user"))
+        .thenReturn(Optional.of(principal));
 
     OIDCIntrospection result = service.introspectAccessToken(token);
 
-    assertEquals(expected, result);
+    assertEquals(new OIDCIntrospection(token, true, "user", userId), result);
+
     verify(authenticationPort).introspectAccessToken(token);
-    verifyNoMoreInteractions(authenticationPort);
+    verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "user");
+    verifyNoMoreInteractions(authenticationPort, principalService);
   }
 
   @Test
