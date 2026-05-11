@@ -16,13 +16,12 @@ public class AvenirsPortfolioSecurityApplication implements CommandLineRunner {
 
   public static void main(String[] args) {
     log.info("Starting Avenirs Portfolio Security Module");
-    /* ApplicationContext app = */ SpringApplication.run(
-        AvenirsPortfolioSecurityApplication.class, args);
+    SpringApplication.run(AvenirsPortfolioSecurityApplication.class, args);
   }
 
   @Transactional
   @Override
-  public void run(String... args) throws Exception {
+  public void run(String... args) {
     log.info("AvenirsPortfolioSecurityApplication running");
   }
 }

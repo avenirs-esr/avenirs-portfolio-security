@@ -49,7 +49,7 @@ class DataGenerator:
 
     def generate_principals(self):
         uid_start = 4000
-        principals = []
+        principalEntities = []
 
         for i in range(self.scale(BASE_NUM_PRINCIPALS)):
             uid_number = uid_start + i
@@ -76,8 +76,8 @@ class DataGenerator:
                 "homeDirectory": f"/home/perso/{login}",
                 "userPassword": f"{login}_pwd"
             }
-            principals.append(principal)
-        return principals
+            principalEntities.append(principal)
+        return principalEntities
 
 
     def generate_roles(self):
@@ -87,7 +87,7 @@ class DataGenerator:
         return [{"id": str(uuid.uuid4()), "name": f"permission_{i}", "description": f"Description of permission {i}"} for i in range(NUM_PERMISSIONS)]
 
     def generate_structures(self):
-        return [{"id": str(uuid.uuid4()), "name": f"structure_{i}", "description": f"Description of structure {i}"} for i in range(min(self.scale(BASE_NUM_STRUCTURES), MAX_NUM_STRUCTURES))]
+        return [{"id": str(uuid.uuid4()), "name": f"structure_{i}", "description": f"Description of structureEntity {i}"} for i in range(min(self.scale(BASE_NUM_STRUCTURES), MAX_NUM_STRUCTURES))]
 
     def generate_resources(self, resource_type_ids):
         return [
@@ -276,7 +276,7 @@ def write_to_csv(directory, filename, data, fieldnames):
         writer.writeheader()
         writer.writerows(data)
     logger.info("File generated: %s with %s entries", filename, len(data))
-def write_to_ldif(output_directory, filename, principals):
+def write_to_ldif(output_directory, filename, principalEntities):
     ldif_template = """dn: uid={uid},ou=people,dc=ldap-dev,dc=avenirs-esr,dc=fr
 objectClass: posixAccount
 objectClass: inetOrgPerson
@@ -298,7 +298,7 @@ mail: {mail}
 
     file_path = os.path.join(output_directory, filename)
     with open(file_path, 'w') as ldif_file:
-        for principal in principals:
+        for principal in principalEntities:
             ldif_entry = ldif_template.format(
                 uid=principal["uid"],
                 displayName=principal["displayName"],
@@ -322,7 +322,7 @@ def generate_changelog(directory, changelog_file):
         "principal",
         "role",
         "permission",
-        "structure",
+        "structureEntity",
         "context",
         "resource_type",
         "resource",
@@ -363,16 +363,16 @@ def generate_fixtures(multiplicator=1):
     logger.info(f"Output directory: {output_directory}")
 
     # Logs des tailles des données
-    logger.info(f"Number of principals: {int(BASE_NUM_PRINCIPALS * multiplicator)}")
+    logger.info(f"Number of principalEntities: {int(BASE_NUM_PRINCIPALS * multiplicator)}")
     logger.info(f"Number of permissions: {int(NUM_PERMISSIONS)}")
-    logger.info(f"Number of structures: {int(min(BASE_NUM_STRUCTURES * multiplicator, MAX_NUM_STRUCTURES))}")
+    logger.info(f"Number of structureEntities: {int(min(BASE_NUM_STRUCTURES * multiplicator, MAX_NUM_STRUCTURES))}")
     logger.info(f"Number of resource types: {int(NUM_RESOURCE_TYPES )}")
     logger.info(f"Number of resources: {int(BASE_NUM_RESOURCES * multiplicator)}")
     logger.info(f"Number of roles and actions: {int(NUM_ROLES_AND_ACTIONS)}")
 
 
-    logger.info("Step : principals (%s)", BASE_NUM_PRINCIPALS*multiplicator)
-    principals = data_gen.generate_principals()
+    logger.info("Step : principalEntities (%s)", BASE_NUM_PRINCIPALS*multiplicator)
+    principalEntities = data_gen.generate_principals()
 
     logger.info("Step : roles (%s)", NUM_ROLES_AND_ACTIONS)
     roles = data_gen.generate_roles()
@@ -380,8 +380,8 @@ def generate_fixtures(multiplicator=1):
     logger.info("Step : permissions (%s)", NUM_PERMISSIONS)
     permissions = data_gen.generate_permissions()
 
-    logger.info("Step : structure (%s)", min(BASE_NUM_STRUCTURES * multiplicator, MAX_NUM_STRUCTURES))
-    structures = data_gen.generate_structures()
+    logger.info("Step : structureEntity (%s)", min(BASE_NUM_STRUCTURES * multiplicator, MAX_NUM_STRUCTURES))
+    structureEntities = data_gen.generate_structures()
 
     logger.info("Step : resource types (%s)", NUM_RESOURCE_TYPES)
     resource_types = data_gen.generate_resource_types()
@@ -395,7 +395,7 @@ def generate_fixtures(multiplicator=1):
     logger.info("Step : assignments (max %s per principal)", MAX_PRINCIPAL_ASSIGNMENTS)
     assignments, scopes, contexts = data_gen.generate_assignments(
         [r["id"] for r in roles],
-        [p["id"] for p in principals]
+        [p["id"] for p in principalEntities]
     )
 
     logger.info("Step : scope_resources (max %s resources per scope)", MAX_SCOPE_RESOURCES)
@@ -403,19 +403,19 @@ def generate_fixtures(multiplicator=1):
         [s["id"] for s in scopes], [r["id"] for r in resources]
     )
 
-    logger.info("Step : context_structures (max %s structures per context)", MAX_CONTEXT_STRUCTURES)
+    logger.info("Step : context_structures (max %s structureEntities per context)", MAX_CONTEXT_STRUCTURES)
     context_structures = data_gen.generate_context_structures(
         [c["id"] for c in contexts],
-        [s["id"] for s in structures]
+        [s["id"] for s in structureEntities]
     )
 
     logger.info("Step : action_routes (max %s routes per action)", MAX_ACTION_ROUTES)
     action_routes = data_gen.generate_action_routes([a["id"] for a in actions])
 
-    logger.info("Step : principal_structures (max %s structure per principal)", MAX_PRINCIPAL_STRUCTURES)
+    logger.info("Step : principal_structures (max %s structureEntity per principal)", MAX_PRINCIPAL_STRUCTURES)
     principal_structures = data_gen.generate_principal_structures(
-        [p["id"] for p in principals],
-        [s["id"] for s in structures]
+        [p["id"] for p in principalEntities],
+        [s["id"] for s in structureEntities]
     )
 
     logger.info("Step : role_permissions & action_permissions (max %s involved permission)", MAX_INVOLVED_PERMISSIONS)
@@ -424,11 +424,11 @@ def generate_fixtures(multiplicator=1):
     )
 
     logger.info("Writing principal.csv")
-    filtered_principals = [{"id": p["id"], "login": p["login"]} for p in principals]
+    filtered_principals = [{"id": p["id"], "login": p["login"]} for p in principalEntities]
     write_to_csv(output_directory, "principal.csv", filtered_principals, filtered_principals[0].keys())
 
     logger.info("Writing  principal.ldif")
-    write_to_ldif(output_directory, "principal.ldif", principals)
+    write_to_ldif(output_directory, "principal.ldif", principalEntities)
 
     logger.info("Writing role.csv")
     write_to_csv(output_directory, "role.csv", roles, roles[0].keys())
@@ -437,7 +437,7 @@ def generate_fixtures(multiplicator=1):
     write_to_csv(output_directory, "permission.csv", permissions, permissions[0].keys())
 
     logger.info("Writing permission.csv")
-    write_to_csv(output_directory, "structure.csv", structures, structures[0].keys())
+    write_to_csv(output_directory, "structureEntity.csv", structureEntities, structureEntities[0].keys())
 
     logger.info("Writing context.csv")
     write_to_csv(output_directory, "context.csv", contexts, contexts[0].keys())

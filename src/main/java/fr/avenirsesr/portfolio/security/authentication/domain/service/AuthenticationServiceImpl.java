@@ -1,24 +1,24 @@
 package fr.avenirsesr.portfolio.security.authentication.domain.service;
 
-import fr.avenirsesr.portfolio.security.authentication.domain.exception.PrincipalNotFoundException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthenticationPort;
-import fr.avenirsesr.portfolio.security.authentication.domain.port.output.repository.PrincipalRepository;
-import fr.avenirsesr.portfolio.security.model.Principal;
+import fr.avenirsesr.portfolio.security.principal.domain.exception.PrincipalNotFoundException;
+import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
+import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.util.Optional;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final AuthenticationPort authenticationPort;
-  private final PrincipalRepository principalRepository;
+  private final PrincipalService principalService;
 
   public AuthenticationServiceImpl(
-      AuthenticationPort authenticationPort, PrincipalRepository principalRepository) {
+      AuthenticationPort authenticationPort, PrincipalService principalService) {
     this.authenticationPort = authenticationPort;
-    this.principalRepository = principalRepository;
+    this.principalService = principalService;
   }
 
   @Override
@@ -38,6 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   @Override
   public OIDCIntrospection introspectAccessToken(String token) {
+
     OIDCIntrospection introspection = authenticationPort.introspectAccessToken(token);
 
     if (!introspection.active()) {
@@ -45,8 +46,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     Principal principal =
-        principalRepository
-            .findByProviderAndExternalId("OIDC", introspection.uniqueSecurityName())
+        principalService
+            .getPrincipalByProviderAndExternalId("OIDC", introspection.uniqueSecurityName())
             .orElseThrow(
                 () ->
                     new PrincipalNotFoundException(
@@ -54,7 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             + introspection.uniqueSecurityName()));
 
     return new OIDCIntrospection(
-        introspection.token(), true, introspection.uniqueSecurityName(), principal.getUserId());
+        introspection.token(), true, introspection.uniqueSecurityName(), principal.userId());
   }
 
   @Override
