@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACResourceServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.domain.service</a> &gt; <span class="el_source">RBACResourceServiceImpl.java</span></div><h1>RBACResourceServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.domain.service;
+
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACResource;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.input.RBACResourceService;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACResourceRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L13">@Slf4j</span>
+@RequiredArgsConstructor
+public class RBACResourceServiceImpl implements RBACResourceService {
+
+  private final RBACResourceRepository resourceRepository;
+
+  @Override
+  public Optional&lt;RBACResource&gt; getResourceById(UUID resourceId) {
+<span class="fc" id="L21">    log.trace(&quot;getResourceById, resourceId: {}&quot;, resourceId);</span>
+<span class="fc" id="L22">    return resourceRepository.findById(resourceId);</span>
+  }
+
+  @Override
+  public List&lt;RBACResource&gt; getAllResources() {
+<span class="fc" id="L27">    log.trace(&quot;getAllResources&quot;);</span>
+<span class="fc" id="L28">    return resourceRepository.findAll();</span>
+  }
+
+  @Override
+  public RBACResource createResource(RBACResource resource) {
+<span class="fc" id="L33">    log.trace(&quot;createResource, resource: {}&quot;, resource);</span>
+<span class="fc" id="L34">    return resourceRepository.save(resource);</span>
+  }
+
+  @Override
+  public RBACResource updateResource(RBACResource resource) {
+<span class="fc" id="L39">    log.trace(&quot;updateResource, resource: {}&quot;, resource);</span>
+
+<span class="fc" id="L41">    resourceRepository</span>
+<span class="fc" id="L42">        .findById(resource.id())</span>
+<span class="fc" id="L43">        .orElseThrow(() -&gt; AccessControlNotFoundException.resource(resource.id()));</span>
+
+<span class="fc" id="L45">    return resourceRepository.save(resource);</span>
+  }
+
+  @Override
+  public void deleteResource(UUID resourceId) {
+<span class="fc" id="L50">    log.trace(&quot;deleteResource, resourceId: {}&quot;, resourceId);</span>
+<span class="fc" id="L51">    resourceRepository.deleteById(resourceId);</span>
+<span class="fc" id="L52">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

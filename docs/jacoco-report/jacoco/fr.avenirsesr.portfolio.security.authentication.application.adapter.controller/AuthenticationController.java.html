@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.authentication.application.adapter.controller</a> &gt; <span class="el_source">AuthenticationController.java</span></div><h1>AuthenticationController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.IntrospectResponseDTO;
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.LoginRequestDTO;
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.IntrospectResponseMapper;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCAccessTokenMapper;
-import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCIntrospectionMapper;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCProfileMapper;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCAccessTokenResponse;
-import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCIntrospectResponse;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCProfileResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -124,9 +124,8 @@ public class AuthenticationController {
    */
   @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
   @PostMapping(&quot;${avenirs.authentication.oidc.callback.introspect}&quot;)
-  public OIDCIntrospectResponse introspect(@RequestHeader(value = &quot;x-authorization&quot;) String token) {
-<span class="fc" id="L128">    return OIDCIntrospectionMapper.fromDomain(</span>
-<span class="fc" id="L129">        this.authenticationService.introspectAccessToken(token));</span>
+  public IntrospectResponseDTO introspect(@RequestHeader(value = &quot;x-authorization&quot;) String token) {
+<span class="fc" id="L128">    return IntrospectResponseMapper.toDTO(this.authenticationService.introspectAccessToken(token));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

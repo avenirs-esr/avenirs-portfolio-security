@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StructureServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.principal.domain.service</a> &gt; <span class="el_source">StructureServiceImpl.java</span></div><h1>StructureServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.principal.domain.service;
+
+import fr.avenirsesr.portfolio.security.principal.domain.exception.StructureNotFoundException;
+import fr.avenirsesr.portfolio.security.principal.domain.model.Structure;
+import fr.avenirsesr.portfolio.security.principal.domain.port.input.StructureService;
+import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.StructureRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L13">@Slf4j</span>
+@RequiredArgsConstructor
+public class StructureServiceImpl implements StructureService {
+
+  private final StructureRepository structureRepository;
+
+  @Override
+  public Optional&lt;Structure&gt; getStructureById(UUID structureId) {
+<span class="fc" id="L21">    log.trace(&quot;getStructureById structureId: {}&quot;, structureId);</span>
+<span class="fc" id="L22">    return structureRepository.findById(structureId);</span>
+  }
+
+  @Override
+  public Optional&lt;Structure&gt; getStructureByName(String structureName) {
+<span class="fc" id="L27">    log.trace(&quot;getStructureByName structureName: {}&quot;, structureName);</span>
+<span class="fc" id="L28">    return structureRepository.findByName(structureName);</span>
+  }
+
+  @Override
+  public List&lt;Structure&gt; getAllStructures() {
+<span class="fc" id="L33">    log.trace(&quot;getAllStructures&quot;);</span>
+<span class="fc" id="L34">    return structureRepository.findAll();</span>
+  }
+
+  @Override
+  public Structure createStructure(Structure structure) {
+<span class="fc" id="L39">    log.trace(&quot;createStructure, structure: {}&quot;, structure);</span>
+<span class="fc" id="L40">    return structureRepository.save(structure);</span>
+  }
+
+  @Override
+  public Structure updateStructure(Structure structure) {
+<span class="fc" id="L45">    log.trace(&quot;updateStructure, structure: {}&quot;, structure);</span>
+
+<span class="fc" id="L47">    return structureRepository</span>
+<span class="fc" id="L48">        .findById(structure.id())</span>
+<span class="fc" id="L49">        .map(</span>
+            storedStructure -&gt;
+<span class="fc" id="L51">                new Structure(storedStructure.id(), structure.name(), structure.description()))</span>
+<span class="fc" id="L52">        .map(structureRepository::save)</span>
+<span class="fc" id="L53">        .orElseThrow(</span>
+            () -&gt;
+<span class="fc" id="L55">                new StructureNotFoundException(</span>
+<span class="fc" id="L56">                    &quot;No structure found for id : &quot; + structure.id().toString()));</span>
+  }
+
+  @Override
+  public void deleteStructure(UUID structureId) {
+<span class="fc" id="L61">    log.trace(&quot;deleteStructure, structureId: {}&quot;, structureId);</span>
+<span class="fc" id="L62">    structureRepository.deleteById(structureId);</span>
+<span class="fc" id="L63">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

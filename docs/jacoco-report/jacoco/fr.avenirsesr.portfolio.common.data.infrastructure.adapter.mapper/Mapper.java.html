@@ -3,11 +3,12 @@
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.EntityGrapher;
 
 public interface Mapper&lt;E, D&gt; {
-    E fromDomain(D domain);
-    D toDomain(E entity);
+  E fromDomain(D domain);
 
-    default D toDomain(E entity, EntityGrapher&lt;?&gt; graph) {
-<span class="nc" id="L10">        return toDomain(entity); // fallback</span>
-    }
+  D toDomain(E entity);
+
+  default D toDomain(E entity, EntityGrapher&lt;?&gt; graph) {
+<span class="nc" id="L11">    return toDomain(entity); // fallback</span>
+  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

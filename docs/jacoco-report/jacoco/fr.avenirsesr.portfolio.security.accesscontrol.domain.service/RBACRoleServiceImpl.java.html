@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACRoleServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.domain.service</a> &gt; <span class="el_source">RBACRoleServiceImpl.java</span></div><h1>RBACRoleServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.domain.service;
+
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAssignment;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACRole;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.input.RBACRoleService;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L15">@Slf4j</span>
+@RequiredArgsConstructor
+public class RBACRoleServiceImpl implements RBACRoleService {
+
+  private final RBACRoleRepository roleRepository;
+  private final RBACAssignmentRepository assignementRepository;
+
+  @Override
+  public Optional&lt;RBACRole&gt; getRoleById(UUID roleId) {
+<span class="fc" id="L24">    log.trace(&quot;getRoleById roleId: {}&quot;, roleId);</span>
+<span class="fc" id="L25">    return roleRepository.findById(roleId);</span>
+  }
+
+  @Override
+  public Optional&lt;RBACRole&gt; getRoleByName(String roleName) {
+<span class="fc" id="L30">    log.trace(&quot;getRoleByName roleName: {}&quot;, roleName);</span>
+<span class="fc" id="L31">    return roleRepository.findByName(roleName);</span>
+  }
+
+  @Override
+  public List&lt;RBACRole&gt; getAllRoles() {
+<span class="fc" id="L36">    log.trace(&quot;getAllRoles&quot;);</span>
+<span class="fc" id="L37">    return roleRepository.findAll();</span>
+  }
+
+  @Override
+  public RBACRole createRole(RBACRole role) {
+<span class="fc" id="L42">    log.trace(&quot;createRole, role: {}&quot;, role);</span>
+<span class="fc" id="L43">    return roleRepository.save(role);</span>
+  }
+
+  @Override
+  public RBACRole updateRole(RBACRole role) {
+<span class="fc" id="L48">    log.trace(&quot;updateRole, role: {}&quot;, role);</span>
+
+<span class="fc" id="L50">    roleRepository</span>
+<span class="fc" id="L51">        .findById(role.id())</span>
+<span class="fc" id="L52">        .orElseThrow(() -&gt; AccessControlNotFoundException.role(role.id()));</span>
+
+<span class="fc" id="L54">    return roleRepository.save(role);</span>
+  }
+
+  @Override
+  public void deleteRole(UUID roleId) {
+<span class="fc" id="L59">    log.trace(&quot;deleteRole, roleId: {}&quot;, roleId);</span>
+<span class="fc" id="L60">    roleRepository.deleteById(roleId);</span>
+<span class="fc" id="L61">  }</span>
+
+  @Override
+  public List&lt;RBACRole&gt; getRolesByPrincipalLogin(String login) {
+<span class="fc" id="L65">    log.trace(&quot;getRolesByPrincipalLogin, login: {}&quot;, login);</span>
+
+<span class="fc" id="L67">    return assignementRepository.findByPrincipal(login).stream()</span>
+<span class="fc" id="L68">        .map(RBACAssignment::role)</span>
+<span class="fc" id="L69">        .distinct()</span>
+<span class="fc" id="L70">        .toList();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

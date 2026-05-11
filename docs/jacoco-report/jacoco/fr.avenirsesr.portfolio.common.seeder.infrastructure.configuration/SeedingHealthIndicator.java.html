@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SeedingHealthIndicator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration</a> &gt; <span class="el_source">SeedingHealthIndicator.java</span></div><h1>SeedingHealthIndicator.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration;
+
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class SeedingHealthIndicator {
+
+  private final boolean seederEnabled;
+  private final SeedingState seedingState;
+
+  public SeedingHealthIndicator(
+<span class="nc" id="L15">      @Value(&quot;${seeder.enabled:false}&quot;) boolean seederEnabled, SeedingState seedingState) {</span>
+<span class="nc" id="L16">    this.seederEnabled = seederEnabled;</span>
+<span class="nc" id="L17">    this.seedingState = seedingState;</span>
+<span class="nc" id="L18">  }</span>
+
+  @GetMapping(&quot;/health/seeding&quot;)
+  public Map&lt;String, Object&gt; health() {
+<span class="nc bnc" id="L22" title="All 2 branches missed.">    if (!seederEnabled) {</span>
+<span class="nc" id="L23">      return Map.of(&quot;status&quot;, &quot;UP&quot;, &quot;seeder.enabled&quot;, false);</span>
+    }
+
+<span class="nc bnc" id="L26" title="All 2 branches missed.">    if (seedingState.isCompleted()) {</span>
+<span class="nc" id="L27">      return Map.of(</span>
+          &quot;status&quot;, &quot;UP&quot;,
+          &quot;seeding&quot;, &quot;completed&quot;);
+    }
+
+<span class="nc" id="L32">    String err = seedingState.getError();</span>
+<span class="nc bnc" id="L33" title="All 4 branches missed.">    if (err != null &amp;&amp; !err.isBlank()) {</span>
+<span class="nc" id="L34">      return Map.of(</span>
+          &quot;status&quot;, &quot;DOWN&quot;,
+          &quot;seeding&quot;, &quot;failed&quot;,
+          &quot;error&quot;, err);
+    }
+
+<span class="nc" id="L40">    return Map.of(</span>
+        &quot;status&quot;, &quot;DOWN&quot;,
+        &quot;seeding&quot;, &quot;running_or_not_started&quot;);
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

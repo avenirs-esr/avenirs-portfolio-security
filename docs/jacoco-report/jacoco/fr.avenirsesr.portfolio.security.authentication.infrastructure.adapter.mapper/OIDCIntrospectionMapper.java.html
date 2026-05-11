@@ -13,19 +13,19 @@ public final class OIDCIntrospectionMapper {
     }
 
 <span class="fc" id="L15">    return new OIDCIntrospection(</span>
-<span class="fc" id="L16">        payload.getToken(), payload.isActive(), payload.getUniqueSecurityName());</span>
+<span class="fc" id="L16">        payload.getToken(), payload.isActive(), payload.getUniqueSecurityName(), null);</span>
   }
 
   public static OIDCIntrospectResponse fromDomain(OIDCIntrospection domain) {
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">    if (domain == null) {</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">    if (domain == null) {</span>
 <span class="nc" id="L21">      return null;</span>
     }
 
-<span class="fc" id="L24">    OIDCIntrospectResponse payload = new OIDCIntrospectResponse();</span>
-<span class="fc" id="L25">    payload.setToken(domain.token());</span>
-<span class="fc" id="L26">    payload.setActive(domain.active());</span>
-<span class="fc" id="L27">    payload.setUniqueSecurityName(domain.uniqueSecurityName());</span>
-<span class="fc" id="L28">    return payload;</span>
+<span class="nc" id="L24">    OIDCIntrospectResponse payload = new OIDCIntrospectResponse();</span>
+<span class="nc" id="L25">    payload.setToken(domain.token());</span>
+<span class="nc" id="L26">    payload.setActive(domain.active());</span>
+<span class="nc" id="L27">    payload.setUniqueSecurityName(domain.uniqueSecurityName());</span>
+<span class="nc" id="L28">    return payload;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

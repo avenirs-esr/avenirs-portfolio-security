@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACScopeDatabaseRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.repository</a> &gt; <span class="el_source">RBACScopeDatabaseRepository.java</span></div><h1>RBACScopeDatabaseRepository.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.repository;
+
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACScope;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACScopeRepository;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper.RBACScopeMapper;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+@Repository
+@RequiredArgsConstructor
+public class RBACScopeDatabaseRepository implements RBACScopeRepository {
+
+  private final RBACScopeJpaRepository scopeJpaRepository;
+  private final RBACScopeMapper scopeMapper;
+
+  @Override
+  @Transactional
+  public Optional&lt;RBACScope&gt; findById(UUID scopeId) {
+<span class="nc" id="L23">    return scopeJpaRepository.findById(scopeId).map(scopeMapper::toDomain);</span>
+  }
+
+  @Override
+  @Transactional
+  public Optional&lt;RBACScope&gt; findByName(String scopeName) {
+<span class="nc" id="L29">    return scopeJpaRepository.findByName(scopeName).map(scopeMapper::toDomain);</span>
+  }
+
+  @Override
+  @Transactional
+  public List&lt;RBACScope&gt; findAll() {
+<span class="nc" id="L35">    return scopeJpaRepository.findAll().stream().map(scopeMapper::toDomain).toList();</span>
+  }
+
+  @Override
+  @Transactional
+  public RBACScope save(RBACScope scope) {
+<span class="nc" id="L41">    return scopeMapper.toDomain(scopeJpaRepository.save(scopeMapper.fromDomain(scope)));</span>
+  }
+
+  @Override
+  @Transactional
+  public void deleteById(UUID scopeId) {
+<span class="nc" id="L47">    scopeJpaRepository.deleteById(scopeId);</span>
+<span class="nc" id="L48">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

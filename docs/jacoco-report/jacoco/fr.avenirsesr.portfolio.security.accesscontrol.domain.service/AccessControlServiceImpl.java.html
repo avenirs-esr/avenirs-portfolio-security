@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccessControlServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.domain.service</a> &gt; <span class="el_source">AccessControlServiceImpl.java</span></div><h1>AccessControlServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.domain.service;
+
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlInvalidDateException;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.input.AccessControlService;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.*;
+import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
+import fr.avenirsesr.portfolio.security.principal.domain.model.Structure;
+import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
+import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.StructureRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L27">@Slf4j</span>
+@RequiredArgsConstructor
+public class AccessControlServiceImpl implements AccessControlService {
+
+  private final RBACActionRepository actionRepository;
+  private final RBACAssignmentRepository assignmentRepository;
+  private final PrincipalRepository principalRepository;
+  private final RBACResourceRepository resourceRepository;
+  private final RBACRoleRepository roleRepository;
+  private final StructureRepository structureRepository;
+  private final String dateFormat;
+
+  private final Map&lt;UUID, List&lt;RBACPermission&gt;&gt; permissionsByActionId = new HashMap&lt;&gt;();
+
+  @Override
+  public AccessControlGrantResult grantAccess(AccessControlGrantCommand command) {
+<span class="fc" id="L43">    log.trace(&quot;grantAccess, command: {}&quot;, command);</span>
+
+<span class="fc" id="L45">    RBACRole role =</span>
+        roleRepository
+<span class="fc" id="L47">            .findById(command.roleId())</span>
+<span class="fc" id="L48">            .orElseThrow(() -&gt; AccessControlNotFoundException.role(command.roleId()));</span>
+
+<span class="fc" id="L50">    Principal principal =</span>
+        principalRepository
+<span class="fc" id="L52">            .findByLogin(command.login())</span>
+<span class="fc" id="L53">            .orElseThrow(() -&gt; AccessControlNotFoundException.principal(command.login()));</span>
+
+<span class="fc" id="L55">    List&lt;RBACResource&gt; resources = resolveResources(command.resourceIds());</span>
+<span class="fc" id="L56">    List&lt;Structure&gt; structures = resolveStructures(command.structureIds());</span>
+
+<span class="fc" id="L58">    RBACContext context =</span>
+        new RBACContext(
+            null,
+<span class="fc" id="L61">            parseDate(command.validityStart()),</span>
+<span class="fc" id="L62">            parseDate(command.validityEnd()),</span>
+            new HashSet&lt;&gt;(structures));
+
+<span class="fc" id="L65">    RBACAssignment assignment =</span>
+        new RBACAssignment(null, principal, role, new RBACScope(null, resources), context);
+
+<span class="fc" id="L68">    RBACAssignment savedAssignment = assignmentRepository.save(assignment);</span>
+
+<span class="fc" id="L70">    return new AccessControlGrantResult(command.login(), true, savedAssignment.id(), null);</span>
+  }
+
+  @Override
+  public AccessControlRevokeResult revokeAccess(AccessControlRevokeCommand command) {
+<span class="fc" id="L75">    log.trace(&quot;revokeAccess, command: {}&quot;, command);</span>
+
+<span class="fc" id="L77">    assignmentRepository.deleteById(command.assignmentId());</span>
+
+<span class="fc" id="L79">    return new AccessControlRevokeResult(command.login(), true, command.assignmentId(), null);</span>
+  }
+
+  @Override
+  public boolean isAuthorized(String login, UUID actionId, UUID resourceId) {
+<span class="fc" id="L84">    log.trace(&quot;isAuthorized, login: {}, actionId: {}, resourceId: {}&quot;, login, actionId, resourceId);</span>
+
+<span class="fc" id="L86">    Principal principal = principalRepository.findByLogin(login).orElse(null);</span>
+
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    if (principal == null) {</span>
+<span class="fc" id="L89">      log.debug(&quot;isAuthorized, principal not found for login: {}&quot;, login);</span>
+<span class="fc" id="L90">      return false;</span>
+    }
+
+<span class="fc" id="L93">    RBACContext executionContext = createExecutionContext(principal);</span>
+
+<span class="fc" id="L95">    List&lt;RBACAssignment&gt; principalAssignments =</span>
+<span class="fc" id="L96">        assignmentRepository.findByPrincipalContextAndResource(login, executionContext, resourceId);</span>
+
+<span class="fc" id="L98">    HashSet&lt;RBACPermission&gt; principalPermissions =</span>
+<span class="fc" id="L99">        principalAssignments.stream()</span>
+<span class="fc" id="L100">            .map(assignment -&gt; assignment.role().permissions())</span>
+<span class="fc" id="L101">            .flatMap(Collection::stream)</span>
+<span class="fc" id="L102">            .collect(Collectors.toCollection(HashSet::new));</span>
+
+<span class="fc bfc" id="L104" title="All 2 branches covered.">    if (principalPermissions.isEmpty()) {</span>
+<span class="fc" id="L105">      log.debug(&quot;isAuthorized, principal {} has no permission&quot;, login);</span>
+<span class="fc" id="L106">      return false;</span>
+    }
+
+<span class="fc" id="L109">    List&lt;RBACPermission&gt; requiredPermissions = fetchPermissions(actionId);</span>
+
+<span class="fc bfc" id="L111" title="All 2 branches covered.">    boolean accessGranted =</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        requiredPermissions != null &amp;&amp; principalPermissions.containsAll(requiredPermissions);</span>
+
+<span class="fc" id="L114">    log.trace(&quot;isAuthorized, accessGranted: {}&quot;, accessGranted);</span>
+
+<span class="fc" id="L116">    return accessGranted;</span>
+  }
+
+  private RBACContext createExecutionContext(Principal principal) {
+<span class="fc" id="L120">    return new RBACContext(null, null, null, new HashSet&lt;&gt;(principal.structures()));</span>
+  }
+
+  private List&lt;RBACResource&gt; resolveResources(List&lt;UUID&gt; resourceIds) {
+<span class="pc bpc" id="L124" title="1 of 4 branches missed.">    if (resourceIds == null || resourceIds.isEmpty()) {</span>
+<span class="fc" id="L125">      return Collections.emptyList();</span>
+    }
+
+<span class="fc" id="L128">    List&lt;RBACResource&gt; resources = resourceRepository.findAllByIds(resourceIds);</span>
+<span class="fc" id="L129">    List&lt;UUID&gt; foundIds = resources.stream().map(RBACResource::id).toList();</span>
+
+<span class="fc bfc" id="L131" title="All 2 branches covered.">    List&lt;UUID&gt; missingIds = resourceIds.stream().filter(id -&gt; !foundIds.contains(id)).toList();</span>
+
+<span class="fc bfc" id="L133" title="All 2 branches covered.">    if (!missingIds.isEmpty()) {</span>
+<span class="fc" id="L134">      log.warn(&quot;Missing resource ids: {}&quot;, missingIds);</span>
+<span class="fc" id="L135">      throw AccessControlNotFoundException.resources(missingIds);</span>
+    }
+
+<span class="fc" id="L138">    return resources;</span>
+  }
+
+  private List&lt;Structure&gt; resolveStructures(List&lt;UUID&gt; structureIds) {
+<span class="pc bpc" id="L142" title="1 of 4 branches missed.">    if (structureIds == null || structureIds.isEmpty()) {</span>
+<span class="fc" id="L143">      return Collections.emptyList();</span>
+    }
+
+<span class="fc" id="L146">    List&lt;Structure&gt; structures = structureRepository.findAllByIds(structureIds);</span>
+<span class="fc" id="L147">    List&lt;UUID&gt; foundIds = structures.stream().map(Structure::id).toList();</span>
+
+<span class="fc bfc" id="L149" title="All 2 branches covered.">    List&lt;UUID&gt; missingIds = structureIds.stream().filter(id -&gt; !foundIds.contains(id)).toList();</span>
+
+<span class="fc bfc" id="L151" title="All 2 branches covered.">    if (!missingIds.isEmpty()) {</span>
+<span class="fc" id="L152">      log.warn(&quot;Missing structure ids: {}&quot;, missingIds);</span>
+<span class="fc" id="L153">      throw AccessControlNotFoundException.structures(missingIds);</span>
+    }
+
+<span class="fc" id="L156">    return structures;</span>
+  }
+
+  private LocalDateTime parseDate(String value) {
+<span class="pc bpc" id="L160" title="1 of 4 branches missed.">    if (value == null || value.isBlank()) {</span>
+<span class="fc" id="L161">      return null;</span>
+    }
+
+    try {
+<span class="fc" id="L165">      return LocalDate.parse(value, DateTimeFormatter.ofPattern(dateFormat)).atStartOfDay();</span>
+<span class="fc" id="L166">    } catch (DateTimeParseException e) {</span>
+<span class="fc" id="L167">      throw new AccessControlInvalidDateException(dateFormat, value, e);</span>
+    }
+  }
+
+  private List&lt;RBACPermission&gt; fetchPermissions(UUID actionId) {
+<span class="pc bpc" id="L172" title="1 of 4 branches missed.">    if (actionId != null &amp;&amp; !permissionsByActionId.containsKey(actionId)) {</span>
+<span class="fc" id="L173">      List&lt;RBACPermission&gt; permissions =</span>
+<span class="fc" id="L174">          actionRepository.findById(actionId).map(RBACAction::permissions).orElse(null);</span>
+
+<span class="fc" id="L176">      permissionsByActionId.put(actionId, permissions);</span>
+    }
+
+<span class="fc" id="L179">    return permissionsByActionId.get(actionId);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

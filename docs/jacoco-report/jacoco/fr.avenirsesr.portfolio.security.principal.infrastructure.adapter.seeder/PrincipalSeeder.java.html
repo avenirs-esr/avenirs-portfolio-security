@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrincipalSeeder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.seeder</a> &gt; <span class="el_source">PrincipalSeeder.java</span></div><h1>PrincipalSeeder.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.seeder;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import fr.avenirsesr.portfolio.common.utils.FileReader;
+import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity;
+import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.repository.PrincipalJpaRepository;
+import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.seeder.data.PrincipalCreationData;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+<span class="nc" id="L14">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class PrincipalSeeder {
+
+  private static final String PATH_FILE = &quot;seeder/principals.json&quot;;
+
+  private final FileReader fileReader;
+  private final PrincipalJpaRepository principalJpaRepository;
+
+  @Transactional
+  public List&lt;PrincipalEntity&gt; seed() {
+<span class="nc" id="L26">    List&lt;PrincipalCreationData&gt; creationData =</span>
+<span class="nc" id="L27">        fileReader.readJSON(PATH_FILE, new TypeReference&lt;&gt;() {});</span>
+
+<span class="nc" id="L29">    List&lt;PrincipalEntity&gt; principalEntities =</span>
+<span class="nc" id="L30">        creationData.stream()</span>
+<span class="nc" id="L31">            .map(</span>
+                data -&gt;
+<span class="nc" id="L33">                    PrincipalEntity.of(</span>
+<span class="nc" id="L34">                        null, data.login(), data.provider(), data.externalId(), data.userId()))</span>
+<span class="nc" id="L35">            .toList();</span>
+
+<span class="nc" id="L37">    List&lt;PrincipalEntity&gt; savedPrincipalEntities =</span>
+<span class="nc" id="L38">        principalJpaRepository.saveAll(principalEntities);</span>
+
+<span class="nc" id="L40">    log.info(&quot;✔ {} principals created&quot;, savedPrincipalEntities.size());</span>
+
+<span class="nc" id="L42">    return savedPrincipalEntities;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

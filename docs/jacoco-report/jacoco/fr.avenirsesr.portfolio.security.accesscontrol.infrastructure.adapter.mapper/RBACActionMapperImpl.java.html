@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACActionMapperImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper</a> &gt; <span class="el_source">RBACActionMapperImpl.java</span></div><h1>RBACActionMapperImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper;
+
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAction;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACPermission;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACPermissionEntity;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import javax.annotation.processing.Generated;
+import org.springframework.stereotype.Component;
+
+@Generated(
+    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+    date = &quot;2026-05-11T09:58:22+0000&quot;,
+    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.10 (Eclipse Adoptium)&quot;
+)
+@Component
+<span class="nc" id="L19">public class RBACActionMapperImpl implements RBACActionMapper {</span>
+
+    @Override
+    public RBACAction toDomain(RBACActionEntity entity) {
+<span class="nc bnc" id="L23" title="All 2 branches missed.">        if ( entity == null ) {</span>
+<span class="nc" id="L24">            return null;</span>
+        }
+
+<span class="nc" id="L27">        UUID id = null;</span>
+<span class="nc" id="L28">        String name = null;</span>
+<span class="nc" id="L29">        String description = null;</span>
+<span class="nc" id="L30">        List&lt;RBACPermission&gt; permissions = null;</span>
+
+<span class="nc" id="L32">        id = entity.getId();</span>
+<span class="nc" id="L33">        name = entity.getName();</span>
+<span class="nc" id="L34">        description = entity.getDescription();</span>
+<span class="nc" id="L35">        permissions = rBACPermissionEntityListToRBACPermissionList( entity.getPermissions() );</span>
+
+<span class="nc" id="L37">        RBACAction rBACAction = new RBACAction( id, name, description, permissions );</span>
+
+<span class="nc" id="L39">        return rBACAction;</span>
+    }
+
+    @Override
+    public RBACActionEntity fromDomain(RBACAction domain) {
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if ( domain == null ) {</span>
+<span class="nc" id="L45">            return null;</span>
+        }
+
+<span class="nc" id="L48">        RBACActionEntity rBACActionEntity = new RBACActionEntity();</span>
+
+<span class="nc" id="L50">        rBACActionEntity.setId( domain.id() );</span>
+<span class="nc" id="L51">        rBACActionEntity.setName( domain.name() );</span>
+<span class="nc" id="L52">        rBACActionEntity.setDescription( domain.description() );</span>
+<span class="nc" id="L53">        rBACActionEntity.setPermissions( rBACPermissionListToRBACPermissionEntityList( domain.permissions() ) );</span>
+
+<span class="nc" id="L55">        return rBACActionEntity;</span>
+    }
+
+    protected RBACPermission rBACPermissionEntityToRBACPermission(RBACPermissionEntity rBACPermissionEntity) {
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        if ( rBACPermissionEntity == null ) {</span>
+<span class="nc" id="L60">            return null;</span>
+        }
+
+<span class="nc" id="L63">        UUID id = null;</span>
+<span class="nc" id="L64">        String name = null;</span>
+<span class="nc" id="L65">        String description = null;</span>
+
+<span class="nc" id="L67">        id = rBACPermissionEntity.getId();</span>
+<span class="nc" id="L68">        name = rBACPermissionEntity.getName();</span>
+<span class="nc" id="L69">        description = rBACPermissionEntity.getDescription();</span>
+
+<span class="nc" id="L71">        RBACPermission rBACPermission = new RBACPermission( id, name, description );</span>
+
+<span class="nc" id="L73">        return rBACPermission;</span>
+    }
+
+    protected List&lt;RBACPermission&gt; rBACPermissionEntityListToRBACPermissionList(List&lt;RBACPermissionEntity&gt; list) {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if ( list == null ) {</span>
+<span class="nc" id="L78">            return null;</span>
+        }
+
+<span class="nc" id="L81">        List&lt;RBACPermission&gt; list1 = new ArrayList&lt;RBACPermission&gt;( list.size() );</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        for ( RBACPermissionEntity rBACPermissionEntity : list ) {</span>
+<span class="nc" id="L83">            list1.add( rBACPermissionEntityToRBACPermission( rBACPermissionEntity ) );</span>
+<span class="nc" id="L84">        }</span>
+
+<span class="nc" id="L86">        return list1;</span>
+    }
+
+    protected RBACPermissionEntity rBACPermissionToRBACPermissionEntity(RBACPermission rBACPermission) {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if ( rBACPermission == null ) {</span>
+<span class="nc" id="L91">            return null;</span>
+        }
+
+<span class="nc" id="L94">        RBACPermissionEntity rBACPermissionEntity = new RBACPermissionEntity();</span>
+
+<span class="nc" id="L96">        rBACPermissionEntity.setId( rBACPermission.id() );</span>
+<span class="nc" id="L97">        rBACPermissionEntity.setName( rBACPermission.name() );</span>
+<span class="nc" id="L98">        rBACPermissionEntity.setDescription( rBACPermission.description() );</span>
+
+<span class="nc" id="L100">        return rBACPermissionEntity;</span>
+    }
+
+    protected List&lt;RBACPermissionEntity&gt; rBACPermissionListToRBACPermissionEntityList(List&lt;RBACPermission&gt; list) {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if ( list == null ) {</span>
+<span class="nc" id="L105">            return null;</span>
+        }
+
+<span class="nc" id="L108">        List&lt;RBACPermissionEntity&gt; list1 = new ArrayList&lt;RBACPermissionEntity&gt;( list.size() );</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        for ( RBACPermission rBACPermission : list ) {</span>
+<span class="nc" id="L110">            list1.add( rBACPermissionToRBACPermissionEntity( rBACPermission ) );</span>
+<span class="nc" id="L111">        }</span>
+
+<span class="nc" id="L113">        return list1;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

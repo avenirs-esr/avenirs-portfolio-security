@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrincipalEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model</a> &gt; <span class="el_source">PrincipalEntity.java</span></div><h1>PrincipalEntity.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/** Principal in the RBAC system. */
+@Entity
+@Table(
+    name = &quot;principal&quot;,
+    indexes = {
+      @Index(name = &quot;principal_login_idx&quot;, columnList = &quot;login&quot;),
+      @Index(name = &quot;principal_external_id_idx&quot;, columnList = &quot;external_id&quot;),
+      @Index(name = &quot;principal_user_id_idx&quot;, columnList = &quot;user_id&quot;)
+    },
+    uniqueConstraints = {
+      @UniqueConstraint(
+          name = &quot;principal_provider_external_id_uk&quot;,
+          columnNames = {&quot;provider&quot;, &quot;external_id&quot;}),
+      @UniqueConstraint(name = &quot;principal_user_id_uk&quot;, columnNames = &quot;user_id&quot;)
+    })
+@NoArgsConstructor
+@Getter
+@Setter
+public class PrincipalEntity {
+
+  /** Database Id. */
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
+
+  /** Login of the principal. */
+  @Column(length = 255, nullable = false)
+  private String login;
+
+  /** Authentication provider, for example CAS, OIDC, LDAP, or LOCAL. */
+  @Column(length = 100, nullable = false)
+  private String provider;
+
+  /** Stable external identifier, for example OIDC sub or LDAP uid. */
+  @Column(name = &quot;external_id&quot;, length = 255, nullable = false)
+  private String externalId;
+
+  /** Business user identifier handled by the user domain/module. */
+  @Column(name = &quot;user_id&quot;, nullable = false, unique = true)
+  private UUID userId;
+
+  /** Structures associated to the principal. */
+<span class="nc" id="L64">  @ManyToMany(fetch = FetchType.LAZY)</span>
+  @JoinTable(
+      name = &quot;principal_structure&quot;,
+      joinColumns = @JoinColumn(name = &quot;id_principal&quot;, nullable = false),
+      inverseJoinColumns = @JoinColumn(name = &quot;id_structure&quot;, nullable = false),
+      uniqueConstraints =
+          @UniqueConstraint(
+              name = &quot;principal_structure_pk&quot;,
+              columnNames = {&quot;id_principal&quot;, &quot;id_structure&quot;}))
+  private Set&lt;StructureEntity&gt; structureEntities = new HashSet&lt;&gt;();
+
+  private PrincipalEntity(
+      UUID id,
+      String login,
+      String provider,
+      String externalId,
+      UUID userId,
+<span class="nc" id="L81">      Set&lt;StructureEntity&gt; structureEntities) {</span>
+<span class="nc" id="L82">    this.id = id;</span>
+<span class="nc" id="L83">    this.login = login;</span>
+<span class="nc" id="L84">    this.provider = provider;</span>
+<span class="nc" id="L85">    this.externalId = externalId;</span>
+<span class="nc" id="L86">    this.userId = userId;</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    this.structureEntities = structureEntities != null ? structureEntities : new HashSet&lt;&gt;();</span>
+<span class="nc" id="L88">  }</span>
+
+  public static PrincipalEntity of(
+      UUID id,
+      String login,
+      String provider,
+      String externalId,
+      UUID userId,
+      Set&lt;StructureEntity&gt; structureEntities) {
+<span class="nc" id="L97">    return new PrincipalEntity(id, login, provider, externalId, userId, structureEntities);</span>
+  }
+
+  public static PrincipalEntity of(
+      UUID id, String login, String provider, String externalId, UUID userId) {
+<span class="nc" id="L102">    return new PrincipalEntity(id, login, provider, externalId, userId, new HashSet&lt;&gt;());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

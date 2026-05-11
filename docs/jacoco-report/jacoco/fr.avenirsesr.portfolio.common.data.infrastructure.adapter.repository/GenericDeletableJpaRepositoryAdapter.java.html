@@ -5,7 +5,6 @@ import fr.avenirsesr.portfolio.common.data.domain.port.output.repository.Generic
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.DeletableAvenirsBaseEntity;
 import java.util.UUID;
-import java.util.function.Function;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -21,15 +20,15 @@ public abstract class GenericDeletableJpaRepositoryAdapter&lt;
       JpaSpecificationExecutor&lt;E&gt; jpaSpecificationExecutor,
       Class&lt;E&gt; entityClass,
       Mapper&lt;E, D&gt; mapper) {
-<span class="nc" id="L24">    super(jpaRepository, jpaSpecificationExecutor, entityClass, mapper);</span>
-<span class="nc" id="L25">    this.jpaRepository = jpaRepository;</span>
-<span class="nc" id="L26">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
-<span class="nc" id="L27">    this.mapper = mapper;</span>
-<span class="nc" id="L28">  }</span>
+<span class="nc" id="L23">    super(jpaRepository, jpaSpecificationExecutor, entityClass, mapper);</span>
+<span class="nc" id="L24">    this.jpaRepository = jpaRepository;</span>
+<span class="nc" id="L25">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
+<span class="nc" id="L26">    this.mapper = mapper;</span>
+<span class="nc" id="L27">  }</span>
 
   @Override
   public void delete(D domain) {
-<span class="nc" id="L32">    jpaRepository.delete(mapper.fromDomain(domain));</span>
-<span class="nc" id="L33">  }</span>
+<span class="nc" id="L31">    jpaRepository.delete(mapper.fromDomain(domain));</span>
+<span class="nc" id="L32">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

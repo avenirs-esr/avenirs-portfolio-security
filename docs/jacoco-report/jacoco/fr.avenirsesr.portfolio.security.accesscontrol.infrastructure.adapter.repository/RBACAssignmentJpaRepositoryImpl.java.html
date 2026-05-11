@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACAssignmentJpaRepositoryImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.repository</a> &gt; <span class="el_source">RBACAssignmentJpaRepositoryImpl.java</span></div><h1>RBACAssignmentJpaRepositoryImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.repository;
+
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACAssignmentEntity;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACResourceEntity;
+import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.StructureEntity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ *
+ *
+ * &lt;h1&gt;RBACAssignmentRepositoryImpl&lt;/h1&gt;
+ *
+ * &lt;p&gt;Description: RBACAssignmentRepositoryImpl is used for [describe the main functionality of the
+ * class]. It provides [summarize key features or expected behavior].
+ *
+ * &lt;h2&gt;Version:&lt;/h2&gt;
+ *
+ * 1.0.0
+ *
+ * &lt;h2&gt;Author:&lt;/h2&gt;
+ *
+ * Arnaud Deman
+ *
+ * &lt;h2&gt;Since:&lt;/h2&gt;
+ *
+ * 05/12/2024
+ */
+<span class="nc" id="L32">public class RBACAssignmentJpaRepositoryImpl implements RBACAssignmentJpaRepositoryCustom {</span>
+
+  @PersistenceContext private EntityManager entityManager;
+
+  /**
+   * Save an assignment. The entities collections in scope and context are handled.
+   *
+   * @param assignment The assignment to save.
+   * @return The persisted assignment.
+   */
+  public RBACAssignmentEntity saveWithRelations(RBACAssignmentEntity assignment) {
+
+<span class="nc" id="L44">    List&lt;RBACResourceEntity&gt; managedResources =</span>
+<span class="nc" id="L45">        assignment.getScope().getResources().stream()</span>
+<span class="nc" id="L46">            .map(</span>
+                resource -&gt;
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                    entityManager.contains(resource) ? resource : entityManager.merge(resource))</span>
+<span class="nc" id="L49">            .toList();</span>
+<span class="nc" id="L50">    assignment.getScope().setResources(managedResources);</span>
+
+<span class="nc" id="L52">    Set&lt;StructureEntity&gt; managedStructureEntities =</span>
+<span class="nc" id="L53">        assignment.getContext().getStructureEntities().stream()</span>
+<span class="nc" id="L54">            .map(</span>
+                structure -&gt;
+<span class="nc bnc" id="L56" title="All 2 branches missed.">                    entityManager.contains(structure) ? structure : entityManager.merge(structure))</span>
+<span class="nc" id="L57">            .collect(Collectors.toSet());</span>
+<span class="nc" id="L58">    assignment.getContext().setStructureEntities(managedStructureEntities);</span>
+
+<span class="nc bnc" id="L60" title="All 2 branches missed.">    if (!entityManager.contains(assignment.getScope())) {</span>
+<span class="nc" id="L61">      assignment.setScope(entityManager.merge(assignment.getScope()));</span>
+    }
+<span class="nc bnc" id="L63" title="All 2 branches missed.">    if (!entityManager.contains(assignment.getContext())) {</span>
+<span class="nc" id="L64">      assignment.setContext(entityManager.merge(assignment.getContext()));</span>
+    }
+
+<span class="nc" id="L67">    return entityManager.merge(assignment);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

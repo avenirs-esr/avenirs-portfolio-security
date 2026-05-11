@@ -5,39 +5,62 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospe
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthenticationPort;
+import fr.avenirsesr.portfolio.security.principal.domain.exception.PrincipalNotFoundException;
+import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
+import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.util.Optional;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final AuthenticationPort authenticationPort;
+  private final PrincipalService principalService;
 
-<span class="fc" id="L14">  public AuthenticationServiceImpl(AuthenticationPort authenticationPort) {</span>
-<span class="fc" id="L15">    this.authenticationPort = authenticationPort;</span>
-<span class="fc" id="L16">  }</span>
+  public AuthenticationServiceImpl(
+<span class="fc" id="L19">      AuthenticationPort authenticationPort, PrincipalService principalService) {</span>
+<span class="fc" id="L20">    this.authenticationPort = authenticationPort;</span>
+<span class="fc" id="L21">    this.principalService = principalService;</span>
+<span class="fc" id="L22">  }</span>
 
   @Override
   public Optional&lt;OIDCAccessToken&gt; getAccessToken(String login, String password) {
-<span class="fc" id="L20">    return authenticationPort.getAccessToken(login, password);</span>
+<span class="fc" id="L26">    return authenticationPort.getAccessToken(login, password);</span>
   }
 
   @Override
   public OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code) {
-<span class="fc" id="L25">    return authenticationPort.exchangeAuthorizationCodeForToken(host, code);</span>
+<span class="fc" id="L31">    return authenticationPort.exchangeAuthorizationCodeForToken(host, code);</span>
   }
 
   @Override
   public String generateServiceURL(String host) {
-<span class="fc" id="L30">    return authenticationPort.generateServiceURL(host);</span>
+<span class="fc" id="L36">    return authenticationPort.generateServiceURL(host);</span>
   }
 
   @Override
   public OIDCIntrospection introspectAccessToken(String token) {
-<span class="fc" id="L35">    return authenticationPort.introspectAccessToken(token);</span>
+
+<span class="fc" id="L42">    OIDCIntrospection introspection = authenticationPort.introspectAccessToken(token);</span>
+
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">    if (!introspection.active()) {</span>
+<span class="nc" id="L45">      return introspection;</span>
+    }
+
+<span class="fc" id="L48">    Principal principal =</span>
+        principalService
+<span class="fc" id="L50">            .getPrincipalByProviderAndExternalId(&quot;OIDC&quot;, introspection.uniqueSecurityName())</span>
+<span class="fc" id="L51">            .orElseThrow(</span>
+                () -&gt;
+<span class="nc" id="L53">                    new PrincipalNotFoundException(</span>
+                        &quot;No principal found for external id: &quot;
+<span class="nc" id="L55">                            + introspection.uniqueSecurityName()));</span>
+
+<span class="fc" id="L57">    return new OIDCIntrospection(</span>
+<span class="fc" id="L58">        introspection.token(), true, introspection.uniqueSecurityName(), principal.userId());</span>
   }
 
   @Override
   public OIDCProfile profile(String token) {
-<span class="fc" id="L40">    return authenticationPort.profile(token);</span>
+<span class="fc" id="L63">    return authenticationPort.profile(token);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

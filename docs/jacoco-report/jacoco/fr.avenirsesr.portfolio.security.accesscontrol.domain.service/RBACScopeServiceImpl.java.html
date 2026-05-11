@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACScopeServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.domain.service</a> &gt; <span class="el_source">RBACScopeServiceImpl.java</span></div><h1>RBACScopeServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.domain.service;
+
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACScope;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.input.RBACScopeService;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACScopeRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L13">@Slf4j</span>
+@RequiredArgsConstructor
+public class RBACScopeServiceImpl implements RBACScopeService {
+
+  private final RBACScopeRepository scopeRepository;
+
+  @Override
+  public Optional&lt;RBACScope&gt; getScopeById(UUID scopeId) {
+<span class="fc" id="L21">    log.trace(&quot;getScopeById, scopeId: {}&quot;, scopeId);</span>
+<span class="fc" id="L22">    return scopeRepository.findById(scopeId);</span>
+  }
+
+  @Override
+  public Optional&lt;RBACScope&gt; getScopeByName(String scopeName) {
+<span class="fc" id="L27">    log.trace(&quot;getScopeByName, scopeName: {}&quot;, scopeName);</span>
+<span class="fc" id="L28">    return scopeRepository.findByName(scopeName);</span>
+  }
+
+  @Override
+  public List&lt;RBACScope&gt; getAllScopes() {
+<span class="fc" id="L33">    log.trace(&quot;getAllScopes&quot;);</span>
+<span class="fc" id="L34">    return scopeRepository.findAll();</span>
+  }
+
+  @Override
+  public RBACScope createScope(RBACScope scope) {
+<span class="fc" id="L39">    log.trace(&quot;createScope, scope: {}&quot;, scope);</span>
+<span class="fc" id="L40">    return scopeRepository.save(scope);</span>
+  }
+
+  @Override
+  public RBACScope updateScope(RBACScope scope) {
+<span class="fc" id="L45">    log.trace(&quot;updateScope, scope: {}&quot;, scope);</span>
+
+<span class="fc" id="L47">    scopeRepository</span>
+<span class="fc" id="L48">        .findById(scope.id())</span>
+<span class="fc" id="L49">        .orElseThrow(() -&gt; AccessControlNotFoundException.scope(scope.id()));</span>
+
+<span class="fc" id="L51">    return scopeRepository.save(scope);</span>
+  }
+
+  @Override
+  public void deleteScope(UUID scopeId) {
+<span class="fc" id="L56">    log.trace(&quot;deleteScope, scopeId: {}&quot;, scopeId);</span>
+<span class="fc" id="L57">    scopeRepository.deleteById(scopeId);</span>
+<span class="fc" id="L58">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
