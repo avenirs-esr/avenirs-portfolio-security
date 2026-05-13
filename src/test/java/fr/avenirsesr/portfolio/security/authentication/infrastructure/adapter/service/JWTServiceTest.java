@@ -252,7 +252,8 @@ class JWTServiceTest {
     BddLogger.given("an access token response with an empty idToken");
 
     OIDCAccessToken accessToken =
-        new OIDCAccessToken("TEST_ACCESS_TOKEN", null, 0, null, "", null, false);
+        new OIDCAccessToken(
+            "TEST_ACCESS_TOKEN", "TEST_REFRESH_TOKEN", null, 0, null, "", null, false);
 
     BddLogger.when("parsing and checking signature");
     Optional<Map<String, Object>> result = jwtService.parseAndCheckSignature(accessToken);
