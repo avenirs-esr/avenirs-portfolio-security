@@ -47,7 +47,8 @@ class OidcServiceImplTest {
     String password = "password";
 
     OIDCAccessToken expected =
-        new OIDCAccessToken("access-token", "Bearer", 3600, "openid", null, Map.of(), false);
+        new OIDCAccessToken(
+            "access-token", "refresh-token", "Bearer", 3600, "openid", null, Map.of(), false);
     when(oidcAuthenticationPort.getAccessToken(login, password)).thenReturn(Optional.of(expected));
 
     Optional<OIDCAccessToken> result = service.getAccessToken(login, password);
@@ -64,7 +65,8 @@ class OidcServiceImplTest {
     String code = "code";
 
     OIDCAccessToken expected =
-        new OIDCAccessToken("access-token", "Bearer", 3600, "openid", null, Map.of(), false);
+        new OIDCAccessToken(
+            "access-token", "refresh-token", "Bearer", 3600, "openid", null, Map.of(), false);
     when(oidcAuthenticationPort.exchangeAuthorizationCodeForToken(host, code)).thenReturn(expected);
 
     OIDCAccessToken result = service.exchangeAuthorizationCodeForToken(host, code);

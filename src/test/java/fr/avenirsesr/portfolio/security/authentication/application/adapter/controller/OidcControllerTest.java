@@ -54,7 +54,8 @@ class OidcControllerTest {
   void login_returnsAccessToken() throws Exception {
     when(oidcService.getAccessToken(eq("user"), eq("pass")))
         .thenReturn(
-            Optional.of(new OIDCAccessToken("AT", "Bearer", 3600, "openid", null, null, false)));
+            Optional.of(
+                new OIDCAccessToken("AT", "AT", "Bearer", 3600, "openid", null, null, false)));
 
     mockMvc
         .perform(
@@ -82,7 +83,7 @@ class OidcControllerTest {
   @Test
   void oidcCallback_mapsDomainToPayload() throws Exception {
     when(oidcService.exchangeAuthorizationCodeForToken("test-host.com", "code"))
-        .thenReturn(new OIDCAccessToken("AT", "Bearer", 3600, "openid", null, null, false));
+        .thenReturn(new OIDCAccessToken("AT", "AT", "Bearer", 3600, "openid", null, null, false));
 
     mockMvc
         .perform(
@@ -96,7 +97,7 @@ class OidcControllerTest {
   @Test
   void oidcCallback_withoutHostAndCode_usesLocalhostAndNullCode() throws Exception {
     when(oidcService.exchangeAuthorizationCodeForToken("localhost", null))
-        .thenReturn(new OIDCAccessToken("AT", "Bearer", 3600, "openid", null, null, false));
+        .thenReturn(new OIDCAccessToken("AT", "AT", "Bearer", 3600, "openid", null, null, false));
 
     mockMvc
         .perform(get("/oidc/callback"))

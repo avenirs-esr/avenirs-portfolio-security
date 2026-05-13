@@ -16,6 +16,7 @@ public final class OIDCAccessTokenMapper {
 
     return new OIDCAccessToken(
         payload.getAccessToken(),
+        payload.getRefreshToken(),
         payload.getTokenType(),
         payload.getExpireIn(),
         payload.getScope(),
@@ -31,6 +32,7 @@ public final class OIDCAccessTokenMapper {
 
     OIDCAccessTokenResponse payload = new OIDCAccessTokenResponse();
     payload.setAccessToken(domain.accessToken());
+    payload.setRefreshToken(domain.refreshToken());
     payload.setTokenType(domain.tokenType());
     payload.setExpireIn(domain.expiresIn());
     payload.setScope(domain.scope());

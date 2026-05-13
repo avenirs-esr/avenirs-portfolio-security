@@ -18,6 +18,11 @@ public class OIDCAccessTokenResponse {
   @JsonProperty("access_token")
   private String accessToken;
 
+  /** Refresh token value */
+  @ToString.Exclude
+  @JsonProperty("refresh_token")
+  private String refreshToken;
+
   /** Id token value */
   @JsonProperty("id_token")
   private OIDCIdToken idToken;

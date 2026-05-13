@@ -314,6 +314,7 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
         accessToken =
             new OIDCAccessToken(
                 accessToken.accessToken(),
+                accessToken.refreshToken(),
                 accessToken.tokenType(),
                 accessToken.expiresIn(),
                 accessToken.scope(),

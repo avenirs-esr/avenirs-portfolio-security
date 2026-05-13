@@ -4,6 +4,7 @@ import java.util.Map;
 
 public record OIDCAccessToken(
     String accessToken,
+    String refreshToken,
     String tokenType,
     int expiresIn,
     String scope,
