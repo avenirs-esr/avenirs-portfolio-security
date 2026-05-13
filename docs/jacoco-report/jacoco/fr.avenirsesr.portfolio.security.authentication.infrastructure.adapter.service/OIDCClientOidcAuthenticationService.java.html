@@ -314,44 +314,45 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
 <span class="fc" id="L314">        accessToken =</span>
             new OIDCAccessToken(
 <span class="fc" id="L316">                accessToken.accessToken(),</span>
-<span class="fc" id="L317">                accessToken.tokenType(),</span>
-<span class="fc" id="L318">                accessToken.expiresIn(),</span>
-<span class="fc" id="L319">                accessToken.scope(),</span>
-<span class="fc" id="L320">                accessToken.rawIdToken(),</span>
-<span class="fc" id="L321">                new HashMap&lt;&gt;(claims.get()),</span>
+<span class="fc" id="L317">                accessToken.refreshToken(),</span>
+<span class="fc" id="L318">                accessToken.tokenType(),</span>
+<span class="fc" id="L319">                accessToken.expiresIn(),</span>
+<span class="fc" id="L320">                accessToken.scope(),</span>
+<span class="fc" id="L321">                accessToken.rawIdToken(),</span>
+<span class="fc" id="L322">                new HashMap&lt;&gt;(claims.get()),</span>
                 true);
       }
-<span class="fc" id="L324">      return Optional.of(accessToken);</span>
-<span class="fc" id="L325">    } catch (HttpClientErrorException e) {</span>
-<span class="fc" id="L326">      log.error(</span>
+<span class="fc" id="L325">      return Optional.of(accessToken);</span>
+<span class="fc" id="L326">    } catch (HttpClientErrorException e) {</span>
+<span class="fc" id="L327">      log.error(</span>
           &quot;getAccessToken, error while retrieving access token for {}: {}&quot;,
           login,
-<span class="fc" id="L329">          +e.getStatusCode().value());</span>
-<span class="fc" id="L330">      return Optional.empty();</span>
+<span class="fc" id="L330">          +e.getStatusCode().value());</span>
+<span class="fc" id="L331">      return Optional.empty();</span>
     }
   }
 
   @Override
   public String generateAuthorizationUrl(String host, String redirect) {
-<span class="nc bnc" id="L336" title="All 4 branches missed.">    String safeHost = host == null || host.isBlank() ? &quot;localhost&quot; : host;</span>
+<span class="nc bnc" id="L337" title="All 4 branches missed.">    String safeHost = host == null || host.isBlank() ? &quot;localhost&quot; : host;</span>
 
     String redirectUri =
-<span class="nc" id="L339">        UriComponentsBuilder.newInstance()</span>
-<span class="nc" id="L340">            .scheme(&quot;https&quot;)</span>
-<span class="nc" id="L341">            .host(safeHost)</span>
-<span class="nc" id="L342">            .path(authCallbackPublicPath)</span>
-<span class="nc" id="L343">            .build()</span>
-<span class="nc" id="L344">            .toUriString();</span>
+<span class="nc" id="L340">        UriComponentsBuilder.newInstance()</span>
+<span class="nc" id="L341">            .scheme(&quot;https&quot;)</span>
+<span class="nc" id="L342">            .host(safeHost)</span>
+<span class="nc" id="L343">            .path(authCallbackPublicPath)</span>
+<span class="nc" id="L344">            .build()</span>
+<span class="nc" id="L345">            .toUriString();</span>
 
-<span class="nc" id="L346">    return UriComponentsBuilder.fromUriString(oidcAuthorizeUrl)</span>
-<span class="nc" id="L347">        .queryParam(&quot;client_id&quot;, clientId)</span>
-<span class="nc" id="L348">        .queryParam(&quot;response_type&quot;, &quot;code&quot;)</span>
-<span class="nc" id="L349">        .queryParam(&quot;scope&quot;, oidcScope)</span>
-<span class="nc" id="L350">        .queryParam(&quot;redirect_uri&quot;, redirectUri)</span>
-<span class="nc" id="L351">        .queryParam(&quot;state&quot;, redirect)</span>
-<span class="nc" id="L352">        .build()</span>
-<span class="nc" id="L353">        .encode()</span>
-<span class="nc" id="L354">        .toUriString();</span>
+<span class="nc" id="L347">    return UriComponentsBuilder.fromUriString(oidcAuthorizeUrl)</span>
+<span class="nc" id="L348">        .queryParam(&quot;client_id&quot;, clientId)</span>
+<span class="nc" id="L349">        .queryParam(&quot;response_type&quot;, &quot;code&quot;)</span>
+<span class="nc" id="L350">        .queryParam(&quot;scope&quot;, oidcScope)</span>
+<span class="nc" id="L351">        .queryParam(&quot;redirect_uri&quot;, redirectUri)</span>
+<span class="nc" id="L352">        .queryParam(&quot;state&quot;, redirect)</span>
+<span class="nc" id="L353">        .build()</span>
+<span class="nc" id="L354">        .encode()</span>
+<span class="nc" id="L355">        .toUriString();</span>
   }
 
   /**
@@ -361,17 +362,17 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
    * @return The basic authentication header.
    */
   private String basicAuthentication() {
-<span class="pc bpc" id="L364" title="1 of 2 branches missed.">    if (basicAuthenticationHeader == null) {</span>
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">    if (basicAuthenticationHeader == null) {</span>
 
-<span class="fc" id="L366">      log.trace(&quot;basicAuthentication generating authentication header. &quot;);</span>
-<span class="fc" id="L367">      final String auth = clientId + &quot;:&quot; + clientSecret;</span>
+<span class="fc" id="L367">      log.trace(&quot;basicAuthentication generating authentication header. &quot;);</span>
+<span class="fc" id="L368">      final String auth = clientId + &quot;:&quot; + clientSecret;</span>
 
       final byte[] encodedAuth =
-<span class="fc" id="L370">          Base64.getEncoder().encode(auth.getBytes(StandardCharsets.US_ASCII));</span>
-<span class="fc" id="L371">      basicAuthenticationHeader = &quot;Basic &quot; + new String(encodedAuth);</span>
+<span class="fc" id="L371">          Base64.getEncoder().encode(auth.getBytes(StandardCharsets.US_ASCII));</span>
+<span class="fc" id="L372">      basicAuthenticationHeader = &quot;Basic &quot; + new String(encodedAuth);</span>
     }
-<span class="fc" id="L373">    log.trace(&quot;basicAuthentication, basicAuthenticationHeader: {}&quot;, basicAuthenticationHeader);</span>
-<span class="fc" id="L374">    return basicAuthenticationHeader;</span>
+<span class="fc" id="L374">    log.trace(&quot;basicAuthentication, basicAuthenticationHeader: {}&quot;, basicAuthenticationHeader);</span>
+<span class="fc" id="L375">    return basicAuthenticationHeader;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -18,6 +18,11 @@ public class OIDCAccessTokenResponse {
   @JsonProperty(&quot;access_token&quot;)
   private String accessToken;
 
+  /** Refresh token value */
+  @ToString.Exclude
+  @JsonProperty(&quot;refresh_token&quot;)
+  private String refreshToken;
+
   /** Id token value */
   @JsonProperty(&quot;id_token&quot;)
   private OIDCIdToken idToken;
@@ -41,7 +46,7 @@ public class OIDCAccessTokenResponse {
 
   @ToString.Include(name = &quot;accessToken&quot;)
   public String getMaskedAccessToken() {
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">    return accessToken != null ? &quot;****&quot; : null;</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">    return accessToken != null ? &quot;****&quot; : null;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

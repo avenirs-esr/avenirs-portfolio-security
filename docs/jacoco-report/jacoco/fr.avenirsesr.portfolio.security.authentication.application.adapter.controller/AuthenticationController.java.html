@@ -2,10 +2,17 @@
 
 import static fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.utils.RedirectUtils.toSafeRelativePath;
 
+import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
+import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.session.SessionAttributes;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(&quot;/auth&quot;)
@@ -13,9 +20,9 @@ public class AuthenticationController {
 
   private final AuthenticationService authenticationService;
 
-<span class="nc" id="L16">  public AuthenticationController(AuthenticationService authenticationService) {</span>
-<span class="nc" id="L17">    this.authenticationService = authenticationService;</span>
-<span class="nc" id="L18">  }</span>
+<span class="nc" id="L23">  public AuthenticationController(AuthenticationService authenticationService) {</span>
+<span class="nc" id="L24">    this.authenticationService = authenticationService;</span>
+<span class="nc" id="L25">  }</span>
 
   @GetMapping(&quot;/login&quot;)
   public void login(
@@ -23,19 +30,39 @@ public class AuthenticationController {
       @RequestParam(value = &quot;redirect&quot;, required = false) String redirect,
       HttpServletResponse response)
       throws IOException {
-<span class="nc" id="L26">    String safeRedirect = toSafeRelativePath(redirect, &quot;/cofolio/student&quot;);</span>
+<span class="nc" id="L33">    String safeRedirect = toSafeRelativePath(redirect, &quot;/cofolio/student&quot;);</span>
 
-<span class="nc" id="L28">    String authorizeUrl =</span>
-<span class="nc" id="L29">        authenticationService.generateAuthorizationUrl(</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">            host == null ? &quot;localhost&quot; : host, safeRedirect);</span>
+<span class="nc" id="L35">    String authorizeUrl =</span>
+<span class="nc" id="L36">        authenticationService.generateAuthorizationUrl(</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            host == null ? &quot;localhost&quot; : host, safeRedirect);</span>
 
-<span class="nc" id="L32">    response.sendRedirect(authorizeUrl);</span>
-<span class="nc" id="L33">  }</span>
+<span class="nc" id="L39">    response.sendRedirect(authorizeUrl);</span>
+<span class="nc" id="L40">  }</span>
 
   @GetMapping(&quot;/callback&quot;)
-<span class="nc" id="L36">  public void callback() {}</span>
+  public void callback(
+      @RequestHeader(value = &quot;x-forwarded-host&quot;, required = false) String host,
+      @RequestParam(value = &quot;code&quot;, required = false) String code,
+      @RequestParam(value = &quot;state&quot;, required = false) String state,
+      HttpSession session,
+      HttpServletResponse response)
+      throws IOException {
+<span class="nc bnc" id="L50" title="All 4 branches missed.">    if (code == null || code.isBlank()) {</span>
+<span class="nc" id="L51">      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, &quot;Missing authorization code&quot;);</span>
+<span class="nc" id="L52">      return;</span>
+    }
+
+<span class="nc" id="L55">    OIDCSession oidcSession =</span>
+<span class="nc" id="L56">        authenticationService.createSessionFromAuthorizationCode(</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            host == null ? &quot;localhost&quot; : host, code);</span>
+
+<span class="nc" id="L59">    session.setAttribute(SessionAttributes.OIDC_SESSION, oidcSession);</span>
+
+<span class="nc" id="L61">    String safeRedirect = toSafeRelativePath(state, &quot;/cofolio/student&quot;);</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">    response.sendRedirect(&quot;https://&quot; + (host == null ? &quot;localhost&quot; : host) + safeRedirect);</span>
+<span class="nc" id="L63">  }</span>
 
   @GetMapping(&quot;/logout&quot;)
-<span class="nc" id="L39">  public void logout() {}</span>
+<span class="nc" id="L66">  public void logout() {}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
