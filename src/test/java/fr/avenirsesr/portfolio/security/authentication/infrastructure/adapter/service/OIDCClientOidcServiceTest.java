@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-class OIDCClientAuthenticationServiceTest {
+class OIDCClientOidcServiceTest {
 
   private static final String HOST = "localhost";
   private static final String CODE = "code";
@@ -49,7 +49,7 @@ class OIDCClientAuthenticationServiceTest {
 
   @Mock private JWTServicePort jwtService;
 
-  private OIDCClientAuthenticationService authenticationService;
+  private OIDCClientOidcAuthenticationService authenticationService;
 
   private MockWebServer mockWebServer;
 
@@ -117,7 +117,7 @@ class OIDCClientAuthenticationServiceTest {
         });
     mockWebServer.start();
 
-    authenticationService = new OIDCClientAuthenticationService(jwtService);
+    authenticationService = new OIDCClientOidcAuthenticationService(jwtService);
     ReflectionTestUtils.setField(
         authenticationService, "oidcAuthorizeTemplate", AUTHORISE_TEMPLATE_URL);
     ReflectionTestUtils.setField(

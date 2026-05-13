@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter;
 
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
-import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @AllArgsConstructor
 public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
 
-  private AuthenticationService authenticationService;
+  private OidcService oidcService;
 
   @Override
   protected void doFilterInternal(
@@ -53,7 +53,7 @@ public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
     if (StringUtils.hasText(token)) {
       log.trace("doFilterInternal hasText(token) is true");
 
-      introspection = authenticationService.introspectAccessToken(token);
+      introspection = oidcService.introspectAccessToken(token);
       log.trace("doFilterInternal introspection: {}", introspection);
 
       if (introspection != null && introspection.active()) {

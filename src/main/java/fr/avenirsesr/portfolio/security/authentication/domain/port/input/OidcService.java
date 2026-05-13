@@ -1,24 +1,18 @@
-package fr.avenirsesr.portfolio.security.authentication.domain.port.output;
+package fr.avenirsesr.portfolio.security.authentication.domain.port.input;
 
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import java.util.Optional;
 
-public interface AuthenticationPort {
-  String generateAuthorizeURL(String host, String code);
-
-  String generateServiceURL(String host);
-
-  String generateProfileURL(String token);
-
-  String generateIntrospectURL(String token);
+public interface OidcService {
+  Optional<OIDCAccessToken> getAccessToken(String login, String password);
 
   OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code);
 
-  OIDCProfile profile(String token);
+  String generateServiceURL(String host);
 
   OIDCIntrospection introspectAccessToken(String token);
 
-  Optional<OIDCAccessToken> getAccessToken(String login, String password);
+  OIDCProfile profile(String token);
 }

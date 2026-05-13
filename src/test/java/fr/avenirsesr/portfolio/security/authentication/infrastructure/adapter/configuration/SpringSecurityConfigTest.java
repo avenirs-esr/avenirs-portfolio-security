@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.common.user.domain.port.output.BaseUserService;
-import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,7 +32,7 @@ class SpringSecurityConfigTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockitoBean private AuthenticationService authenticationService;
+  @MockitoBean private OidcService oidcService;
 
   @MockitoBean private BaseUserService baseUserService;
 

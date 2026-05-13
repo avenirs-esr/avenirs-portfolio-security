@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
-import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
-import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.OIDCClientAuthenticationService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.OIDCClientOidcAuthenticationService;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -44,9 +44,9 @@ class RoleControllerIT {
 
   @Autowired private AccessTokenHelper accessTokenHelper;
 
-  @MockitoBean private AuthenticationService authenticationService;
+  @MockitoBean private OidcService oidcService;
 
-  @MockitoBean private OIDCClientAuthenticationService oidcClientAuthenticationService;
+  @MockitoBean private OIDCClientOidcAuthenticationService oidcClientAuthenticationService;
 
   @AfterEach
   void tearDown() {
@@ -64,7 +64,7 @@ class RoleControllerIT {
   void getRolesWithInvalidTokenReturnsForbidden() throws Exception {
     String token = "invalid-token";
 
-    when(authenticationService.introspectAccessToken(token))
+    when(oidcService.introspectAccessToken(token))
         .thenReturn(new OIDCIntrospection(token, false, null, null));
 
     mockMvc
@@ -112,7 +112,7 @@ class RoleControllerIT {
         .thenReturn(
             Optional.of(new OIDCAccessToken(token, "Bearer", 3600, "openid", null, null, false)));
 
-    when(authenticationService.introspectAccessToken(token))
+    when(oidcService.introspectAccessToken(token))
         .thenReturn(new OIDCIntrospection(token, true, login, null));
 
     return accessTokenHelper.provideAccessToken(login, password);
