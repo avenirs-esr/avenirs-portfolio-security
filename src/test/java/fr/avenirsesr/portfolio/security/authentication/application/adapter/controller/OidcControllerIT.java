@@ -45,7 +45,7 @@ import org.springframework.test.web.servlet.MockMvc;
       "avenirs.authentication.oidc.client.secret=secret",
       "avenirs.authentication.oidc.token.is.jwt=false"
     })
-class AuthenticationControllerIT {
+class OidcControllerIT {
 
   private static MockWebServer mockOidcServer;
 

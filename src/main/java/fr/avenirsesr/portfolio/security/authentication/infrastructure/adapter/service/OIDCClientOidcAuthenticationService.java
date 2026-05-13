@@ -4,8 +4,8 @@ package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.s
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
-import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthenticationPort;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.JWTServicePort;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.OidcAuthenticationPort;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCAccessTokenMapper;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCIntrospectionMapper;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper.OIDCProfileMapper;
@@ -23,10 +23,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Service
-public class OIDCClientAuthenticationService implements AuthenticationPort {
+public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPort {
 
   /** Rest client to interact with OIDC provider. */
   private final RestClient restClient = RestClient.create();
@@ -72,7 +73,16 @@ public class OIDCClientAuthenticationService implements AuthenticationPort {
   @Value("${avenirs.authentication.oidc.token.is.jwt}")
   private boolean jwtAccessToken;
 
-  public OIDCClientAuthenticationService(JWTServicePort jwtService) {
+  @Value("${avenirs.authentication.oidc.authorize.url}")
+  private String oidcAuthorizeUrl;
+
+  @Value("${avenirs.authentication.oidc.scope}")
+  private String oidcScope;
+
+  @Value("${avenirs.authentication.auth.callback.public-path}")
+  private String authCallbackPublicPath;
+
+  public OIDCClientOidcAuthenticationService(JWTServicePort jwtService) {
     this.jwtService = jwtService;
   }
 
@@ -319,6 +329,29 @@ public class OIDCClientAuthenticationService implements AuthenticationPort {
           +e.getStatusCode().value());
       return Optional.empty();
     }
+  }
+
+  @Override
+  public String generateAuthorizationUrl(String host, String redirect) {
+    String safeHost = host == null || host.isBlank() ? "localhost" : host;
+
+    String redirectUri =
+        UriComponentsBuilder.newInstance()
+            .scheme("https")
+            .host(safeHost)
+            .path(authCallbackPublicPath)
+            .build()
+            .toUriString();
+
+    return UriComponentsBuilder.fromUriString(oidcAuthorizeUrl)
+        .queryParam("client_id", clientId)
+        .queryParam("response_type", "code")
+        .queryParam("scope", oidcScope)
+        .queryParam("redirect_uri", redirectUri)
+        .queryParam("state", redirect)
+        .build()
+        .encode()
+        .toUriString();
   }
 
   /**

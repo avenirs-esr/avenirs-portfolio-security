@@ -5,7 +5,7 @@ import static org.mockito.Mockito.*;
 
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
-import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,8 @@ class CASTokenAuthenticationFilterTest {
   @Test
   void doFilterInternal_withoutToken_doesNotAuthenticate() throws Exception {
     BddLogger.given("a CAS token authentication filter");
-    AuthenticationService authenticationService = mock(AuthenticationService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(authenticationService);
+    OidcService oidcService = mock(OidcService.class);
+    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
 
     BddLogger.and("a request without Authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -37,7 +37,7 @@ class CASTokenAuthenticationFilterTest {
 
     BddLogger.then(
         "it should not call the authentication service and should not authenticate the user");
-    verifyNoInteractions(authenticationService);
+    verifyNoInteractions(oidcService);
     verify(chain, times(1)).doFilter(request, response);
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -47,8 +47,8 @@ class CASTokenAuthenticationFilterTest {
   @Test
   void doFilterInternal_withActiveToken_setsAuthentication() throws Exception {
     BddLogger.given("a CAS token authentication filter");
-    AuthenticationService authenticationService = mock(AuthenticationService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(authenticationService);
+    OidcService oidcService = mock(OidcService.class);
+    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
 
     BddLogger.and("a request with an Authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -59,14 +59,13 @@ class CASTokenAuthenticationFilterTest {
     BddLogger.and("an introspect response indicating the token is active");
     OIDCIntrospection introspection = new OIDCIntrospection(null, true, "deman", null);
 
-    when(authenticationService.introspectAccessToken("TEST_ACCESS_TOKEN"))
-        .thenReturn(introspection);
+    when(oidcService.introspectAccessToken("TEST_ACCESS_TOKEN")).thenReturn(introspection);
 
     BddLogger.when("filtering the request");
     filter.doFilter(request, response, chain);
 
     BddLogger.then("it should authenticate the user and continue the filter chain");
-    verify(authenticationService, times(1)).introspectAccessToken("TEST_ACCESS_TOKEN");
+    verify(oidcService, times(1)).introspectAccessToken("TEST_ACCESS_TOKEN");
     verify(chain, times(1)).doFilter(request, response);
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,8 +77,8 @@ class CASTokenAuthenticationFilterTest {
   @Test
   void doFilterInternal_withInactiveToken_doesNotSetAuthentication() throws Exception {
     BddLogger.given("a CAS token authentication filter");
-    AuthenticationService authenticationService = mock(AuthenticationService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(authenticationService);
+    OidcService oidcService = mock(OidcService.class);
+    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
 
     BddLogger.and("a request with an Authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -90,14 +89,13 @@ class CASTokenAuthenticationFilterTest {
     BddLogger.and("an introspect response indicating the token is inactive");
     OIDCIntrospection introspection = new OIDCIntrospection(null, false, null, null);
 
-    when(authenticationService.introspectAccessToken("TEST_ACCESS_TOKEN"))
-        .thenReturn(introspection);
+    when(oidcService.introspectAccessToken("TEST_ACCESS_TOKEN")).thenReturn(introspection);
 
     BddLogger.when("filtering the request");
     filter.doFilter(request, response, chain);
 
     BddLogger.then("it should not authenticate the user and should continue the filter chain");
-    verify(authenticationService, times(1)).introspectAccessToken("TEST_ACCESS_TOKEN");
+    verify(oidcService, times(1)).introspectAccessToken("TEST_ACCESS_TOKEN");
     verify(chain, times(1)).doFilter(request, response);
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -107,8 +105,8 @@ class CASTokenAuthenticationFilterTest {
   @Test
   void doFilterInternal_withXAuthorizationHeader_setsAuthentication() throws Exception {
     BddLogger.given("a CAS token authentication filter");
-    AuthenticationService authenticationService = mock(AuthenticationService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(authenticationService);
+    OidcService oidcService = mock(OidcService.class);
+    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
 
     BddLogger.and("a request with an x-authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -118,14 +116,13 @@ class CASTokenAuthenticationFilterTest {
 
     BddLogger.and("an introspect response indicating the token is active");
     OIDCIntrospection introspection = new OIDCIntrospection(null, true, "deman", null);
-    when(authenticationService.introspectAccessToken("TEST_ACCESS_TOKEN"))
-        .thenReturn(introspection);
+    when(oidcService.introspectAccessToken("TEST_ACCESS_TOKEN")).thenReturn(introspection);
 
     BddLogger.when("filtering the request");
     filter.doFilter(request, response, chain);
 
     BddLogger.then("it should authenticate the user and continue the filter chain");
-    verify(authenticationService, times(1)).introspectAccessToken("TEST_ACCESS_TOKEN");
+    verify(oidcService, times(1)).introspectAccessToken("TEST_ACCESS_TOKEN");
     verify(chain, times(1)).doFilter(request, response);
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -137,8 +134,8 @@ class CASTokenAuthenticationFilterTest {
   @Test
   void doFilterInternal_withNonBearerOrEmptyBearerToken_doesNotAuthenticate() throws Exception {
     BddLogger.given("a CAS token authentication filter");
-    AuthenticationService authenticationService = mock(AuthenticationService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(authenticationService);
+    OidcService oidcService = mock(OidcService.class);
+    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
 
     BddLogger.and("a request with a non-bearer authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -151,7 +148,7 @@ class CASTokenAuthenticationFilterTest {
 
     BddLogger.then(
         "it should not call the authentication service and should not authenticate the user");
-    verifyNoInteractions(authenticationService);
+    verifyNoInteractions(oidcService);
     verify(chain, times(1)).doFilter(request, response);
     assertNull(SecurityContextHolder.getContext().getAuthentication());
 
@@ -166,7 +163,7 @@ class CASTokenAuthenticationFilterTest {
 
     BddLogger.then(
         "it should not call the authentication service and should not authenticate the user");
-    verifyNoInteractions(authenticationService);
+    verifyNoInteractions(oidcService);
     verify(chain2, times(1)).doFilter(request2, response);
     assertNull(SecurityContextHolder.getContext().getAuthentication());
   }

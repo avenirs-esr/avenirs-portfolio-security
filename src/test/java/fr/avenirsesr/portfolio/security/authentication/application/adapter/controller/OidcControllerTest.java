@@ -15,7 +15,7 @@ import fr.avenirsesr.portfolio.common.user.domain.port.output.BaseUserService;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
-import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration.SpringSecurityConfig;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(AuthenticationController.class)
+@WebMvcTest(OidcController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import(SpringSecurityConfig.class)
 @TestPropertySource(
@@ -42,17 +42,17 @@ import org.springframework.test.web.servlet.MockMvc;
       "avenirs.authentication.oidc.callback.introspect=/oidc/callback/introspect",
       "management.actuator.health.path=/actuator/health"
     })
-class AuthenticationControllerTest {
+class OidcControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockitoBean private AuthenticationService authenticationService;
+  @MockitoBean private OidcService oidcService;
 
   @MockitoBean private BaseUserService baseUserService;
 
   @Test
   void login_returnsAccessToken() throws Exception {
-    when(authenticationService.getAccessToken(eq("user"), eq("pass")))
+    when(oidcService.getAccessToken(eq("user"), eq("pass")))
         .thenReturn(
             Optional.of(new OIDCAccessToken("AT", "Bearer", 3600, "openid", null, null, false)));
 
@@ -64,12 +64,12 @@ class AuthenticationControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().string("AT"));
 
-    verify(authenticationService).getAccessToken("user", "pass");
+    verify(oidcService).getAccessToken("user", "pass");
   }
 
   @Test
   void login_invalidCredentials_returns401() throws Exception {
-    when(authenticationService.getAccessToken(any(), any())).thenReturn(Optional.empty());
+    when(oidcService.getAccessToken(any(), any())).thenReturn(Optional.empty());
 
     mockMvc
         .perform(
@@ -81,7 +81,7 @@ class AuthenticationControllerTest {
 
   @Test
   void oidcCallback_mapsDomainToPayload() throws Exception {
-    when(authenticationService.exchangeAuthorizationCodeForToken("test-host.com", "code"))
+    when(oidcService.exchangeAuthorizationCodeForToken("test-host.com", "code"))
         .thenReturn(new OIDCAccessToken("AT", "Bearer", 3600, "openid", null, null, false));
 
     mockMvc
@@ -90,12 +90,12 @@ class AuthenticationControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.access_token").value("AT"));
 
-    verify(authenticationService).exchangeAuthorizationCodeForToken("test-host.com", "code");
+    verify(oidcService).exchangeAuthorizationCodeForToken("test-host.com", "code");
   }
 
   @Test
   void oidcCallback_withoutHostAndCode_usesLocalhostAndNullCode() throws Exception {
-    when(authenticationService.exchangeAuthorizationCodeForToken("localhost", null))
+    when(oidcService.exchangeAuthorizationCodeForToken("localhost", null))
         .thenReturn(new OIDCAccessToken("AT", "Bearer", 3600, "openid", null, null, false));
 
     mockMvc
@@ -103,12 +103,12 @@ class AuthenticationControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.access_token").value("AT"));
 
-    verify(authenticationService).exchangeAuthorizationCodeForToken("localhost", null);
+    verify(oidcService).exchangeAuthorizationCodeForToken("localhost", null);
   }
 
   @Test
   void redirect_returns302WithLocation() throws Exception {
-    when(authenticationService.generateServiceURL("test-host.com"))
+    when(oidcService.generateServiceURL("test-host.com"))
         .thenReturn("https://test-host.com/target");
 
     mockMvc
@@ -116,30 +116,28 @@ class AuthenticationControllerTest {
         .andExpect(status().is3xxRedirection())
         .andExpect(header().string("Location", "https://test-host.com/target"));
 
-    verify(authenticationService).generateServiceURL("test-host.com");
+    verify(oidcService).generateServiceURL("test-host.com");
   }
 
   @Test
   void redirect_withoutHost_usesLocalhost() throws Exception {
-    when(authenticationService.generateServiceURL("localhost"))
-        .thenReturn("https://localhost/target");
+    when(oidcService.generateServiceURL("localhost")).thenReturn("https://localhost/target");
 
     mockMvc
         .perform(get("/oidc/callback/redirect"))
         .andExpect(status().is3xxRedirection())
         .andExpect(header().string("Location", "https://localhost/target"));
 
-    verify(authenticationService).generateServiceURL("localhost");
+    verify(oidcService).generateServiceURL("localhost");
   }
 
   @Test
   void profile_activeToken_returnsProfile() throws Exception {
     String token = "AT";
 
-    when(authenticationService.introspectAccessToken(token))
+    when(oidcService.introspectAccessToken(token))
         .thenReturn(new OIDCIntrospection(token, true, "usn", null));
-    when(authenticationService.profile(token))
-        .thenReturn(new OIDCProfile("id", "svc", "fn", "ln", "mail"));
+    when(oidcService.profile(token)).thenReturn(new OIDCProfile("id", "svc", "fn", "ln", "mail"));
 
     mockMvc
         .perform(post("/oidc/callback/profile").header("x-authorization", token))
@@ -150,29 +148,29 @@ class AuthenticationControllerTest {
         .andExpect(jsonPath("$.lastName").value("ln"))
         .andExpect(jsonPath("$.email").value("mail"));
 
-    verify(authenticationService).introspectAccessToken(token);
-    verify(authenticationService).profile(token);
+    verify(oidcService).introspectAccessToken(token);
+    verify(oidcService).profile(token);
   }
 
   @Test
   void profile_inactiveToken_returns403() throws Exception {
     String token = "inactive";
 
-    when(authenticationService.introspectAccessToken(token))
+    when(oidcService.introspectAccessToken(token))
         .thenReturn(new OIDCIntrospection(token, false, null, null));
 
     mockMvc
         .perform(post("/oidc/callback/profile").header("x-authorization", token))
         .andExpect(status().isForbidden());
 
-    verify(authenticationService).introspectAccessToken(token);
+    verify(oidcService).introspectAccessToken(token);
   }
 
   @Test
   void introspect_returnsIntrospectionPayload() throws Exception {
     String token = "AT";
 
-    when(authenticationService.introspectAccessToken(token))
+    when(oidcService.introspectAccessToken(token))
         .thenReturn(
             new OIDCIntrospection(
                 token, true, "usn", UUID.fromString("00000000-0000-0000-0000-000000000101")));
@@ -184,6 +182,6 @@ class AuthenticationControllerTest {
         .andExpect(jsonPath("$.userId").value("00000000-0000-0000-0000-000000000101"))
         .andExpect(jsonPath("$.uniqueSecurityName").value("usn"));
 
-    verify(authenticationService).introspectAccessToken(token);
+    verify(oidcService).introspectAccessToken(token);
   }
 }

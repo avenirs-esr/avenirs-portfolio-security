@@ -1,13 +1,14 @@
 /** */
 package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration;
 
-import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter.CASTokenAuthenticationFilter;
 import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -56,16 +57,17 @@ public class SpringSecurityConfig {
   @Value("${springdoc.swagger-ui.path}")
   private String swaggerUIPath;
 
-  private final AuthenticationService authenticationService;
+  private final OidcService oidcService;
 
   @Value("${management.actuator.health.path}")
   private String actuatorHealth;
 
-  public SpringSecurityConfig(AuthenticationService authenticationService) {
-    this.authenticationService = authenticationService;
+  public SpringSecurityConfig(OidcService oidcService) {
+    this.oidcService = oidcService;
   }
 
   @Bean
+  @Order(1)
   SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
     return httpSecurity
         .securityMatcher(
@@ -74,13 +76,15 @@ public class SpringSecurityConfig {
             LOGIN,
             actuatorHealth,
             oidcCallback,
-            oidcRedirect)
+            oidcRedirect,
+            "/auth/**")
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
         .build();
   }
 
   @Bean
+  @Order(2)
   SecurityFilterChain protectedFilterChain(HttpSecurity httpSecurity) throws Exception {
     return httpSecurity
         .securityMatcher("/**")
@@ -91,6 +95,6 @@ public class SpringSecurityConfig {
   }
 
   Filter casTokenAuthenticationFilter() {
-    return new CASTokenAuthenticationFilter(authenticationService);
+    return new CASTokenAuthenticationFilter(oidcService);
   }
 }

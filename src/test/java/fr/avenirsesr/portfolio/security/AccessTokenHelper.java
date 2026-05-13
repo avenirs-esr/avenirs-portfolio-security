@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security;
 
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
-import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.OIDCClientAuthenticationService;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.OIDCClientOidcAuthenticationService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AccessTokenHelper {
 
-  private final OIDCClientAuthenticationService authenticationService;
+  private final OIDCClientOidcAuthenticationService authenticationService;
 
   private static final Map<String, String> accessTokenRepository = new HashMap<>();
 
