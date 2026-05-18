@@ -16,43 +16,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final OidcService oidcService;
   private final PrincipalService principalService;
 
-<span class="nc" id="L19">  public AuthenticationServiceImpl(OidcService oidcService, PrincipalService principalService) {</span>
-<span class="nc" id="L20">    this.oidcService = oidcService;</span>
-<span class="nc" id="L21">    this.principalService = principalService;</span>
-<span class="nc" id="L22">  }</span>
+<span class="fc" id="L19">  public AuthenticationServiceImpl(OidcService oidcService, PrincipalService principalService) {</span>
+<span class="fc" id="L20">    this.oidcService = oidcService;</span>
+<span class="fc" id="L21">    this.principalService = principalService;</span>
+<span class="fc" id="L22">  }</span>
 
   @Override
   public String generateAuthorizationUrl(String host, String redirect) {
-<span class="nc" id="L26">    return oidcService.generateAuthorizationUrl(host, redirect);</span>
+<span class="fc" id="L26">    return oidcService.generateAuthorizationUrl(host, redirect);</span>
   }
 
   @Override
   public OIDCSession createSessionFromAuthorizationCode(String host, String code) {
-<span class="nc" id="L31">    OIDCAccessToken accessToken = oidcService.exchangeAuthorizationCodeForToken(host, code);</span>
+<span class="fc" id="L31">    OIDCAccessToken accessToken = oidcService.exchangeAuthorizationCodeForToken(host, code);</span>
 
-<span class="nc" id="L33">    Instant accessTokenExpiresAt = Instant.now().plusSeconds(accessToken.expiresIn());</span>
+<span class="fc" id="L33">    Instant accessTokenExpiresAt = Instant.now().plusSeconds(accessToken.expiresIn());</span>
 
-<span class="nc" id="L35">    return new OIDCSession(</span>
-<span class="nc" id="L36">        accessToken.accessToken(),</span>
-<span class="nc" id="L37">        accessToken.refreshToken(),</span>
-<span class="nc" id="L38">        accessToken.rawIdToken(),</span>
+<span class="fc" id="L35">    return new OIDCSession(</span>
+<span class="fc" id="L36">        accessToken.accessToken(),</span>
+<span class="fc" id="L37">        accessToken.refreshToken(),</span>
+<span class="fc" id="L38">        accessToken.rawIdToken(),</span>
         accessTokenExpiresAt);
   }
 
   @Override
   public AuthContext getAuthenticatedContext(OIDCSession oidcSession) {
-<span class="nc" id="L44">    OIDCIntrospection introspection = oidcService.introspectAccessToken(oidcSession.accessToken());</span>
+<span class="fc" id="L44">    OIDCIntrospection introspection = oidcService.introspectAccessToken(oidcSession.accessToken());</span>
 
-<span class="nc bnc" id="L46" title="All 4 branches missed.">    if (introspection == null || !introspection.active()) {</span>
-<span class="nc" id="L47">      throw new UnauthenticatedSessionException();</span>
+<span class="fc bfc" id="L46" title="All 4 branches covered.">    if (introspection == null || !introspection.active()) {</span>
+<span class="fc" id="L47">      throw new UnauthenticatedSessionException();</span>
     }
 
-<span class="nc" id="L50">    Principal principal =</span>
+<span class="fc" id="L50">    Principal principal =</span>
         principalService
-<span class="nc" id="L52">            .getPrincipalByProviderAndExternalId(&quot;OIDC&quot;, introspection.uniqueSecurityName())</span>
-<span class="nc" id="L53">            .orElseThrow(UnauthenticatedSessionException::new);</span>
+<span class="fc" id="L52">            .getPrincipalByProviderAndExternalId(&quot;OIDC&quot;, introspection.uniqueSecurityName())</span>
+<span class="fc" id="L53">            .orElseThrow(UnauthenticatedSessionException::new);</span>
 
-<span class="nc" id="L55">    return new AuthContext(true, principal.userId(), introspection.uniqueSecurityName());</span>
+<span class="fc" id="L55">    return new AuthContext(true, principal.userId(), introspection.uniqueSecurityName());</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
