@@ -77,25 +77,26 @@ public class SpringSecurityConfig {
             actuatorHealth,
             oidcCallback,
             oidcRedirect,
-            &quot;/auth/**&quot;)
-<span class="fc" id="L81">        .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L82">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
-<span class="fc" id="L83">        .build();</span>
+            &quot;/auth/**&quot;,
+            &quot;/internal/**&quot;)
+<span class="fc" id="L82">        .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L83">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
+<span class="fc" id="L84">        .build();</span>
   }
 
   @Bean
   @Order(2)
   SecurityFilterChain protectedFilterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L89">    return httpSecurity</span>
-<span class="fc" id="L90">        .securityMatcher(&quot;/**&quot;)</span>
-<span class="fc" id="L91">        .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L92">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
-<span class="fc" id="L93">        .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
-<span class="fc" id="L94">        .build();</span>
+<span class="fc" id="L90">    return httpSecurity</span>
+<span class="fc" id="L91">        .securityMatcher(&quot;/**&quot;)</span>
+<span class="fc" id="L92">        .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L93">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
+<span class="fc" id="L94">        .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L95">        .build();</span>
   }
 
   Filter casTokenAuthenticationFilter() {
-<span class="fc" id="L98">    return new CASTokenAuthenticationFilter(oidcService);</span>
+<span class="fc" id="L99">    return new CASTokenAuthenticationFilter(oidcService);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
