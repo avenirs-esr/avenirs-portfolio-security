@@ -99,7 +99,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseSwaggerSchema,91,0,0,0,25,0,3,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,OidcController,0,95,1,7,0,24,1,11,0,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,InternalAuthenticationController,29,0,0,0,10,0,2,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,AuthenticationController,63,0,10,0,20,0,9,0,4,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,AuthenticationController,111,0,12,0,39,0,10,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,AccessControlRevokeResult,0,15,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,RBACResourceType,0,12,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,AccessControlGrantCommand,0,21,0,0,0,1,0,1,0,1
