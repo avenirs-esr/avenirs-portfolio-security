@@ -15,4 +15,6 @@ public interface OidcService {
   OIDCIntrospection introspectAccessToken(String token);
 
   OIDCProfile profile(String token);
+
+  String generateAuthorizationUrl(String host, String redirect);
 }

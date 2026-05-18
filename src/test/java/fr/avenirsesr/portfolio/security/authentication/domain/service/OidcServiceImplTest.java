@@ -7,6 +7,7 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessTo
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.OidcAuthenticationPort;
+import fr.avenirsesr.portfolio.security.principal.domain.exception.PrincipalNotFoundException;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.util.Map;
@@ -49,14 +50,16 @@ class OidcServiceImplTest {
     OIDCAccessToken expected =
         new OIDCAccessToken(
             "access-token", "refresh-token", "Bearer", 3600, "openid", null, Map.of(), false);
+
     when(oidcAuthenticationPort.getAccessToken(login, password)).thenReturn(Optional.of(expected));
 
     Optional<OIDCAccessToken> result = service.getAccessToken(login, password);
 
     assertTrue(result.isPresent());
     assertEquals(expected, result.get());
+
     verify(oidcAuthenticationPort).getAccessToken(login, password);
-    verifyNoMoreInteractions(oidcAuthenticationPort);
+    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
   }
 
   @Test
@@ -67,13 +70,15 @@ class OidcServiceImplTest {
     OIDCAccessToken expected =
         new OIDCAccessToken(
             "access-token", "refresh-token", "Bearer", 3600, "openid", null, Map.of(), false);
+
     when(oidcAuthenticationPort.exchangeAuthorizationCodeForToken(host, code)).thenReturn(expected);
 
     OIDCAccessToken result = service.exchangeAuthorizationCodeForToken(host, code);
 
     assertEquals(expected, result);
+
     verify(oidcAuthenticationPort).exchangeAuthorizationCodeForToken(host, code);
-    verifyNoMoreInteractions(oidcAuthenticationPort);
+    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
   }
 
   @Test
@@ -86,8 +91,25 @@ class OidcServiceImplTest {
     String result = service.generateServiceURL(host);
 
     assertEquals(expected, result);
+
     verify(oidcAuthenticationPort).generateServiceURL(host);
-    verifyNoMoreInteractions(oidcAuthenticationPort);
+    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+  }
+
+  @Test
+  void generateAuthorizationUrlDelegatesToPort() {
+    String host = "dev.avenirs-esr.fr";
+    String redirect = "/cofolio/student";
+    String expected = "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize";
+
+    when(oidcAuthenticationPort.generateAuthorizationUrl(host, redirect)).thenReturn(expected);
+
+    String result = service.generateAuthorizationUrl(host, redirect);
+
+    assertEquals(expected, result);
+
+    verify(oidcAuthenticationPort).generateAuthorizationUrl(host, redirect);
+    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
   }
 
   @Test
@@ -112,6 +134,43 @@ class OidcServiceImplTest {
   }
 
   @Test
+  void introspectAccessTokenWithInactiveTokenReturnsIntrospectionWithoutPrincipalLookup() {
+    String token = "token";
+
+    OIDCIntrospection introspection = new OIDCIntrospection(token, false, "user", null);
+
+    when(oidcAuthenticationPort.introspectAccessToken(token)).thenReturn(introspection);
+
+    OIDCIntrospection result = service.introspectAccessToken(token);
+
+    assertEquals(introspection, result);
+
+    verify(oidcAuthenticationPort).introspectAccessToken(token);
+    verifyNoInteractions(principalService);
+    verifyNoMoreInteractions(oidcAuthenticationPort);
+  }
+
+  @Test
+  void introspectAccessTokenWithActiveTokenAndMissingPrincipalThrowsPrincipalNotFoundException() {
+    String token = "token";
+
+    OIDCIntrospection introspection = new OIDCIntrospection(token, true, "unknown-user", null);
+
+    when(oidcAuthenticationPort.introspectAccessToken(token)).thenReturn(introspection);
+    when(principalService.getPrincipalByProviderAndExternalId("OIDC", "unknown-user"))
+        .thenReturn(Optional.empty());
+
+    PrincipalNotFoundException exception =
+        assertThrows(PrincipalNotFoundException.class, () -> service.introspectAccessToken(token));
+
+    assertEquals("No principal found for external id: unknown-user", exception.getMessage());
+
+    verify(oidcAuthenticationPort).introspectAccessToken(token);
+    verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "unknown-user");
+    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+  }
+
+  @Test
   void profileDelegatesToPort() {
     String token = "token";
     OIDCProfile expected = new OIDCProfile("id", "service", "first", "last", "email@d.tld");
@@ -121,7 +180,8 @@ class OidcServiceImplTest {
     OIDCProfile result = service.profile(token);
 
     assertEquals(expected, result);
+
     verify(oidcAuthenticationPort).profile(token);
-    verifyNoMoreInteractions(oidcAuthenticationPort);
+    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
   }
 }

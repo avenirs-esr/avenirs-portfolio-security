@@ -62,4 +62,9 @@ public class OidcServiceImpl implements OidcService {
   public OIDCProfile profile(String token) {
     return oidcAuthenticationPort.profile(token);
   }
+
+  @Override
+  public String generateAuthorizationUrl(String host, String redirect) {
+    return oidcAuthenticationPort.generateAuthorizationUrl(host, redirect);
+  }
 }

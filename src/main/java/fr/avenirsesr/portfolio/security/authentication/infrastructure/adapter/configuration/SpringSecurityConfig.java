@@ -77,7 +77,8 @@ public class SpringSecurityConfig {
             actuatorHealth,
             oidcCallback,
             oidcRedirect,
-            "/auth/**")
+            "/auth/**",
+            "/internal/**")
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
         .build();
