@@ -2,6 +2,7 @@
 
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.AuthContextDTO;
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.AuthContextMapper;
+import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.AuthenticationSessionReader;
@@ -21,19 +22,24 @@ public class InternalAuthenticationController {
 
   public InternalAuthenticationController(
       AuthenticationService authenticationService,
-<span class="nc" id="L24">      AuthenticationSessionReader authenticationSessionReader) {</span>
-<span class="nc" id="L25">    this.authenticationService = authenticationService;</span>
-<span class="nc" id="L26">    this.authenticationSessionReader = authenticationSessionReader;</span>
-<span class="nc" id="L27">  }</span>
+<span class="nc" id="L25">      AuthenticationSessionReader authenticationSessionReader) {</span>
+<span class="nc" id="L26">    this.authenticationService = authenticationService;</span>
+<span class="nc" id="L27">    this.authenticationSessionReader = authenticationSessionReader;</span>
+<span class="nc" id="L28">  }</span>
 
   @GetMapping(&quot;/context&quot;)
   public AuthContextDTO context(HttpServletRequest request) {
-<span class="nc" id="L31">    OIDCSession oidcSession =</span>
-        authenticationSessionReader
-<span class="nc" id="L33">            .readOidcSession(request)</span>
-<span class="nc" id="L34">            .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.UNAUTHORIZED));</span>
+    try {
+<span class="nc" id="L33">      OIDCSession oidcSession =</span>
+          authenticationSessionReader
+<span class="nc" id="L35">              .readOidcSession(request)</span>
+<span class="nc" id="L36">              .orElseThrow(UnauthenticatedSessionException::new);</span>
 
-<span class="nc" id="L36">    return AuthContextMapper.toDTO(authenticationService.getAuthenticatedContext(oidcSession));</span>
+<span class="nc" id="L38">      return AuthContextMapper.toDTO(authenticationService.getAuthenticatedContext(oidcSession));</span>
+
+<span class="nc" id="L40">    } catch (UnauthenticatedSessionException e) {</span>
+<span class="nc" id="L41">      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);</span>
+    }
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

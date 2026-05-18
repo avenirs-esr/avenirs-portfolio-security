@@ -98,7 +98,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.ad
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseOpenApiConfiguration,22,0,0,0,9,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseSwaggerSchema,91,0,0,0,25,0,3,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,OidcController,0,95,1,7,0,24,1,11,0,8
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,InternalAuthenticationController,28,0,0,0,8,0,3,0,3,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,InternalAuthenticationController,29,0,0,0,10,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,AuthenticationController,63,0,10,0,20,0,9,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,AccessControlRevokeResult,0,15,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,RBACResourceType,0,12,0,0,0,1,0,1,0,1
@@ -183,6 +183,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.applicat
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.application.adapter.dto,ExternalSkillDTO,15,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.dependency.domain.service,DependencyCheckerImpl,251,0,14,0,53,0,12,0,5,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.domain.exception,UserNotAuthorizedException,9,0,0,0,4,0,2,0,2,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.exception,UnauthenticatedSessionException,4,0,0,0,2,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.domain.model,DeletableAvenirsBaseModel,13,0,0,0,4,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.domain.model,PagedResult,9,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.domain.model,SortCriteria,55,0,6,0,12,0,6,0,3,0
@@ -213,4 +214,4 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.domain.except
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.application.adapter.exception,BaseRestExceptionHandler,89,0,0,0,23,0,8,0,8,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.validation.domain.utils,FieldValidationUtils,100,0,24,0,29,0,17,0,5,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.service,OidcServiceImpl,15,61,1,1,4,15,3,6,2,6
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.service,AuthenticationServiceImpl,78,0,4,0,18,0,7,0,5,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.service,AuthenticationServiceImpl,72,0,4,0,18,0,6,0,4,0
