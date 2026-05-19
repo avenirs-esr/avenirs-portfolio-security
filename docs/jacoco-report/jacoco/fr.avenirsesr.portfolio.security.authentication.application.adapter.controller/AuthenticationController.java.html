@@ -4,8 +4,10 @@ import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeHost;
 import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeRelativePath;
 
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
+import fr.avenirsesr.portfolio.security.authentication.domain.model.PkceChallenge;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.session.SessionAttributes;
+import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.utils.PkceUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -35,23 +37,27 @@ public class AuthenticationController {
 
   private final AuthenticationService authenticationService;
 
-<span class="nc" id="L38">  public AuthenticationController(AuthenticationService authenticationService) {</span>
-<span class="nc" id="L39">    this.authenticationService = authenticationService;</span>
-<span class="nc" id="L40">  }</span>
+<span class="nc" id="L40">  public AuthenticationController(AuthenticationService authenticationService) {</span>
+<span class="nc" id="L41">    this.authenticationService = authenticationService;</span>
+<span class="nc" id="L42">  }</span>
 
   @GetMapping(&quot;/login&quot;)
   public void login(
       @RequestHeader(value = &quot;x-forwarded-host&quot;, required = false) String host,
       @RequestParam(value = &quot;redirect&quot;, required = false) String redirect,
+      HttpSession session,
       HttpServletResponse response)
       throws IOException {
-<span class="nc" id="L48">    String safeRedirect = toSafeRelativePath(redirect, &quot;/cofolio/student&quot;);</span>
+<span class="nc" id="L51">    String safeRedirect = toSafeRelativePath(redirect, &quot;/cofolio/student&quot;);</span>
 
-<span class="nc" id="L50">    String authorizeUrl =</span>
-<span class="nc" id="L51">        authenticationService.generateAuthorizationUrl(toSafeHost(host), safeRedirect);</span>
+<span class="nc" id="L53">    PkceChallenge pkce = PkceUtils.generate();</span>
+<span class="nc" id="L54">    session.setAttribute(SessionAttributes.PKCE_CODE_VERIFIER, pkce.verifier());</span>
 
-<span class="nc" id="L53">    response.sendRedirect(authorizeUrl);</span>
-<span class="nc" id="L54">  }</span>
+<span class="nc" id="L56">    String authorizeUrl =</span>
+<span class="nc" id="L57">        authenticationService.generateAuthorizationUrl(host, safeRedirect, pkce.challenge());</span>
+
+<span class="nc" id="L59">    response.sendRedirect(authorizeUrl);</span>
+<span class="nc" id="L60">  }</span>
 
   @GetMapping(&quot;/callback&quot;)
   public void callback(
@@ -61,47 +67,56 @@ public class AuthenticationController {
       HttpSession session,
       HttpServletResponse response)
       throws IOException {
-<span class="nc bnc" id="L64" title="All 4 branches missed.">    if (code == null || code.isBlank()) {</span>
-<span class="nc" id="L65">      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, &quot;Missing authorization code&quot;);</span>
-<span class="nc" id="L66">      return;</span>
+<span class="nc bnc" id="L70" title="All 4 branches missed.">    if (code == null || code.isBlank()) {</span>
+<span class="nc" id="L71">      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, &quot;Missing authorization code&quot;);</span>
+<span class="nc" id="L72">      return;</span>
     }
 
-<span class="nc" id="L69">    OIDCSession oidcSession =</span>
-<span class="nc" id="L70">        authenticationService.createSessionFromAuthorizationCode(toSafeHost(host), code);</span>
+<span class="nc" id="L75">    String codeVerifier = (String) session.getAttribute(SessionAttributes.PKCE_CODE_VERIFIER);</span>
 
-<span class="nc" id="L72">    session.setAttribute(SessionAttributes.OIDC_SESSION, oidcSession);</span>
+<span class="nc bnc" id="L77" title="All 4 branches missed.">    if (codeVerifier == null || codeVerifier.isBlank()) {</span>
+<span class="nc" id="L78">      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, &quot;Missing PKCE code verifier&quot;);</span>
+<span class="nc" id="L79">      return;</span>
+    }
 
-<span class="nc" id="L74">    String safeRedirect = toSafeRelativePath(state, &quot;/cofolio/student&quot;);</span>
-<span class="nc" id="L75">    response.sendRedirect(&quot;https://&quot; + (toSafeHost(host)) + safeRedirect);</span>
-<span class="nc" id="L76">  }</span>
+<span class="nc" id="L82">    session.removeAttribute(SessionAttributes.PKCE_CODE_VERIFIER);</span>
+
+<span class="nc" id="L84">    OIDCSession oidcSession =</span>
+<span class="nc" id="L85">        authenticationService.createSessionFromAuthorizationCode(host, code, codeVerifier);</span>
+
+<span class="nc" id="L87">    session.setAttribute(SessionAttributes.OIDC_SESSION, oidcSession);</span>
+
+<span class="nc" id="L89">    String safeRedirect = toSafeRelativePath(state, &quot;/cofolio/student&quot;);</span>
+<span class="nc" id="L90">    response.sendRedirect(&quot;https://&quot; + (toSafeHost(host)) + safeRedirect);</span>
+<span class="nc" id="L91">  }</span>
 
   @GetMapping(&quot;/logout&quot;)
   public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-<span class="nc" id="L80">    HttpSession session = request.getSession(false);</span>
+<span class="nc" id="L95">    HttpSession session = request.getSession(false);</span>
 
-<span class="nc bnc" id="L82" title="All 2 branches missed.">    if (session != null) {</span>
-<span class="nc" id="L83">      session.invalidate();</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">    if (session != null) {</span>
+<span class="nc" id="L98">      session.invalidate();</span>
     }
 
-<span class="nc" id="L86">    ResponseCookie sessionCookie =</span>
-<span class="nc" id="L87">        ResponseCookie.from(sessionCookieName, &quot;&quot;)</span>
-<span class="nc" id="L88">            .path(&quot;/&quot;)</span>
-<span class="nc" id="L89">            .httpOnly(true)</span>
-<span class="nc" id="L90">            .secure(true)</span>
-<span class="nc" id="L91">            .sameSite(&quot;Lax&quot;)</span>
-<span class="nc" id="L92">            .maxAge(0)</span>
-<span class="nc" id="L93">            .build();</span>
+<span class="nc" id="L101">    ResponseCookie sessionCookie =</span>
+<span class="nc" id="L102">        ResponseCookie.from(sessionCookieName, &quot;&quot;)</span>
+<span class="nc" id="L103">            .path(&quot;/&quot;)</span>
+<span class="nc" id="L104">            .httpOnly(true)</span>
+<span class="nc" id="L105">            .secure(true)</span>
+<span class="nc" id="L106">            .sameSite(&quot;Lax&quot;)</span>
+<span class="nc" id="L107">            .maxAge(0)</span>
+<span class="nc" id="L108">            .build();</span>
 
-<span class="nc" id="L95">    response.addHeader(HttpHeaders.SET_COOKIE, sessionCookie.toString());</span>
+<span class="nc" id="L110">    response.addHeader(HttpHeaders.SET_COOKIE, sessionCookie.toString());</span>
 
-<span class="nc" id="L97">    String logoutRedirectUrl =</span>
-<span class="nc" id="L98">        UriComponentsBuilder.fromUriString(casLogoutUrl)</span>
-<span class="nc" id="L99">            .queryParam(&quot;service&quot;, logoutDefaultService)</span>
-<span class="nc" id="L100">            .build()</span>
-<span class="nc" id="L101">            .encode()</span>
-<span class="nc" id="L102">            .toUriString();</span>
+<span class="nc" id="L112">    String logoutRedirectUrl =</span>
+<span class="nc" id="L113">        UriComponentsBuilder.fromUriString(casLogoutUrl)</span>
+<span class="nc" id="L114">            .queryParam(&quot;service&quot;, logoutDefaultService)</span>
+<span class="nc" id="L115">            .build()</span>
+<span class="nc" id="L116">            .encode()</span>
+<span class="nc" id="L117">            .toUriString();</span>
 
-<span class="nc" id="L104">    response.sendRedirect(logoutRedirectUrl);</span>
-<span class="nc" id="L105">  }</span>
+<span class="nc" id="L119">    response.sendRedirect(logoutRedirectUrl);</span>
+<span class="nc" id="L120">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

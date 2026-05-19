@@ -18,6 +18,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.configuration.domain.m
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.delegate,SecurityDelegate,0,19,0,4,0,5,0,4,0,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.infrastructure.adapter.filter,LanguageFilterSupplier,14,0,2,0,5,0,3,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.infrastructure.adapter.filter,LanguageFilterAspect,10,0,0,0,3,0,1,0,1,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.utils,PkceUtils,31,0,0,0,8,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model,AvenirsBaseEntity,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model,DeletableAvenirsBaseEntity,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model,TranslatableEntity,8,0,0,0,2,0,1,0,1,0
@@ -27,7 +28,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration,SeedingHealthIndicator,52,0,8,0,12,0,6,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration,SharedDataGeneratorConfig,13,0,0,0,3,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.utils,FileReader,70,0,2,0,16,0,4,0,3,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.common.utils,RedirectUtils,38,0,12,0,10,0,10,0,4,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.common.utils,RedirectUtils,27,11,10,2,8,2,8,2,2,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto,RoleResponseDTO,12,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter,FakeExternalSource,51,0,4,0,9,0,6,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter,FakePeriod,241,0,10,0,55,0,17,0,12,0
@@ -45,7 +46,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastruc
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.configuration,StructureServiceConfig,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,AuthenticationSessionReader,24,0,4,0,7,0,3,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,JWTService,128,275,8,22,38,66,6,16,0,7
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,OIDCClientOidcAuthenticationService,203,378,12,12,36,93,10,16,1,13
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,OIDCClientOidcAuthenticationService,153,465,14,12,21,113,10,17,0,14
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.configuration,UserServiceConfig,7,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCProfileMapper,4,49,2,2,2,15,2,2,0,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCIntrospectionMapper,27,13,3,1,8,3,3,1,1,1
@@ -86,6 +87,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.ad
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository,GenericTranslatableJpaRepositoryAdapter,69,0,2,0,13,0,3,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.model,OIDCProfile,0,18,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.model,OIDCSession,0,15,0,0,0,1,0,1,0,1
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.model,PkceChallenge,9,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.model,OIDCAccessToken,0,27,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.model,AuthContext,0,12,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.model,OIDCIntrospection,0,15,0,0,0,1,0,1,0,1
@@ -97,9 +99,9 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.domain,FetchGraph
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter,EntityGrapher,259,0,19,0,53,0,21,0,10,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseOpenApiConfiguration,22,0,0,0,9,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseSwaggerSchema,91,0,0,0,25,0,3,0,3,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,OidcController,0,95,1,7,0,24,1,11,0,8
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,OidcController,0,114,3,11,0,27,3,12,0,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,InternalAuthenticationController,29,0,0,0,10,0,2,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,AuthenticationController,102,0,6,0,37,0,7,0,4,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,AuthenticationController,128,0,10,0,44,0,9,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,AccessControlRevokeResult,0,15,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,RBACResourceType,0,12,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,AccessControlGrantCommand,0,21,0,0,0,1,0,1,0,1
@@ -213,5 +215,5 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.configuration.domain.e
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.domain.exception,LanguageException,9,0,0,0,4,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.application.adapter.exception,BaseRestExceptionHandler,89,0,0,0,23,0,8,0,8,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.validation.domain.utils,FieldValidationUtils,100,0,24,0,29,0,17,0,5,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.service,OidcServiceImpl,0,76,0,2,0,19,0,9,0,8
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.service,AuthenticationServiceImpl,0,72,0,4,0,18,0,6,0,4
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.service,OidcServiceImpl,0,78,0,2,0,19,0,9,0,8
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.service,AuthenticationServiceImpl,0,74,0,4,0,19,0,6,0,4

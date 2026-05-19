@@ -22,37 +22,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 <span class="fc" id="L22">  }</span>
 
   @Override
-  public String generateAuthorizationUrl(String host, String redirect) {
-<span class="fc" id="L26">    return oidcService.generateAuthorizationUrl(host, redirect);</span>
+  public String generateAuthorizationUrl(String host, String redirect, String codeChallenge) {
+<span class="fc" id="L26">    return oidcService.generateAuthorizationUrl(host, redirect, codeChallenge);</span>
   }
 
   @Override
-  public OIDCSession createSessionFromAuthorizationCode(String host, String code) {
-<span class="fc" id="L31">    OIDCAccessToken accessToken = oidcService.exchangeAuthorizationCodeForToken(host, code);</span>
+  public OIDCSession createSessionFromAuthorizationCode(
+      String host, String code, String codeVerifier) {
+<span class="fc" id="L32">    OIDCAccessToken accessToken =</span>
+<span class="fc" id="L33">        oidcService.exchangeAuthorizationCodeForToken(host, code, codeVerifier);</span>
 
-<span class="fc" id="L33">    Instant accessTokenExpiresAt = Instant.now().plusSeconds(accessToken.expiresIn());</span>
+<span class="fc" id="L35">    Instant accessTokenExpiresAt = Instant.now().plusSeconds(accessToken.expiresIn());</span>
 
-<span class="fc" id="L35">    return new OIDCSession(</span>
-<span class="fc" id="L36">        accessToken.accessToken(),</span>
-<span class="fc" id="L37">        accessToken.refreshToken(),</span>
-<span class="fc" id="L38">        accessToken.rawIdToken(),</span>
+<span class="fc" id="L37">    return new OIDCSession(</span>
+<span class="fc" id="L38">        accessToken.accessToken(),</span>
+<span class="fc" id="L39">        accessToken.refreshToken(),</span>
+<span class="fc" id="L40">        accessToken.rawIdToken(),</span>
         accessTokenExpiresAt);
   }
 
   @Override
   public AuthContext getAuthenticatedContext(OIDCSession oidcSession) {
-<span class="fc" id="L44">    OIDCIntrospection introspection = oidcService.introspectAccessToken(oidcSession.accessToken());</span>
+<span class="fc" id="L46">    OIDCIntrospection introspection = oidcService.introspectAccessToken(oidcSession.accessToken());</span>
 
-<span class="fc bfc" id="L46" title="All 4 branches covered.">    if (introspection == null || !introspection.active()) {</span>
-<span class="fc" id="L47">      throw new UnauthenticatedSessionException();</span>
+<span class="fc bfc" id="L48" title="All 4 branches covered.">    if (introspection == null || !introspection.active()) {</span>
+<span class="fc" id="L49">      throw new UnauthenticatedSessionException();</span>
     }
 
-<span class="fc" id="L50">    Principal principal =</span>
+<span class="fc" id="L52">    Principal principal =</span>
         principalService
-<span class="fc" id="L52">            .getPrincipalByProviderAndExternalId(&quot;OIDC&quot;, introspection.uniqueSecurityName())</span>
-<span class="fc" id="L53">            .orElseThrow(UnauthenticatedSessionException::new);</span>
+<span class="fc" id="L54">            .getPrincipalByProviderAndExternalId(&quot;OIDC&quot;, introspection.uniqueSecurityName())</span>
+<span class="fc" id="L55">            .orElseThrow(UnauthenticatedSessionException::new);</span>
 
-<span class="fc" id="L55">    return new AuthContext(true, principal.userId(), introspection.uniqueSecurityName());</span>
+<span class="fc" id="L57">    return new AuthContext(true, principal.userId(), introspection.uniqueSecurityName());</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

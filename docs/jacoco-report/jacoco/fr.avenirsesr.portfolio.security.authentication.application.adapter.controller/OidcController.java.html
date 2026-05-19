@@ -62,22 +62,31 @@ public class OidcController {
    *
    * @param host The header used to retrieve the current host. This is used to determine the end
    *     point from the current request.
-   * @param response The response instance used to redirect to the authorize end point.
    * @param code The session code used to issue an access token.
+   * @param codeVerifier The PKCE code verifier used to issue an access token.
    * @throws IOException If an input or output exception occurs.
    */
   @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
   @GetMapping(&quot;${avenirs.authentication.oidc.callback}&quot;)
   public ResponseEntity&lt;OIDCAccessTokenResponse&gt; oidcCallback(
       @RequestHeader(value = &quot;x-forwarded-host&quot;, required = false) String host,
-      HttpServletResponse response,
-      @RequestParam(value = &quot;code&quot;, required = false) String code)
+      @RequestParam(value = &quot;code&quot;, required = false) String code,
+      @RequestParam(value = &quot;code_verifier&quot;, required = false) String codeVerifier)
       throws IOException {
 <span class="fc" id="L76">    log.trace(&quot;oidcCallback&quot;);</span>
-<span class="fc" id="L77">    OIDCAccessToken accessToken =</span>
-<span class="fc" id="L78">        this.oidcService.exchangeAuthorizationCodeForToken(</span>
-<span class="fc bfc" id="L79" title="All 2 branches covered.">            (host == null ? &quot;localhost&quot; : host), code);</span>
-<span class="fc" id="L80">    return ResponseEntity.ok(OIDCAccessTokenMapper.fromDomain(accessToken));</span>
+
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">    if (code == null || code.isBlank()) {</span>
+<span class="fc" id="L79">      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Missing authorization code&quot;);</span>
+    }
+
+<span class="pc bpc" id="L82" title="1 of 4 branches missed.">    if (codeVerifier == null || codeVerifier.isBlank()) {</span>
+<span class="fc" id="L83">      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Missing PKCE code verifier&quot;);</span>
+    }
+
+<span class="fc" id="L86">    OIDCAccessToken accessToken =</span>
+<span class="fc" id="L87">        this.oidcService.exchangeAuthorizationCodeForToken(host, code, codeVerifier);</span>
+
+<span class="fc" id="L89">    return ResponseEntity.ok(OIDCAccessTokenMapper.fromDomain(accessToken));</span>
   }
 
   /**
@@ -93,9 +102,9 @@ public class OidcController {
       @RequestHeader(value = &quot;x-forwarded-host&quot;, required = false) String host,
       HttpServletResponse response)
       throws IOException {
-<span class="fc" id="L96">    log.trace(&quot;redirect&quot;);</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">    response.sendRedirect(this.oidcService.generateServiceURL(host == null ? &quot;localhost&quot; : host));</span>
-<span class="fc" id="L98">  }</span>
+<span class="fc" id="L105">    log.trace(&quot;redirect&quot;);</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">    response.sendRedirect(this.oidcService.generateServiceURL(host == null ? &quot;localhost&quot; : host));</span>
+<span class="fc" id="L107">  }</span>
 
   /**
    * Access token introspection end point.
@@ -106,13 +115,13 @@ public class OidcController {
   @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
   @PostMapping(&quot;${avenirs.authentication.oidc.callback.profile}&quot;)
   public OIDCProfileResponse profile(@RequestHeader(value = &quot;x-authorization&quot;) String token) {
-<span class="fc" id="L109">    OIDCIntrospection introspection = this.oidcService.introspectAccessToken(token);</span>
+<span class="fc" id="L118">    OIDCIntrospection introspection = this.oidcService.introspectAccessToken(token);</span>
 
-<span class="pc bpc" id="L111" title="1 of 4 branches missed.">    if (introspection != null &amp;&amp; introspection.active()) {</span>
-<span class="fc" id="L112">      OIDCProfile profile = this.oidcService.profile(token);</span>
-<span class="fc" id="L113">      return OIDCProfileMapper.fromDomain(profile);</span>
+<span class="pc bpc" id="L120" title="1 of 4 branches missed.">    if (introspection != null &amp;&amp; introspection.active()) {</span>
+<span class="fc" id="L121">      OIDCProfile profile = this.oidcService.profile(token);</span>
+<span class="fc" id="L122">      return OIDCProfileMapper.fromDomain(profile);</span>
     }
-<span class="fc" id="L115">    throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
+<span class="fc" id="L124">    throw new ResponseStatusException(HttpStatus.FORBIDDEN);</span>
   }
 
   /**
@@ -124,7 +133,7 @@ public class OidcController {
   @SuppressWarnings(&quot;SpringOmittedPathVariableParameterInspection&quot;)
   @PostMapping(&quot;${avenirs.authentication.oidc.callback.introspect}&quot;)
   public IntrospectResponseDTO introspect(@RequestHeader(value = &quot;x-authorization&quot;) String token) {
-<span class="fc" id="L127">    return IntrospectResponseMapper.toDTO(this.oidcService.introspectAccessToken(token));</span>
+<span class="fc" id="L136">    return IntrospectResponseMapper.toDTO(this.oidcService.introspectAccessToken(token));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

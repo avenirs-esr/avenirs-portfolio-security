@@ -27,11 +27,11 @@ public final class RedirectUtils {
   }
 
   public static String toSafeHost(String host) {
-<span class="nc" id="L30">    return toSafeHost(host, DEFAULT_HOST);</span>
+<span class="fc" id="L30">    return toSafeHost(host, DEFAULT_HOST);</span>
   }
 
   public static String toSafeHost(String host, String fallback) {
-<span class="nc bnc" id="L34" title="All 4 branches missed.">    return host == null || host.isBlank() ? fallback : host;</span>
+<span class="pc bpc" id="L34" title="2 of 4 branches missed.">    return host == null || host.isBlank() ? fallback : host;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
