@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACContext;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACContextRepository;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -35,113 +37,252 @@ class RBACContextServiceImplTest {
     service = new RBACContextServiceImpl(contextRepository);
   }
 
-  @Test
-  void getAllContextsReturnsRepositoryContexts() {
-    RBACContext context = context();
+  @Nested
+  class GivenARBACContextService {
 
-    when(contextRepository.findAll()).thenReturn(List.of(context));
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a RBAC context service");
+    }
 
-    List<RBACContext> result = service.getAllContexts();
+    @Nested
+    class WhenGettingAllContexts {
 
-    assertThat(result).containsExactly(context);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting all contexts");
+      }
 
-    verify(contextRepository).findAll();
-    verifyNoMoreInteractions(contextRepository);
-  }
+      @Nested
+      class AndTheRepositoryContainsContexts {
+        private RBACContext context;
+        private List<RBACContext> result;
 
-  @Test
-  void getAllContextsReturnsEmptyListWhenRepositoryIsEmpty() {
-    when(contextRepository.findAll()).thenReturn(List.of());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository contains contexts");
 
-    List<RBACContext> result = service.getAllContexts();
+          context = context();
 
-    assertThat(result).isEmpty();
+          when(contextRepository.findAll()).thenReturn(List.of(context));
 
-    verify(contextRepository).findAll();
-    verifyNoMoreInteractions(contextRepository);
-  }
+          result = service.getAllContexts();
+        }
 
-  @Test
-  void getContextByIdReturnsContextWhenFound() {
-    RBACContext context = context();
+        @Test
+        void thenItShouldReturnRepositoryContexts() {
+          BddLogger.then("it should return repository contexts");
 
-    when(contextRepository.findById(CONTEXT_ID)).thenReturn(Optional.of(context));
+          assertThat(result).containsExactly(context);
 
-    Optional<RBACContext> result = service.getContextById(CONTEXT_ID);
+          verify(contextRepository).findAll();
+          verifyNoMoreInteractions(contextRepository);
+        }
+      }
 
-    assertTrue(result.isPresent());
-    assertEquals(context, result.orElseThrow());
+      @Nested
+      class AndTheRepositoryIsEmpty {
+        private List<RBACContext> result;
 
-    verify(contextRepository).findById(CONTEXT_ID);
-    verifyNoMoreInteractions(contextRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository is empty");
 
-  @Test
-  void getContextByIdReturnsEmptyWhenNotFound() {
-    when(contextRepository.findById(UNKNOWN_CONTEXT_ID)).thenReturn(Optional.empty());
+          when(contextRepository.findAll()).thenReturn(List.of());
 
-    Optional<RBACContext> result = service.getContextById(UNKNOWN_CONTEXT_ID);
+          result = service.getAllContexts();
+        }
 
-    assertTrue(result.isEmpty());
+        @Test
+        void thenItShouldReturnEmptyList() {
+          BddLogger.then("it should return an empty list");
 
-    verify(contextRepository).findById(UNKNOWN_CONTEXT_ID);
-    verifyNoMoreInteractions(contextRepository);
-  }
+          assertThat(result).isEmpty();
 
-  @Test
-  void createContextSavesContext() {
-    RBACContext contextToCreate = contextWithoutId();
-    RBACContext savedContext = context();
+          verify(contextRepository).findAll();
+          verifyNoMoreInteractions(contextRepository);
+        }
+      }
+    }
 
-    when(contextRepository.save(contextToCreate)).thenReturn(savedContext);
+    @Nested
+    class WhenGettingContextById {
 
-    RBACContext result = service.createContext(contextToCreate);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting context by id");
+      }
 
-    assertEquals(savedContext, result);
-    assertEquals(CONTEXT_ID, result.id());
+      @Nested
+      class AndTheContextExists {
+        private RBACContext context;
+        private Optional<RBACContext> result;
 
-    verify(contextRepository).save(contextToCreate);
-    verifyNoMoreInteractions(contextRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the context exists");
 
-  @Test
-  void updateContextSavesContextWhenExistingContextIsFound() {
-    RBACContext context = context();
+          context = context();
 
-    when(contextRepository.findById(CONTEXT_ID)).thenReturn(Optional.of(context));
-    when(contextRepository.save(context)).thenReturn(context);
+          when(contextRepository.findById(CONTEXT_ID)).thenReturn(Optional.of(context));
 
-    RBACContext result = service.updateContext(context);
+          result = service.getContextById(CONTEXT_ID);
+        }
 
-    assertEquals(context, result);
+        @Test
+        void thenItShouldReturnTheContext() {
+          BddLogger.then("it should return the context");
 
-    verify(contextRepository).findById(CONTEXT_ID);
-    verify(contextRepository).save(context);
-    verifyNoMoreInteractions(contextRepository);
-  }
+          assertTrue(result.isPresent());
+          assertEquals(context, result.orElseThrow());
 
-  @Test
-  void updateContextThrowsWhenContextDoesNotExist() {
-    RBACContext context = context();
+          verify(contextRepository).findById(CONTEXT_ID);
+          verifyNoMoreInteractions(contextRepository);
+        }
+      }
 
-    when(contextRepository.findById(CONTEXT_ID)).thenReturn(Optional.empty());
+      @Nested
+      class AndTheContextDoesNotExist {
+        private Optional<RBACContext> result;
 
-    AccessControlNotFoundException exception =
-        assertThrows(AccessControlNotFoundException.class, () -> service.updateContext(context));
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the context does not exist");
 
-    assertEquals(
-        "Context not found, ID: 00000000-0000-0000-0000-000000000001", exception.getMessage());
+          when(contextRepository.findById(UNKNOWN_CONTEXT_ID)).thenReturn(Optional.empty());
 
-    verify(contextRepository).findById(CONTEXT_ID);
-    verifyNoMoreInteractions(contextRepository);
-  }
+          result = service.getContextById(UNKNOWN_CONTEXT_ID);
+        }
 
-  @Test
-  void deleteContextDeletesById() {
-    service.deleteContext(CONTEXT_ID);
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    verify(contextRepository).deleteById(CONTEXT_ID);
-    verifyNoMoreInteractions(contextRepository);
+          assertTrue(result.isEmpty());
+
+          verify(contextRepository).findById(UNKNOWN_CONTEXT_ID);
+          verifyNoMoreInteractions(contextRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenCreatingContext {
+      private RBACContext contextToCreate;
+      private RBACContext savedContext;
+      private RBACContext result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("creating context");
+
+        contextToCreate = contextWithoutId();
+        savedContext = context();
+
+        when(contextRepository.save(contextToCreate)).thenReturn(savedContext);
+
+        result = service.createContext(contextToCreate);
+      }
+
+      @Test
+      void thenItShouldSaveContext() {
+        BddLogger.then("it should save context");
+
+        assertEquals(savedContext, result);
+        assertEquals(CONTEXT_ID, result.id());
+
+        verify(contextRepository).save(contextToCreate);
+        verifyNoMoreInteractions(contextRepository);
+      }
+    }
+
+    @Nested
+    class WhenUpdatingContext {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("updating context");
+      }
+
+      @Nested
+      class AndTheContextExists {
+        private RBACContext context;
+        private RBACContext result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the context exists");
+
+          context = context();
+
+          when(contextRepository.findById(CONTEXT_ID)).thenReturn(Optional.of(context));
+          when(contextRepository.save(context)).thenReturn(context);
+
+          result = service.updateContext(context);
+        }
+
+        @Test
+        void thenItShouldSaveContext() {
+          BddLogger.then("it should save context");
+
+          assertEquals(context, result);
+
+          verify(contextRepository).findById(CONTEXT_ID);
+          verify(contextRepository).save(context);
+          verifyNoMoreInteractions(contextRepository);
+        }
+      }
+
+      @Nested
+      class AndTheContextDoesNotExist {
+        private RBACContext context;
+        private AccessControlNotFoundException exception;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the context does not exist");
+
+          context = context();
+
+          when(contextRepository.findById(CONTEXT_ID)).thenReturn(Optional.empty());
+
+          exception =
+              assertThrows(
+                  AccessControlNotFoundException.class, () -> service.updateContext(context));
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertEquals(
+              "Context not found, ID: 00000000-0000-0000-0000-000000000001",
+              exception.getMessage());
+
+          verify(contextRepository).findById(CONTEXT_ID);
+          verifyNoMoreInteractions(contextRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenDeletingContext {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("deleting context");
+
+        service.deleteContext(CONTEXT_ID);
+      }
+
+      @Test
+      void thenItShouldDeleteById() {
+        BddLogger.then("it should delete by id");
+
+        verify(contextRepository).deleteById(CONTEXT_ID);
+        verifyNoMoreInteractions(contextRepository);
+      }
+    }
   }
 
   private RBACContext context() {

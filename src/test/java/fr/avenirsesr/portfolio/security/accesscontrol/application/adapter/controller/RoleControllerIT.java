@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
@@ -15,6 +16,8 @@ import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.se
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,56 +56,127 @@ class RoleControllerIT {
     accessTokenHelper.clear();
   }
 
-  @Test
-  void getRolesWithoutAuthenticationReturnsForbidden() throws Exception {
-    mockMvc
-        .perform(get(rolesEndpoint).accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-  }
+  @Nested
+  class GivenRolesEndpoint {
 
-  @Test
-  void getRolesWithInvalidTokenReturnsForbidden() throws Exception {
-    String token = "invalid-token";
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a roles endpoint");
+    }
 
-    when(oidcService.introspectAccessToken(token))
-        .thenReturn(new OIDCIntrospection(token, false, null, null));
+    @Nested
+    class WhenGettingRolesWithoutAuthentication {
 
-    mockMvc
-        .perform(
-            get(rolesEndpoint).accept(MediaType.APPLICATION_JSON).header("x-authorization", token))
-        .andExpect(status().isForbidden());
-  }
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting roles without authentication");
+      }
 
-  @Test
-  void getRolesWithValidTokenAndNoRoleReturnsEmptyList() throws Exception {
-    String token = mockAccessToken(USER_WITHOUT_ROLE_LOGIN, PASSWORD);
+      @Test
+      void thenItShouldReturnForbidden() throws Exception {
+        BddLogger.then("it should return FORBIDDEN");
 
-    mockMvc
-        .perform(
-            get(rolesEndpoint).accept(MediaType.APPLICATION_JSON).header("x-authorization", token))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(0)));
-  }
+        mockMvc
+            .perform(get(rolesEndpoint).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isForbidden());
+      }
+    }
 
-  @Sql(
-      scripts = {
-        "classpath:db/test-fixtures-commons.sql",
-        "classpath:db/test-fixtures-role-controller.sql"
-      })
-  @Test
-  void getRolesWithValidTokenReturnsUserRoles() throws Exception {
-    String token = mockAccessToken(USER_WITH_ROLE_LOGIN, PASSWORD);
+    @Nested
+    class WhenGettingRolesWithInvalidToken {
+      private String token;
 
-    mockMvc
-        .perform(
-            get(rolesEndpoint).accept(MediaType.APPLICATION_JSON).header("x-authorization", token))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(2)))
-        .andExpect(jsonPath("$[*].name", containsInAnyOrder("ROLE_PAIR", "ROLE_CONTRIBUTOR")))
-        .andExpect(
-            jsonPath(
-                "$[*].description",
-                containsInAnyOrder("Can give feedback", "Contributor for the resource")));
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting roles with an invalid token");
+
+        token = "invalid-token";
+
+        when(oidcService.introspectAccessToken(token))
+            .thenReturn(new OIDCIntrospection(token, false, null, null));
+      }
+
+      @Test
+      void thenItShouldReturnForbidden() throws Exception {
+        BddLogger.then("it should return FORBIDDEN");
+
+        mockMvc
+            .perform(
+                get(rolesEndpoint)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .header("x-authorization", token))
+            .andExpect(status().isForbidden());
+      }
+    }
+
+    @Nested
+    class WhenGettingRolesWithValidToken {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting roles with a valid token");
+      }
+
+      @Nested
+      class AndTheUserHasNoRole {
+        private String token;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the user has no role");
+
+          token = mockAccessToken(USER_WITHOUT_ROLE_LOGIN, PASSWORD);
+        }
+
+        @Test
+        void thenItShouldReturnEmptyList() throws Exception {
+          BddLogger.then("it should return an empty list");
+
+          mockMvc
+              .perform(
+                  get(rolesEndpoint)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .header("x-authorization", token))
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$", hasSize(0)));
+        }
+      }
+
+      @Nested
+      @Sql(
+          scripts = {
+            "classpath:db/test-fixtures-commons.sql",
+            "classpath:db/test-fixtures-role-controller.sql"
+          })
+      class AndTheUserHasRoles {
+        private String token;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the user has roles");
+
+          token = mockAccessToken(USER_WITH_ROLE_LOGIN, PASSWORD);
+        }
+
+        @Test
+        void thenItShouldReturnUserRoles() throws Exception {
+          BddLogger.then("it should return user roles");
+
+          mockMvc
+              .perform(
+                  get(rolesEndpoint)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .header("x-authorization", token))
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$", hasSize(2)))
+              .andExpect(jsonPath("$[*].name", containsInAnyOrder("ROLE_PAIR", "ROLE_CONTRIBUTOR")))
+              .andExpect(
+                  jsonPath(
+                      "$[*].description",
+                      containsInAnyOrder("Can give feedback", "Contributor for the resource")));
+        }
+      }
+    }
   }
 
   private String mockAccessToken(String login, String password) {

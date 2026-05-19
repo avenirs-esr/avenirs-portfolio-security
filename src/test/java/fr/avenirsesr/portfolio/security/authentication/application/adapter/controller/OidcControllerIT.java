@@ -6,11 +6,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.common.user.domain.port.output.BaseUserService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -78,68 +81,152 @@ class OidcControllerIT {
         () -> mockOidcServer.url("/profile?token=%s").toString());
   }
 
-  @Test
-  void oidcCallback_returnsAccessTokenPayload() throws Exception {
-    mockOidcServer.enqueue(
-        new MockResponse()
-            .setResponseCode(200)
-            .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-            .setBody(
-                "{\"access_token\":\"AT\",\"token_type\":\"Bearer\",\"expires_in\":3600,\"scope\":\"openid\",\"jwt\":false}"));
+  @Nested
+  class GivenOidcController {
 
-    mockMvc
-        .perform(
-            get("/oidc/callback").header("x-forwarded-host", "test-host.com").param("code", "code"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.access_token").value("AT"));
-  }
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("an OIDC controller");
+    }
 
-  @Test
-  void profile_activeToken_returnsProfilePayload() throws Exception {
-    mockOidcServer.enqueue(
-        new MockResponse()
-            .setResponseCode(200)
-            .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-            .setBody("{\"token\":\"AT\",\"active\":true,\"uniqueSecurityName\":\"gribonvald\"}"));
+    @Nested
+    class WhenOidcCallbackIsRequested {
 
-    mockOidcServer.enqueue(
-        new MockResponse()
-            .setResponseCode(200)
-            .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-            .setBody(
-                "{\"id\":\"id\",\"service\":\"svc\",\"attributes\":{\"given_name\":\"fn\",\"family_name\":\"ln\",\"email\":\"mail\"}}"));
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("OIDC callback is requested");
+      }
 
-    mockMvc
-        .perform(post("/oidc/callback/profile").header("x-authorization", "AT"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value("id"))
-        .andExpect(jsonPath("$.service").value("svc"))
-        .andExpect(jsonPath("$.firstName").value("fn"))
-        .andExpect(jsonPath("$.lastName").value("ln"))
-        .andExpect(jsonPath("$.email").value("mail"));
-  }
+      @Nested
+      class AndProviderReturnsAccessToken {
 
-  @Test
-  void introspect_returnsIntrospectionPayload() throws Exception {
-    mockOidcServer.enqueue(
-        new MockResponse()
-            .setResponseCode(200)
-            .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-            .setBody("{\"token\":\"AT\",\"active\":true,\"uniqueSecurityName\":\"gribonvald\"}"));
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("provider returns access token");
 
-    mockMvc
-        .perform(post("/oidc/callback/introspect").header("x-authorization", "AT"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.active").value(true))
-        .andExpect(jsonPath("$.userId").value("00000000-0000-0000-0000-000000000101"))
-        .andExpect(jsonPath("$.uniqueSecurityName").value("gribonvald"));
-  }
+          mockOidcServer.enqueue(
+              new MockResponse()
+                  .setResponseCode(200)
+                  .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                  .setBody(
+                      "{\"access_token\":\"AT\",\"token_type\":\"Bearer\",\"expires_in\":3600,\"scope\":\"openid\",\"jwt\":false}"));
+        }
 
-  @Test
-  void redirect_returns302ToServiceUrl() throws Exception {
-    mockMvc
-        .perform(get("/oidc/callback/redirect").header("x-forwarded-host", "example.com"))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(header().string("Location", "https://example.com/oidc/callback"));
+        @Test
+        void thenItShouldReturnAccessTokenPayload() throws Exception {
+          BddLogger.then("it should return access token payload");
+
+          mockMvc
+              .perform(
+                  get("/oidc/callback")
+                      .header("x-forwarded-host", "test-host.com")
+                      .param("code", "code"))
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$.access_token").value("AT"));
+        }
+      }
+    }
+
+    @Nested
+    class WhenProfileIsRequested {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("profile is requested");
+      }
+
+      @Nested
+      class AndTokenIsActive {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("token is active");
+
+          mockOidcServer.enqueue(
+              new MockResponse()
+                  .setResponseCode(200)
+                  .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                  .setBody(
+                      "{\"token\":\"AT\",\"active\":true,\"uniqueSecurityName\":\"gribonvald\"}"));
+
+          mockOidcServer.enqueue(
+              new MockResponse()
+                  .setResponseCode(200)
+                  .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                  .setBody(
+                      "{\"id\":\"id\",\"service\":\"svc\",\"attributes\":{\"given_name\":\"fn\",\"family_name\":\"ln\",\"email\":\"mail\"}}"));
+        }
+
+        @Test
+        void thenItShouldReturnProfilePayload() throws Exception {
+          BddLogger.then("it should return profile payload");
+
+          mockMvc
+              .perform(post("/oidc/callback/profile").header("x-authorization", "AT"))
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$.id").value("id"))
+              .andExpect(jsonPath("$.service").value("svc"))
+              .andExpect(jsonPath("$.firstName").value("fn"))
+              .andExpect(jsonPath("$.lastName").value("ln"))
+              .andExpect(jsonPath("$.email").value("mail"));
+        }
+      }
+    }
+
+    @Nested
+    class WhenIntrospectionIsRequested {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("introspection is requested");
+      }
+
+      @Nested
+      class AndProviderReturnsActiveToken {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("provider returns active token");
+
+          mockOidcServer.enqueue(
+              new MockResponse()
+                  .setResponseCode(200)
+                  .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                  .setBody(
+                      "{\"token\":\"AT\",\"active\":true,\"uniqueSecurityName\":\"gribonvald\"}"));
+        }
+
+        @Test
+        void thenItShouldReturnIntrospectionPayload() throws Exception {
+          BddLogger.then("it should return introspection payload");
+
+          mockMvc
+              .perform(post("/oidc/callback/introspect").header("x-authorization", "AT"))
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$.active").value(true))
+              .andExpect(jsonPath("$.userId").value("00000000-0000-0000-0000-000000000101"))
+              .andExpect(jsonPath("$.uniqueSecurityName").value("gribonvald"));
+        }
+      }
+    }
+
+    @Nested
+    class WhenRedirectIsRequested {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("redirect is requested");
+      }
+
+      @Test
+      void thenItShouldReturn302ToServiceUrl() throws Exception {
+        BddLogger.then("it should return 302 to service URL");
+
+        mockMvc
+            .perform(get("/oidc/callback/redirect").header("x-forwarded-host", "example.com"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(header().string("Location", "https://example.com/oidc/callback"));
+      }
+    }
   }
 }

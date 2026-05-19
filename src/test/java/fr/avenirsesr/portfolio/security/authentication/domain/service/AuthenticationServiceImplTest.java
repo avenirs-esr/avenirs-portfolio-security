@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.authentication.domain.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
@@ -16,163 +17,233 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class AuthenticationServiceImplTest {
+
+  private static final String HOST = "dev.avenirs-esr.fr";
+  private static final String REDIRECT = "/cofolio/student";
+  private static final String CODE = "authorization-code";
+  private static final String ACCESS_TOKEN = "access-token";
+  private static final String REFRESH_TOKEN = "refresh-token";
+  private static final String ID_TOKEN = "id-token";
+  private static final String LOGIN = "gribonvald";
 
   @Mock private OidcService oidcService;
   @Mock private PrincipalService principalService;
 
-  private AuthenticationServiceImpl service;
-  private AutoCloseable closeable;
+  @InjectMocks private AuthenticationServiceImpl service;
 
-  @BeforeEach
-  void setUp() {
-    closeable = MockitoAnnotations.openMocks(this);
-    service = new AuthenticationServiceImpl(oidcService, principalService);
-  }
+  @Nested
+  class GivenAuthenticationService {
 
-  @AfterEach
-  void tearDown() throws Exception {
-    if (closeable != null) {
-      closeable.close();
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("an authentication service");
+    }
+
+    @Nested
+    class WhenGeneratingAuthorizationUrl {
+      private String expected;
+      private String result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("generating authorization URL");
+
+        expected = "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize";
+
+        when(oidcService.generateAuthorizationUrl(HOST, REDIRECT)).thenReturn(expected);
+
+        result = service.generateAuthorizationUrl(HOST, REDIRECT);
+      }
+
+      @Test
+      void thenItShouldDelegateToOidcService() {
+        BddLogger.then("it should delegate to OIDC service");
+
+        assertEquals(expected, result);
+
+        verify(oidcService).generateAuthorizationUrl(HOST, REDIRECT);
+        verifyNoMoreInteractions(oidcService, principalService);
+      }
+    }
+
+    @Nested
+    class WhenCreatingSessionFromAuthorizationCode {
+      private OIDCSession result;
+      private Instant before;
+      private Instant after;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("creating session from authorization code");
+
+        when(oidcService.exchangeAuthorizationCodeForToken(HOST, CODE)).thenReturn(accessToken());
+
+        before = Instant.now();
+        result = service.createSessionFromAuthorizationCode(HOST, CODE);
+        after = Instant.now();
+      }
+
+      @Test
+      void thenItShouldReturnOidcSession() {
+        BddLogger.then("it should return OIDC session");
+
+        assertEquals(ACCESS_TOKEN, result.accessToken());
+        assertEquals(REFRESH_TOKEN, result.refreshToken());
+        assertEquals(ID_TOKEN, result.idToken());
+
+        assertFalse(result.accessTokenExpiresAt().isBefore(before.plusSeconds(3600)));
+        assertFalse(result.accessTokenExpiresAt().isAfter(after.plusSeconds(3600)));
+
+        verify(oidcService).exchangeAuthorizationCodeForToken(HOST, CODE);
+        verifyNoMoreInteractions(oidcService, principalService);
+      }
+    }
+
+    @Nested
+    class WhenGettingAuthenticatedContext {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting authenticated context");
+      }
+
+      @Nested
+      class AndSessionIsActiveAndPrincipalExists {
+        private UUID userId;
+        private AuthContext result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("session is active and principal exists");
+
+          userId = UUID.fromString("00000000-0000-0000-0000-000000000101");
+
+          OIDCIntrospection introspection = new OIDCIntrospection(ACCESS_TOKEN, true, LOGIN, null);
+
+          Principal principal = new Principal(null, LOGIN, "OIDC", LOGIN, userId, Set.of());
+
+          when(oidcService.introspectAccessToken(ACCESS_TOKEN)).thenReturn(introspection);
+          when(principalService.getPrincipalByProviderAndExternalId("OIDC", LOGIN))
+              .thenReturn(Optional.of(principal));
+
+          result = service.getAuthenticatedContext(oidcSession());
+        }
+
+        @Test
+        void thenItShouldReturnAuthContext() {
+          BddLogger.then("it should return auth context");
+
+          assertEquals(new AuthContext(true, userId, LOGIN), result);
+
+          verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
+          verify(principalService).getPrincipalByProviderAndExternalId("OIDC", LOGIN);
+          verifyNoMoreInteractions(oidcService, principalService);
+        }
+      }
+
+      @Nested
+      class AndIntrospectionIsNull {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("introspection is null");
+
+          when(oidcService.introspectAccessToken(ACCESS_TOKEN)).thenReturn(null);
+        }
+
+        @Test
+        void thenItShouldThrowUnauthenticatedSessionException() {
+          BddLogger.then("it should throw unauthenticated session exception");
+
+          assertThrows(
+              UnauthenticatedSessionException.class,
+              () -> service.getAuthenticatedContext(oidcSession()));
+
+          verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
+          verifyNoInteractions(principalService);
+          verifyNoMoreInteractions(oidcService);
+        }
+      }
+
+      @Nested
+      class AndTokenIsInactive {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("token is inactive");
+
+          when(oidcService.introspectAccessToken(ACCESS_TOKEN))
+              .thenReturn(new OIDCIntrospection(ACCESS_TOKEN, false, LOGIN, null));
+        }
+
+        @Test
+        void thenItShouldThrowUnauthenticatedSessionException() {
+          BddLogger.then("it should throw unauthenticated session exception");
+
+          assertThrows(
+              UnauthenticatedSessionException.class,
+              () -> service.getAuthenticatedContext(oidcSession()));
+
+          verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
+          verifyNoInteractions(principalService);
+          verifyNoMoreInteractions(oidcService);
+        }
+      }
+
+      @Nested
+      class AndPrincipalIsMissing {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("principal is missing");
+
+          when(oidcService.introspectAccessToken(ACCESS_TOKEN))
+              .thenReturn(new OIDCIntrospection(ACCESS_TOKEN, true, "unknown-user", null));
+
+          when(principalService.getPrincipalByProviderAndExternalId("OIDC", "unknown-user"))
+              .thenReturn(Optional.empty());
+        }
+
+        @Test
+        void thenItShouldThrowUnauthenticatedSessionException() {
+          BddLogger.then("it should throw unauthenticated session exception");
+
+          assertThrows(
+              UnauthenticatedSessionException.class,
+              () -> service.getAuthenticatedContext(oidcSession()));
+
+          verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
+          verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "unknown-user");
+          verifyNoMoreInteractions(oidcService, principalService);
+        }
+      }
     }
   }
 
-  @Test
-  void generateAuthorizationUrlDelegatesToOidcService() {
-    String host = "dev.avenirs-esr.fr";
-    String redirect = "/cofolio/student";
-    String expected = "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize";
-
-    when(oidcService.generateAuthorizationUrl(host, redirect)).thenReturn(expected);
-
-    String result = service.generateAuthorizationUrl(host, redirect);
-
-    assertEquals(expected, result);
-
-    verify(oidcService).generateAuthorizationUrl(host, redirect);
-    verifyNoMoreInteractions(oidcService, principalService);
+  private OIDCAccessToken accessToken() {
+    return new OIDCAccessToken(
+        ACCESS_TOKEN,
+        REFRESH_TOKEN,
+        "Bearer",
+        3600,
+        "openid profile email",
+        ID_TOKEN,
+        Map.of(),
+        false);
   }
 
-  @Test
-  void createSessionFromAuthorizationCodeReturnsOidcSession() {
-    String host = "dev.avenirs-esr.fr";
-    String code = "authorization-code";
-
-    OIDCAccessToken accessToken =
-        new OIDCAccessToken(
-            "access-token",
-            "refresh-token",
-            "Bearer",
-            3600,
-            "openid profile email",
-            "id-token",
-            Map.of(),
-            false);
-
-    when(oidcService.exchangeAuthorizationCodeForToken(host, code)).thenReturn(accessToken);
-
-    Instant before = Instant.now();
-
-    OIDCSession result = service.createSessionFromAuthorizationCode(host, code);
-
-    Instant after = Instant.now();
-
-    assertEquals("access-token", result.accessToken());
-    assertEquals("refresh-token", result.refreshToken());
-    assertEquals("id-token", result.idToken());
-
-    assertFalse(result.accessTokenExpiresAt().isBefore(before.plusSeconds(3600)));
-    assertFalse(result.accessTokenExpiresAt().isAfter(after.plusSeconds(3600)));
-
-    verify(oidcService).exchangeAuthorizationCodeForToken(host, code);
-    verifyNoMoreInteractions(oidcService, principalService);
-  }
-
-  @Test
-  void getAuthenticatedContextWithActiveSessionReturnsAuthContext() {
-    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000101");
-
-    OIDCSession oidcSession =
-        new OIDCSession(
-            "access-token", "refresh-token", "id-token", Instant.parse("2026-05-13T13:30:00Z"));
-
-    OIDCIntrospection introspection =
-        new OIDCIntrospection("access-token", true, "gribonvald", null);
-
-    Principal principal = new Principal(null, "gribonvald", "OIDC", "gribonvald", userId, Set.of());
-
-    when(oidcService.introspectAccessToken("access-token")).thenReturn(introspection);
-    when(principalService.getPrincipalByProviderAndExternalId("OIDC", "gribonvald"))
-        .thenReturn(Optional.of(principal));
-
-    AuthContext result = service.getAuthenticatedContext(oidcSession);
-
-    assertEquals(new AuthContext(true, userId, "gribonvald"), result);
-
-    verify(oidcService).introspectAccessToken("access-token");
-    verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "gribonvald");
-    verifyNoMoreInteractions(oidcService, principalService);
-  }
-
-  @Test
-  void getAuthenticatedContextWithNullIntrospectionThrowsUnauthenticatedSessionException() {
-    OIDCSession oidcSession =
-        new OIDCSession(
-            "access-token", "refresh-token", "id-token", Instant.parse("2026-05-13T13:30:00Z"));
-
-    when(oidcService.introspectAccessToken("access-token")).thenReturn(null);
-
-    assertThrows(
-        UnauthenticatedSessionException.class, () -> service.getAuthenticatedContext(oidcSession));
-
-    verify(oidcService).introspectAccessToken("access-token");
-    verifyNoInteractions(principalService);
-    verifyNoMoreInteractions(oidcService);
-  }
-
-  @Test
-  void getAuthenticatedContextWithInactiveTokenThrowsUnauthenticatedSessionException() {
-    OIDCSession oidcSession =
-        new OIDCSession(
-            "access-token", "refresh-token", "id-token", Instant.parse("2026-05-13T13:30:00Z"));
-
-    OIDCIntrospection introspection =
-        new OIDCIntrospection("access-token", false, "gribonvald", null);
-
-    when(oidcService.introspectAccessToken("access-token")).thenReturn(introspection);
-
-    assertThrows(
-        UnauthenticatedSessionException.class, () -> service.getAuthenticatedContext(oidcSession));
-
-    verify(oidcService).introspectAccessToken("access-token");
-    verifyNoInteractions(principalService);
-    verifyNoMoreInteractions(oidcService);
-  }
-
-  @Test
-  void getAuthenticatedContextWithMissingPrincipalThrowsUnauthenticatedSessionException() {
-    OIDCSession oidcSession =
-        new OIDCSession(
-            "access-token", "refresh-token", "id-token", Instant.parse("2026-05-13T13:30:00Z"));
-
-    OIDCIntrospection introspection =
-        new OIDCIntrospection("access-token", true, "unknown-user", null);
-
-    when(oidcService.introspectAccessToken("access-token")).thenReturn(introspection);
-    when(principalService.getPrincipalByProviderAndExternalId("OIDC", "unknown-user"))
-        .thenReturn(Optional.empty());
-
-    assertThrows(
-        UnauthenticatedSessionException.class, () -> service.getAuthenticatedContext(oidcSession));
-
-    verify(oidcService).introspectAccessToken("access-token");
-    verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "unknown-user");
-    verifyNoMoreInteractions(oidcService, principalService);
+  private OIDCSession oidcSession() {
+    return new OIDCSession(
+        ACCESS_TOKEN, REFRESH_TOKEN, ID_TOKEN, Instant.parse("2026-05-13T13:30:00Z"));
   }
 }

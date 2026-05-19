@@ -2,18 +2,31 @@ package fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.contr
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.*;
-import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantRequestDTO;
+import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantResponseDTO;
+import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlRevokeRequestDTO;
+import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlRevokeResponseDTO;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlGrantCommand;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlGrantResult;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlRevokeCommand;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlRevokeResult;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.input.AccessControlService;
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+@ExtendWith(MockitoExtension.class)
 class AccessControlControllerTest {
 
   private static final UUID ROLE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
@@ -23,101 +36,193 @@ class AccessControlControllerTest {
   private static final UUID ACTION_ID = UUID.fromString("00000000-0000-0000-0000-000000000003");
   private static final String LOGIN = "user1234";
 
-  @Test
-  void grantAccessSuccess() {
-    AccessControlService service = mock(AccessControlService.class);
-    AccessControlController controller = new AccessControlController(service);
+  @Mock private AccessControlService service;
 
-    when(service.grantAccess(any(AccessControlGrantCommand.class)))
-        .thenReturn(new AccessControlGrantResult(LOGIN, true, ASSIGNMENT_ID, null));
+  @InjectMocks private AccessControlController controller;
 
-    ResponseEntity<AccessControlGrantResponseDTO> response = controller.grantAccess(grantRequest());
+  @Nested
+  class GivenAccessControlController {
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertNotNull(response.getBody());
-    assertTrue(response.getBody().isGranted());
-    assertEquals(LOGIN, response.getBody().getLogin());
-    assertEquals(ASSIGNMENT_ID, response.getBody().getAssignmentId());
-  }
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("an access control controller");
+    }
 
-  @Test
-  void grantAccessWithServiceError() {
-    AccessControlService service = mock(AccessControlService.class);
-    AccessControlController controller = new AccessControlController(service);
+    @Nested
+    class WhenGrantingAccess {
 
-    when(service.grantAccess(any(AccessControlGrantCommand.class)))
-        .thenThrow(new RuntimeException("Error during access granting"));
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("granting access");
+      }
 
-    ResponseEntity<AccessControlGrantResponseDTO> response = controller.grantAccess(grantRequest());
+      @Nested
+      class AndTheServiceGrantsAccessSuccessfully {
+        private ResponseEntity<AccessControlGrantResponseDTO> response;
 
-    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    assertNotNull(response.getBody());
-    assertFalse(response.getBody().isGranted());
-    assertEquals(LOGIN, response.getBody().getLogin());
-    assertEquals("Error during access granting", response.getBody().getError());
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the service grants access successfully");
 
-  @Test
-  void revokeAccessSuccess() {
-    AccessControlService service = mock(AccessControlService.class);
-    AccessControlController controller = new AccessControlController(service);
+          when(service.grantAccess(any(AccessControlGrantCommand.class)))
+              .thenReturn(new AccessControlGrantResult(LOGIN, true, ASSIGNMENT_ID, null));
 
-    when(service.revokeAccess(any(AccessControlRevokeCommand.class)))
-        .thenReturn(new AccessControlRevokeResult(LOGIN, true, ASSIGNMENT_ID, null));
+          response = controller.grantAccess(grantRequest());
+        }
 
-    ResponseEntity<AccessControlRevokeResponseDTO> response =
-        controller.revokeAccess(revokeRequest());
+        @Test
+        void thenItShouldReturnOkWithGrantedResponse() {
+          BddLogger.then("it should return OK with granted response");
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertNotNull(response.getBody());
-    assertTrue(response.getBody().isRevoked());
-    assertEquals(LOGIN, response.getBody().getLogin());
-    assertEquals(ASSIGNMENT_ID, response.getBody().getAssignmentId());
-  }
+          assertEquals(HttpStatus.OK, response.getStatusCode());
+          assertNotNull(response.getBody());
+          assertTrue(response.getBody().isGranted());
+          assertEquals(LOGIN, response.getBody().getLogin());
+          assertEquals(ASSIGNMENT_ID, response.getBody().getAssignmentId());
+        }
+      }
 
-  @Test
-  void revokeAccessWithServiceError() {
-    AccessControlService service = mock(AccessControlService.class);
-    AccessControlController controller = new AccessControlController(service);
+      @Nested
+      class AndTheServiceThrowsAnError {
+        private ResponseEntity<AccessControlGrantResponseDTO> response;
 
-    when(service.revokeAccess(any(AccessControlRevokeCommand.class)))
-        .thenThrow(new RuntimeException("Error during access revoking"));
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the service throws an error");
 
-    ResponseEntity<AccessControlRevokeResponseDTO> response =
-        controller.revokeAccess(revokeRequest());
+          when(service.grantAccess(any(AccessControlGrantCommand.class)))
+              .thenThrow(new RuntimeException("Error during access granting"));
 
-    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    assertNotNull(response.getBody());
-    assertFalse(response.getBody().isRevoked());
-    assertEquals(LOGIN, response.getBody().getLogin());
-    assertEquals(ASSIGNMENT_ID, response.getBody().getAssignmentId());
-    assertEquals("Error during access revoking", response.getBody().getError());
-  }
+          response = controller.grantAccess(grantRequest());
+        }
 
-  @Test
-  void isAuthorizedReturnsOkWhenGranted() {
-    AccessControlService service = mock(AccessControlService.class);
-    AccessControlController controller = new AccessControlController(service);
+        @Test
+        void thenItShouldReturnForbiddenWithErrorResponse() {
+          BddLogger.then("it should return FORBIDDEN with error response");
 
-    when(service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID)).thenReturn(true);
+          assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+          assertNotNull(response.getBody());
+          assertFalse(response.getBody().isGranted());
+          assertEquals(LOGIN, response.getBody().getLogin());
+          assertEquals("Error during access granting", response.getBody().getError());
+        }
+      }
+    }
 
-    ResponseEntity<Boolean> response = controller.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+    @Nested
+    class WhenRevokingAccess {
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(true, response.getBody());
-  }
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("revoking access");
+      }
 
-  @Test
-  void isAuthorizedReturnsForbiddenWhenDenied() {
-    AccessControlService service = mock(AccessControlService.class);
-    AccessControlController controller = new AccessControlController(service);
+      @Nested
+      class AndTheServiceRevokesAccessSuccessfully {
+        private ResponseEntity<AccessControlRevokeResponseDTO> response;
 
-    when(service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID)).thenReturn(false);
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the service revokes access successfully");
 
-    ResponseEntity<Boolean> response = controller.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+          when(service.revokeAccess(any(AccessControlRevokeCommand.class)))
+              .thenReturn(new AccessControlRevokeResult(LOGIN, true, ASSIGNMENT_ID, null));
 
-    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    assertEquals(false, response.getBody());
+          response = controller.revokeAccess(revokeRequest());
+        }
+
+        @Test
+        void thenItShouldReturnOkWithRevokedResponse() {
+          BddLogger.then("it should return OK with revoked response");
+
+          assertEquals(HttpStatus.OK, response.getStatusCode());
+          assertNotNull(response.getBody());
+          assertTrue(response.getBody().isRevoked());
+          assertEquals(LOGIN, response.getBody().getLogin());
+          assertEquals(ASSIGNMENT_ID, response.getBody().getAssignmentId());
+        }
+      }
+
+      @Nested
+      class AndTheServiceThrowsAnError {
+        private ResponseEntity<AccessControlRevokeResponseDTO> response;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the service throws an error");
+
+          when(service.revokeAccess(any(AccessControlRevokeCommand.class)))
+              .thenThrow(new RuntimeException("Error during access revoking"));
+
+          response = controller.revokeAccess(revokeRequest());
+        }
+
+        @Test
+        void thenItShouldReturnForbiddenWithErrorResponse() {
+          BddLogger.then("it should return FORBIDDEN with error response");
+
+          assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+          assertNotNull(response.getBody());
+          assertFalse(response.getBody().isRevoked());
+          assertEquals(LOGIN, response.getBody().getLogin());
+          assertEquals(ASSIGNMENT_ID, response.getBody().getAssignmentId());
+          assertEquals("Error during access revoking", response.getBody().getError());
+        }
+      }
+    }
+
+    @Nested
+    class WhenCheckingAuthorization {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("checking authorization");
+      }
+
+      @Nested
+      class AndTheAccessIsGranted {
+        private ResponseEntity<Boolean> response;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the access is granted");
+
+          when(service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID)).thenReturn(true);
+
+          response = controller.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+        }
+
+        @Test
+        void thenItShouldReturnOkWithTrueBody() {
+          BddLogger.then("it should return OK with true body");
+
+          assertEquals(HttpStatus.OK, response.getStatusCode());
+          assertEquals(true, response.getBody());
+        }
+      }
+
+      @Nested
+      class AndTheAccessIsDenied {
+        private ResponseEntity<Boolean> response;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the access is denied");
+
+          when(service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID)).thenReturn(false);
+
+          response = controller.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+        }
+
+        @Test
+        void thenItShouldReturnForbiddenWithFalseBody() {
+          BddLogger.then("it should return FORBIDDEN with false body");
+
+          assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+          assertEquals(false, response.getBody());
+        }
+      }
+    }
   }
 
   private AccessControlGrantRequestDTO grantRequest() {

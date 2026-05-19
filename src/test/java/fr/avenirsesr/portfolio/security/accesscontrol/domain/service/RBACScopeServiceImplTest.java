@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACResource;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACResourceType;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -41,140 +43,311 @@ class RBACScopeServiceImplTest {
     service = new RBACScopeServiceImpl(scopeRepository);
   }
 
-  @Test
-  void getScopeByIdReturnsScopeWhenFound() {
-    RBACScope scope = scope();
+  @Nested
+  class GivenARBACScopeService {
 
-    when(scopeRepository.findById(SCOPE_ID)).thenReturn(Optional.of(scope));
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a RBAC scope service");
+    }
 
-    Optional<RBACScope> result = service.getScopeById(SCOPE_ID);
+    @Nested
+    class WhenGettingScopeById {
 
-    assertTrue(result.isPresent());
-    assertEquals(scope, result.orElseThrow());
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting scope by id");
+      }
 
-    verify(scopeRepository).findById(SCOPE_ID);
-    verifyNoMoreInteractions(scopeRepository);
-  }
+      @Nested
+      class AndTheScopeExists {
+        private RBACScope scope;
+        private Optional<RBACScope> result;
 
-  @Test
-  void getScopeByIdReturnsEmptyWhenNotFound() {
-    when(scopeRepository.findById(UNKNOWN_SCOPE_ID)).thenReturn(Optional.empty());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the scope exists");
 
-    Optional<RBACScope> result = service.getScopeById(UNKNOWN_SCOPE_ID);
+          scope = scope();
 
-    assertTrue(result.isEmpty());
+          when(scopeRepository.findById(SCOPE_ID)).thenReturn(Optional.of(scope));
 
-    verify(scopeRepository).findById(UNKNOWN_SCOPE_ID);
-    verifyNoMoreInteractions(scopeRepository);
-  }
+          result = service.getScopeById(SCOPE_ID);
+        }
 
-  @Test
-  void getScopeByNameReturnsScopeWhenFound() {
-    RBACScope scope = scope();
+        @Test
+        void thenItShouldReturnScope() {
+          BddLogger.then("it should return scope");
 
-    when(scopeRepository.findByName(SCOPE_NAME)).thenReturn(Optional.of(scope));
+          assertTrue(result.isPresent());
+          assertEquals(scope, result.orElseThrow());
 
-    Optional<RBACScope> result = service.getScopeByName(SCOPE_NAME);
+          verify(scopeRepository).findById(SCOPE_ID);
+          verifyNoMoreInteractions(scopeRepository);
+        }
+      }
 
-    assertTrue(result.isPresent());
-    assertEquals(scope, result.orElseThrow());
+      @Nested
+      class AndTheScopeDoesNotExist {
+        private Optional<RBACScope> result;
 
-    verify(scopeRepository).findByName(SCOPE_NAME);
-    verifyNoMoreInteractions(scopeRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the scope does not exist");
 
-  @Test
-  void getScopeByNameReturnsEmptyWhenNotFound() {
-    when(scopeRepository.findByName(UNKNOWN_SCOPE_NAME)).thenReturn(Optional.empty());
+          when(scopeRepository.findById(UNKNOWN_SCOPE_ID)).thenReturn(Optional.empty());
 
-    Optional<RBACScope> result = service.getScopeByName(UNKNOWN_SCOPE_NAME);
+          result = service.getScopeById(UNKNOWN_SCOPE_ID);
+        }
 
-    assertTrue(result.isEmpty());
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    verify(scopeRepository).findByName(UNKNOWN_SCOPE_NAME);
-    verifyNoMoreInteractions(scopeRepository);
-  }
+          assertTrue(result.isEmpty());
 
-  @Test
-  void getAllScopesReturnsRepositoryScopes() {
-    RBACScope scope = scope();
+          verify(scopeRepository).findById(UNKNOWN_SCOPE_ID);
+          verifyNoMoreInteractions(scopeRepository);
+        }
+      }
+    }
 
-    when(scopeRepository.findAll()).thenReturn(List.of(scope));
+    @Nested
+    class WhenGettingScopeByName {
 
-    List<RBACScope> result = service.getAllScopes();
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting scope by name");
+      }
 
-    assertThat(result).containsExactly(scope);
+      @Nested
+      class AndTheScopeExists {
+        private RBACScope scope;
+        private Optional<RBACScope> result;
 
-    verify(scopeRepository).findAll();
-    verifyNoMoreInteractions(scopeRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the scope exists");
 
-  @Test
-  void getAllScopesReturnsEmptyListWhenRepositoryIsEmpty() {
-    when(scopeRepository.findAll()).thenReturn(List.of());
+          scope = scope();
 
-    List<RBACScope> result = service.getAllScopes();
+          when(scopeRepository.findByName(SCOPE_NAME)).thenReturn(Optional.of(scope));
 
-    assertThat(result).isEmpty();
+          result = service.getScopeByName(SCOPE_NAME);
+        }
 
-    verify(scopeRepository).findAll();
-    verifyNoMoreInteractions(scopeRepository);
-  }
+        @Test
+        void thenItShouldReturnScope() {
+          BddLogger.then("it should return scope");
 
-  @Test
-  void createScopeSavesScope() {
-    RBACScope scopeToCreate = scopeWithoutId();
-    RBACScope savedScope = scope();
+          assertTrue(result.isPresent());
+          assertEquals(scope, result.orElseThrow());
 
-    when(scopeRepository.save(scopeToCreate)).thenReturn(savedScope);
+          verify(scopeRepository).findByName(SCOPE_NAME);
+          verifyNoMoreInteractions(scopeRepository);
+        }
+      }
 
-    RBACScope result = service.createScope(scopeToCreate);
+      @Nested
+      class AndTheScopeDoesNotExist {
+        private Optional<RBACScope> result;
 
-    assertEquals(savedScope, result);
-    assertEquals(SCOPE_ID, result.id());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the scope does not exist");
 
-    verify(scopeRepository).save(scopeToCreate);
-    verifyNoMoreInteractions(scopeRepository);
-  }
+          when(scopeRepository.findByName(UNKNOWN_SCOPE_NAME)).thenReturn(Optional.empty());
 
-  @Test
-  void updateScopeSavesScopeWhenExistingScopeIsFound() {
-    RBACScope scope = scope();
+          result = service.getScopeByName(UNKNOWN_SCOPE_NAME);
+        }
 
-    when(scopeRepository.findById(SCOPE_ID)).thenReturn(Optional.of(scope));
-    when(scopeRepository.save(scope)).thenReturn(scope);
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    RBACScope result = service.updateScope(scope);
+          assertTrue(result.isEmpty());
 
-    assertEquals(scope, result);
+          verify(scopeRepository).findByName(UNKNOWN_SCOPE_NAME);
+          verifyNoMoreInteractions(scopeRepository);
+        }
+      }
+    }
 
-    verify(scopeRepository).findById(SCOPE_ID);
-    verify(scopeRepository).save(scope);
-    verifyNoMoreInteractions(scopeRepository);
-  }
+    @Nested
+    class WhenGettingAllScopes {
 
-  @Test
-  void updateScopeThrowsWhenScopeDoesNotExist() {
-    RBACScope scope = scope();
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting all scopes");
+      }
 
-    when(scopeRepository.findById(SCOPE_ID)).thenReturn(Optional.empty());
+      @Nested
+      class AndTheRepositoryContainsScopes {
+        private RBACScope scope;
+        private List<RBACScope> result;
 
-    AccessControlNotFoundException exception =
-        assertThrows(AccessControlNotFoundException.class, () -> service.updateScope(scope));
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository contains scopes");
 
-    assertEquals(
-        "Scope not found, ID: 00000000-0000-0000-0000-000000000001", exception.getMessage());
+          scope = scope();
 
-    verify(scopeRepository).findById(SCOPE_ID);
-    verifyNoMoreInteractions(scopeRepository);
-  }
+          when(scopeRepository.findAll()).thenReturn(List.of(scope));
 
-  @Test
-  void deleteScopeDeletesById() {
-    service.deleteScope(SCOPE_ID);
+          result = service.getAllScopes();
+        }
 
-    verify(scopeRepository).deleteById(SCOPE_ID);
-    verifyNoMoreInteractions(scopeRepository);
+        @Test
+        void thenItShouldReturnRepositoryScopes() {
+          BddLogger.then("it should return repository scopes");
+
+          assertThat(result).containsExactly(scope);
+
+          verify(scopeRepository).findAll();
+          verifyNoMoreInteractions(scopeRepository);
+        }
+      }
+
+      @Nested
+      class AndTheRepositoryIsEmpty {
+        private List<RBACScope> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository is empty");
+
+          when(scopeRepository.findAll()).thenReturn(List.of());
+
+          result = service.getAllScopes();
+        }
+
+        @Test
+        void thenItShouldReturnEmptyList() {
+          BddLogger.then("it should return an empty list");
+
+          assertThat(result).isEmpty();
+
+          verify(scopeRepository).findAll();
+          verifyNoMoreInteractions(scopeRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenCreatingScope {
+      private RBACScope scopeToCreate;
+      private RBACScope savedScope;
+      private RBACScope result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("creating scope");
+
+        scopeToCreate = scopeWithoutId();
+        savedScope = scope();
+
+        when(scopeRepository.save(scopeToCreate)).thenReturn(savedScope);
+
+        result = service.createScope(scopeToCreate);
+      }
+
+      @Test
+      void thenItShouldSaveScope() {
+        BddLogger.then("it should save scope");
+
+        assertEquals(savedScope, result);
+        assertEquals(SCOPE_ID, result.id());
+
+        verify(scopeRepository).save(scopeToCreate);
+        verifyNoMoreInteractions(scopeRepository);
+      }
+    }
+
+    @Nested
+    class WhenUpdatingScope {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("updating scope");
+      }
+
+      @Nested
+      class AndTheScopeExists {
+        private RBACScope scope;
+        private RBACScope result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the scope exists");
+
+          scope = scope();
+
+          when(scopeRepository.findById(SCOPE_ID)).thenReturn(Optional.of(scope));
+          when(scopeRepository.save(scope)).thenReturn(scope);
+
+          result = service.updateScope(scope);
+        }
+
+        @Test
+        void thenItShouldSaveScope() {
+          BddLogger.then("it should save scope");
+
+          assertEquals(scope, result);
+
+          verify(scopeRepository).findById(SCOPE_ID);
+          verify(scopeRepository).save(scope);
+          verifyNoMoreInteractions(scopeRepository);
+        }
+      }
+
+      @Nested
+      class AndTheScopeDoesNotExist {
+        private RBACScope scope;
+        private AccessControlNotFoundException exception;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the scope does not exist");
+
+          scope = scope();
+
+          when(scopeRepository.findById(SCOPE_ID)).thenReturn(Optional.empty());
+
+          exception =
+              assertThrows(AccessControlNotFoundException.class, () -> service.updateScope(scope));
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertEquals(
+              "Scope not found, ID: 00000000-0000-0000-0000-000000000001", exception.getMessage());
+
+          verify(scopeRepository).findById(SCOPE_ID);
+          verifyNoMoreInteractions(scopeRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenDeletingScope {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("deleting scope");
+
+        service.deleteScope(SCOPE_ID);
+      }
+
+      @Test
+      void thenItShouldDeleteById() {
+        BddLogger.then("it should delete by id");
+
+        verify(scopeRepository).deleteById(SCOPE_ID);
+        verifyNoMoreInteractions(scopeRepository);
+      }
+    }
   }
 
   private RBACScope scope() {

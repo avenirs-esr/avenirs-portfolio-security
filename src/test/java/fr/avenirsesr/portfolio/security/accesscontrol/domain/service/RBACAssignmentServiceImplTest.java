@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -38,114 +40,252 @@ class RBACAssignmentServiceImplTest {
     service = new RBACAssignmentServiceImpl(assignmentRepository);
   }
 
-  @Test
-  void getAllAssignmentsReturnsRepositoryAssignments() {
-    RBACAssignment assignment = assignment();
+  @Nested
+  class GivenARBACAssignmentService {
 
-    when(assignmentRepository.findAll()).thenReturn(List.of(assignment));
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a RBAC assignment service");
+    }
 
-    List<RBACAssignment> result = service.getAllAssignments();
+    @Nested
+    class WhenGettingAllAssignments {
 
-    assertThat(result).containsExactly(assignment);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting all assignments");
+      }
 
-    verify(assignmentRepository).findAll();
-    verifyNoMoreInteractions(assignmentRepository);
-  }
+      @Nested
+      class AndTheRepositoryContainsAssignments {
+        private RBACAssignment assignment;
+        private List<RBACAssignment> result;
 
-  @Test
-  void getAllAssignmentsReturnsEmptyListWhenRepositoryIsEmpty() {
-    when(assignmentRepository.findAll()).thenReturn(List.of());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository contains assignments");
 
-    List<RBACAssignment> result = service.getAllAssignments();
+          assignment = assignment();
 
-    assertThat(result).isEmpty();
+          when(assignmentRepository.findAll()).thenReturn(List.of(assignment));
 
-    verify(assignmentRepository).findAll();
-    verifyNoMoreInteractions(assignmentRepository);
-  }
+          result = service.getAllAssignments();
+        }
 
-  @Test
-  void getAssignmentByIdReturnsAssignmentWhenFound() {
-    RBACAssignment assignment = assignment();
+        @Test
+        void thenItShouldReturnRepositoryAssignments() {
+          BddLogger.then("it should return repository assignments");
 
-    when(assignmentRepository.findById(ASSIGNMENT_ID)).thenReturn(Optional.of(assignment));
+          assertThat(result).containsExactly(assignment);
 
-    Optional<RBACAssignment> result = service.getAssignmentById(ASSIGNMENT_ID);
+          verify(assignmentRepository).findAll();
+          verifyNoMoreInteractions(assignmentRepository);
+        }
+      }
 
-    assertTrue(result.isPresent());
-    assertEquals(assignment, result.orElseThrow());
+      @Nested
+      class AndTheRepositoryIsEmpty {
+        private List<RBACAssignment> result;
 
-    verify(assignmentRepository).findById(ASSIGNMENT_ID);
-    verifyNoMoreInteractions(assignmentRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository is empty");
 
-  @Test
-  void getAssignmentByIdReturnsEmptyWhenNotFound() {
-    when(assignmentRepository.findById(UNKNOWN_ASSIGNMENT_ID)).thenReturn(Optional.empty());
+          when(assignmentRepository.findAll()).thenReturn(List.of());
 
-    Optional<RBACAssignment> result = service.getAssignmentById(UNKNOWN_ASSIGNMENT_ID);
+          result = service.getAllAssignments();
+        }
 
-    assertTrue(result.isEmpty());
+        @Test
+        void thenItShouldReturnEmptyList() {
+          BddLogger.then("it should return an empty list");
 
-    verify(assignmentRepository).findById(UNKNOWN_ASSIGNMENT_ID);
-    verifyNoMoreInteractions(assignmentRepository);
-  }
+          assertThat(result).isEmpty();
 
-  @Test
-  void createAssignmentSavesAssignment() {
-    RBACAssignment assignmentToCreate = assignmentWithoutId();
-    RBACAssignment savedAssignment = assignment();
+          verify(assignmentRepository).findAll();
+          verifyNoMoreInteractions(assignmentRepository);
+        }
+      }
+    }
 
-    when(assignmentRepository.save(assignmentToCreate)).thenReturn(savedAssignment);
+    @Nested
+    class WhenGettingAssignmentById {
 
-    RBACAssignment result = service.createAssignment(assignmentToCreate);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting an assignment by id");
+      }
 
-    assertEquals(savedAssignment, result);
-    assertEquals(ASSIGNMENT_ID, result.id());
+      @Nested
+      class AndTheAssignmentExists {
+        private RBACAssignment assignment;
+        private Optional<RBACAssignment> result;
 
-    verify(assignmentRepository).save(assignmentToCreate);
-    verifyNoMoreInteractions(assignmentRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the assignment exists");
 
-  @Test
-  void updateAssignmentSavesAssignmentWhenExistingAssignmentIsFound() {
-    RBACAssignment assignment = assignment();
+          assignment = assignment();
 
-    when(assignmentRepository.findById(ASSIGNMENT_ID)).thenReturn(Optional.of(assignment));
-    when(assignmentRepository.save(assignment)).thenReturn(assignment);
+          when(assignmentRepository.findById(ASSIGNMENT_ID)).thenReturn(Optional.of(assignment));
 
-    RBACAssignment result = service.updateAssignment(assignment);
+          result = service.getAssignmentById(ASSIGNMENT_ID);
+        }
 
-    assertEquals(assignment, result);
+        @Test
+        void thenItShouldReturnTheAssignment() {
+          BddLogger.then("it should return the assignment");
 
-    verify(assignmentRepository).findById(ASSIGNMENT_ID);
-    verify(assignmentRepository).save(assignment);
-    verifyNoMoreInteractions(assignmentRepository);
-  }
+          assertTrue(result.isPresent());
+          assertEquals(assignment, result.orElseThrow());
 
-  @Test
-  void updateAssignmentThrowsWhenAssignmentDoesNotExist() {
-    RBACAssignment assignment = assignment();
+          verify(assignmentRepository).findById(ASSIGNMENT_ID);
+          verifyNoMoreInteractions(assignmentRepository);
+        }
+      }
 
-    when(assignmentRepository.findById(ASSIGNMENT_ID)).thenReturn(Optional.empty());
+      @Nested
+      class AndTheAssignmentDoesNotExist {
+        private Optional<RBACAssignment> result;
 
-    AccessControlNotFoundException exception =
-        assertThrows(
-            AccessControlNotFoundException.class, () -> service.updateAssignment(assignment));
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the assignment does not exist");
 
-    assertEquals(
-        "Assignment not found, ID: 00000000-0000-0000-0000-000000000001", exception.getMessage());
+          when(assignmentRepository.findById(UNKNOWN_ASSIGNMENT_ID)).thenReturn(Optional.empty());
 
-    verify(assignmentRepository).findById(ASSIGNMENT_ID);
-    verifyNoMoreInteractions(assignmentRepository);
-  }
+          result = service.getAssignmentById(UNKNOWN_ASSIGNMENT_ID);
+        }
 
-  @Test
-  void deleteAssignmentDeletesById() {
-    service.deleteAssignment(ASSIGNMENT_ID);
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    verify(assignmentRepository).deleteById(ASSIGNMENT_ID);
-    verifyNoMoreInteractions(assignmentRepository);
+          assertTrue(result.isEmpty());
+
+          verify(assignmentRepository).findById(UNKNOWN_ASSIGNMENT_ID);
+          verifyNoMoreInteractions(assignmentRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenCreatingAssignment {
+      private RBACAssignment assignmentToCreate;
+      private RBACAssignment savedAssignment;
+      private RBACAssignment result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("creating an assignment");
+
+        assignmentToCreate = assignmentWithoutId();
+        savedAssignment = assignment();
+
+        when(assignmentRepository.save(assignmentToCreate)).thenReturn(savedAssignment);
+
+        result = service.createAssignment(assignmentToCreate);
+      }
+
+      @Test
+      void thenItShouldSaveTheAssignment() {
+        BddLogger.then("it should save the assignment");
+
+        assertEquals(savedAssignment, result);
+        assertEquals(ASSIGNMENT_ID, result.id());
+
+        verify(assignmentRepository).save(assignmentToCreate);
+        verifyNoMoreInteractions(assignmentRepository);
+      }
+    }
+
+    @Nested
+    class WhenUpdatingAssignment {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("updating an assignment");
+      }
+
+      @Nested
+      class AndTheAssignmentExists {
+        private RBACAssignment assignment;
+        private RBACAssignment result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the assignment exists");
+
+          assignment = assignment();
+
+          when(assignmentRepository.findById(ASSIGNMENT_ID)).thenReturn(Optional.of(assignment));
+          when(assignmentRepository.save(assignment)).thenReturn(assignment);
+
+          result = service.updateAssignment(assignment);
+        }
+
+        @Test
+        void thenItShouldSaveTheAssignment() {
+          BddLogger.then("it should save the assignment");
+
+          assertEquals(assignment, result);
+
+          verify(assignmentRepository).findById(ASSIGNMENT_ID);
+          verify(assignmentRepository).save(assignment);
+          verifyNoMoreInteractions(assignmentRepository);
+        }
+      }
+
+      @Nested
+      class AndTheAssignmentDoesNotExist {
+        private RBACAssignment assignment;
+        private AccessControlNotFoundException exception;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the assignment does not exist");
+
+          assignment = assignment();
+
+          when(assignmentRepository.findById(ASSIGNMENT_ID)).thenReturn(Optional.empty());
+
+          exception =
+              assertThrows(
+                  AccessControlNotFoundException.class, () -> service.updateAssignment(assignment));
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertEquals(
+              "Assignment not found, ID: 00000000-0000-0000-0000-000000000001",
+              exception.getMessage());
+
+          verify(assignmentRepository).findById(ASSIGNMENT_ID);
+          verifyNoMoreInteractions(assignmentRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenDeletingAssignment {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("deleting an assignment");
+
+        service.deleteAssignment(ASSIGNMENT_ID);
+      }
+
+      @Test
+      void thenItShouldDeleteById() {
+        BddLogger.then("it should delete by id");
+
+        verify(assignmentRepository).deleteById(ASSIGNMENT_ID);
+        verifyNoMoreInteractions(assignmentRepository);
+      }
+    }
   }
 
   private RBACAssignment assignment() {

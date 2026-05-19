@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.principal.domain.exception.StructureNotFoundException;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Structure;
 import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.StructureRepository;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -39,144 +41,318 @@ class StructureServiceImplTest {
     service = new StructureServiceImpl(structureRepository);
   }
 
-  @Test
-  void getStructureByIdReturnsStructureWhenFound() {
-    Structure structure = structure();
+  @Nested
+  class GivenStructureService {
 
-    when(structureRepository.findById(STRUCTURE_ID)).thenReturn(Optional.of(structure));
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a structure service");
+    }
 
-    Optional<Structure> result = service.getStructureById(STRUCTURE_ID);
+    @Nested
+    class WhenGettingStructureById {
 
-    assertTrue(result.isPresent());
-    assertEquals(structure, result.orElseThrow());
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting structure by id");
+      }
 
-    verify(structureRepository).findById(STRUCTURE_ID);
-    verifyNoMoreInteractions(structureRepository);
-  }
+      @Nested
+      class AndTheStructureExists {
+        private Structure structure;
+        private Optional<Structure> result;
 
-  @Test
-  void getStructureByIdReturnsEmptyWhenNotFound() {
-    when(structureRepository.findById(UNKNOWN_STRUCTURE_ID)).thenReturn(Optional.empty());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the structure exists");
 
-    Optional<Structure> result = service.getStructureById(UNKNOWN_STRUCTURE_ID);
+          structure = structure();
 
-    assertTrue(result.isEmpty());
+          when(structureRepository.findById(STRUCTURE_ID)).thenReturn(Optional.of(structure));
 
-    verify(structureRepository).findById(UNKNOWN_STRUCTURE_ID);
-    verifyNoMoreInteractions(structureRepository);
-  }
+          result = service.getStructureById(STRUCTURE_ID);
+        }
 
-  @Test
-  void getStructureByNameReturnsStructureWhenFound() {
-    Structure structure = structure();
+        @Test
+        void thenItShouldReturnStructure() {
+          BddLogger.then("it should return structure");
 
-    when(structureRepository.findByName(STRUCTURE_NAME)).thenReturn(Optional.of(structure));
+          assertTrue(result.isPresent());
+          assertEquals(structure, result.orElseThrow());
 
-    Optional<Structure> result = service.getStructureByName(STRUCTURE_NAME);
+          verify(structureRepository).findById(STRUCTURE_ID);
+          verifyNoMoreInteractions(structureRepository);
+        }
+      }
 
-    assertTrue(result.isPresent());
-    assertEquals(structure, result.orElseThrow());
+      @Nested
+      class AndTheStructureDoesNotExist {
+        private Optional<Structure> result;
 
-    verify(structureRepository).findByName(STRUCTURE_NAME);
-    verifyNoMoreInteractions(structureRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the structure does not exist");
 
-  @Test
-  void getStructureByNameReturnsEmptyWhenNotFound() {
-    when(structureRepository.findByName(UNKNOWN_STRUCTURE_NAME)).thenReturn(Optional.empty());
+          when(structureRepository.findById(UNKNOWN_STRUCTURE_ID)).thenReturn(Optional.empty());
 
-    Optional<Structure> result = service.getStructureByName(UNKNOWN_STRUCTURE_NAME);
+          result = service.getStructureById(UNKNOWN_STRUCTURE_ID);
+        }
 
-    assertTrue(result.isEmpty());
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    verify(structureRepository).findByName(UNKNOWN_STRUCTURE_NAME);
-    verifyNoMoreInteractions(structureRepository);
-  }
+          assertTrue(result.isEmpty());
 
-  @Test
-  void getAllStructuresReturnsRepositoryStructures() {
-    Structure structure = structure();
+          verify(structureRepository).findById(UNKNOWN_STRUCTURE_ID);
+          verifyNoMoreInteractions(structureRepository);
+        }
+      }
+    }
 
-    when(structureRepository.findAll()).thenReturn(List.of(structure));
+    @Nested
+    class WhenGettingStructureByName {
 
-    List<Structure> result = service.getAllStructures();
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting structure by name");
+      }
 
-    assertThat(result).containsExactly(structure);
+      @Nested
+      class AndTheStructureExists {
+        private Structure structure;
+        private Optional<Structure> result;
 
-    verify(structureRepository).findAll();
-    verifyNoMoreInteractions(structureRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the structure exists");
 
-  @Test
-  void getAllStructuresReturnsEmptyListWhenRepositoryIsEmpty() {
-    when(structureRepository.findAll()).thenReturn(List.of());
+          structure = structure();
 
-    List<Structure> result = service.getAllStructures();
+          when(structureRepository.findByName(STRUCTURE_NAME)).thenReturn(Optional.of(structure));
 
-    assertThat(result).isEmpty();
+          result = service.getStructureByName(STRUCTURE_NAME);
+        }
 
-    verify(structureRepository).findAll();
-    verifyNoMoreInteractions(structureRepository);
-  }
+        @Test
+        void thenItShouldReturnStructure() {
+          BddLogger.then("it should return structure");
 
-  @Test
-  void createStructureSavesStructure() {
-    Structure structureToCreate = new Structure(null, STRUCTURE_NAME, STRUCTURE_DESCRIPTION);
-    Structure savedStructure = structure();
+          assertTrue(result.isPresent());
+          assertEquals(structure, result.orElseThrow());
 
-    when(structureRepository.save(structureToCreate)).thenReturn(savedStructure);
+          verify(structureRepository).findByName(STRUCTURE_NAME);
+          verifyNoMoreInteractions(structureRepository);
+        }
+      }
 
-    Structure result = service.createStructure(structureToCreate);
+      @Nested
+      class AndTheStructureDoesNotExist {
+        private Optional<Structure> result;
 
-    assertEquals(savedStructure, result);
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the structure does not exist");
 
-    verify(structureRepository).save(structureToCreate);
-    verifyNoMoreInteractions(structureRepository);
-  }
+          when(structureRepository.findByName(UNKNOWN_STRUCTURE_NAME)).thenReturn(Optional.empty());
 
-  @Test
-  void updateStructureSavesUpdatedStructureWhenExistingStructureIsFound() {
-    Structure storedStructure = structure();
-    Structure updateRequest =
-        new Structure(STRUCTURE_ID, UPDATED_STRUCTURE_NAME, UPDATED_STRUCTURE_DESCRIPTION);
-    Structure expectedSavedStructure =
-        new Structure(STRUCTURE_ID, UPDATED_STRUCTURE_NAME, UPDATED_STRUCTURE_DESCRIPTION);
+          result = service.getStructureByName(UNKNOWN_STRUCTURE_NAME);
+        }
 
-    when(structureRepository.findById(STRUCTURE_ID)).thenReturn(Optional.of(storedStructure));
-    when(structureRepository.save(expectedSavedStructure)).thenReturn(expectedSavedStructure);
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    Structure result = service.updateStructure(updateRequest);
+          assertTrue(result.isEmpty());
 
-    assertEquals(expectedSavedStructure, result);
+          verify(structureRepository).findByName(UNKNOWN_STRUCTURE_NAME);
+          verifyNoMoreInteractions(structureRepository);
+        }
+      }
+    }
 
-    verify(structureRepository).findById(STRUCTURE_ID);
-    verify(structureRepository).save(expectedSavedStructure);
-    verifyNoMoreInteractions(structureRepository);
-  }
+    @Nested
+    class WhenGettingAllStructures {
 
-  @Test
-  void updateStructureThrowsWhenStructureDoesNotExist() {
-    Structure updateRequest =
-        new Structure(UNKNOWN_STRUCTURE_ID, UPDATED_STRUCTURE_NAME, UPDATED_STRUCTURE_DESCRIPTION);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting all structures");
+      }
 
-    when(structureRepository.findById(UNKNOWN_STRUCTURE_ID)).thenReturn(Optional.empty());
+      @Nested
+      class AndTheRepositoryContainsStructures {
+        private Structure structure;
+        private List<Structure> result;
 
-    StructureNotFoundException exception =
-        assertThrows(
-            StructureNotFoundException.class, () -> service.updateStructure(updateRequest));
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository contains structures");
 
-    assertEquals("No structure found for id : " + UNKNOWN_STRUCTURE_ID, exception.getMessage());
+          structure = structure();
 
-    verify(structureRepository).findById(UNKNOWN_STRUCTURE_ID);
-    verifyNoMoreInteractions(structureRepository);
-  }
+          when(structureRepository.findAll()).thenReturn(List.of(structure));
 
-  @Test
-  void deleteStructureDeletesById() {
-    service.deleteStructure(STRUCTURE_ID);
+          result = service.getAllStructures();
+        }
 
-    verify(structureRepository).deleteById(STRUCTURE_ID);
-    verifyNoMoreInteractions(structureRepository);
+        @Test
+        void thenItShouldReturnRepositoryStructures() {
+          BddLogger.then("it should return repository structures");
+
+          assertThat(result).containsExactly(structure);
+
+          verify(structureRepository).findAll();
+          verifyNoMoreInteractions(structureRepository);
+        }
+      }
+
+      @Nested
+      class AndTheRepositoryIsEmpty {
+        private List<Structure> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository is empty");
+
+          when(structureRepository.findAll()).thenReturn(List.of());
+
+          result = service.getAllStructures();
+        }
+
+        @Test
+        void thenItShouldReturnEmptyList() {
+          BddLogger.then("it should return an empty list");
+
+          assertThat(result).isEmpty();
+
+          verify(structureRepository).findAll();
+          verifyNoMoreInteractions(structureRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenCreatingStructure {
+      private Structure structureToCreate;
+      private Structure savedStructure;
+      private Structure result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("creating structure");
+
+        structureToCreate = new Structure(null, STRUCTURE_NAME, STRUCTURE_DESCRIPTION);
+        savedStructure = structure();
+
+        when(structureRepository.save(structureToCreate)).thenReturn(savedStructure);
+
+        result = service.createStructure(structureToCreate);
+      }
+
+      @Test
+      void thenItShouldSaveStructure() {
+        BddLogger.then("it should save structure");
+
+        assertEquals(savedStructure, result);
+
+        verify(structureRepository).save(structureToCreate);
+        verifyNoMoreInteractions(structureRepository);
+      }
+    }
+
+    @Nested
+    class WhenUpdatingStructure {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("updating structure");
+      }
+
+      @Nested
+      class AndTheStructureExists {
+        private Structure expectedSavedStructure;
+        private Structure result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the structure exists");
+
+          Structure storedStructure = structure();
+          Structure updateRequest =
+              new Structure(STRUCTURE_ID, UPDATED_STRUCTURE_NAME, UPDATED_STRUCTURE_DESCRIPTION);
+
+          expectedSavedStructure =
+              new Structure(STRUCTURE_ID, UPDATED_STRUCTURE_NAME, UPDATED_STRUCTURE_DESCRIPTION);
+
+          when(structureRepository.findById(STRUCTURE_ID)).thenReturn(Optional.of(storedStructure));
+          when(structureRepository.save(expectedSavedStructure)).thenReturn(expectedSavedStructure);
+
+          result = service.updateStructure(updateRequest);
+        }
+
+        @Test
+        void thenItShouldSaveUpdatedStructure() {
+          BddLogger.then("it should save updated structure");
+
+          assertEquals(expectedSavedStructure, result);
+
+          verify(structureRepository).findById(STRUCTURE_ID);
+          verify(structureRepository).save(expectedSavedStructure);
+          verifyNoMoreInteractions(structureRepository);
+        }
+      }
+
+      @Nested
+      class AndTheStructureDoesNotExist {
+        private Structure updateRequest;
+        private StructureNotFoundException exception;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the structure does not exist");
+
+          updateRequest =
+              new Structure(
+                  UNKNOWN_STRUCTURE_ID, UPDATED_STRUCTURE_NAME, UPDATED_STRUCTURE_DESCRIPTION);
+
+          when(structureRepository.findById(UNKNOWN_STRUCTURE_ID)).thenReturn(Optional.empty());
+
+          exception =
+              assertThrows(
+                  StructureNotFoundException.class, () -> service.updateStructure(updateRequest));
+        }
+
+        @Test
+        void thenItShouldThrowStructureNotFoundException() {
+          BddLogger.then("it should throw structure not found exception");
+
+          assertEquals(
+              "No structure found for id : " + UNKNOWN_STRUCTURE_ID, exception.getMessage());
+
+          verify(structureRepository).findById(UNKNOWN_STRUCTURE_ID);
+          verifyNoMoreInteractions(structureRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenDeletingStructure {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("deleting structure");
+
+        service.deleteStructure(STRUCTURE_ID);
+      }
+
+      @Test
+      void thenItShouldDeleteById() {
+        BddLogger.then("it should delete by id");
+
+        verify(structureRepository).deleteById(STRUCTURE_ID);
+        verifyNoMoreInteractions(structureRepository);
+      }
+    }
   }
 
   private Structure structure() {
