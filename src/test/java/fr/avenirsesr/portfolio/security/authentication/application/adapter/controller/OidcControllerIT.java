@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
       "management.actuator.health.path=/actuator/health",
       "avenirs.authentication.oidc.authorise.template.url=https://%s/cas/oidc/authorize?service=%s&code=%s",
       "avenirs.authentication.oidc.token.template.body=username=%s&password=%s",
-      "avenirs.authentication.oidc.code.exchange.template.body=redirect_uri=https://%s/oidc/callback&code=%s",
+      "avenirs.authentication.oidc.code.exchange.template.body=redirect_uri=https://%s/oidc/callback&code=%s&code_verifier=%s",
       "avenirs.authentication.service.template=https://%s/oidc/callback",
       "avenirs.authentication.oidc.client.id=client",
       "avenirs.authentication.oidc.client.secret=secret",
@@ -120,7 +120,8 @@ class OidcControllerIT {
               .perform(
                   get("/oidc/callback")
                       .header("x-forwarded-host", "test-host.com")
-                      .param("code", "code"))
+                      .param("code", "code")
+                      .param("code_verifier", "code-verifier"))
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.access_token").value("AT"));
         }

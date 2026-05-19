@@ -14,7 +14,7 @@ public interface OidcAuthenticationPort {
 
   String generateIntrospectURL(String token);
 
-  OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code);
+  OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code, String codeVerifier);
 
   OIDCProfile profile(String token);
 
@@ -22,5 +22,5 @@ public interface OidcAuthenticationPort {
 
   Optional<OIDCAccessToken> getAccessToken(String login, String password);
 
-  String generateAuthorizationUrl(String host, String redirect);
+  String generateAuthorizationUrl(String host, String redirect, String codeChallenge);
 }

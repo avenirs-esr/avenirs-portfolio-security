@@ -31,6 +31,8 @@ class AuthenticationServiceImplTest {
   private static final String HOST = "dev.avenirs-esr.fr";
   private static final String REDIRECT = "/cofolio/student";
   private static final String CODE = "authorization-code";
+  private static final String CODE_VERIFIER = "code-verifier";
+  private static final String CODE_CHALLENGE = "code-challenge";
   private static final String ACCESS_TOKEN = "access-token";
   private static final String REFRESH_TOKEN = "refresh-token";
   private static final String ID_TOKEN = "id-token";
@@ -60,9 +62,10 @@ class AuthenticationServiceImplTest {
 
         expected = "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize";
 
-        when(oidcService.generateAuthorizationUrl(HOST, REDIRECT)).thenReturn(expected);
+        when(oidcService.generateAuthorizationUrl(HOST, REDIRECT, CODE_CHALLENGE))
+            .thenReturn(expected);
 
-        result = service.generateAuthorizationUrl(HOST, REDIRECT);
+        result = service.generateAuthorizationUrl(HOST, REDIRECT, CODE_CHALLENGE);
       }
 
       @Test
@@ -71,7 +74,7 @@ class AuthenticationServiceImplTest {
 
         assertEquals(expected, result);
 
-        verify(oidcService).generateAuthorizationUrl(HOST, REDIRECT);
+        verify(oidcService).generateAuthorizationUrl(HOST, REDIRECT, CODE_CHALLENGE);
         verifyNoMoreInteractions(oidcService, principalService);
       }
     }
@@ -86,10 +89,11 @@ class AuthenticationServiceImplTest {
       void setupWhen() {
         BddLogger.when("creating session from authorization code");
 
-        when(oidcService.exchangeAuthorizationCodeForToken(HOST, CODE)).thenReturn(accessToken());
+        when(oidcService.exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER))
+            .thenReturn(accessToken());
 
         before = Instant.now();
-        result = service.createSessionFromAuthorizationCode(HOST, CODE);
+        result = service.createSessionFromAuthorizationCode(HOST, CODE, CODE_VERIFIER);
         after = Instant.now();
       }
 
@@ -104,7 +108,7 @@ class AuthenticationServiceImplTest {
         assertFalse(result.accessTokenExpiresAt().isBefore(before.plusSeconds(3600)));
         assertFalse(result.accessTokenExpiresAt().isAfter(after.plusSeconds(3600)));
 
-        verify(oidcService).exchangeAuthorizationCodeForToken(HOST, CODE);
+        verify(oidcService).exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER);
         verifyNoMoreInteractions(oidcService, principalService);
       }
     }

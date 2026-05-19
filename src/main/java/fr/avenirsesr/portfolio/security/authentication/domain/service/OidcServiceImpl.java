@@ -27,8 +27,9 @@ public class OidcServiceImpl implements OidcService {
   }
 
   @Override
-  public OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code) {
-    return oidcAuthenticationPort.exchangeAuthorizationCodeForToken(host, code);
+  public OIDCAccessToken exchangeAuthorizationCodeForToken(
+      String host, String code, String codeVerifier) {
+    return oidcAuthenticationPort.exchangeAuthorizationCodeForToken(host, code, codeVerifier);
   }
 
   @Override
@@ -64,7 +65,7 @@ public class OidcServiceImpl implements OidcService {
   }
 
   @Override
-  public String generateAuthorizationUrl(String host, String redirect) {
-    return oidcAuthenticationPort.generateAuthorizationUrl(host, redirect);
+  public String generateAuthorizationUrl(String host, String redirect, String codeChallenge) {
+    return oidcAuthenticationPort.generateAuthorizationUrl(host, redirect, codeChallenge);
   }
 }

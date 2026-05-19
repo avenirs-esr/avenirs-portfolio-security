@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -19,6 +19,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,8 +30,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 class OIDCClientOidcServiceTest {
 
   private static final String HOST = "localhost";
+  private static final String REDIRECT = "/cofolio/student";
   private static final String CODE = "code";
+  private static final String CODE_VERIFIER = "code-verifier";
+  private static final String CODE_CHALLENGE = "code-challenge";
   private static final String TOKEN = "TEST_ACCESS_TOKEN";
+
   private static final String USER_LOGIN = "deman";
   private static final String USER_PASSWORD = "password";
   private static final String USER_EMAIL = "deman@univ.fr";
@@ -39,13 +44,15 @@ class OIDCClientOidcServiceTest {
 
   private static final String CLIENT_ID = "OIDCClientId";
   private static final String CLIENT_SECRET = "OIDCClientSecret";
+  private static final String OIDC_SCOPE = "openid profile email offline_access";
+  private static final String AUTH_CALLBACK_PUBLIC_PATH = "/security/auth/callback";
 
   private static final String AUTHORISE_TEMPLATE_URL =
       "https://%s/cas/oidc/authorize?service=%s&code=%s";
   private static final String SERVICE_TEMPLATE_URL = "https://%s/oidc/callback";
   private static final String ACCESS_TOKEN_TEMPLATE_BODY = "username=%s&password=%s";
   private static final String CODE_EXCHANGE_TEMPLATE_BODY =
-      "redirect_uri=https://%s/oidc/callback&code=%s";
+      "redirect_uri=https://%s/oidc/callback&code=%s&code_verifier=%s";
 
   @Mock private JWTServicePort jwtService;
 
@@ -56,68 +63,11 @@ class OIDCClientOidcServiceTest {
   @BeforeEach
   void setUp() throws Exception {
     mockWebServer = new MockWebServer();
-    mockWebServer.setDispatcher(
-        new Dispatcher() {
-          @NotNull
-          @Override
-          public MockResponse dispatch(@NotNull RecordedRequest request) {
-            String path = request.getPath();
-            if (path == null) {
-              return new MockResponse().setResponseCode(404);
-            }
-            if (path.startsWith("/cas/oidc/accessToken")) {
-              String body = request.getBody().readUtf8();
-              if (body.contains("password=") && body.contains("false")) {
-                return new MockResponse().setResponseCode(401);
-              }
-              if (body.contains("password=") && body.contains("null-response")) {
-                return new MockResponse()
-                    .setResponseCode(200)
-                    .addHeader("Content-Type", "application/json")
-                    .setBody("");
-              }
-              return new MockResponse()
-                  .setResponseCode(200)
-                  .addHeader("Content-Type", "application/json")
-                  .setBody(
-                      "{\"access_token\":\""
-                          + TOKEN
-                          + "\",\"token_type\":\"Bearer\",\"expires_in\":3600,\"scope\":\"openid\"}");
-            }
-            if (path.startsWith("/cas/oidc/profile")) {
-              return new MockResponse()
-                  .setResponseCode(200)
-                  .addHeader("Content-Type", "application/json")
-                  .setBody(
-                      "{\"id\":\""
-                          + USER_LOGIN
-                          + "\",\"service\":\""
-                          + CLIENT_ID
-                          + "\",\"attributes\":{\"given_name\":\""
-                          + USER_FIRST_NAME
-                          + "\",\"family_name\":\""
-                          + USER_LAST_NAME
-                          + "\",\"email\":\""
-                          + USER_EMAIL
-                          + "\"}}");
-            }
-            if (path.startsWith("/cas/oidc/introspect")) {
-              return new MockResponse()
-                  .setResponseCode(200)
-                  .addHeader("Content-Type", "application/json")
-                  .setBody(
-                      "{\"token\":\""
-                          + TOKEN
-                          + "\",\"active\":true,\"uniqueSecurityName\":\""
-                          + USER_LOGIN
-                          + "\"}");
-            }
-            return new MockResponse().setResponseCode(404);
-          }
-        });
+    mockWebServer.setDispatcher(dispatcher());
     mockWebServer.start();
 
     authenticationService = new OIDCClientOidcAuthenticationService(jwtService);
+
     ReflectionTestUtils.setField(
         authenticationService, "oidcAuthorizeTemplate", AUTHORISE_TEMPLATE_URL);
     ReflectionTestUtils.setField(
@@ -140,6 +90,11 @@ class OIDCClientOidcServiceTest {
     ReflectionTestUtils.setField(authenticationService, "clientId", CLIENT_ID);
     ReflectionTestUtils.setField(authenticationService, "clientSecret", CLIENT_SECRET);
     ReflectionTestUtils.setField(authenticationService, "jwtAccessToken", false);
+    ReflectionTestUtils.setField(
+        authenticationService, "oidcAuthorizeUrl", "https://" + HOST + "/cas/oidc/oidcAuthorize");
+    ReflectionTestUtils.setField(authenticationService, "oidcScope", OIDC_SCOPE);
+    ReflectionTestUtils.setField(
+        authenticationService, "authCallbackPublicPath", AUTH_CALLBACK_PUBLIC_PATH);
   }
 
   @AfterEach
@@ -149,185 +104,346 @@ class OIDCClientOidcServiceTest {
     }
   }
 
-  @Test
-  void generateAuthorizeURL() {
-    BddLogger.given("an OIDC configuration and an expected authorize URL");
-    BddLogger.when("generating the authorize URL");
-    BddLogger.then("it should match the expected URL");
-    assertEquals(
-        String.format(AUTHORISE_TEMPLATE_URL, HOST, HOST, CODE),
-        authenticationService.generateAuthorizeURL(HOST, CODE),
-        "Generated authorize URL.");
-  }
+  @Nested
+  class GivenOidcAuthenticationService {
 
-  @Test
-  void generateServiceURL() {
-    BddLogger.given("an OIDC host and an expected service URL");
-    BddLogger.when("generating the service URL");
-    BddLogger.then("it should match the expected URL");
-    assertEquals(
-        String.format(SERVICE_TEMPLATE_URL, HOST),
-        authenticationService.generateServiceURL(HOST),
-        "Generated service URL.");
-  }
-
-  @Test
-  void generateCodeExchangeBody() {
-    BddLogger.given("a code exchange template body and an expected formatted body");
-    BddLogger.when("generating the code exchange body");
-    BddLogger.then("it should match the expected formatted body");
-    assertEquals(
-        String.format(CODE_EXCHANGE_TEMPLATE_BODY, HOST, CODE),
-        authenticationService.generateCodeExchangeBody(HOST, CODE));
-  }
-
-  @Test
-  void exchangeAuthorizationCodeForToken() {
-    BddLogger.given("a running mock OIDC token endpoint");
-    BddLogger.when("exchanging an authorization code for a token");
-    OIDCAccessToken response = authenticationService.exchangeAuthorizationCodeForToken(HOST, CODE);
-
-    BddLogger.then("it should return an access token response");
-    assertNotNull(response);
-    assertEquals(TOKEN, response.accessToken());
-  }
-
-  @Test
-  void generateProfileURL() {
-    BddLogger.given("a running mock OIDC profile endpoint");
-    String expectedProfileURL =
-        "http://localhost:" + mockWebServer.getPort() + "/cas/oidc/profile?token=" + TOKEN;
-
-    BddLogger.when("generating the profile URL");
-    BddLogger.then("it should match the expected profile URL");
-    assertEquals(
-        expectedProfileURL,
-        authenticationService.generateProfileURL(TOKEN),
-        "Generated profile URL.");
-  }
-
-  @Test
-  void generateIntrospectURL() {
-    BddLogger.given("a running mock OIDC introspect endpoint");
-    String expectedIntrospectURL =
-        "http://localhost:" + mockWebServer.getPort() + "/cas/oidc/introspect?token=" + TOKEN;
-
-    BddLogger.when("generating the introspect URL");
-    BddLogger.then("it should match the expected introspect URL");
-    assertEquals(
-        expectedIntrospectURL,
-        authenticationService.generateIntrospectURL(TOKEN),
-        "Generated introspect URL.");
-  }
-
-  @Test
-  void profile() throws Exception {
-    BddLogger.given("valid user credentials and a running mock OIDC profile endpoint");
-    BddLogger.when("requesting the user profile through the authentication service");
-
-    Optional<OIDCAccessToken> accessToken =
-        authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
-    assertTrue(accessToken.isPresent());
-    OIDCProfile response = authenticationService.profile(accessToken.get().accessToken());
-
-    BddLogger.then("it should return profile attributes matching the expected values");
-    assertThat(response)
-        .extracting(
-            OIDCProfile::id, OIDCProfile::firstName, OIDCProfile::lastName, OIDCProfile::email)
-        .containsExactly(USER_LOGIN, USER_FIRST_NAME, USER_LAST_NAME, USER_EMAIL);
-  }
-
-  @Test
-  void introspectAccessToken() throws Exception {
-    BddLogger.given("valid user credentials and a running mock OIDC introspect endpoint");
-    BddLogger.when("requesting an access token and introspecting it");
-    Optional<OIDCAccessToken> accessToken =
-        authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
-    assertTrue(accessToken.isPresent());
-    String accessTokenValue = accessToken.get().accessToken();
-    OIDCIntrospection response = authenticationService.introspectAccessToken(accessTokenValue);
-
-    BddLogger.then("it should return an active introspection response for the same token");
-    assertEquals(accessTokenValue, response.token(), "Access token in response");
-    assertTrue(response.active(), "Active flag in response");
-    assertEquals(USER_LOGIN, response.uniqueSecurityName(), "Unique security name in response");
-  }
-
-  @Test
-  void getAccessTokenWithValidPassword() {
-    BddLogger.given("valid user credentials");
-    BddLogger.when("requesting an access token");
-
-    Optional<OIDCAccessToken> response =
-        authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
-
-    BddLogger.then("it should return a non-empty access token response");
-    assertFalse(response.isEmpty());
-    OIDCAccessToken oidcAccessToken = response.get();
-    if (oidcAccessToken.jwt()) {
-      assertNotNull(oidcAccessToken.claims(), "Claims in response");
-      assertFalse(oidcAccessToken.claims().isEmpty(), "Claims not empty");
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("an OIDC authentication service");
     }
-    assertNotNull(oidcAccessToken.accessToken(), "Access Token in response");
-    assertFalse(oidcAccessToken.accessToken().isEmpty(), "Access Token not empty");
+
+    @Nested
+    class WhenGeneratingAuthorizeURL {
+
+      @Test
+      void thenItShouldReturnExpectedAuthorizeURL() {
+        BddLogger.when("generating the legacy authorize URL");
+        BddLogger.then("it should match the expected URL");
+
+        assertEquals(
+            String.format(AUTHORISE_TEMPLATE_URL, HOST, HOST, CODE),
+            authenticationService.generateAuthorizeURL(HOST, CODE));
+      }
+    }
+
+    @Nested
+    class WhenGeneratingAuthorizationUrl {
+
+      @Test
+      void thenItShouldReturnExpectedAuthorizationUrlWithPkceParameters() {
+        BddLogger.when("generating the authorization URL");
+        BddLogger.then("it should include OIDC and PKCE parameters");
+
+        String result =
+            authenticationService.generateAuthorizationUrl(HOST, REDIRECT, CODE_CHALLENGE);
+
+        assertThat(result)
+            .startsWith("https://localhost/cas/oidc/oidcAuthorize?")
+            .contains("client_id=" + CLIENT_ID)
+            .contains("response_type=code")
+            .contains("scope=openid%20profile%20email%20offline_access")
+            .contains("redirect_uri=https://localhost/security/auth/callback")
+            .contains("state=/cofolio/student")
+            .contains("code_challenge=" + CODE_CHALLENGE)
+            .contains("code_challenge_method=S256");
+      }
+    }
+
+    @Nested
+    class WhenGeneratingServiceURL {
+
+      @Test
+      void thenItShouldReturnExpectedServiceURL() {
+        BddLogger.when("generating the service URL");
+        BddLogger.then("it should match the expected URL");
+
+        assertEquals(
+            String.format(SERVICE_TEMPLATE_URL, HOST),
+            authenticationService.generateServiceURL(HOST));
+      }
+    }
+
+    @Nested
+    class WhenGeneratingCodeExchangeBody {
+
+      @Test
+      void thenItShouldReturnExpectedCodeExchangeBody() {
+        BddLogger.when("generating the code exchange body");
+        BddLogger.then("it should include redirect uri, code and PKCE code verifier");
+
+        assertEquals(
+            String.format(CODE_EXCHANGE_TEMPLATE_BODY, HOST, CODE, CODE_VERIFIER),
+            authenticationService.generateCodeExchangeBody(HOST, CODE, CODE_VERIFIER));
+      }
+    }
+
+    @Nested
+    class WhenExchangingAuthorizationCodeForToken {
+
+      @Test
+      void thenItShouldReturnAccessTokenResponse() {
+        BddLogger.when("exchanging an authorization code for a token");
+
+        OIDCAccessToken response =
+            authenticationService.exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER);
+
+        BddLogger.then("it should return an access token response");
+
+        assertNotNull(response);
+        assertEquals(TOKEN, response.accessToken());
+      }
+    }
+
+    @Nested
+    class WhenGeneratingProfileURL {
+
+      @Test
+      void thenItShouldReturnExpectedProfileURL() {
+        BddLogger.when("generating the profile URL");
+        BddLogger.then("it should match the expected profile URL");
+
+        String expectedProfileURL =
+            "http://localhost:" + mockWebServer.getPort() + "/cas/oidc/profile?token=" + TOKEN;
+
+        assertEquals(expectedProfileURL, authenticationService.generateProfileURL(TOKEN));
+      }
+    }
+
+    @Nested
+    class WhenGeneratingIntrospectURL {
+
+      @Test
+      void thenItShouldReturnExpectedIntrospectURL() {
+        BddLogger.when("generating the introspect URL");
+        BddLogger.then("it should match the expected introspect URL");
+
+        String expectedIntrospectURL =
+            "http://localhost:" + mockWebServer.getPort() + "/cas/oidc/introspect?token=" + TOKEN;
+
+        assertEquals(expectedIntrospectURL, authenticationService.generateIntrospectURL(TOKEN));
+      }
+    }
+
+    @Nested
+    class WhenRequestingProfile {
+
+      @Test
+      void thenItShouldReturnProfileAttributes() {
+        BddLogger.when("requesting the user profile through the authentication service");
+
+        Optional<OIDCAccessToken> accessToken =
+            authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
+
+        assertTrue(accessToken.isPresent());
+
+        OIDCProfile response = authenticationService.profile(accessToken.get().accessToken());
+
+        BddLogger.then("it should return profile attributes matching the expected values");
+
+        assertThat(response)
+            .extracting(
+                OIDCProfile::id, OIDCProfile::firstName, OIDCProfile::lastName, OIDCProfile::email)
+            .containsExactly(USER_LOGIN, USER_FIRST_NAME, USER_LAST_NAME, USER_EMAIL);
+      }
+    }
+
+    @Nested
+    class WhenIntrospectingAccessToken {
+
+      @Test
+      void thenItShouldReturnActiveIntrospectionResponse() {
+        BddLogger.when("requesting an access token and introspecting it");
+
+        Optional<OIDCAccessToken> accessToken =
+            authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
+
+        assertTrue(accessToken.isPresent());
+
+        String accessTokenValue = accessToken.get().accessToken();
+        OIDCIntrospection response = authenticationService.introspectAccessToken(accessTokenValue);
+
+        BddLogger.then("it should return an active introspection response for the same token");
+
+        assertEquals(accessTokenValue, response.token());
+        assertTrue(response.active());
+        assertEquals(USER_LOGIN, response.uniqueSecurityName());
+      }
+    }
+
+    @Nested
+    class WhenGettingAccessToken {
+
+      @Nested
+      class AndPasswordIsValid {
+
+        @Test
+        void thenItShouldReturnAccessToken() {
+          BddLogger.when("requesting an access token with valid credentials");
+
+          Optional<OIDCAccessToken> response =
+              authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
+
+          BddLogger.then("it should return a non-empty access token response");
+
+          assertTrue(response.isPresent());
+
+          OIDCAccessToken oidcAccessToken = response.get();
+
+          assertNotNull(oidcAccessToken.accessToken());
+          assertFalse(oidcAccessToken.accessToken().isEmpty());
+        }
+      }
+
+      @Nested
+      class AndPasswordIsInvalid {
+
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.when("requesting an access token with invalid credentials");
+
+          Optional<OIDCAccessToken> response =
+              authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD + "false");
+
+          BddLogger.then("it should return empty");
+
+          assertTrue(response.isEmpty());
+        }
+      }
+
+      @Nested
+      class AndProviderReturnsEmptyBody {
+
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.when("requesting an access token when provider returns an empty body");
+
+          Optional<OIDCAccessToken> response =
+              authenticationService.getAccessToken(USER_LOGIN, "null-response");
+
+          BddLogger.then("it should return empty");
+
+          assertTrue(response.isEmpty());
+        }
+      }
+
+      @Nested
+      class AndJwtAccessTokenIsEnabled {
+
+        @Test
+        void thenItShouldReturnAccessTokenWithParsedClaims() {
+          BddLogger.when("requesting an access token with JWT access token enabled");
+
+          ReflectionTestUtils.setField(authenticationService, "jwtAccessToken", true);
+
+          Map<String, Object> claims = Map.of("k", "v");
+          when(jwtService.parseAndCheckSignature(any(OIDCAccessToken.class)))
+              .thenReturn(Optional.of(claims));
+
+          Optional<OIDCAccessToken> response =
+              authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
+
+          BddLogger.then("it should return a JWT access token response with parsed claims");
+
+          assertTrue(response.isPresent());
+          assertTrue(response.get().jwt());
+          assertNotNull(response.get().claims());
+          assertEquals("v", response.get().claims().get("k"));
+        }
+
+        @Test
+        void thenItShouldReturnEmptyWhenClaimsAreEmpty() {
+          BddLogger.when(
+              "requesting an access token with JWT access token enabled and empty claims");
+
+          ReflectionTestUtils.setField(authenticationService, "jwtAccessToken", true);
+
+          when(jwtService.parseAndCheckSignature(any(OIDCAccessToken.class)))
+              .thenReturn(Optional.empty());
+
+          Optional<OIDCAccessToken> response =
+              authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
+
+          BddLogger.then("it should return empty");
+
+          assertTrue(response.isEmpty());
+        }
+      }
+    }
   }
 
-  @Test
-  void getAccessTokenWithInvalidPassword() {
-    BddLogger.given("invalid user credentials");
-    BddLogger.when("requesting an access token");
+  private Dispatcher dispatcher() {
+    return new Dispatcher() {
+      @NotNull
+      @Override
+      public MockResponse dispatch(@NotNull RecordedRequest request) {
+        String path = request.getPath();
 
-    Optional<OIDCAccessToken> response =
-        authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD + "false");
+        if (path == null) {
+          return new MockResponse().setResponseCode(404);
+        }
 
-    BddLogger.then("it should return empty");
-    assertTrue(response.isEmpty());
+        if (path.startsWith("/cas/oidc/accessToken")) {
+          return accessTokenResponse(request);
+        }
+
+        if (path.startsWith("/cas/oidc/profile")) {
+          return profileResponse();
+        }
+
+        if (path.startsWith("/cas/oidc/introspect")) {
+          return introspectResponse();
+        }
+
+        return new MockResponse().setResponseCode(404);
+      }
+    };
   }
 
-  @Test
-  void getAccessTokenWhenResponseIsNull() {
-    BddLogger.given("a token endpoint returning an empty body");
-    BddLogger.when("requesting an access token");
-    Optional<OIDCAccessToken> response =
-        authenticationService.getAccessToken(USER_LOGIN, "null-response");
+  private MockResponse accessTokenResponse(RecordedRequest request) {
+    String body = request.getBody().readUtf8();
 
-    BddLogger.then("it should return empty");
-    assertTrue(response.isEmpty());
+    if (body.contains("password=") && body.contains("false")) {
+      return new MockResponse().setResponseCode(401);
+    }
+
+    if (body.contains("password=") && body.contains("null-response")) {
+      return jsonResponse("");
+    }
+
+    return jsonResponse(
+        "{\"access_token\":\""
+            + TOKEN
+            + "\",\"token_type\":\"Bearer\",\"expires_in\":3600,\"scope\":\"openid\"}");
   }
 
-  @Test
-  void getAccessTokenWhenJwtAccessTokenIsTrue() {
-    BddLogger.given("jwtAccessToken enabled and a JWT service returning claims");
-    ReflectionTestUtils.setField(authenticationService, "jwtAccessToken", true);
-
-    Map<String, Object> claims = Map.of("k", "v");
-    when(jwtService.parseAndCheckSignature(any(OIDCAccessToken.class)))
-        .thenReturn(Optional.of(claims));
-
-    BddLogger.when("requesting an access token");
-    Optional<OIDCAccessToken> response =
-        authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
-
-    BddLogger.then("it should return a JWT access token response with the parsed claims");
-    assertTrue(response.isPresent());
-    assertTrue(response.get().jwt());
-    assertNotNull(response.get().claims());
-    assertEquals("v", response.get().claims().get("k"));
+  private MockResponse profileResponse() {
+    return jsonResponse(
+        "{\"id\":\""
+            + USER_LOGIN
+            + "\",\"service\":\""
+            + CLIENT_ID
+            + "\",\"attributes\":{\"given_name\":\""
+            + USER_FIRST_NAME
+            + "\",\"family_name\":\""
+            + USER_LAST_NAME
+            + "\",\"email\":\""
+            + USER_EMAIL
+            + "\"}}");
   }
 
-  @Test
-  void getAccessTokenWhenJwtAccessTokenIsTrueAndClaimsAreEmpty() {
-    BddLogger.given("jwtAccessToken enabled and a JWT service returning empty claims");
-    ReflectionTestUtils.setField(authenticationService, "jwtAccessToken", true);
+  private MockResponse introspectResponse() {
+    return jsonResponse(
+        "{\"token\":\""
+            + TOKEN
+            + "\",\"active\":true,\"uniqueSecurityName\":\""
+            + USER_LOGIN
+            + "\"}");
+  }
 
-    when(jwtService.parseAndCheckSignature(any(OIDCAccessToken.class)))
-        .thenReturn(Optional.empty());
-
-    BddLogger.when("requesting an access token");
-    Optional<OIDCAccessToken> response =
-        authenticationService.getAccessToken(USER_LOGIN, USER_PASSWORD);
-
-    BddLogger.then("it should return empty");
-    assertTrue(response.isEmpty());
+  private MockResponse jsonResponse(String body) {
+    return new MockResponse()
+        .setResponseCode(200)
+        .addHeader("Content-Type", "application/json")
+        .setBody(body);
   }
 }

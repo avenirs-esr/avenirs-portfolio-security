@@ -4,8 +4,10 @@ import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeHost;
 import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeRelativePath;
 
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
+import fr.avenirsesr.portfolio.security.authentication.domain.model.PkceChallenge;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.session.SessionAttributes;
+import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.utils.PkceUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -43,12 +45,16 @@ public class AuthenticationController {
   public void login(
       @RequestHeader(value = "x-forwarded-host", required = false) String host,
       @RequestParam(value = "redirect", required = false) String redirect,
+      HttpSession session,
       HttpServletResponse response)
       throws IOException {
     String safeRedirect = toSafeRelativePath(redirect, "/cofolio/student");
 
+    PkceChallenge pkce = PkceUtils.generate();
+    session.setAttribute(SessionAttributes.PKCE_CODE_VERIFIER, pkce.verifier());
+
     String authorizeUrl =
-        authenticationService.generateAuthorizationUrl(toSafeHost(host), safeRedirect);
+        authenticationService.generateAuthorizationUrl(host, safeRedirect, pkce.challenge());
 
     response.sendRedirect(authorizeUrl);
   }
@@ -66,8 +72,17 @@ public class AuthenticationController {
       return;
     }
 
+    String codeVerifier = (String) session.getAttribute(SessionAttributes.PKCE_CODE_VERIFIER);
+
+    if (codeVerifier == null || codeVerifier.isBlank()) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing PKCE code verifier");
+      return;
+    }
+
+    session.removeAttribute(SessionAttributes.PKCE_CODE_VERIFIER);
+
     OIDCSession oidcSession =
-        authenticationService.createSessionFromAuthorizationCode(toSafeHost(host), code);
+        authenticationService.createSessionFromAuthorizationCode(host, code, codeVerifier);
 
     session.setAttribute(SessionAttributes.OIDC_SESSION, oidcSession);
 

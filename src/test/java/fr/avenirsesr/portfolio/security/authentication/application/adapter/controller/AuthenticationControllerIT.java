@@ -1,6 +1,8 @@
 package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,6 +40,11 @@ import org.springframework.test.web.servlet.MockMvc;
     })
 class AuthenticationControllerIT {
 
+  private static final String HOST = "dev.avenirs-esr.fr";
+  private static final String REDIRECT = "/cofolio/student";
+  private static final String CODE = "code";
+  private static final String PKCE_CODE_VERIFIER = "pkce-code-verifier";
+
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private AuthenticationService authenticationService;
@@ -65,8 +72,7 @@ class AuthenticationControllerIT {
         void setupAnd() {
           BddLogger.and("host and safe redirect are provided");
 
-          when(authenticationService.generateAuthorizationUrl(
-                  "dev.avenirs-esr.fr", "/cofolio/student"))
+          when(authenticationService.generateAuthorizationUrl(eq(HOST), eq(REDIRECT), anyString()))
               .thenReturn("https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize");
         }
 
@@ -76,15 +82,14 @@ class AuthenticationControllerIT {
 
           mockMvc
               .perform(
-                  get("/auth/login")
-                      .header("x-forwarded-host", "dev.avenirs-esr.fr")
-                      .param("redirect", "/cofolio/student"))
+                  get("/auth/login").header("x-forwarded-host", HOST).param("redirect", REDIRECT))
               .andExpect(status().is3xxRedirection())
               .andExpect(
-                  header().string("Location", "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize"));
+                  header().string("Location", "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize"))
+              .andExpect(request().sessionAttributeDoesNotExist(SessionAttributes.OIDC_SESSION));
 
           verify(authenticationService)
-              .generateAuthorizationUrl("dev.avenirs-esr.fr", "/cofolio/student");
+              .generateAuthorizationUrl(eq(HOST), eq(REDIRECT), anyString());
         }
       }
 
@@ -95,20 +100,21 @@ class AuthenticationControllerIT {
         void setupAnd() {
           BddLogger.and("host is missing");
 
-          when(authenticationService.generateAuthorizationUrl("localhost", "/cofolio/student"))
+          when(authenticationService.generateAuthorizationUrl(eq(null), eq(REDIRECT), anyString()))
               .thenReturn("https://localhost/cas/oidc/oidcAuthorize");
         }
 
         @Test
-        void thenItShouldUseLocalhost() throws Exception {
-          BddLogger.then("it should use localhost");
+        void thenItShouldDelegateNullHostAndRedirect() throws Exception {
+          BddLogger.then("it should delegate null host and redirect");
 
           mockMvc
-              .perform(get("/auth/login").param("redirect", "/cofolio/student"))
+              .perform(get("/auth/login").param("redirect", REDIRECT))
               .andExpect(status().is3xxRedirection())
               .andExpect(header().string("Location", "https://localhost/cas/oidc/oidcAuthorize"));
 
-          verify(authenticationService).generateAuthorizationUrl("localhost", "/cofolio/student");
+          verify(authenticationService)
+              .generateAuthorizationUrl(eq(null), eq(REDIRECT), anyString());
         }
       }
 
@@ -119,8 +125,7 @@ class AuthenticationControllerIT {
         void setupAnd() {
           BddLogger.and("redirect is unsafe");
 
-          when(authenticationService.generateAuthorizationUrl(
-                  "dev.avenirs-esr.fr", "/cofolio/student"))
+          when(authenticationService.generateAuthorizationUrl(eq(HOST), eq(REDIRECT), anyString()))
               .thenReturn("https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize");
         }
 
@@ -131,14 +136,14 @@ class AuthenticationControllerIT {
           mockMvc
               .perform(
                   get("/auth/login")
-                      .header("x-forwarded-host", "dev.avenirs-esr.fr")
+                      .header("x-forwarded-host", HOST)
                       .param("redirect", "https://evil.com"))
               .andExpect(status().is3xxRedirection())
               .andExpect(
                   header().string("Location", "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize"));
 
           verify(authenticationService)
-              .generateAuthorizationUrl("dev.avenirs-esr.fr", "/cofolio/student");
+              .generateAuthorizationUrl(eq(HOST), eq(REDIRECT), anyString());
         }
       }
     }
@@ -151,102 +156,86 @@ class AuthenticationControllerIT {
         BddLogger.when("callback is requested");
       }
 
-      @Nested
-      class AndCodeIsMissing {
-
-        @Test
-        void thenItShouldReturnUnauthorized() throws Exception {
-          BddLogger.then("it should return unauthorized");
-
-          mockMvc
-              .perform(
-                  get("/auth/callback")
-                      .header("x-forwarded-host", "dev.avenirs-esr.fr")
-                      .param("state", "/cofolio/student"))
-              .andExpect(status().isUnauthorized());
-        }
+      @Test
+      void thenItShouldReturnUnauthorizedWhenCodeIsMissing() throws Exception {
+        mockMvc
+            .perform(
+                get("/auth/callback").header("x-forwarded-host", HOST).param("state", REDIRECT))
+            .andExpect(status().isUnauthorized());
       }
 
-      @Nested
-      class AndCodeIsBlank {
-
-        @Test
-        void thenItShouldReturnUnauthorized() throws Exception {
-          BddLogger.then("it should return unauthorized");
-
-          mockMvc
-              .perform(
-                  get("/auth/callback")
-                      .header("x-forwarded-host", "dev.avenirs-esr.fr")
-                      .param("code", " ")
-                      .param("state", "/cofolio/student"))
-              .andExpect(status().isUnauthorized());
-        }
+      @Test
+      void thenItShouldReturnUnauthorizedWhenCodeIsBlank() throws Exception {
+        mockMvc
+            .perform(
+                get("/auth/callback")
+                    .header("x-forwarded-host", HOST)
+                    .param("code", " ")
+                    .param("state", REDIRECT))
+            .andExpect(status().isUnauthorized());
       }
 
-      @Nested
-      class AndCodeAndSafeStateAreProvided {
-        private OIDCSession oidcSession;
-
-        @BeforeEach
-        void setupAnd() {
-          BddLogger.and("code and safe state are provided");
-
-          oidcSession = oidcSession();
-
-          when(authenticationService.createSessionFromAuthorizationCode(
-                  "dev.avenirs-esr.fr", "code"))
-              .thenReturn(oidcSession);
-        }
-
-        @Test
-        void thenItShouldStoreOidcSessionAndRedirectToState() throws Exception {
-          BddLogger.then("it should store OIDC session and redirect to state");
-
-          mockMvc
-              .perform(
-                  get("/auth/callback")
-                      .header("x-forwarded-host", "dev.avenirs-esr.fr")
-                      .param("code", "code")
-                      .param("state", "/cofolio/student"))
-              .andExpect(status().is3xxRedirection())
-              .andExpect(header().string("Location", "https://dev.avenirs-esr.fr/cofolio/student"))
-              .andExpect(request().sessionAttribute(SessionAttributes.OIDC_SESSION, oidcSession));
-
-          verify(authenticationService)
-              .createSessionFromAuthorizationCode("dev.avenirs-esr.fr", "code");
-        }
+      @Test
+      void thenItShouldReturnUnauthorizedWhenPkceVerifierIsMissing() throws Exception {
+        mockMvc
+            .perform(
+                get("/auth/callback")
+                    .header("x-forwarded-host", HOST)
+                    .param("code", CODE)
+                    .param("state", REDIRECT))
+            .andExpect(status().isUnauthorized());
       }
 
-      @Nested
-      class AndStateIsUnsafe {
-        private OIDCSession oidcSession;
+      @Test
+      void thenItShouldStoreOidcSessionAndRedirectToState() throws Exception {
+        OIDCSession oidcSession = oidcSession();
+        MockHttpSession session = sessionWithPkceVerifier();
 
-        @BeforeEach
-        void setupAnd() {
-          BddLogger.and("state is unsafe");
+        when(authenticationService.createSessionFromAuthorizationCode(
+                HOST, CODE, PKCE_CODE_VERIFIER))
+            .thenReturn(oidcSession);
 
-          oidcSession = oidcSession();
+        mockMvc
+            .perform(
+                get("/auth/callback")
+                    .session(session)
+                    .header("x-forwarded-host", HOST)
+                    .param("code", CODE)
+                    .param("state", REDIRECT))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(header().string("Location", "https://dev.avenirs-esr.fr/cofolio/student"))
+            .andExpect(request().sessionAttribute(SessionAttributes.OIDC_SESSION, oidcSession))
+            .andExpect(
+                request().sessionAttributeDoesNotExist(SessionAttributes.PKCE_CODE_VERIFIER));
 
-          when(authenticationService.createSessionFromAuthorizationCode(
-                  "dev.avenirs-esr.fr", "code"))
-              .thenReturn(oidcSession);
-        }
+        verify(authenticationService)
+            .createSessionFromAuthorizationCode(HOST, CODE, PKCE_CODE_VERIFIER);
+      }
 
-        @Test
-        void thenItShouldRedirectToDefaultPath() throws Exception {
-          BddLogger.then("it should redirect to default path");
+      @Test
+      void thenItShouldRedirectToDefaultPathWhenStateIsUnsafe() throws Exception {
+        OIDCSession oidcSession = oidcSession();
+        MockHttpSession session = sessionWithPkceVerifier();
 
-          mockMvc
-              .perform(
-                  get("/auth/callback")
-                      .header("x-forwarded-host", "dev.avenirs-esr.fr")
-                      .param("code", "code")
-                      .param("state", "https://evil.com"))
-              .andExpect(status().is3xxRedirection())
-              .andExpect(header().string("Location", "https://dev.avenirs-esr.fr/cofolio/student"))
-              .andExpect(request().sessionAttribute(SessionAttributes.OIDC_SESSION, oidcSession));
-        }
+        when(authenticationService.createSessionFromAuthorizationCode(
+                HOST, CODE, PKCE_CODE_VERIFIER))
+            .thenReturn(oidcSession);
+
+        mockMvc
+            .perform(
+                get("/auth/callback")
+                    .session(session)
+                    .header("x-forwarded-host", HOST)
+                    .param("code", CODE)
+                    .param("state", "https://evil.com"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(header().string("Location", "https://dev.avenirs-esr.fr/cofolio/student"))
+            .andExpect(request().sessionAttribute(SessionAttributes.OIDC_SESSION, oidcSession))
+            .andExpect(
+                request().sessionAttributeDoesNotExist(SessionAttributes.PKCE_CODE_VERIFIER));
+
+        verify(authenticationService)
+            .createSessionFromAuthorizationCode(HOST, CODE, PKCE_CODE_VERIFIER);
       }
     }
 
@@ -258,56 +247,44 @@ class AuthenticationControllerIT {
         BddLogger.when("logout is requested");
       }
 
-      @Nested
-      class AndSessionExists {
-        private MockHttpSession session;
+      @Test
+      void thenItShouldInvalidateSessionClearCookieAndRedirectToCasLogout() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(SessionAttributes.OIDC_SESSION, oidcSession());
 
-        @BeforeEach
-        void setupAnd() {
-          BddLogger.and("session exists");
-
-          session = new MockHttpSession();
-          session.setAttribute(SessionAttributes.OIDC_SESSION, oidcSession());
-        }
-
-        @Test
-        void thenItShouldInvalidateSessionClearCookieAndRedirectToCasLogout() throws Exception {
-          BddLogger.then("it should invalidate session, clear cookie and redirect to CAS logout");
-
-          mockMvc
-              .perform(get("/auth/logout").session(session))
-              .andExpect(status().is3xxRedirection())
-              .andExpect(
-                  header()
-                      .string(
-                          "Location",
-                          "https://dev.avenirs-esr.fr/cas/logout?service=https://dev.avenirs-esr.fr/cofolio/student"))
-              .andExpect(cookie().maxAge("AVENIRS_SESSION", 0))
-              .andExpect(cookie().httpOnly("AVENIRS_SESSION", true))
-              .andExpect(cookie().secure("AVENIRS_SESSION", true))
-              .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("SameSite=Lax")));
-        }
+        mockMvc
+            .perform(get("/auth/logout").session(session))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(
+                header()
+                    .string(
+                        "Location",
+                        "https://dev.avenirs-esr.fr/cas/logout?service=https://dev.avenirs-esr.fr/cofolio/student"))
+            .andExpect(cookie().maxAge("AVENIRS_SESSION", 0))
+            .andExpect(cookie().httpOnly("AVENIRS_SESSION", true))
+            .andExpect(cookie().secure("AVENIRS_SESSION", true))
+            .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("SameSite=Lax")));
       }
 
-      @Nested
-      class AndSessionDoesNotExist {
-
-        @Test
-        void thenItShouldClearCookieAndRedirectToCasLogout() throws Exception {
-          BddLogger.then("it should clear cookie and redirect to CAS logout");
-
-          mockMvc
-              .perform(get("/auth/logout"))
-              .andExpect(status().is3xxRedirection())
-              .andExpect(
-                  header()
-                      .string(
-                          "Location",
-                          "https://dev.avenirs-esr.fr/cas/logout?service=https://dev.avenirs-esr.fr/cofolio/student"))
-              .andExpect(cookie().maxAge("AVENIRS_SESSION", 0));
-        }
+      @Test
+      void thenItShouldClearCookieAndRedirectToCasLogoutWhenSessionDoesNotExist() throws Exception {
+        mockMvc
+            .perform(get("/auth/logout"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(
+                header()
+                    .string(
+                        "Location",
+                        "https://dev.avenirs-esr.fr/cas/logout?service=https://dev.avenirs-esr.fr/cofolio/student"))
+            .andExpect(cookie().maxAge("AVENIRS_SESSION", 0));
       }
     }
+  }
+
+  private MockHttpSession sessionWithPkceVerifier() {
+    MockHttpSession session = new MockHttpSession();
+    session.setAttribute(SessionAttributes.PKCE_CODE_VERIFIER, PKCE_CODE_VERIFIER);
+    return session;
   }
 
   private OIDCSession oidcSession() {

@@ -62,21 +62,30 @@ public class OidcController {
    *
    * @param host The header used to retrieve the current host. This is used to determine the end
    *     point from the current request.
-   * @param response The response instance used to redirect to the authorize end point.
    * @param code The session code used to issue an access token.
+   * @param codeVerifier The PKCE code verifier used to issue an access token.
    * @throws IOException If an input or output exception occurs.
    */
   @SuppressWarnings("SpringOmittedPathVariableParameterInspection")
   @GetMapping("${avenirs.authentication.oidc.callback}")
   public ResponseEntity<OIDCAccessTokenResponse> oidcCallback(
       @RequestHeader(value = "x-forwarded-host", required = false) String host,
-      HttpServletResponse response,
-      @RequestParam(value = "code", required = false) String code)
+      @RequestParam(value = "code", required = false) String code,
+      @RequestParam(value = "code_verifier", required = false) String codeVerifier)
       throws IOException {
     log.trace("oidcCallback");
+
+    if (code == null || code.isBlank()) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing authorization code");
+    }
+
+    if (codeVerifier == null || codeVerifier.isBlank()) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing PKCE code verifier");
+    }
+
     OIDCAccessToken accessToken =
-        this.oidcService.exchangeAuthorizationCodeForToken(
-            (host == null ? "localhost" : host), code);
+        this.oidcService.exchangeAuthorizationCodeForToken(host, code, codeVerifier);
+
     return ResponseEntity.ok(OIDCAccessTokenMapper.fromDomain(accessToken));
   }
 
