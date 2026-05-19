@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OIDCClientOidcAuthenticationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service</a> &gt; <span class="el_source">OIDCClientOidcAuthenticationService.java</span></div><h1>OIDCClientOidcAuthenticationService.java</h1><pre class="source lang-java linenums">/** */
 package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service;
 
+import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeHost;
+
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
@@ -25,12 +27,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-<span class="fc" id="L28">@Slf4j</span>
+<span class="fc" id="L30">@Slf4j</span>
 @Service
 public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPort {
 
   /** Rest client to interact with OIDC provider. */
-<span class="fc" id="L33">  private final RestClient restClient = RestClient.create();</span>
+<span class="fc" id="L35">  private final RestClient restClient = RestClient.create();</span>
 
   private final JWTServicePort jwtService;
 
@@ -82,9 +84,9 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   @Value(&quot;${avenirs.authentication.auth.callback.public-path}&quot;)
   private String authCallbackPublicPath;
 
-<span class="fc" id="L85">  public OIDCClientOidcAuthenticationService(JWTServicePort jwtService) {</span>
-<span class="fc" id="L86">    this.jwtService = jwtService;</span>
-<span class="fc" id="L87">  }</span>
+<span class="fc" id="L87">  public OIDCClientOidcAuthenticationService(JWTServicePort jwtService) {</span>
+<span class="fc" id="L88">    this.jwtService = jwtService;</span>
+<span class="fc" id="L89">  }</span>
 
   /**
    * Generates the OIDC Authorize URL.
@@ -96,16 +98,16 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   @Override
   public String generateAuthorizeURL(String host, String code) {
 
-<span class="fc" id="L99">    String oidcAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, code);</span>
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">    if (log.isTraceEnabled()) {</span>
-<span class="nc bnc" id="L101" title="All 2 branches missed.">      String maskedCode = code == null ? &quot;null&quot; : &quot;*&quot;.repeat(code.length());</span>
-<span class="nc" id="L102">      String maskedOIDCAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, maskedCode);</span>
-<span class="nc" id="L103">      log.trace(&quot;generateAuthorizeURL, host: {}&quot;, host);</span>
-<span class="nc" id="L104">      log.trace(&quot;generateAuthorizeURL, code: {}&quot;, maskedCode);</span>
+<span class="fc" id="L101">    String oidcAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, code);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    if (log.isTraceEnabled()) {</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">      String maskedCode = code == null ? &quot;null&quot; : &quot;*&quot;.repeat(code.length());</span>
+<span class="nc" id="L104">      String maskedOIDCAuthorizeURL = String.format(oidcAuthorizeTemplate, host, host, maskedCode);</span>
+<span class="nc" id="L105">      log.trace(&quot;generateAuthorizeURL, host: {}&quot;, host);</span>
+<span class="nc" id="L106">      log.trace(&quot;generateAuthorizeURL, code: {}&quot;, maskedCode);</span>
 
-<span class="nc" id="L106">      log.trace(&quot;generateAuthorizeURL, oidcAuthorizeURL: {}&quot;, maskedOIDCAuthorizeURL);</span>
+<span class="nc" id="L108">      log.trace(&quot;generateAuthorizeURL, oidcAuthorizeURL: {}&quot;, maskedOIDCAuthorizeURL);</span>
     }
-<span class="fc" id="L108">    return oidcAuthorizeURL;</span>
+<span class="fc" id="L110">    return oidcAuthorizeURL;</span>
   }
 
   /**
@@ -116,15 +118,15 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
    * @return The access token body.
    */
   public String generateAccessTokenBody(String login, String password) {
-<span class="fc" id="L119">    String oidcAccessTokenBody = String.format(oidcAccessTokenBodyTemplate, login, password);</span>
+<span class="fc" id="L121">    String oidcAccessTokenBody = String.format(oidcAccessTokenBodyTemplate, login, password);</span>
 
-<span class="pc bpc" id="L121" title="1 of 2 branches missed.">    if (log.isDebugEnabled()) {</span>
-<span class="nc bnc" id="L122" title="All 2 branches missed.">      String maskedPassword = password == null ? &quot;null&quot; : &quot;*&quot;.repeat(password.length());</span>
-<span class="nc" id="L123">      String maskedOIDCAccessTokenBody = String.format(oidcAccessTokenBody, login, maskedPassword);</span>
-<span class="nc" id="L124">      log.debug(</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">    if (log.isDebugEnabled()) {</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">      String maskedPassword = password == null ? &quot;null&quot; : &quot;*&quot;.repeat(password.length());</span>
+<span class="nc" id="L125">      String maskedOIDCAccessTokenBody = String.format(oidcAccessTokenBody, login, maskedPassword);</span>
+<span class="nc" id="L126">      log.debug(</span>
           &quot;generateAccessTokenBody, maskedOIDCAccessTokenBody: {}&quot;, maskedOIDCAccessTokenBody);
     }
-<span class="fc" id="L127">    return oidcAccessTokenBody;</span>
+<span class="fc" id="L129">    return oidcAccessTokenBody;</span>
   }
 
   /**
@@ -135,16 +137,16 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
    * @return The exchange query body.
    */
   public String generateCodeExchangeBody(String host, String code) {
-<span class="fc" id="L138">    String oidcCodeExchangeBody = String.format(oidcCodeExchangeBodyTemplate, host, code);</span>
+<span class="fc" id="L140">    String oidcCodeExchangeBody = String.format(oidcCodeExchangeBodyTemplate, host, code);</span>
 
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">    if (log.isDebugEnabled()) {</span>
-<span class="nc bnc" id="L141" title="All 2 branches missed.">      String maskedCode = code == null ? &quot;null&quot; : &quot;*&quot;.repeat(code.length());</span>
-<span class="nc" id="L142">      String maskedOIDCCodeExchangeBody =</span>
-<span class="nc" id="L143">          String.format(oidcCodeExchangeBodyTemplate, host, maskedCode);</span>
-<span class="nc" id="L144">      log.debug(</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">    if (log.isDebugEnabled()) {</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">      String maskedCode = code == null ? &quot;null&quot; : &quot;*&quot;.repeat(code.length());</span>
+<span class="nc" id="L144">      String maskedOIDCCodeExchangeBody =</span>
+<span class="nc" id="L145">          String.format(oidcCodeExchangeBodyTemplate, host, maskedCode);</span>
+<span class="nc" id="L146">      log.debug(</span>
           &quot;generateCodeExchangeBody, maskedOIDCCodeExchangeBody: {}&quot;, maskedOIDCCodeExchangeBody);
     }
-<span class="fc" id="L147">    return oidcCodeExchangeBody;</span>
+<span class="fc" id="L149">    return oidcCodeExchangeBody;</span>
   }
 
   /**
@@ -156,9 +158,9 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   @Override
   public String generateServiceURL(String host) {
 
-<span class="fc" id="L159">    String serviceURL = String.format(serviceTemplate, host);</span>
-<span class="fc" id="L160">    log.debug(&quot;generateServiceURL, serviceURL: {}&quot;, serviceURL);</span>
-<span class="fc" id="L161">    return serviceURL;</span>
+<span class="fc" id="L161">    String serviceURL = String.format(serviceTemplate, host);</span>
+<span class="fc" id="L162">    log.debug(&quot;generateServiceURL, serviceURL: {}&quot;, serviceURL);</span>
+<span class="fc" id="L163">    return serviceURL;</span>
   }
 
   /**
@@ -170,15 +172,15 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   @Override
   public String generateProfileURL(String token) {
 
-<span class="fc" id="L173">    String profileURL = String.format(oidcProviderProfileURL, token);</span>
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">    if (log.isDebugEnabled()) {</span>
-<span class="nc" id="L175">      String maskedProfileURL =</span>
-<span class="nc" id="L176">          String.format(</span>
+<span class="fc" id="L175">    String profileURL = String.format(oidcProviderProfileURL, token);</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">    if (log.isDebugEnabled()) {</span>
+<span class="nc" id="L177">      String maskedProfileURL =</span>
+<span class="nc" id="L178">          String.format(</span>
               oidcProviderProfileURL,
-<span class="nc" id="L178">              token.substring(0, 4) + &quot;****&quot; + token.substring(token.length() - 4));</span>
-<span class="nc" id="L179">      log.debug(&quot;generateProfileURL, maskedProfileURL: {}&quot;, maskedProfileURL);</span>
+<span class="nc" id="L180">              token.substring(0, 4) + &quot;****&quot; + token.substring(token.length() - 4));</span>
+<span class="nc" id="L181">      log.debug(&quot;generateProfileURL, maskedProfileURL: {}&quot;, maskedProfileURL);</span>
     }
-<span class="fc" id="L181">    return profileURL;</span>
+<span class="fc" id="L183">    return profileURL;</span>
   }
 
   /**
@@ -190,32 +192,32 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   @Override
   public String generateIntrospectURL(String token) {
 
-<span class="fc" id="L193">    String introspectURL = String.format(oidcProviderIntrospectURL, token);</span>
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">    if (log.isTraceEnabled()) {</span>
-<span class="nc" id="L195">      String maskedIntrospectURL =</span>
-<span class="nc" id="L196">          String.format(</span>
+<span class="fc" id="L195">    String introspectURL = String.format(oidcProviderIntrospectURL, token);</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">    if (log.isTraceEnabled()) {</span>
+<span class="nc" id="L197">      String maskedIntrospectURL =</span>
+<span class="nc" id="L198">          String.format(</span>
               oidcProviderIntrospectURL,
-<span class="nc" id="L198">              token.substring(0, 4) + &quot;****&quot; + token.substring(token.length() - 4));</span>
-<span class="nc" id="L199">      log.trace(&quot;generateIntrospectURL, maskedIntrospectURL: {}&quot;, maskedIntrospectURL);</span>
+<span class="nc" id="L200">              token.substring(0, 4) + &quot;****&quot; + token.substring(token.length() - 4));</span>
+<span class="nc" id="L201">      log.trace(&quot;generateIntrospectURL, maskedIntrospectURL: {}&quot;, maskedIntrospectURL);</span>
     }
 
-<span class="fc" id="L202">    return introspectURL;</span>
+<span class="fc" id="L204">    return introspectURL;</span>
   }
 
   @Override
   public OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code) {
 
-<span class="fc" id="L208">    String body = generateCodeExchangeBody(host, code);</span>
-<span class="fc" id="L209">    OIDCAccessTokenResponse payload =</span>
+<span class="fc" id="L210">    String body = generateCodeExchangeBody(host, code);</span>
+<span class="fc" id="L211">    OIDCAccessTokenResponse payload =</span>
         restClient
-<span class="fc" id="L211">            .post()</span>
-<span class="fc" id="L212">            .uri(oidcAccessTokenURL)</span>
-<span class="fc" id="L213">            .header(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;)</span>
-<span class="fc" id="L214">            .body(body)</span>
-<span class="fc" id="L215">            .retrieve()</span>
-<span class="fc" id="L216">            .body(OIDCAccessTokenResponse.class);</span>
+<span class="fc" id="L213">            .post()</span>
+<span class="fc" id="L214">            .uri(oidcAccessTokenURL)</span>
+<span class="fc" id="L215">            .header(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;)</span>
+<span class="fc" id="L216">            .body(body)</span>
+<span class="fc" id="L217">            .retrieve()</span>
+<span class="fc" id="L218">            .body(OIDCAccessTokenResponse.class);</span>
 
-<span class="fc" id="L218">    return OIDCAccessTokenMapper.toDomain(payload);</span>
+<span class="fc" id="L220">    return OIDCAccessTokenMapper.toDomain(payload);</span>
   }
 
   /**
@@ -227,21 +229,21 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   @Override
   public OIDCProfile profile(String token) {
 
-<span class="fc" id="L230">    log.trace(&quot;profile&quot;);</span>
+<span class="fc" id="L232">    log.trace(&quot;profile&quot;);</span>
 
-<span class="fc" id="L232">    OIDCProfileResponse payload =</span>
+<span class="fc" id="L234">    OIDCProfileResponse payload =</span>
         restClient
-<span class="fc" id="L234">            .post()</span>
-<span class="fc" id="L235">            .uri(generateProfileURL(token))</span>
-<span class="fc" id="L236">            .header(&quot;Authorization&quot;, basicAuthentication())</span>
-<span class="fc" id="L237">            .contentType(MediaType.APPLICATION_FORM_URLENCODED)</span>
-<span class="fc" id="L238">            .accept(MediaType.APPLICATION_JSON)</span>
-<span class="fc" id="L239">            .retrieve()</span>
-<span class="fc" id="L240">            .body(OIDCProfileResponse.class);</span>
+<span class="fc" id="L236">            .post()</span>
+<span class="fc" id="L237">            .uri(generateProfileURL(token))</span>
+<span class="fc" id="L238">            .header(&quot;Authorization&quot;, basicAuthentication())</span>
+<span class="fc" id="L239">            .contentType(MediaType.APPLICATION_FORM_URLENCODED)</span>
+<span class="fc" id="L240">            .accept(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L241">            .retrieve()</span>
+<span class="fc" id="L242">            .body(OIDCProfileResponse.class);</span>
 
-<span class="fc" id="L242">    log.debug(&quot;profile, payload: {}&quot;, payload);</span>
+<span class="fc" id="L244">    log.debug(&quot;profile, payload: {}&quot;, payload);</span>
 
-<span class="fc" id="L244">    return OIDCProfileMapper.toDomain(payload);</span>
+<span class="fc" id="L246">    return OIDCProfileMapper.toDomain(payload);</span>
   }
 
   /**
@@ -253,21 +255,21 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   @Override
   public OIDCIntrospection introspectAccessToken(String token) {
 
-<span class="fc" id="L256">    log.debug(&quot;introspectAccessToken&quot;);</span>
+<span class="fc" id="L258">    log.debug(&quot;introspectAccessToken&quot;);</span>
 
-<span class="fc" id="L258">    OIDCIntrospectResponse payload =</span>
+<span class="fc" id="L260">    OIDCIntrospectResponse payload =</span>
         restClient
-<span class="fc" id="L260">            .post()</span>
-<span class="fc" id="L261">            .uri(generateIntrospectURL(token))</span>
-<span class="fc" id="L262">            .header(&quot;Authorization&quot;, basicAuthentication())</span>
-<span class="fc" id="L263">            .contentType(MediaType.APPLICATION_FORM_URLENCODED)</span>
-<span class="fc" id="L264">            .accept(MediaType.APPLICATION_JSON)</span>
-<span class="fc" id="L265">            .retrieve()</span>
-<span class="fc" id="L266">            .body(OIDCIntrospectResponse.class);</span>
+<span class="fc" id="L262">            .post()</span>
+<span class="fc" id="L263">            .uri(generateIntrospectURL(token))</span>
+<span class="fc" id="L264">            .header(&quot;Authorization&quot;, basicAuthentication())</span>
+<span class="fc" id="L265">            .contentType(MediaType.APPLICATION_FORM_URLENCODED)</span>
+<span class="fc" id="L266">            .accept(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L267">            .retrieve()</span>
+<span class="fc" id="L268">            .body(OIDCIntrospectResponse.class);</span>
 
-<span class="fc" id="L268">    log.debug(&quot;introspect, payload: {}&quot;, payload);</span>
+<span class="fc" id="L270">    log.debug(&quot;introspect, payload: {}&quot;, payload);</span>
 
-<span class="fc" id="L270">    return OIDCIntrospectionMapper.toDomain(payload);</span>
+<span class="fc" id="L272">    return OIDCIntrospectionMapper.toDomain(payload);</span>
   }
 
   /**
@@ -281,78 +283,75 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   public Optional&lt;OIDCAccessToken&gt; getAccessToken(String login, String password) {
     try {
 
-<span class="fc" id="L284">      String body = generateAccessTokenBody(login, password);</span>
+<span class="fc" id="L286">      String body = generateAccessTokenBody(login, password);</span>
 
-<span class="fc" id="L286">      OIDCAccessTokenResponse payload =</span>
+<span class="fc" id="L288">      OIDCAccessTokenResponse payload =</span>
           restClient
-<span class="fc" id="L288">              .post()</span>
-<span class="fc" id="L289">              .uri(oidcAccessTokenURL)</span>
-<span class="fc" id="L290">              .header(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;)</span>
-<span class="fc" id="L291">              .body(body)</span>
-<span class="fc" id="L292">              .retrieve()</span>
-<span class="fc" id="L293">              .body(OIDCAccessTokenResponse.class);</span>
+<span class="fc" id="L290">              .post()</span>
+<span class="fc" id="L291">              .uri(oidcAccessTokenURL)</span>
+<span class="fc" id="L292">              .header(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;)</span>
+<span class="fc" id="L293">              .body(body)</span>
+<span class="fc" id="L294">              .retrieve()</span>
+<span class="fc" id="L295">              .body(OIDCAccessTokenResponse.class);</span>
 
-<span class="fc bfc" id="L295" title="All 2 branches covered.">      if (payload == null) {</span>
-<span class="fc" id="L296">        return Optional.empty();</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">      if (payload == null) {</span>
+<span class="fc" id="L298">        return Optional.empty();</span>
       }
 
-<span class="fc" id="L299">      OIDCAccessToken accessToken = OIDCAccessTokenMapper.toDomain(payload);</span>
-<span class="pc bpc" id="L300" title="1 of 2 branches missed.">      if (accessToken == null) {</span>
-<span class="nc" id="L301">        return Optional.empty();</span>
-      }
+<span class="fc" id="L301">      OIDCAccessToken accessToken = OIDCAccessTokenMapper.toDomain(payload);</span>
 
-<span class="fc" id="L304">      log.debug(&quot;getAccessToken, jwtAccessToken: {}&quot;, jwtAccessToken);</span>
+<span class="fc" id="L303">      log.debug(&quot;getAccessToken, jwtAccessToken: {}&quot;, jwtAccessToken);</span>
 
-<span class="fc bfc" id="L306" title="All 2 branches covered.">      if (jwtAccessToken) {</span>
-<span class="fc" id="L307">        final Optional&lt;Map&lt;String, Object&gt;&gt; claims =</span>
-<span class="fc" id="L308">            this.jwtService.parseAndCheckSignature(accessToken);</span>
-<span class="fc bfc" id="L309" title="All 2 branches covered.">        if (claims.isEmpty()) {</span>
-<span class="fc" id="L310">          log.error(&quot;Invalid access token response: {}&quot;, payload);</span>
-<span class="fc" id="L311">          return Optional.empty();</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">      if (jwtAccessToken) {</span>
+<span class="fc" id="L306">        final Optional&lt;Map&lt;String, Object&gt;&gt; claims =</span>
+<span class="fc" id="L307">            this.jwtService.parseAndCheckSignature(accessToken);</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        if (claims.isEmpty()) {</span>
+<span class="fc" id="L309">          log.error(&quot;Invalid access token response: {}&quot;, payload);</span>
+<span class="fc" id="L310">          return Optional.empty();</span>
         }
-<span class="fc" id="L313">        log.trace(&quot;Claims: {}&quot;, claims.get());</span>
-<span class="fc" id="L314">        accessToken =</span>
+<span class="fc" id="L312">        log.trace(&quot;Claims: {}&quot;, claims.get());</span>
+<span class="fc" id="L313">        accessToken =</span>
             new OIDCAccessToken(
-<span class="fc" id="L316">                accessToken.accessToken(),</span>
-<span class="fc" id="L317">                accessToken.refreshToken(),</span>
-<span class="fc" id="L318">                accessToken.tokenType(),</span>
-<span class="fc" id="L319">                accessToken.expiresIn(),</span>
-<span class="fc" id="L320">                accessToken.scope(),</span>
-<span class="fc" id="L321">                accessToken.rawIdToken(),</span>
-<span class="fc" id="L322">                new HashMap&lt;&gt;(claims.get()),</span>
+<span class="fc" id="L315">                accessToken.accessToken(),</span>
+<span class="fc" id="L316">                accessToken.refreshToken(),</span>
+<span class="fc" id="L317">                accessToken.tokenType(),</span>
+<span class="fc" id="L318">                accessToken.expiresIn(),</span>
+<span class="fc" id="L319">                accessToken.scope(),</span>
+<span class="fc" id="L320">                accessToken.rawIdToken(),</span>
+<span class="fc" id="L321">                new HashMap&lt;&gt;(claims.get()),</span>
                 true);
       }
-<span class="fc" id="L325">      return Optional.of(accessToken);</span>
-<span class="fc" id="L326">    } catch (HttpClientErrorException e) {</span>
-<span class="fc" id="L327">      log.error(</span>
+<span class="fc" id="L324">      return Optional.of(accessToken);</span>
+<span class="fc" id="L325">    } catch (HttpClientErrorException e) {</span>
+<span class="fc" id="L326">      log.error(</span>
           &quot;getAccessToken, error while retrieving access token for {}: {}&quot;,
           login,
-<span class="fc" id="L330">          +e.getStatusCode().value());</span>
-<span class="fc" id="L331">      return Optional.empty();</span>
+<span class="fc" id="L329">          +e.getStatusCode().value());</span>
+<span class="fc" id="L330">      return Optional.empty();</span>
     }
   }
 
   @Override
   public String generateAuthorizationUrl(String host, String redirect) {
-<span class="nc bnc" id="L337" title="All 4 branches missed.">    String safeHost = host == null || host.isBlank() ? &quot;localhost&quot; : host;</span>
+<span class="nc" id="L336">    String safeHost = toSafeHost(host);</span>
 
     String redirectUri =
-<span class="nc" id="L340">        UriComponentsBuilder.newInstance()</span>
-<span class="nc" id="L341">            .scheme(&quot;https&quot;)</span>
-<span class="nc" id="L342">            .host(safeHost)</span>
-<span class="nc" id="L343">            .path(authCallbackPublicPath)</span>
-<span class="nc" id="L344">            .build()</span>
-<span class="nc" id="L345">            .toUriString();</span>
+<span class="nc" id="L339">        UriComponentsBuilder.newInstance()</span>
+<span class="nc" id="L340">            .scheme(&quot;https&quot;)</span>
+<span class="nc" id="L341">            .host(safeHost)</span>
+<span class="nc" id="L342">            .path(authCallbackPublicPath)</span>
+<span class="nc" id="L343">            .build()</span>
+<span class="nc" id="L344">            .toUriString();</span>
 
-<span class="nc" id="L347">    return UriComponentsBuilder.fromUriString(oidcAuthorizeUrl)</span>
-<span class="nc" id="L348">        .queryParam(&quot;client_id&quot;, clientId)</span>
-<span class="nc" id="L349">        .queryParam(&quot;response_type&quot;, &quot;code&quot;)</span>
-<span class="nc" id="L350">        .queryParam(&quot;scope&quot;, oidcScope)</span>
-<span class="nc" id="L351">        .queryParam(&quot;redirect_uri&quot;, redirectUri)</span>
-<span class="nc" id="L352">        .queryParam(&quot;state&quot;, redirect)</span>
-<span class="nc" id="L353">        .build()</span>
-<span class="nc" id="L354">        .encode()</span>
-<span class="nc" id="L355">        .toUriString();</span>
+<span class="nc" id="L346">    return UriComponentsBuilder.fromUriString(oidcAuthorizeUrl)</span>
+<span class="nc" id="L347">        .queryParam(&quot;client_id&quot;, clientId)</span>
+<span class="nc" id="L348">        .queryParam(&quot;response_type&quot;, &quot;code&quot;)</span>
+<span class="nc" id="L349">        .queryParam(&quot;scope&quot;, oidcScope)</span>
+<span class="nc" id="L350">        .queryParam(&quot;redirect_uri&quot;, redirectUri)</span>
+<span class="nc" id="L351">        .queryParam(&quot;state&quot;, redirect)</span>
+<span class="nc" id="L352">        .build()</span>
+<span class="nc" id="L353">        .encode()</span>
+<span class="nc" id="L354">        .toUriString();</span>
   }
 
   /**
@@ -362,17 +361,17 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
    * @return The basic authentication header.
    */
   private String basicAuthentication() {
-<span class="pc bpc" id="L365" title="1 of 2 branches missed.">    if (basicAuthenticationHeader == null) {</span>
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">    if (basicAuthenticationHeader == null) {</span>
 
-<span class="fc" id="L367">      log.trace(&quot;basicAuthentication generating authentication header. &quot;);</span>
-<span class="fc" id="L368">      final String auth = clientId + &quot;:&quot; + clientSecret;</span>
+<span class="fc" id="L366">      log.trace(&quot;basicAuthentication generating authentication header. &quot;);</span>
+<span class="fc" id="L367">      final String auth = clientId + &quot;:&quot; + clientSecret;</span>
 
       final byte[] encodedAuth =
-<span class="fc" id="L371">          Base64.getEncoder().encode(auth.getBytes(StandardCharsets.US_ASCII));</span>
-<span class="fc" id="L372">      basicAuthenticationHeader = &quot;Basic &quot; + new String(encodedAuth);</span>
+<span class="fc" id="L370">          Base64.getEncoder().encode(auth.getBytes(StandardCharsets.US_ASCII));</span>
+<span class="fc" id="L371">      basicAuthenticationHeader = &quot;Basic &quot; + new String(encodedAuth);</span>
     }
-<span class="fc" id="L374">    log.trace(&quot;basicAuthentication, basicAuthenticationHeader: {}&quot;, basicAuthenticationHeader);</span>
-<span class="fc" id="L375">    return basicAuthenticationHeader;</span>
+<span class="fc" id="L373">    log.trace(&quot;basicAuthentication, basicAuthenticationHeader: {}&quot;, basicAuthenticationHeader);</span>
+<span class="fc" id="L374">    return basicAuthenticationHeader;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
