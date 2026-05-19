@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.contr
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
@@ -12,6 +13,8 @@ import jakarta.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,84 +83,180 @@ class AccessControlControllerIT {
     accessTokenHelper.clear();
   }
 
-  @Test
-  void ownerCanAccessAuthorizedResource() throws Exception {
-    expectAuthorizationStatus(
-        ownerLogin,
-        ownerPassword,
-        authorizedResourceId,
-        ACT_SHARE_READ,
-        status().is2xxSuccessful());
-    expectAuthorizationStatus(
-        ownerLogin,
-        ownerPassword,
-        authorizedResourceId,
-        ACT_SHARE_WRITE,
-        status().is2xxSuccessful());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, authorizedResourceId, ACT_DISPLAY, status().is2xxSuccessful());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, authorizedResourceId, ACT_EDIT, status().is2xxSuccessful());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, authorizedResourceId, ACT_FEEDBACK, status().is2xxSuccessful());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, authorizedResourceId, ACT_DELETE, status().is2xxSuccessful());
-  }
+  @Nested
+  class GivenAccessControlEndpoint {
 
-  @Test
-  void ownerCannotAccessUnauthorizedResource() throws Exception {
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, unauthorizedResourceId, ACT_SHARE_READ, status().isForbidden());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, unauthorizedResourceId, ACT_SHARE_WRITE, status().isForbidden());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, unauthorizedResourceId, ACT_DISPLAY, status().isForbidden());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, unauthorizedResourceId, ACT_EDIT, status().isForbidden());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, unauthorizedResourceId, ACT_FEEDBACK, status().isForbidden());
-    expectAuthorizationStatus(
-        ownerLogin, ownerPassword, unauthorizedResourceId, ACT_DELETE, status().isForbidden());
-  }
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("an access control endpoint");
+    }
 
-  @Test
-  void unprivilegedUserCannotAccessAuthorizedResource() throws Exception {
-    expectAuthorizationStatus(
-        unprivilegedLogin,
-        unprivilegedPassword,
-        authorizedResourceId,
-        ACT_SHARE_READ,
-        status().isForbidden());
-    expectAuthorizationStatus(
-        unprivilegedLogin,
-        unprivilegedPassword,
-        authorizedResourceId,
-        ACT_SHARE_WRITE,
-        status().isForbidden());
-    expectAuthorizationStatus(
-        unprivilegedLogin,
-        unprivilegedPassword,
-        authorizedResourceId,
-        ACT_DISPLAY,
-        status().isForbidden());
-    expectAuthorizationStatus(
-        unprivilegedLogin,
-        unprivilegedPassword,
-        authorizedResourceId,
-        ACT_EDIT,
-        status().isForbidden());
-    expectAuthorizationStatus(
-        unprivilegedLogin,
-        unprivilegedPassword,
-        authorizedResourceId,
-        ACT_FEEDBACK,
-        status().isForbidden());
-    expectAuthorizationStatus(
-        unprivilegedLogin,
-        unprivilegedPassword,
-        authorizedResourceId,
-        ACT_DELETE,
-        status().isForbidden());
+    @Nested
+    class AndAnOwnerUser {
+
+      @BeforeEach
+      void setupAnd() {
+        BddLogger.and("an owner user");
+      }
+
+      @Nested
+      class WhenAccessingAnAuthorizedResource {
+
+        @BeforeEach
+        void setupWhen() {
+          BddLogger.when("accessing an authorized resource");
+        }
+
+        @Test
+        void thenItShouldAuthorizeEveryExpectedAction() throws Exception {
+          BddLogger.then("it should authorize every expected action");
+
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              authorizedResourceId,
+              ACT_SHARE_READ,
+              status().is2xxSuccessful());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              authorizedResourceId,
+              ACT_SHARE_WRITE,
+              status().is2xxSuccessful());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              authorizedResourceId,
+              ACT_DISPLAY,
+              status().is2xxSuccessful());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              authorizedResourceId,
+              ACT_EDIT,
+              status().is2xxSuccessful());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              authorizedResourceId,
+              ACT_FEEDBACK,
+              status().is2xxSuccessful());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              authorizedResourceId,
+              ACT_DELETE,
+              status().is2xxSuccessful());
+        }
+      }
+
+      @Nested
+      class WhenAccessingAnUnauthorizedResource {
+
+        @BeforeEach
+        void setupWhen() {
+          BddLogger.when("accessing an unauthorized resource");
+        }
+
+        @Test
+        void thenItShouldForbidEveryExpectedAction() throws Exception {
+          BddLogger.then("it should forbid every expected action");
+
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              unauthorizedResourceId,
+              ACT_SHARE_READ,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              unauthorizedResourceId,
+              ACT_SHARE_WRITE,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              unauthorizedResourceId,
+              ACT_DISPLAY,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              ownerLogin, ownerPassword, unauthorizedResourceId, ACT_EDIT, status().isForbidden());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              unauthorizedResourceId,
+              ACT_FEEDBACK,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              ownerLogin,
+              ownerPassword,
+              unauthorizedResourceId,
+              ACT_DELETE,
+              status().isForbidden());
+        }
+      }
+    }
+
+    @Nested
+    class AndAnUnprivilegedUser {
+
+      @BeforeEach
+      void setupAnd() {
+        BddLogger.and("an unprivileged user");
+      }
+
+      @Nested
+      class WhenAccessingAnAuthorizedResource {
+
+        @BeforeEach
+        void setupWhen() {
+          BddLogger.when("accessing an authorized resource");
+        }
+
+        @Test
+        void thenItShouldForbidEveryExpectedAction() throws Exception {
+          BddLogger.then("it should forbid every expected action");
+
+          expectAuthorizationStatus(
+              unprivilegedLogin,
+              unprivilegedPassword,
+              authorizedResourceId,
+              ACT_SHARE_READ,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              unprivilegedLogin,
+              unprivilegedPassword,
+              authorizedResourceId,
+              ACT_SHARE_WRITE,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              unprivilegedLogin,
+              unprivilegedPassword,
+              authorizedResourceId,
+              ACT_DISPLAY,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              unprivilegedLogin,
+              unprivilegedPassword,
+              authorizedResourceId,
+              ACT_EDIT,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              unprivilegedLogin,
+              unprivilegedPassword,
+              authorizedResourceId,
+              ACT_FEEDBACK,
+              status().isForbidden());
+          expectAuthorizationStatus(
+              unprivilegedLogin,
+              unprivilegedPassword,
+              authorizedResourceId,
+              ACT_DELETE,
+              status().isForbidden());
+        }
+      }
+    }
   }
 
   private void expectAuthorizationStatus(

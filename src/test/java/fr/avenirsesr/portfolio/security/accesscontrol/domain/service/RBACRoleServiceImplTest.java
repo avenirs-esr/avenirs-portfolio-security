@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -40,173 +42,379 @@ class RBACRoleServiceImplTest {
     service = new RBACRoleServiceImpl(roleRepository, assignmentRepository);
   }
 
-  @Test
-  void getRoleByIdReturnsRoleWhenFound() {
-    RBACRole role = role();
+  @Nested
+  class GivenARBACRoleService {
 
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a RBAC role service");
+    }
 
-    Optional<RBACRole> result = service.getRoleById(ROLE_ID);
+    @Nested
+    class WhenGettingRoleById {
 
-    assertTrue(result.isPresent());
-    assertEquals(role, result.orElseThrow());
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting role by id");
+      }
 
-    verify(roleRepository).findById(ROLE_ID);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+      @Nested
+      class AndTheRoleExists {
+        private RBACRole role;
+        private Optional<RBACRole> result;
 
-  @Test
-  void getRoleByIdReturnsEmptyWhenNotFound() {
-    when(roleRepository.findById(UNKNOWN_ROLE_ID)).thenReturn(Optional.empty());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the role exists");
 
-    Optional<RBACRole> result = service.getRoleById(UNKNOWN_ROLE_ID);
+          role = role();
 
-    assertTrue(result.isEmpty());
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
 
-    verify(roleRepository).findById(UNKNOWN_ROLE_ID);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+          result = service.getRoleById(ROLE_ID);
+        }
 
-  @Test
-  void getRoleByNameReturnsRoleWhenFound() {
-    RBACRole role = role();
+        @Test
+        void thenItShouldReturnRole() {
+          BddLogger.then("it should return role");
 
-    when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
+          assertTrue(result.isPresent());
+          assertEquals(role, result.orElseThrow());
 
-    Optional<RBACRole> result = service.getRoleByName(ROLE_NAME);
+          verify(roleRepository).findById(ROLE_ID);
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
 
-    assertTrue(result.isPresent());
-    assertEquals(role, result.orElseThrow());
+      @Nested
+      class AndTheRoleDoesNotExist {
+        private Optional<RBACRole> result;
 
-    verify(roleRepository).findByName(ROLE_NAME);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the role does not exist");
 
-  @Test
-  void getRoleByNameReturnsEmptyWhenNotFound() {
-    when(roleRepository.findByName(UNKNOWN_ROLE_NAME)).thenReturn(Optional.empty());
+          when(roleRepository.findById(UNKNOWN_ROLE_ID)).thenReturn(Optional.empty());
 
-    Optional<RBACRole> result = service.getRoleByName(UNKNOWN_ROLE_NAME);
+          result = service.getRoleById(UNKNOWN_ROLE_ID);
+        }
 
-    assertTrue(result.isEmpty());
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    verify(roleRepository).findByName(UNKNOWN_ROLE_NAME);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+          assertTrue(result.isEmpty());
 
-  @Test
-  void getAllRolesReturnsRepositoryRoles() {
-    RBACRole role = role();
+          verify(roleRepository).findById(UNKNOWN_ROLE_ID);
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
+    }
 
-    when(roleRepository.findAll()).thenReturn(List.of(role));
+    @Nested
+    class WhenGettingRoleByName {
 
-    List<RBACRole> result = service.getAllRoles();
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting role by name");
+      }
 
-    assertThat(result).containsExactly(role);
+      @Nested
+      class AndTheRoleExists {
+        private RBACRole role;
+        private Optional<RBACRole> result;
 
-    verify(roleRepository).findAll();
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the role exists");
 
-  @Test
-  void getAllRolesReturnsEmptyListWhenRepositoryIsEmpty() {
-    when(roleRepository.findAll()).thenReturn(List.of());
+          role = role();
 
-    List<RBACRole> result = service.getAllRoles();
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
 
-    assertThat(result).isEmpty();
+          result = service.getRoleByName(ROLE_NAME);
+        }
 
-    verify(roleRepository).findAll();
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+        @Test
+        void thenItShouldReturnRole() {
+          BddLogger.then("it should return role");
 
-  @Test
-  void createRoleSavesRole() {
-    RBACRole roleToCreate = roleWithoutId();
-    RBACRole savedRole = role();
+          assertTrue(result.isPresent());
+          assertEquals(role, result.orElseThrow());
 
-    when(roleRepository.save(roleToCreate)).thenReturn(savedRole);
+          verify(roleRepository).findByName(ROLE_NAME);
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
 
-    RBACRole result = service.createRole(roleToCreate);
+      @Nested
+      class AndTheRoleDoesNotExist {
+        private Optional<RBACRole> result;
 
-    assertEquals(savedRole, result);
-    assertEquals(ROLE_ID, result.id());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the role does not exist");
 
-    verify(roleRepository).save(roleToCreate);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+          when(roleRepository.findByName(UNKNOWN_ROLE_NAME)).thenReturn(Optional.empty());
 
-  @Test
-  void updateRoleSavesRoleWhenExistingRoleIsFound() {
-    RBACRole role = role();
+          result = service.getRoleByName(UNKNOWN_ROLE_NAME);
+        }
 
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
-    when(roleRepository.save(role)).thenReturn(role);
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    RBACRole result = service.updateRole(role);
+          assertTrue(result.isEmpty());
 
-    assertEquals(role, result);
+          verify(roleRepository).findByName(UNKNOWN_ROLE_NAME);
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
+    }
 
-    verify(roleRepository).findById(ROLE_ID);
-    verify(roleRepository).save(role);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+    @Nested
+    class WhenGettingAllRoles {
 
-  @Test
-  void updateRoleThrowsWhenRoleDoesNotExist() {
-    RBACRole role = role();
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting all roles");
+      }
 
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.empty());
+      @Nested
+      class AndTheRepositoryContainsRoles {
+        private RBACRole role;
+        private List<RBACRole> result;
 
-    AccessControlNotFoundException exception =
-        assertThrows(AccessControlNotFoundException.class, () -> service.updateRole(role));
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository contains roles");
 
-    assertEquals(
-        "Role not found, ID: 00000000-0000-0000-0000-000000000001", exception.getMessage());
+          role = role();
 
-    verify(roleRepository).findById(ROLE_ID);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+          when(roleRepository.findAll()).thenReturn(List.of(role));
 
-  @Test
-  void deleteRoleDeletesById() {
-    service.deleteRole(ROLE_ID);
+          result = service.getAllRoles();
+        }
 
-    verify(roleRepository).deleteById(ROLE_ID);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+        @Test
+        void thenItShouldReturnRepositoryRoles() {
+          BddLogger.then("it should return repository roles");
 
-  @Test
-  void getRolesByPrincipalLoginReturnsDistinctRolesFromAssignments() {
-    RBACRole owner = role();
-    RBACRole pair =
-        new RBACRole(
-            UUID.fromString("00000000-0000-0000-0000-000000000002"),
-            "ROLE_PAIR",
-            "Can give feedback",
-            Set.of(permission("PERM_READ"), permission("PERM_COMMENT")));
+          assertThat(result).containsExactly(role);
 
-    when(assignmentRepository.findByPrincipal(LOGIN))
-        .thenReturn(List.of(assignment(owner), assignment(owner), assignment(pair)));
+          verify(roleRepository).findAll();
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
 
-    List<RBACRole> result = service.getRolesByPrincipalLogin(LOGIN);
+      @Nested
+      class AndTheRepositoryIsEmpty {
+        private List<RBACRole> result;
 
-    assertThat(result).containsExactly(owner, pair);
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository is empty");
 
-    verify(assignmentRepository).findByPrincipal(LOGIN);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
-  }
+          when(roleRepository.findAll()).thenReturn(List.of());
 
-  @Test
-  void getRolesByPrincipalLoginReturnsEmptyListWhenNoAssignmentExists() {
-    when(assignmentRepository.findByPrincipal(LOGIN)).thenReturn(List.of());
+          result = service.getAllRoles();
+        }
 
-    List<RBACRole> result = service.getRolesByPrincipalLogin(LOGIN);
+        @Test
+        void thenItShouldReturnEmptyList() {
+          BddLogger.then("it should return an empty list");
 
-    assertThat(result).isEmpty();
+          assertThat(result).isEmpty();
 
-    verify(assignmentRepository).findByPrincipal(LOGIN);
-    verifyNoMoreInteractions(roleRepository, assignmentRepository);
+          verify(roleRepository).findAll();
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenCreatingRole {
+      private RBACRole roleToCreate;
+      private RBACRole savedRole;
+      private RBACRole result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("creating role");
+
+        roleToCreate = roleWithoutId();
+        savedRole = role();
+
+        when(roleRepository.save(roleToCreate)).thenReturn(savedRole);
+
+        result = service.createRole(roleToCreate);
+      }
+
+      @Test
+      void thenItShouldSaveRole() {
+        BddLogger.then("it should save role");
+
+        assertEquals(savedRole, result);
+        assertEquals(ROLE_ID, result.id());
+
+        verify(roleRepository).save(roleToCreate);
+        verifyNoMoreInteractions(roleRepository, assignmentRepository);
+      }
+    }
+
+    @Nested
+    class WhenUpdatingRole {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("updating role");
+      }
+
+      @Nested
+      class AndTheRoleExists {
+        private RBACRole role;
+        private RBACRole result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the role exists");
+
+          role = role();
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(roleRepository.save(role)).thenReturn(role);
+
+          result = service.updateRole(role);
+        }
+
+        @Test
+        void thenItShouldSaveRole() {
+          BddLogger.then("it should save role");
+
+          assertEquals(role, result);
+
+          verify(roleRepository).findById(ROLE_ID);
+          verify(roleRepository).save(role);
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
+
+      @Nested
+      class AndTheRoleDoesNotExist {
+        private RBACRole role;
+        private AccessControlNotFoundException exception;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the role does not exist");
+
+          role = role();
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.empty());
+
+          exception =
+              assertThrows(AccessControlNotFoundException.class, () -> service.updateRole(role));
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertEquals(
+              "Role not found, ID: 00000000-0000-0000-0000-000000000001", exception.getMessage());
+
+          verify(roleRepository).findById(ROLE_ID);
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenDeletingRole {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("deleting role");
+
+        service.deleteRole(ROLE_ID);
+      }
+
+      @Test
+      void thenItShouldDeleteById() {
+        BddLogger.then("it should delete by id");
+
+        verify(roleRepository).deleteById(ROLE_ID);
+        verifyNoMoreInteractions(roleRepository, assignmentRepository);
+      }
+    }
+
+    @Nested
+    class WhenGettingRolesByPrincipalLogin {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting roles by principal login");
+      }
+
+      @Nested
+      class AndThePrincipalHasAssignments {
+        private RBACRole owner;
+        private RBACRole pair;
+        private List<RBACRole> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal has assignments");
+
+          owner = role();
+          pair =
+              new RBACRole(
+                  UUID.fromString("00000000-0000-0000-0000-000000000002"),
+                  "ROLE_PAIR",
+                  "Can give feedback",
+                  Set.of(permission("PERM_READ"), permission("PERM_COMMENT")));
+
+          when(assignmentRepository.findByPrincipal(LOGIN))
+              .thenReturn(List.of(assignment(owner), assignment(owner), assignment(pair)));
+
+          result = service.getRolesByPrincipalLogin(LOGIN);
+        }
+
+        @Test
+        void thenItShouldReturnDistinctRolesFromAssignments() {
+          BddLogger.then("it should return distinct roles from assignments");
+
+          assertThat(result).containsExactly(owner, pair);
+
+          verify(assignmentRepository).findByPrincipal(LOGIN);
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
+
+      @Nested
+      class AndThePrincipalHasNoAssignment {
+        private List<RBACRole> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal has no assignment");
+
+          when(assignmentRepository.findByPrincipal(LOGIN)).thenReturn(List.of());
+
+          result = service.getRolesByPrincipalLogin(LOGIN);
+        }
+
+        @Test
+        void thenItShouldReturnEmptyList() {
+          BddLogger.then("it should return an empty list");
+
+          assertThat(result).isEmpty();
+
+          verify(assignmentRepository).findByPrincipal(LOGIN);
+          verifyNoMoreInteractions(roleRepository, assignmentRepository);
+        }
+      }
+    }
   }
 
   private RBACRole role() {

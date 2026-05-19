@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.authentication.domain.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
@@ -14,174 +15,282 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class OidcServiceImplTest {
+
+  private static final String LOGIN = "login";
+  private static final String PASSWORD = "password";
+  private static final String HOST = "localhost";
+  private static final String CODE = "code";
+  private static final String TOKEN = "token";
 
   @Mock private OidcAuthenticationPort oidcAuthenticationPort;
   @Mock private PrincipalService principalService;
 
-  private OidcServiceImpl service;
+  @InjectMocks private OidcServiceImpl service;
 
-  private AutoCloseable closeable;
+  @Nested
+  class GivenOidcService {
 
-  @BeforeEach
-  void setUp() {
-    closeable = MockitoAnnotations.openMocks(this);
-    service = new OidcServiceImpl(oidcAuthenticationPort, principalService);
-  }
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("an OIDC service");
+    }
 
-  @AfterEach
-  void tearDown() throws Exception {
-    if (closeable != null) {
-      closeable.close();
+    @Nested
+    class WhenGettingAccessToken {
+      private OIDCAccessToken expected;
+      private Optional<OIDCAccessToken> result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting access token");
+
+        expected = accessToken();
+
+        when(oidcAuthenticationPort.getAccessToken(LOGIN, PASSWORD))
+            .thenReturn(Optional.of(expected));
+
+        result = service.getAccessToken(LOGIN, PASSWORD);
+      }
+
+      @Test
+      void thenItShouldDelegateToPort() {
+        BddLogger.then("it should delegate to port");
+
+        assertTrue(result.isPresent());
+        assertEquals(expected, result.get());
+
+        verify(oidcAuthenticationPort).getAccessToken(LOGIN, PASSWORD);
+        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+
+    @Nested
+    class WhenExchangingAuthorizationCodeForToken {
+      private OIDCAccessToken expected;
+      private OIDCAccessToken result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("exchanging authorization code for token");
+
+        expected = accessToken();
+
+        when(oidcAuthenticationPort.exchangeAuthorizationCodeForToken(HOST, CODE))
+            .thenReturn(expected);
+
+        result = service.exchangeAuthorizationCodeForToken(HOST, CODE);
+      }
+
+      @Test
+      void thenItShouldDelegateToPort() {
+        BddLogger.then("it should delegate to port");
+
+        assertEquals(expected, result);
+
+        verify(oidcAuthenticationPort).exchangeAuthorizationCodeForToken(HOST, CODE);
+        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+
+    @Nested
+    class WhenGeneratingServiceURL {
+      private String expected;
+      private String result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("generating service URL");
+
+        expected = "https://service/callback";
+
+        when(oidcAuthenticationPort.generateServiceURL(HOST)).thenReturn(expected);
+
+        result = service.generateServiceURL(HOST);
+      }
+
+      @Test
+      void thenItShouldDelegateToPort() {
+        BddLogger.then("it should delegate to port");
+
+        assertEquals(expected, result);
+
+        verify(oidcAuthenticationPort).generateServiceURL(HOST);
+        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+
+    @Nested
+    class WhenGeneratingAuthorizationUrl {
+      private String redirect;
+      private String expected;
+      private String result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("generating authorization URL");
+
+        redirect = "/cofolio/student";
+        expected = "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize";
+
+        when(oidcAuthenticationPort.generateAuthorizationUrl("dev.avenirs-esr.fr", redirect))
+            .thenReturn(expected);
+
+        result = service.generateAuthorizationUrl("dev.avenirs-esr.fr", redirect);
+      }
+
+      @Test
+      void thenItShouldDelegateToPort() {
+        BddLogger.then("it should delegate to port");
+
+        assertEquals(expected, result);
+
+        verify(oidcAuthenticationPort).generateAuthorizationUrl("dev.avenirs-esr.fr", redirect);
+        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+
+    @Nested
+    class WhenIntrospectingAccessToken {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("introspecting access token");
+      }
+
+      @Nested
+      class AndTokenIsActiveAndPrincipalExists {
+        private UUID userId;
+        private OIDCIntrospection result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("token is active and principal exists");
+
+          userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
+          OIDCIntrospection introspection = new OIDCIntrospection(TOKEN, true, "user", null);
+          Principal principal = new Principal(null, "user", "OIDC", "user", userId, Set.of());
+
+          when(oidcAuthenticationPort.introspectAccessToken(TOKEN)).thenReturn(introspection);
+          when(principalService.getPrincipalByProviderAndExternalId("OIDC", "user"))
+              .thenReturn(Optional.of(principal));
+
+          result = service.introspectAccessToken(TOKEN);
+        }
+
+        @Test
+        void thenItShouldReturnIntrospectionWithUserId() {
+          BddLogger.then("it should return introspection with user id");
+
+          assertEquals(new OIDCIntrospection(TOKEN, true, "user", userId), result);
+
+          verify(oidcAuthenticationPort).introspectAccessToken(TOKEN);
+          verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "user");
+          verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        }
+      }
+
+      @Nested
+      class AndTokenIsInactive {
+        private OIDCIntrospection introspection;
+        private OIDCIntrospection result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("token is inactive");
+
+          introspection = new OIDCIntrospection(TOKEN, false, "user", null);
+
+          when(oidcAuthenticationPort.introspectAccessToken(TOKEN)).thenReturn(introspection);
+
+          result = service.introspectAccessToken(TOKEN);
+        }
+
+        @Test
+        void thenItShouldReturnIntrospectionWithoutPrincipalLookup() {
+          BddLogger.then("it should return introspection without principal lookup");
+
+          assertEquals(introspection, result);
+
+          verify(oidcAuthenticationPort).introspectAccessToken(TOKEN);
+          verifyNoInteractions(principalService);
+          verifyNoMoreInteractions(oidcAuthenticationPort);
+        }
+      }
+
+      @Nested
+      class AndTokenIsActiveButPrincipalIsMissing {
+        private PrincipalNotFoundException exception;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("token is active but principal is missing");
+
+          OIDCIntrospection introspection =
+              new OIDCIntrospection(TOKEN, true, "unknown-user", null);
+
+          when(oidcAuthenticationPort.introspectAccessToken(TOKEN)).thenReturn(introspection);
+          when(principalService.getPrincipalByProviderAndExternalId("OIDC", "unknown-user"))
+              .thenReturn(Optional.empty());
+
+          exception =
+              assertThrows(
+                  PrincipalNotFoundException.class, () -> service.introspectAccessToken(TOKEN));
+        }
+
+        @Test
+        void thenItShouldThrowPrincipalNotFoundException() {
+          BddLogger.then("it should throw principal not found exception");
+
+          assertEquals("No principal found for external id: unknown-user", exception.getMessage());
+
+          verify(oidcAuthenticationPort).introspectAccessToken(TOKEN);
+          verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "unknown-user");
+          verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        }
+      }
+    }
+
+    @Nested
+    class WhenGettingProfile {
+      private OIDCProfile expected;
+      private OIDCProfile result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting profile");
+
+        expected = new OIDCProfile("id", "service", "first", "last", "email@d.tld");
+
+        when(oidcAuthenticationPort.profile(TOKEN)).thenReturn(expected);
+
+        result = service.profile(TOKEN);
+      }
+
+      @Test
+      void thenItShouldDelegateToPort() {
+        BddLogger.then("it should delegate to port");
+
+        assertEquals(expected, result);
+
+        verify(oidcAuthenticationPort).profile(TOKEN);
+        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
     }
   }
 
-  @Test
-  void getAccessTokenDelegatesToPort() {
-    String login = "login";
-    String password = "password";
-
-    OIDCAccessToken expected =
-        new OIDCAccessToken(
-            "access-token", "refresh-token", "Bearer", 3600, "openid", null, Map.of(), false);
-
-    when(oidcAuthenticationPort.getAccessToken(login, password)).thenReturn(Optional.of(expected));
-
-    Optional<OIDCAccessToken> result = service.getAccessToken(login, password);
-
-    assertTrue(result.isPresent());
-    assertEquals(expected, result.get());
-
-    verify(oidcAuthenticationPort).getAccessToken(login, password);
-    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
-  }
-
-  @Test
-  void exchangeAuthorizationCodeForTokenDelegatesToPort() {
-    String host = "localhost";
-    String code = "code";
-
-    OIDCAccessToken expected =
-        new OIDCAccessToken(
-            "access-token", "refresh-token", "Bearer", 3600, "openid", null, Map.of(), false);
-
-    when(oidcAuthenticationPort.exchangeAuthorizationCodeForToken(host, code)).thenReturn(expected);
-
-    OIDCAccessToken result = service.exchangeAuthorizationCodeForToken(host, code);
-
-    assertEquals(expected, result);
-
-    verify(oidcAuthenticationPort).exchangeAuthorizationCodeForToken(host, code);
-    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
-  }
-
-  @Test
-  void generateServiceURLDelegatesToPort() {
-    String host = "localhost";
-    String expected = "https://service/callback";
-
-    when(oidcAuthenticationPort.generateServiceURL(host)).thenReturn(expected);
-
-    String result = service.generateServiceURL(host);
-
-    assertEquals(expected, result);
-
-    verify(oidcAuthenticationPort).generateServiceURL(host);
-    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
-  }
-
-  @Test
-  void generateAuthorizationUrlDelegatesToPort() {
-    String host = "dev.avenirs-esr.fr";
-    String redirect = "/cofolio/student";
-    String expected = "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize";
-
-    when(oidcAuthenticationPort.generateAuthorizationUrl(host, redirect)).thenReturn(expected);
-
-    String result = service.generateAuthorizationUrl(host, redirect);
-
-    assertEquals(expected, result);
-
-    verify(oidcAuthenticationPort).generateAuthorizationUrl(host, redirect);
-    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
-  }
-
-  @Test
-  void introspectAccessTokenWithActiveTokenReturnsIntrospectionWithUserId() {
-    String token = "token";
-    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
-
-    OIDCIntrospection introspection = new OIDCIntrospection(token, true, "user", null);
-    Principal principal = new Principal(null, "user", "OIDC", "user", userId, Set.of());
-
-    when(oidcAuthenticationPort.introspectAccessToken(token)).thenReturn(introspection);
-    when(principalService.getPrincipalByProviderAndExternalId("OIDC", "user"))
-        .thenReturn(Optional.of(principal));
-
-    OIDCIntrospection result = service.introspectAccessToken(token);
-
-    assertEquals(new OIDCIntrospection(token, true, "user", userId), result);
-
-    verify(oidcAuthenticationPort).introspectAccessToken(token);
-    verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "user");
-    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
-  }
-
-  @Test
-  void introspectAccessTokenWithInactiveTokenReturnsIntrospectionWithoutPrincipalLookup() {
-    String token = "token";
-
-    OIDCIntrospection introspection = new OIDCIntrospection(token, false, "user", null);
-
-    when(oidcAuthenticationPort.introspectAccessToken(token)).thenReturn(introspection);
-
-    OIDCIntrospection result = service.introspectAccessToken(token);
-
-    assertEquals(introspection, result);
-
-    verify(oidcAuthenticationPort).introspectAccessToken(token);
-    verifyNoInteractions(principalService);
-    verifyNoMoreInteractions(oidcAuthenticationPort);
-  }
-
-  @Test
-  void introspectAccessTokenWithActiveTokenAndMissingPrincipalThrowsPrincipalNotFoundException() {
-    String token = "token";
-
-    OIDCIntrospection introspection = new OIDCIntrospection(token, true, "unknown-user", null);
-
-    when(oidcAuthenticationPort.introspectAccessToken(token)).thenReturn(introspection);
-    when(principalService.getPrincipalByProviderAndExternalId("OIDC", "unknown-user"))
-        .thenReturn(Optional.empty());
-
-    PrincipalNotFoundException exception =
-        assertThrows(PrincipalNotFoundException.class, () -> service.introspectAccessToken(token));
-
-    assertEquals("No principal found for external id: unknown-user", exception.getMessage());
-
-    verify(oidcAuthenticationPort).introspectAccessToken(token);
-    verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "unknown-user");
-    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
-  }
-
-  @Test
-  void profileDelegatesToPort() {
-    String token = "token";
-    OIDCProfile expected = new OIDCProfile("id", "service", "first", "last", "email@d.tld");
-
-    when(oidcAuthenticationPort.profile(token)).thenReturn(expected);
-
-    OIDCProfile result = service.profile(token);
-
-    assertEquals(expected, result);
-
-    verify(oidcAuthenticationPort).profile(token);
-    verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+  private OIDCAccessToken accessToken() {
+    return new OIDCAccessToken(
+        "access-token", "refresh-token", "Bearer", 3600, "openid", null, Map.of(), false);
   }
 }

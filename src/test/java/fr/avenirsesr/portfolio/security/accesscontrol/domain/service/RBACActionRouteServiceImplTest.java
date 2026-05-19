@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.accesscontrol.domain.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAction;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACActionRoute;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACActionRouteRepository;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -36,41 +38,83 @@ class RBACActionRouteServiceImplTest {
     service = new RBACActionRouteServiceImpl(actionRouteRepository);
   }
 
-  @Test
-  void findByUriAndMethodReturnsActionRouteWhenFound() {
-    RBACAction action = new RBACAction(ACTION_ID, ACTION_NAME, "Do feedback", List.of());
+  @Nested
+  class GivenARBACActionRouteService {
 
-    RBACActionRoute expectedRoute = new RBACActionRoute(ACTION_ROUTE_ID, URI, METHOD, action);
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a RBAC action route service");
+    }
 
-    when(actionRouteRepository.findByUriAndMethod(URI, METHOD))
-        .thenReturn(Optional.of(expectedRoute));
+    @Nested
+    class WhenFindingByUriAndMethod {
 
-    Optional<RBACActionRoute> result = service.findByUriAndMethod(URI, METHOD);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("finding an action route by URI and method");
+      }
 
-    assertTrue(result.isPresent());
+      @Nested
+      class AndTheActionRouteExists {
+        private Optional<RBACActionRoute> result;
+        private RBACActionRoute expectedRoute;
 
-    RBACActionRoute actionRoute = result.orElseThrow();
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the action route exists");
 
-    assertEquals(ACTION_ROUTE_ID, actionRoute.id());
-    assertEquals(URI, actionRoute.uri());
-    assertTrue(HttpMethod.POST.name().equalsIgnoreCase(actionRoute.method()));
-    assertNotNull(actionRoute.action());
-    assertEquals(ACTION_ID, actionRoute.action().id());
-    assertEquals(ACTION_NAME, actionRoute.action().name());
+          RBACAction action = new RBACAction(ACTION_ID, ACTION_NAME, "Do feedback", List.of());
+          expectedRoute = new RBACActionRoute(ACTION_ROUTE_ID, URI, METHOD, action);
 
-    verify(actionRouteRepository).findByUriAndMethod(URI, METHOD);
-    verifyNoMoreInteractions(actionRouteRepository);
-  }
+          when(actionRouteRepository.findByUriAndMethod(URI, METHOD))
+              .thenReturn(Optional.of(expectedRoute));
 
-  @Test
-  void findByUriAndMethodReturnsEmptyWhenNotFound() {
-    when(actionRouteRepository.findByUriAndMethod(URI, METHOD)).thenReturn(Optional.empty());
+          result = service.findByUriAndMethod(URI, METHOD);
+        }
 
-    Optional<RBACActionRoute> result = service.findByUriAndMethod(URI, METHOD);
+        @Test
+        void thenItShouldReturnTheActionRoute() {
+          BddLogger.then("it should return the action route");
 
-    assertTrue(result.isEmpty());
+          assertTrue(result.isPresent());
 
-    verify(actionRouteRepository).findByUriAndMethod(URI, METHOD);
-    verifyNoMoreInteractions(actionRouteRepository);
+          RBACActionRoute actionRoute = result.orElseThrow();
+
+          assertEquals(ACTION_ROUTE_ID, actionRoute.id());
+          assertEquals(URI, actionRoute.uri());
+          assertTrue(HttpMethod.POST.name().equalsIgnoreCase(actionRoute.method()));
+          assertNotNull(actionRoute.action());
+          assertEquals(ACTION_ID, actionRoute.action().id());
+          assertEquals(ACTION_NAME, actionRoute.action().name());
+
+          verify(actionRouteRepository).findByUriAndMethod(URI, METHOD);
+          verifyNoMoreInteractions(actionRouteRepository);
+        }
+      }
+
+      @Nested
+      class AndTheActionRouteDoesNotExist {
+        private Optional<RBACActionRoute> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the action route does not exist");
+
+          when(actionRouteRepository.findByUriAndMethod(URI, METHOD)).thenReturn(Optional.empty());
+
+          result = service.findByUriAndMethod(URI, METHOD);
+        }
+
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
+
+          assertTrue(result.isEmpty());
+
+          verify(actionRouteRepository).findByUriAndMethod(URI, METHOD);
+          verifyNoMoreInteractions(actionRouteRepository);
+        }
+      }
+    }
   }
 }

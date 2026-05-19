@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACResource;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACResourceType;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -21,10 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class RBACResourceServiceImplTest {
 
   private static final UUID RESOURCE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
-
   private static final UUID UNKNOWN_RESOURCE_ID =
       UUID.fromString("00000000-0000-0000-0000-000000000999");
-
   private static final UUID RESOURCE_TYPE_ID =
       UUID.fromString("00000000-0000-0000-0000-000000000101");
 
@@ -37,113 +37,252 @@ class RBACResourceServiceImplTest {
     service = new RBACResourceServiceImpl(resourceRepository);
   }
 
-  @Test
-  void getResourceByIdReturnsResourceWhenFound() {
-    RBACResource resource = resource();
+  @Nested
+  class GivenARBACResourceService {
 
-    when(resourceRepository.findById(RESOURCE_ID)).thenReturn(Optional.of(resource));
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a RBAC resource service");
+    }
 
-    Optional<RBACResource> result = service.getResourceById(RESOURCE_ID);
+    @Nested
+    class WhenGettingResourceById {
 
-    assertTrue(result.isPresent());
-    assertEquals(resource, result.orElseThrow());
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting resource by id");
+      }
 
-    verify(resourceRepository).findById(RESOURCE_ID);
-    verifyNoMoreInteractions(resourceRepository);
-  }
+      @Nested
+      class AndTheResourceExists {
+        private RBACResource resource;
+        private Optional<RBACResource> result;
 
-  @Test
-  void getResourceByIdReturnsEmptyWhenNotFound() {
-    when(resourceRepository.findById(UNKNOWN_RESOURCE_ID)).thenReturn(Optional.empty());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the resource exists");
 
-    Optional<RBACResource> result = service.getResourceById(UNKNOWN_RESOURCE_ID);
+          resource = resource();
 
-    assertTrue(result.isEmpty());
+          when(resourceRepository.findById(RESOURCE_ID)).thenReturn(Optional.of(resource));
 
-    verify(resourceRepository).findById(UNKNOWN_RESOURCE_ID);
-    verifyNoMoreInteractions(resourceRepository);
-  }
+          result = service.getResourceById(RESOURCE_ID);
+        }
 
-  @Test
-  void getAllResourcesReturnsRepositoryResources() {
-    RBACResource resource = resource();
+        @Test
+        void thenItShouldReturnResource() {
+          BddLogger.then("it should return resource");
 
-    when(resourceRepository.findAll()).thenReturn(List.of(resource));
+          assertTrue(result.isPresent());
+          assertEquals(resource, result.orElseThrow());
 
-    List<RBACResource> result = service.getAllResources();
+          verify(resourceRepository).findById(RESOURCE_ID);
+          verifyNoMoreInteractions(resourceRepository);
+        }
+      }
 
-    assertThat(result).containsExactly(resource);
+      @Nested
+      class AndTheResourceDoesNotExist {
+        private Optional<RBACResource> result;
 
-    verify(resourceRepository).findAll();
-    verifyNoMoreInteractions(resourceRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the resource does not exist");
 
-  @Test
-  void getAllResourcesReturnsEmptyListWhenRepositoryIsEmpty() {
-    when(resourceRepository.findAll()).thenReturn(List.of());
+          when(resourceRepository.findById(UNKNOWN_RESOURCE_ID)).thenReturn(Optional.empty());
 
-    List<RBACResource> result = service.getAllResources();
+          result = service.getResourceById(UNKNOWN_RESOURCE_ID);
+        }
 
-    assertThat(result).isEmpty();
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
 
-    verify(resourceRepository).findAll();
-    verifyNoMoreInteractions(resourceRepository);
-  }
+          assertTrue(result.isEmpty());
 
-  @Test
-  void createResourceSavesResource() {
-    RBACResource resourceToCreate = resourceWithoutId();
-    RBACResource savedResource = resource();
+          verify(resourceRepository).findById(UNKNOWN_RESOURCE_ID);
+          verifyNoMoreInteractions(resourceRepository);
+        }
+      }
+    }
 
-    when(resourceRepository.save(resourceToCreate)).thenReturn(savedResource);
+    @Nested
+    class WhenGettingAllResources {
 
-    RBACResource result = service.createResource(resourceToCreate);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting all resources");
+      }
 
-    assertEquals(savedResource, result);
-    assertEquals(RESOURCE_ID, result.id());
+      @Nested
+      class AndTheRepositoryContainsResources {
+        private RBACResource resource;
+        private List<RBACResource> result;
 
-    verify(resourceRepository).save(resourceToCreate);
-    verifyNoMoreInteractions(resourceRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository contains resources");
 
-  @Test
-  void updateResourceSavesResourceWhenExistingResourceIsFound() {
-    RBACResource resource = resource();
+          resource = resource();
 
-    when(resourceRepository.findById(RESOURCE_ID)).thenReturn(Optional.of(resource));
-    when(resourceRepository.save(resource)).thenReturn(resource);
+          when(resourceRepository.findAll()).thenReturn(List.of(resource));
 
-    RBACResource result = service.updateResource(resource);
+          result = service.getAllResources();
+        }
 
-    assertEquals(resource, result);
+        @Test
+        void thenItShouldReturnRepositoryResources() {
+          BddLogger.then("it should return repository resources");
 
-    verify(resourceRepository).findById(RESOURCE_ID);
-    verify(resourceRepository).save(resource);
-    verifyNoMoreInteractions(resourceRepository);
-  }
+          assertThat(result).containsExactly(resource);
 
-  @Test
-  void updateResourceThrowsWhenResourceDoesNotExist() {
-    RBACResource resource = resource();
+          verify(resourceRepository).findAll();
+          verifyNoMoreInteractions(resourceRepository);
+        }
+      }
 
-    when(resourceRepository.findById(RESOURCE_ID)).thenReturn(Optional.empty());
+      @Nested
+      class AndTheRepositoryIsEmpty {
+        private List<RBACResource> result;
 
-    AccessControlNotFoundException exception =
-        assertThrows(AccessControlNotFoundException.class, () -> service.updateResource(resource));
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository is empty");
 
-    assertEquals(
-        "Resource not found, ID: 00000000-0000-0000-0000-000000000001", exception.getMessage());
+          when(resourceRepository.findAll()).thenReturn(List.of());
 
-    verify(resourceRepository).findById(RESOURCE_ID);
-    verifyNoMoreInteractions(resourceRepository);
-  }
+          result = service.getAllResources();
+        }
 
-  @Test
-  void deleteResourceDeletesById() {
-    service.deleteResource(RESOURCE_ID);
+        @Test
+        void thenItShouldReturnEmptyList() {
+          BddLogger.then("it should return an empty list");
 
-    verify(resourceRepository).deleteById(RESOURCE_ID);
-    verifyNoMoreInteractions(resourceRepository);
+          assertThat(result).isEmpty();
+
+          verify(resourceRepository).findAll();
+          verifyNoMoreInteractions(resourceRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenCreatingResource {
+      private RBACResource resourceToCreate;
+      private RBACResource savedResource;
+      private RBACResource result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("creating resource");
+
+        resourceToCreate = resourceWithoutId();
+        savedResource = resource();
+
+        when(resourceRepository.save(resourceToCreate)).thenReturn(savedResource);
+
+        result = service.createResource(resourceToCreate);
+      }
+
+      @Test
+      void thenItShouldSaveResource() {
+        BddLogger.then("it should save resource");
+
+        assertEquals(savedResource, result);
+        assertEquals(RESOURCE_ID, result.id());
+
+        verify(resourceRepository).save(resourceToCreate);
+        verifyNoMoreInteractions(resourceRepository);
+      }
+    }
+
+    @Nested
+    class WhenUpdatingResource {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("updating resource");
+      }
+
+      @Nested
+      class AndTheResourceExists {
+        private RBACResource resource;
+        private RBACResource result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the resource exists");
+
+          resource = resource();
+
+          when(resourceRepository.findById(RESOURCE_ID)).thenReturn(Optional.of(resource));
+          when(resourceRepository.save(resource)).thenReturn(resource);
+
+          result = service.updateResource(resource);
+        }
+
+        @Test
+        void thenItShouldSaveResource() {
+          BddLogger.then("it should save resource");
+
+          assertEquals(resource, result);
+
+          verify(resourceRepository).findById(RESOURCE_ID);
+          verify(resourceRepository).save(resource);
+          verifyNoMoreInteractions(resourceRepository);
+        }
+      }
+
+      @Nested
+      class AndTheResourceDoesNotExist {
+        private RBACResource resource;
+        private AccessControlNotFoundException exception;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the resource does not exist");
+
+          resource = resource();
+
+          when(resourceRepository.findById(RESOURCE_ID)).thenReturn(Optional.empty());
+
+          exception =
+              assertThrows(
+                  AccessControlNotFoundException.class, () -> service.updateResource(resource));
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertEquals(
+              "Resource not found, ID: 00000000-0000-0000-0000-000000000001",
+              exception.getMessage());
+
+          verify(resourceRepository).findById(RESOURCE_ID);
+          verifyNoMoreInteractions(resourceRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenDeletingResource {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("deleting resource");
+
+        service.deleteResource(RESOURCE_ID);
+      }
+
+      @Test
+      void thenItShouldDeleteById() {
+        BddLogger.then("it should delete by id");
+
+        verify(resourceRepository).deleteById(RESOURCE_ID);
+        verifyNoMoreInteractions(resourceRepository);
+      }
+    }
   }
 
   private RBACResource resource() {

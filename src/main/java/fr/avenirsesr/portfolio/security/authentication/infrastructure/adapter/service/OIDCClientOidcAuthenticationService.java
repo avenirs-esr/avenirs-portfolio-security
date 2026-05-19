@@ -1,6 +1,8 @@
 /** */
 package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service;
 
+import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeHost;
+
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
@@ -297,9 +299,6 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
       }
 
       OIDCAccessToken accessToken = OIDCAccessTokenMapper.toDomain(payload);
-      if (accessToken == null) {
-        return Optional.empty();
-      }
 
       log.debug("getAccessToken, jwtAccessToken: {}", jwtAccessToken);
 
@@ -334,7 +333,7 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
 
   @Override
   public String generateAuthorizationUrl(String host, String redirect) {
-    String safeHost = host == null || host.isBlank() ? "localhost" : host;
+    String safeHost = toSafeHost(host);
 
     String redirectUri =
         UriComponentsBuilder.newInstance()

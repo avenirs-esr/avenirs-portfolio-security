@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Structure;
 import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -40,87 +42,197 @@ class PrincipalServiceImplTest {
     service = new PrincipalServiceImpl(principalRepository);
   }
 
-  @Test
-  void getAllPrincipalsReturnsRepositoryPrincipals() {
-    Principal principal = principal();
+  @Nested
+  class GivenPrincipalService {
 
-    when(principalRepository.findAll()).thenReturn(List.of(principal));
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("a principal service");
+    }
 
-    List<Principal> result = service.getAllPrincipals();
+    @Nested
+    class WhenGettingAllPrincipals {
 
-    assertThat(result).containsExactly(principal);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting all principals");
+      }
 
-    verify(principalRepository).findAll();
-    verifyNoMoreInteractions(principalRepository);
-  }
+      @Nested
+      class AndTheRepositoryContainsPrincipals {
+        private Principal principal;
+        private List<Principal> result;
 
-  @Test
-  void getAllPrincipalsReturnsEmptyListWhenRepositoryIsEmpty() {
-    when(principalRepository.findAll()).thenReturn(List.of());
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository contains principals");
 
-    List<Principal> result = service.getAllPrincipals();
+          principal = principal();
 
-    assertThat(result).isEmpty();
+          when(principalRepository.findAll()).thenReturn(List.of(principal));
 
-    verify(principalRepository).findAll();
-    verifyNoMoreInteractions(principalRepository);
-  }
+          result = service.getAllPrincipals();
+        }
 
-  @Test
-  void getPrincipalByLoginReturnsPrincipalWhenFound() {
-    Principal principal = principal();
+        @Test
+        void thenItShouldReturnRepositoryPrincipals() {
+          BddLogger.then("it should return repository principals");
 
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          assertThat(result).containsExactly(principal);
 
-    Optional<Principal> result = service.getPrincipalByLogin(LOGIN);
+          verify(principalRepository).findAll();
+          verifyNoMoreInteractions(principalRepository);
+        }
+      }
 
-    assertTrue(result.isPresent());
-    assertEquals(principal, result.orElseThrow());
+      @Nested
+      class AndTheRepositoryIsEmpty {
+        private List<Principal> result;
 
-    verify(principalRepository).findByLogin(LOGIN);
-    verifyNoMoreInteractions(principalRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the repository is empty");
 
-  @Test
-  void getPrincipalByLoginReturnsEmptyWhenNotFound() {
-    when(principalRepository.findByLogin(UNKNOWN_LOGIN)).thenReturn(Optional.empty());
+          when(principalRepository.findAll()).thenReturn(List.of());
 
-    Optional<Principal> result = service.getPrincipalByLogin(UNKNOWN_LOGIN);
+          result = service.getAllPrincipals();
+        }
 
-    assertTrue(result.isEmpty());
+        @Test
+        void thenItShouldReturnEmptyList() {
+          BddLogger.then("it should return an empty list");
 
-    verify(principalRepository).findByLogin(UNKNOWN_LOGIN);
-    verifyNoMoreInteractions(principalRepository);
-  }
+          assertThat(result).isEmpty();
 
-  @Test
-  void getPrincipalByProviderAndExternalIdReturnsPrincipalWhenFound() {
-    Principal principal = principal();
+          verify(principalRepository).findAll();
+          verifyNoMoreInteractions(principalRepository);
+        }
+      }
+    }
 
-    when(principalRepository.findByProviderAndExternalId(PROVIDER, EXTERNAL_ID))
-        .thenReturn(Optional.of(principal));
+    @Nested
+    class WhenGettingPrincipalByLogin {
 
-    Optional<Principal> result = service.getPrincipalByProviderAndExternalId(PROVIDER, EXTERNAL_ID);
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting principal by login");
+      }
 
-    assertTrue(result.isPresent());
-    assertEquals(principal, result.orElseThrow());
+      @Nested
+      class AndThePrincipalExists {
+        private Principal principal;
+        private Optional<Principal> result;
 
-    verify(principalRepository).findByProviderAndExternalId(PROVIDER, EXTERNAL_ID);
-    verifyNoMoreInteractions(principalRepository);
-  }
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal exists");
 
-  @Test
-  void getPrincipalByProviderAndExternalIdReturnsEmptyWhenNotFound() {
-    when(principalRepository.findByProviderAndExternalId(PROVIDER, UNKNOWN_EXTERNAL_ID))
-        .thenReturn(Optional.empty());
+          principal = principal();
 
-    Optional<Principal> result =
-        service.getPrincipalByProviderAndExternalId(PROVIDER, UNKNOWN_EXTERNAL_ID);
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
 
-    assertTrue(result.isEmpty());
+          result = service.getPrincipalByLogin(LOGIN);
+        }
 
-    verify(principalRepository).findByProviderAndExternalId(PROVIDER, UNKNOWN_EXTERNAL_ID);
-    verifyNoMoreInteractions(principalRepository);
+        @Test
+        void thenItShouldReturnPrincipal() {
+          BddLogger.then("it should return principal");
+
+          assertTrue(result.isPresent());
+          assertEquals(principal, result.orElseThrow());
+
+          verify(principalRepository).findByLogin(LOGIN);
+          verifyNoMoreInteractions(principalRepository);
+        }
+      }
+
+      @Nested
+      class AndThePrincipalDoesNotExist {
+        private Optional<Principal> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal does not exist");
+
+          when(principalRepository.findByLogin(UNKNOWN_LOGIN)).thenReturn(Optional.empty());
+
+          result = service.getPrincipalByLogin(UNKNOWN_LOGIN);
+        }
+
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
+
+          assertTrue(result.isEmpty());
+
+          verify(principalRepository).findByLogin(UNKNOWN_LOGIN);
+          verifyNoMoreInteractions(principalRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenGettingPrincipalByProviderAndExternalId {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting principal by provider and external id");
+      }
+
+      @Nested
+      class AndThePrincipalExists {
+        private Principal principal;
+        private Optional<Principal> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal exists");
+
+          principal = principal();
+
+          when(principalRepository.findByProviderAndExternalId(PROVIDER, EXTERNAL_ID))
+              .thenReturn(Optional.of(principal));
+
+          result = service.getPrincipalByProviderAndExternalId(PROVIDER, EXTERNAL_ID);
+        }
+
+        @Test
+        void thenItShouldReturnPrincipal() {
+          BddLogger.then("it should return principal");
+
+          assertTrue(result.isPresent());
+          assertEquals(principal, result.orElseThrow());
+
+          verify(principalRepository).findByProviderAndExternalId(PROVIDER, EXTERNAL_ID);
+          verifyNoMoreInteractions(principalRepository);
+        }
+      }
+
+      @Nested
+      class AndThePrincipalDoesNotExist {
+        private Optional<Principal> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal does not exist");
+
+          when(principalRepository.findByProviderAndExternalId(PROVIDER, UNKNOWN_EXTERNAL_ID))
+              .thenReturn(Optional.empty());
+
+          result = service.getPrincipalByProviderAndExternalId(PROVIDER, UNKNOWN_EXTERNAL_ID);
+        }
+
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
+
+          assertTrue(result.isEmpty());
+
+          verify(principalRepository).findByProviderAndExternalId(PROVIDER, UNKNOWN_EXTERNAL_ID);
+          verifyNoMoreInteractions(principalRepository);
+        }
+      }
+    }
   }
 
   private Principal principal() {

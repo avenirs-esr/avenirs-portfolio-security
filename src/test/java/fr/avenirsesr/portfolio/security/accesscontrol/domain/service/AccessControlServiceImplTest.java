@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlInvalidDateException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
@@ -17,9 +18,11 @@ import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.
 import java.time.LocalDateTime;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -66,7 +69,7 @@ class AccessControlServiceImplTest {
             resourceRepository,
             roleRepository,
             structureRepository,
-            "yyyy-MM-dd");
+            DATE_FORMAT);
 
     ReflectionTestUtils.setField(service, "dateFormat", DATE_FORMAT);
 
@@ -97,338 +100,523 @@ class AccessControlServiceImplTest {
     resource2 = new RBACResource(RESOURCE_ID_2, "ptf_0001", resourceType);
   }
 
-  @Test
-  void grantAccessCreatesAssignment() {
-    AccessControlGrantCommand command =
-        new AccessControlGrantCommand(
-            LOGIN,
-            ROLE_ID,
-            List.of(RESOURCE_ID, RESOURCE_ID_2),
-            "2024-10-01",
-            "2024-12-31",
-            List.of(STRUCTURE_ID));
+  @Nested
+  class GivenAccessControlService {
 
+    @BeforeEach
+    void setupGiven() {
+      BddLogger.given("an access control service");
+    }
+
+    @Nested
+    class WhenGrantingAccess {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("granting access");
+      }
+
+      @Nested
+      class AndTheCommandIsValid {
+        private AccessControlGrantResult result;
+        private ArgumentCaptor<RBACAssignment> assignmentCaptor;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the command is valid");
+
+          AccessControlGrantCommand command =
+              grantCommand(
+                  List.of(RESOURCE_ID, RESOURCE_ID_2),
+                  "2024-10-01",
+                  "2024-12-31",
+                  List.of(STRUCTURE_ID));
+
+          mockValidGrantDependencies();
+          assignmentCaptor = ArgumentCaptor.forClass(RBACAssignment.class);
+
+          when(assignmentRepository.save(any(RBACAssignment.class)))
+              .thenAnswer(this::savedAssignment);
+
+          result = service.grantAccess(command);
+        }
+
+        @Test
+        void thenItShouldCreateAssignment() {
+          BddLogger.then("it should create the assignment");
+
+          assertEquals(new AccessControlGrantResult(LOGIN, true, ASSIGNMENT_ID, null), result);
+
+          verify(assignmentRepository).save(assignmentCaptor.capture());
+
+          RBACAssignment savedAssignment = assignmentCaptor.getValue();
+
+          assertNull(savedAssignment.id());
+          assertEquals(principal, savedAssignment.principal());
+          assertEquals(role, savedAssignment.role());
+
+          assertThat(savedAssignment.scope().resources())
+              .extracting(RBACResource::id)
+              .containsExactlyInAnyOrder(RESOURCE_ID, RESOURCE_ID_2);
+
+          assertEquals(
+              LocalDateTime.of(2024, 10, 1, 0, 0), savedAssignment.context().validityStart());
+          assertEquals(
+              LocalDateTime.of(2024, 12, 31, 0, 0), savedAssignment.context().validityEnd());
+
+          assertThat(savedAssignment.context().structures())
+              .extracting(Structure::id)
+              .containsExactly(STRUCTURE_ID);
+        }
+
+        private RBACAssignment savedAssignment(InvocationOnMock invocation) {
+          RBACAssignment assignment = invocation.getArgument(0);
+          return new RBACAssignment(
+              ASSIGNMENT_ID,
+              assignment.principal(),
+              assignment.role(),
+              assignment.scope(),
+              assignment.context());
+        }
+      }
+
+      @Nested
+      class AndDatesAreBlank {
+        private AccessControlGrantResult result;
+        private ArgumentCaptor<RBACAssignment> assignmentCaptor;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("dates are blank");
+
+          AccessControlGrantCommand command =
+              new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "", "   ", null);
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(assignmentRepository.save(any(RBACAssignment.class)))
+              .thenAnswer(this::savedAssignment);
+
+          assignmentCaptor = ArgumentCaptor.forClass(RBACAssignment.class);
+
+          result = service.grantAccess(command);
+        }
+
+        @Test
+        void thenItShouldCreateAssignmentWithNullValidityDates() {
+          BddLogger.then("it should create assignment with null validity dates");
+
+          assertTrue(result.granted());
+
+          verify(assignmentRepository).save(assignmentCaptor.capture());
+
+          assertNull(assignmentCaptor.getValue().context().validityStart());
+          assertNull(assignmentCaptor.getValue().context().validityEnd());
+          assertThat(assignmentCaptor.getValue().scope().resources()).isEmpty();
+          assertThat(assignmentCaptor.getValue().context().structures()).isEmpty();
+        }
+
+        private RBACAssignment savedAssignment(InvocationOnMock invocation) {
+          RBACAssignment assignment = invocation.getArgument(0);
+          return new RBACAssignment(
+              ASSIGNMENT_ID,
+              assignment.principal(),
+              assignment.role(),
+              assignment.scope(),
+              assignment.context());
+        }
+      }
+
+      @Nested
+      class AndTheRoleDoesNotExist {
+        private AccessControlGrantCommand command;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the role does not exist");
+
+          command = grantCommand(List.of(RESOURCE_ID), "2024-10-01", "2024-12-31", null);
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.empty());
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertThatThrownBy(() -> service.grantAccess(command))
+              .isInstanceOf(AccessControlNotFoundException.class)
+              .hasMessage("Role not found, ID: " + ROLE_ID);
+
+          verifyNoInteractions(
+              principalRepository, resourceRepository, structureRepository, assignmentRepository);
+        }
+      }
+
+      @Nested
+      class AndThePrincipalDoesNotExist {
+        private AccessControlGrantCommand command;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal does not exist");
+
+          command = grantCommand(List.of(RESOURCE_ID), "2024-10-01", "2024-12-31", null);
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertThatThrownBy(() -> service.grantAccess(command))
+              .isInstanceOf(AccessControlNotFoundException.class)
+              .hasMessage("Principal not found, login: " + LOGIN);
+
+          verifyNoInteractions(resourceRepository, structureRepository, assignmentRepository);
+        }
+      }
+
+      @Nested
+      class AndAResourceIsMissing {
+        private UUID missingResourceId;
+        private AccessControlGrantCommand command;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("a resource is missing");
+
+          missingResourceId = UUID.fromString("00000000-0000-0000-0000-000000000099");
+          command =
+              grantCommand(
+                  List.of(RESOURCE_ID, missingResourceId), "2024-10-01", "2024-12-31", null);
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(resourceRepository.findAllByIds(List.of(RESOURCE_ID, missingResourceId)))
+              .thenReturn(List.of(resource));
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertThatThrownBy(() -> service.grantAccess(command))
+              .isInstanceOf(AccessControlNotFoundException.class)
+              .hasMessage("Missing resources, IDs: [" + missingResourceId + "]");
+
+          verifyNoInteractions(structureRepository, assignmentRepository);
+        }
+      }
+
+      @Nested
+      class AndAStructureIsMissing {
+        private UUID missingStructureId;
+        private AccessControlGrantCommand command;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("a structure is missing");
+
+          missingStructureId = UUID.fromString("00000000-0000-0000-0000-000000000099");
+          command =
+              grantCommand(
+                  List.of(RESOURCE_ID),
+                  "2024-10-01",
+                  "2024-12-31",
+                  List.of(STRUCTURE_ID, missingStructureId));
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(resourceRepository.findAllByIds(List.of(RESOURCE_ID))).thenReturn(List.of(resource));
+          when(structureRepository.findAllByIds(List.of(STRUCTURE_ID, missingStructureId)))
+              .thenReturn(List.of(structure));
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw a not found exception");
+
+          assertThatThrownBy(() -> service.grantAccess(command))
+              .isInstanceOf(AccessControlNotFoundException.class)
+              .hasMessage("Missing structures, IDs: [" + missingStructureId + "]");
+
+          verifyNoInteractions(assignmentRepository);
+        }
+      }
+
+      @Nested
+      class AndValidityStartFormatIsInvalid {
+        private AccessControlGrantCommand command;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("validity start format is invalid");
+
+          command =
+              new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "01/10/2024", "2024-12-31", null);
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+        }
+
+        @Test
+        void thenItShouldThrowInvalidDateException() {
+          BddLogger.then("it should throw an invalid date exception");
+
+          assertThatThrownBy(() -> service.grantAccess(command))
+              .isInstanceOf(AccessControlInvalidDateException.class)
+              .hasMessageContaining("Invalid date format");
+
+          verifyNoInteractions(assignmentRepository);
+        }
+      }
+
+      @Nested
+      class AndValidityEndFormatIsInvalid {
+        private AccessControlGrantCommand command;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("validity end format is invalid");
+
+          command =
+              new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "2024-10-01", "31/12/2024", null);
+
+          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+        }
+
+        @Test
+        void thenItShouldThrowInvalidDateException() {
+          BddLogger.then("it should throw an invalid date exception");
+
+          assertThatThrownBy(() -> service.grantAccess(command))
+              .isInstanceOf(AccessControlInvalidDateException.class)
+              .hasMessageContaining("Invalid date format");
+
+          verifyNoInteractions(assignmentRepository);
+        }
+      }
+    }
+
+    @Nested
+    class WhenRevokingAccess {
+      private AccessControlRevokeResult result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("revoking access");
+
+        result = service.revokeAccess(new AccessControlRevokeCommand(LOGIN, ASSIGNMENT_ID));
+      }
+
+      @Test
+      void thenItShouldDeleteAssignmentAndReturnResult() {
+        BddLogger.then("it should delete assignment and return result");
+
+        assertEquals(new AccessControlRevokeResult(LOGIN, true, ASSIGNMENT_ID, null), result);
+
+        verify(assignmentRepository).deleteById(ASSIGNMENT_ID);
+      }
+    }
+
+    @Nested
+    class WhenCheckingAuthorization {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("checking authorization");
+      }
+
+      @Nested
+      class AndPrincipalDoesNotExist {
+        private boolean authorized;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("principal does not exist");
+
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
+
+          authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+        }
+
+        @Test
+        void thenItShouldReturnFalse() {
+          BddLogger.then("it should return false");
+
+          assertFalse(authorized);
+
+          verify(principalRepository).findByLogin(LOGIN);
+          verifyNoInteractions(assignmentRepository, actionRepository);
+        }
+      }
+
+      @Nested
+      class AndPrincipalHasNoAssignmentPermission {
+        private boolean authorized;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("principal has no assignment permission");
+
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(assignmentRepository.findByPrincipalContextAndResource(
+                  eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
+              .thenReturn(List.of());
+
+          authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+        }
+
+        @Test
+        void thenItShouldReturnFalse() {
+          BddLogger.then("it should return false");
+
+          assertFalse(authorized);
+
+          verifyNoInteractions(actionRepository);
+        }
+      }
+
+      @Nested
+      class AndActionDoesNotExist {
+        private boolean authorized;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("action does not exist");
+
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(assignmentRepository.findByPrincipalContextAndResource(
+                  eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
+              .thenReturn(List.of(assignment(role)));
+          when(actionRepository.findById(ACTION_ID)).thenReturn(Optional.empty());
+
+          authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+        }
+
+        @Test
+        void thenItShouldReturnFalse() {
+          BddLogger.then("it should return false");
+
+          assertFalse(authorized);
+        }
+      }
+
+      @Nested
+      class AndPrincipalDoesNotHaveAllRequiredPermissions {
+        private boolean authorized;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("principal does not have all required permissions");
+
+          RBACAction action =
+              new RBACAction(
+                  ACTION_ID, "ACT_EDIT", "Edit action", List.of(readPermission, writePermission));
+
+          RBACRole readOnlyRole =
+              new RBACRole(ROLE_ID, "ROLE_READER", "Reader", Set.of(readPermission));
+
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(assignmentRepository.findByPrincipalContextAndResource(
+                  eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
+              .thenReturn(List.of(assignment(readOnlyRole)));
+          when(actionRepository.findById(ACTION_ID)).thenReturn(Optional.of(action));
+
+          authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+        }
+
+        @Test
+        void thenItShouldReturnFalse() {
+          BddLogger.then("it should return false");
+
+          assertFalse(authorized);
+        }
+      }
+
+      @Nested
+      class AndPrincipalHasAllRequiredPermissions {
+        private boolean authorized;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("principal has all required permissions");
+
+          RBACAction action =
+              new RBACAction(
+                  ACTION_ID, "ACT_EDIT", "Edit action", List.of(readPermission, writePermission));
+
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(assignmentRepository.findByPrincipalContextAndResource(
+                  eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
+              .thenReturn(List.of(assignment(role)));
+          when(actionRepository.findById(ACTION_ID)).thenReturn(Optional.of(action));
+
+          authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
+        }
+
+        @Test
+        void thenItShouldReturnTrue() {
+          BddLogger.then("it should return true");
+
+          assertTrue(authorized);
+        }
+      }
+
+      @Nested
+      class AndActionPermissionsAreCached {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("action permissions are cached");
+
+          RBACAction action =
+              new RBACAction(ACTION_ID, "ACT_DISPLAY", "Display action", List.of(readPermission));
+
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(assignmentRepository.findByPrincipalContextAndResource(
+                  eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
+              .thenReturn(List.of(assignment(role)));
+          when(actionRepository.findById(ACTION_ID)).thenReturn(Optional.of(action));
+        }
+
+        @Test
+        void thenItShouldUseRepositoryOnlyOnceForTheSameAction() {
+          BddLogger.then("it should use repository only once for the same action");
+
+          assertTrue(service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID));
+          assertTrue(service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID));
+
+          verify(actionRepository, times(1)).findById(ACTION_ID);
+        }
+      }
+    }
+  }
+
+  private AccessControlGrantCommand grantCommand(
+      List<UUID> resourceIds, String validityStart, String validityEnd, List<UUID> structureIds) {
+    return new AccessControlGrantCommand(
+        LOGIN, ROLE_ID, resourceIds, validityStart, validityEnd, structureIds);
+  }
+
+  private void mockValidGrantDependencies() {
     when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
     when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
     when(resourceRepository.findAllByIds(List.of(RESOURCE_ID, RESOURCE_ID_2)))
         .thenReturn(List.of(resource, resource2));
     when(structureRepository.findAllByIds(List.of(STRUCTURE_ID))).thenReturn(List.of(structure));
-
-    ArgumentCaptor<RBACAssignment> assignmentCaptor = ArgumentCaptor.forClass(RBACAssignment.class);
-
-    when(assignmentRepository.save(any(RBACAssignment.class)))
-        .thenAnswer(
-            invocation -> {
-              RBACAssignment assignment = invocation.getArgument(0);
-              return new RBACAssignment(
-                  ASSIGNMENT_ID,
-                  assignment.principal(),
-                  assignment.role(),
-                  assignment.scope(),
-                  assignment.context());
-            });
-
-    AccessControlGrantResult result = service.grantAccess(command);
-
-    assertEquals(new AccessControlGrantResult(LOGIN, true, ASSIGNMENT_ID, null), result);
-
-    verify(assignmentRepository).save(assignmentCaptor.capture());
-
-    RBACAssignment savedAssignment = assignmentCaptor.getValue();
-
-    assertNull(savedAssignment.id());
-    assertEquals(principal, savedAssignment.principal());
-    assertEquals(role, savedAssignment.role());
-
-    assertThat(savedAssignment.scope().resources())
-        .extracting(RBACResource::id)
-        .containsExactlyInAnyOrder(RESOURCE_ID, RESOURCE_ID_2);
-
-    assertEquals(LocalDateTime.of(2024, 10, 1, 0, 0), savedAssignment.context().validityStart());
-    assertEquals(LocalDateTime.of(2024, 12, 31, 0, 0), savedAssignment.context().validityEnd());
-
-    assertThat(savedAssignment.context().structures())
-        .extracting(Structure::id)
-        .containsExactly(STRUCTURE_ID);
   }
 
-  @Test
-  void grantAccessWithBlankDatesCreatesNullValidityDates() {
-    AccessControlGrantCommand command =
-        new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "", "   ", null);
-
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-    when(assignmentRepository.save(any(RBACAssignment.class)))
-        .thenAnswer(
-            invocation -> {
-              RBACAssignment assignment = invocation.getArgument(0);
-              return new RBACAssignment(
-                  ASSIGNMENT_ID,
-                  assignment.principal(),
-                  assignment.role(),
-                  assignment.scope(),
-                  assignment.context());
-            });
-
-    AccessControlGrantResult result = service.grantAccess(command);
-
-    assertTrue(result.granted());
-
-    ArgumentCaptor<RBACAssignment> captor = ArgumentCaptor.forClass(RBACAssignment.class);
-    verify(assignmentRepository).save(captor.capture());
-
-    assertNull(captor.getValue().context().validityStart());
-    assertNull(captor.getValue().context().validityEnd());
-    assertThat(captor.getValue().scope().resources()).isEmpty();
-    assertThat(captor.getValue().context().structures()).isEmpty();
-  }
-
-  @Test
-  void grantAccessThrowsWhenRoleDoesNotExist() {
-    AccessControlGrantCommand command =
-        new AccessControlGrantCommand(
-            LOGIN, ROLE_ID, List.of(RESOURCE_ID), "2024-10-01", "2024-12-31", null);
-
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.empty());
-
-    assertThatThrownBy(() -> service.grantAccess(command))
-        .isInstanceOf(AccessControlNotFoundException.class)
-        .hasMessage("Role not found, ID: " + ROLE_ID);
-
-    verifyNoInteractions(
-        principalRepository, resourceRepository, structureRepository, assignmentRepository);
-  }
-
-  @Test
-  void grantAccessThrowsWhenPrincipalDoesNotExist() {
-    AccessControlGrantCommand command =
-        new AccessControlGrantCommand(
-            LOGIN, ROLE_ID, List.of(RESOURCE_ID), "2024-10-01", "2024-12-31", null);
-
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
-
-    assertThatThrownBy(() -> service.grantAccess(command))
-        .isInstanceOf(AccessControlNotFoundException.class)
-        .hasMessage("Principal not found, login: " + LOGIN);
-
-    verifyNoInteractions(resourceRepository, structureRepository, assignmentRepository);
-  }
-
-  @Test
-  void grantAccessThrowsWhenResourceIsMissing() {
-    UUID missingResourceId = UUID.fromString("00000000-0000-0000-0000-000000000099");
-
-    AccessControlGrantCommand command =
-        new AccessControlGrantCommand(
-            LOGIN,
-            ROLE_ID,
-            List.of(RESOURCE_ID, missingResourceId),
-            "2024-10-01",
-            "2024-12-31",
-            null);
-
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-    when(resourceRepository.findAllByIds(List.of(RESOURCE_ID, missingResourceId)))
-        .thenReturn(List.of(resource));
-
-    assertThatThrownBy(() -> service.grantAccess(command))
-        .isInstanceOf(AccessControlNotFoundException.class)
-        .hasMessage("Missing resources, IDs: [" + missingResourceId + "]");
-
-    verifyNoInteractions(structureRepository, assignmentRepository);
-  }
-
-  @Test
-  void grantAccessThrowsWhenStructureIsMissing() {
-    UUID missingStructureId = UUID.fromString("00000000-0000-0000-0000-000000000099");
-
-    AccessControlGrantCommand command =
-        new AccessControlGrantCommand(
-            LOGIN,
-            ROLE_ID,
-            List.of(RESOURCE_ID),
-            "2024-10-01",
-            "2024-12-31",
-            List.of(STRUCTURE_ID, missingStructureId));
-
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-    when(resourceRepository.findAllByIds(List.of(RESOURCE_ID))).thenReturn(List.of(resource));
-    when(structureRepository.findAllByIds(List.of(STRUCTURE_ID, missingStructureId)))
-        .thenReturn(List.of(structure));
-
-    assertThatThrownBy(() -> service.grantAccess(command))
-        .isInstanceOf(AccessControlNotFoundException.class)
-        .hasMessage("Missing structures, IDs: [" + missingStructureId + "]");
-
-    verifyNoInteractions(assignmentRepository);
-  }
-
-  @Test
-  void grantAccessThrowsWhenValidityStartFormatIsInvalid() {
-    AccessControlGrantCommand command =
-        new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "01/10/2024", "2024-12-31", null);
-
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-
-    assertThatThrownBy(() -> service.grantAccess(command))
-        .isInstanceOf(AccessControlInvalidDateException.class)
-        .hasMessageContaining("Invalid date format");
-
-    verifyNoInteractions(assignmentRepository);
-  }
-
-  @Test
-  void grantAccessThrowsWhenValidityEndFormatIsInvalid() {
-    AccessControlGrantCommand command =
-        new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "2024-10-01", "31/12/2024", null);
-
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-
-    assertThatThrownBy(() -> service.grantAccess(command))
-        .isInstanceOf(AccessControlInvalidDateException.class)
-        .hasMessageContaining("Invalid date format");
-
-    verifyNoInteractions(assignmentRepository);
-  }
-
-  @Test
-  void revokeAccessDeletesAssignmentAndReturnsResult() {
-    AccessControlRevokeCommand command = new AccessControlRevokeCommand(LOGIN, ASSIGNMENT_ID);
-
-    AccessControlRevokeResult result = service.revokeAccess(command);
-
-    assertEquals(new AccessControlRevokeResult(LOGIN, true, ASSIGNMENT_ID, null), result);
-
-    verify(assignmentRepository).deleteById(ASSIGNMENT_ID);
-  }
-
-  @Test
-  void isAuthorizedReturnsFalseWhenPrincipalDoesNotExist() {
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
-
-    boolean authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
-
-    assertFalse(authorized);
-
-    verify(principalRepository).findByLogin(LOGIN);
-    verifyNoInteractions(assignmentRepository, actionRepository);
-  }
-
-  @Test
-  void isAuthorizedReturnsFalseWhenPrincipalHasNoAssignmentPermission() {
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-    when(assignmentRepository.findByPrincipalContextAndResource(
-            eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
-        .thenReturn(List.of());
-
-    boolean authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
-
-    assertFalse(authorized);
-
-    verifyNoInteractions(actionRepository);
-  }
-
-  @Test
-  void isAuthorizedReturnsFalseWhenActionDoesNotExist() {
-    RBACAssignment assignment =
-        new RBACAssignment(
-            ASSIGNMENT_ID,
-            principal,
-            role,
-            new RBACScope(null, List.of(resource)),
-            new RBACContext(null, null, null, Set.of(structure)));
-
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-    when(assignmentRepository.findByPrincipalContextAndResource(
-            eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
-        .thenReturn(List.of(assignment));
-    when(actionRepository.findById(ACTION_ID)).thenReturn(Optional.empty());
-
-    boolean authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
-
-    assertFalse(authorized);
-  }
-
-  @Test
-  void isAuthorizedReturnsFalseWhenPrincipalDoesNotHaveAllRequiredPermissions() {
-    RBACAction action =
-        new RBACAction(
-            ACTION_ID, "ACT_EDIT", "Edit action", List.of(readPermission, writePermission));
-
-    RBACRole readOnlyRole = new RBACRole(ROLE_ID, "ROLE_READER", "Reader", Set.of(readPermission));
-
-    RBACAssignment assignment =
-        new RBACAssignment(
-            ASSIGNMENT_ID,
-            principal,
-            readOnlyRole,
-            new RBACScope(null, List.of(resource)),
-            new RBACContext(null, null, null, Set.of(structure)));
-
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-    when(assignmentRepository.findByPrincipalContextAndResource(
-            eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
-        .thenReturn(List.of(assignment));
-    when(actionRepository.findById(ACTION_ID)).thenReturn(Optional.of(action));
-
-    boolean authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
-
-    assertFalse(authorized);
-  }
-
-  @Test
-  void isAuthorizedReturnsTrueWhenPrincipalHasAllRequiredPermissions() {
-    RBACAction action =
-        new RBACAction(
-            ACTION_ID, "ACT_EDIT", "Edit action", List.of(readPermission, writePermission));
-
-    RBACAssignment assignment =
-        new RBACAssignment(
-            ASSIGNMENT_ID,
-            principal,
-            role,
-            new RBACScope(null, List.of(resource)),
-            new RBACContext(null, null, null, Set.of(structure)));
-
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-    when(assignmentRepository.findByPrincipalContextAndResource(
-            eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
-        .thenReturn(List.of(assignment));
-    when(actionRepository.findById(ACTION_ID)).thenReturn(Optional.of(action));
-
-    boolean authorized = service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID);
-
-    assertTrue(authorized);
-  }
-
-  @Test
-  void isAuthorizedCachesActionPermissions() {
-    RBACAction action =
-        new RBACAction(ACTION_ID, "ACT_DISPLAY", "Display action", List.of(readPermission));
-
-    RBACAssignment assignment =
-        new RBACAssignment(
-            ASSIGNMENT_ID,
-            principal,
-            role,
-            new RBACScope(null, List.of(resource)),
-            new RBACContext(null, null, null, Set.of(structure)));
-
-    when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
-    when(assignmentRepository.findByPrincipalContextAndResource(
-            eq(LOGIN), any(RBACContext.class), eq(RESOURCE_ID)))
-        .thenReturn(List.of(assignment));
-    when(actionRepository.findById(ACTION_ID)).thenReturn(Optional.of(action));
-
-    assertTrue(service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID));
-    assertTrue(service.isAuthorized(LOGIN, ACTION_ID, RESOURCE_ID));
-
-    verify(actionRepository, times(1)).findById(ACTION_ID);
+  private RBACAssignment assignment(RBACRole role) {
+    return new RBACAssignment(
+        ASSIGNMENT_ID,
+        principal,
+        role,
+        new RBACScope(null, List.of(resource)),
+        new RBACContext(null, null, null, Set.of(structure)));
   }
 }
