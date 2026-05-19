@@ -22,13 +22,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   @Override
-  public String generateAuthorizationUrl(String host, String redirect) {
-    return oidcService.generateAuthorizationUrl(host, redirect);
+  public String generateAuthorizationUrl(String host, String redirect, String codeChallenge) {
+    return oidcService.generateAuthorizationUrl(host, redirect, codeChallenge);
   }
 
   @Override
-  public OIDCSession createSessionFromAuthorizationCode(String host, String code) {
-    OIDCAccessToken accessToken = oidcService.exchangeAuthorizationCodeForToken(host, code);
+  public OIDCSession createSessionFromAuthorizationCode(
+      String host, String code, String codeVerifier) {
+    OIDCAccessToken accessToken =
+        oidcService.exchangeAuthorizationCodeForToken(host, code, codeVerifier);
 
     Instant accessTokenExpiresAt = Instant.now().plusSeconds(accessToken.expiresIn());
 

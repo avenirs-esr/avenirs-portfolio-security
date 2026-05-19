@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.authentication.application.adapter.cont
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -129,13 +130,14 @@ class OidcControllerTest {
       }
 
       @Nested
-      class AndHostAndCodeAreProvided {
+      class AndHostCodeAndCodeVerifierAreProvided {
 
         @BeforeEach
         void setupAnd() {
-          BddLogger.and("host and code are provided");
+          BddLogger.and("host, code and code verifier are provided");
 
-          when(oidcService.exchangeAuthorizationCodeForToken("test-host.com", "code"))
+          when(oidcService.exchangeAuthorizationCodeForToken(
+                  "test-host.com", "code", "code-verifier"))
               .thenReturn(accessToken());
         }
 
@@ -147,35 +149,59 @@ class OidcControllerTest {
               .perform(
                   get("/oidc/callback")
                       .header("x-forwarded-host", "test-host.com")
-                      .param("code", "code"))
+                      .param("code", "code")
+                      .param("code_verifier", "code-verifier"))
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.access_token").value("AT"));
 
-          verify(oidcService).exchangeAuthorizationCodeForToken("test-host.com", "code");
+          verify(oidcService)
+              .exchangeAuthorizationCodeForToken("test-host.com", "code", "code-verifier");
         }
       }
 
       @Nested
-      class AndHostAndCodeAreMissing {
+      class AndCodeIsMissing {
 
         @BeforeEach
         void setupAnd() {
-          BddLogger.and("host and code are missing");
-
-          when(oidcService.exchangeAuthorizationCodeForToken("localhost", null))
-              .thenReturn(accessToken());
+          BddLogger.and("code is missing");
         }
 
         @Test
-        void thenItShouldUseLocalhostAndNullCode() throws Exception {
-          BddLogger.then("it should use localhost and null code");
+        void thenItShouldReturnUnauthorized() throws Exception {
+          BddLogger.then("it should return unauthorized");
 
           mockMvc
-              .perform(get("/oidc/callback"))
-              .andExpect(status().isOk())
-              .andExpect(jsonPath("$.access_token").value("AT"));
+              .perform(
+                  get("/oidc/callback")
+                      .header("x-forwarded-host", "test-host.com")
+                      .param("code_verifier", "code-verifier"))
+              .andExpect(status().isUnauthorized());
 
-          verify(oidcService).exchangeAuthorizationCodeForToken("localhost", null);
+          verifyNoMoreInteractions(oidcService);
+        }
+      }
+
+      @Nested
+      class AndCodeVerifierIsMissing {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("code verifier is missing");
+        }
+
+        @Test
+        void thenItShouldReturnUnauthorized() throws Exception {
+          BddLogger.then("it should return unauthorized");
+
+          mockMvc
+              .perform(
+                  get("/oidc/callback")
+                      .header("x-forwarded-host", "test-host.com")
+                      .param("code", "code"))
+              .andExpect(status().isUnauthorized());
+
+          verifyNoMoreInteractions(oidcService);
         }
       }
     }
@@ -301,6 +327,7 @@ class OidcControllerTest {
               .andExpect(status().isForbidden());
 
           verify(oidcService).introspectAccessToken(token);
+          verifyNoMoreInteractions(oidcService);
         }
       }
     }
@@ -338,6 +365,6 @@ class OidcControllerTest {
   }
 
   private OIDCAccessToken accessToken() {
-    return new OIDCAccessToken("AT", "AT", "Bearer", 3600, "openid", null, null, false);
+    return new OIDCAccessToken("AT", "RT", "Bearer", 3600, "openid", null, null, false);
   }
 }

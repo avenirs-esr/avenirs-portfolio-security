@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface OidcService {
   Optional<OIDCAccessToken> getAccessToken(String login, String password);
 
-  OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code);
+  OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code, String codeVerifier);
 
   String generateServiceURL(String host);
 
@@ -16,5 +16,5 @@ public interface OidcService {
 
   OIDCProfile profile(String token);
 
-  String generateAuthorizationUrl(String host, String redirect);
+  String generateAuthorizationUrl(String host, String redirect, String codeChallenge);
 }

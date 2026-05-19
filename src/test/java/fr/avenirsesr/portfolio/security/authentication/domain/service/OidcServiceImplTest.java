@@ -1,7 +1,12 @@
 package fr.avenirsesr.portfolio.security.authentication.domain.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
@@ -30,6 +35,8 @@ class OidcServiceImplTest {
   private static final String PASSWORD = "password";
   private static final String HOST = "localhost";
   private static final String CODE = "code";
+  private static final String CODE_VERIFIER = "code-verifier";
+  private static final String CODE_CHALLENGE = "code-challenge";
   private static final String TOKEN = "token";
 
   @Mock private OidcAuthenticationPort oidcAuthenticationPort;
@@ -85,10 +92,10 @@ class OidcServiceImplTest {
 
         expected = accessToken();
 
-        when(oidcAuthenticationPort.exchangeAuthorizationCodeForToken(HOST, CODE))
+        when(oidcAuthenticationPort.exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER))
             .thenReturn(expected);
 
-        result = service.exchangeAuthorizationCodeForToken(HOST, CODE);
+        result = service.exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER);
       }
 
       @Test
@@ -97,7 +104,7 @@ class OidcServiceImplTest {
 
         assertEquals(expected, result);
 
-        verify(oidcAuthenticationPort).exchangeAuthorizationCodeForToken(HOST, CODE);
+        verify(oidcAuthenticationPort).exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER);
         verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
       }
     }
@@ -142,10 +149,11 @@ class OidcServiceImplTest {
         redirect = "/cofolio/student";
         expected = "https://dev.avenirs-esr.fr/cas/oidc/oidcAuthorize";
 
-        when(oidcAuthenticationPort.generateAuthorizationUrl("dev.avenirs-esr.fr", redirect))
+        when(oidcAuthenticationPort.generateAuthorizationUrl(
+                "dev.avenirs-esr.fr", redirect, CODE_CHALLENGE))
             .thenReturn(expected);
 
-        result = service.generateAuthorizationUrl("dev.avenirs-esr.fr", redirect);
+        result = service.generateAuthorizationUrl("dev.avenirs-esr.fr", redirect, CODE_CHALLENGE);
       }
 
       @Test
@@ -154,7 +162,8 @@ class OidcServiceImplTest {
 
         assertEquals(expected, result);
 
-        verify(oidcAuthenticationPort).generateAuthorizationUrl("dev.avenirs-esr.fr", redirect);
+        verify(oidcAuthenticationPort)
+            .generateAuthorizationUrl("dev.avenirs-esr.fr", redirect, CODE_CHALLENGE);
         verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
       }
     }

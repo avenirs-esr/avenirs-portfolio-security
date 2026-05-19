@@ -134,18 +134,26 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
    *
    * @param host The host associated to the service (for redirect_uri).
    * @param code The code given by the oidc provider.
+   * @param codeVerifier The PKCE code verifier used for the code exchange.
    * @return The exchange query body.
    */
-  public String generateCodeExchangeBody(String host, String code) {
-    String oidcCodeExchangeBody = String.format(oidcCodeExchangeBodyTemplate, host, code);
+  public String generateCodeExchangeBody(String host, String code, String codeVerifier) {
+    String safeHost = toSafeHost(host);
+
+    String oidcCodeExchangeBody =
+        String.format(oidcCodeExchangeBodyTemplate, safeHost, code, codeVerifier);
 
     if (log.isDebugEnabled()) {
       String maskedCode = code == null ? "null" : "*".repeat(code.length());
+      String maskedCodeVerifier = codeVerifier == null ? "null" : "*".repeat(codeVerifier.length());
+
       String maskedOIDCCodeExchangeBody =
-          String.format(oidcCodeExchangeBodyTemplate, host, maskedCode);
+          String.format(oidcCodeExchangeBodyTemplate, safeHost, maskedCode, maskedCodeVerifier);
+
       log.debug(
           "generateCodeExchangeBody, maskedOIDCCodeExchangeBody: {}", maskedOIDCCodeExchangeBody);
     }
+
     return oidcCodeExchangeBody;
   }
 
@@ -205,9 +213,10 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   }
 
   @Override
-  public OIDCAccessToken exchangeAuthorizationCodeForToken(String host, String code) {
+  public OIDCAccessToken exchangeAuthorizationCodeForToken(
+      String host, String code, String codeVerifier) {
 
-    String body = generateCodeExchangeBody(host, code);
+    String body = generateCodeExchangeBody(host, code, codeVerifier);
     OIDCAccessTokenResponse payload =
         restClient
             .post()
@@ -332,7 +341,7 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   }
 
   @Override
-  public String generateAuthorizationUrl(String host, String redirect) {
+  public String generateAuthorizationUrl(String host, String redirect, String codeChallenge) {
     String safeHost = toSafeHost(host);
 
     String redirectUri =
@@ -349,6 +358,8 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
         .queryParam("scope", oidcScope)
         .queryParam("redirect_uri", redirectUri)
         .queryParam("state", redirect)
+        .queryParam("code_challenge", codeChallenge)
+        .queryParam("code_challenge_method", "S256")
         .build()
         .encode()
         .toUriString();
