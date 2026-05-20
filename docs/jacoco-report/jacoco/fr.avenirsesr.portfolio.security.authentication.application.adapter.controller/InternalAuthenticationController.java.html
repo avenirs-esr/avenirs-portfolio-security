@@ -6,6 +6,7 @@ import fr.avenirsesr.portfolio.security.authentication.domain.exception.Unauthen
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.AuthenticationSessionReader;
+import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.session.SessionAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,23 +23,30 @@ public class InternalAuthenticationController {
 
   public InternalAuthenticationController(
       AuthenticationService authenticationService,
-<span class="nc" id="L25">      AuthenticationSessionReader authenticationSessionReader) {</span>
-<span class="nc" id="L26">    this.authenticationService = authenticationService;</span>
-<span class="nc" id="L27">    this.authenticationSessionReader = authenticationSessionReader;</span>
-<span class="nc" id="L28">  }</span>
+<span class="nc" id="L26">      AuthenticationSessionReader authenticationSessionReader) {</span>
+<span class="nc" id="L27">    this.authenticationService = authenticationService;</span>
+<span class="nc" id="L28">    this.authenticationSessionReader = authenticationSessionReader;</span>
+<span class="nc" id="L29">  }</span>
 
   @GetMapping(&quot;/context&quot;)
   public AuthContextDTO context(HttpServletRequest request) {
     try {
-<span class="nc" id="L33">      OIDCSession oidcSession =</span>
+<span class="nc" id="L34">      OIDCSession oidcSession =</span>
           authenticationSessionReader
-<span class="nc" id="L35">              .readOidcSession(request)</span>
-<span class="nc" id="L36">              .orElseThrow(UnauthenticatedSessionException::new);</span>
+<span class="nc" id="L36">              .readOidcSession(request)</span>
+<span class="nc" id="L37">              .orElseThrow(UnauthenticatedSessionException::new);</span>
 
-<span class="nc" id="L38">      return AuthContextMapper.toDTO(authenticationService.getAuthenticatedContext(oidcSession));</span>
+<span class="nc" id="L39">      OIDCSession refreshedSession = authenticationService.refreshSessionIfNeeded(oidcSession);</span>
 
-<span class="nc" id="L40">    } catch (UnauthenticatedSessionException e) {</span>
-<span class="nc" id="L41">      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">      if (!refreshedSession.equals(oidcSession)) {</span>
+<span class="nc" id="L42">        request.getSession(false).setAttribute(SessionAttributes.OIDC_SESSION, refreshedSession);</span>
+      }
+
+<span class="nc" id="L45">      return AuthContextMapper.toDTO(</span>
+<span class="nc" id="L46">          authenticationService.getAuthenticatedContext(refreshedSession));</span>
+
+<span class="nc" id="L48">    } catch (UnauthenticatedSessionException e) {</span>
+<span class="nc" id="L49">      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);</span>
     }
   }
 }
