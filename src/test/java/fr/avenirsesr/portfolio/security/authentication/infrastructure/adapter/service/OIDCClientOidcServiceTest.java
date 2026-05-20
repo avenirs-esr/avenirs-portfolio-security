@@ -35,6 +35,8 @@ class OIDCClientOidcServiceTest {
   private static final String CODE_VERIFIER = "code-verifier";
   private static final String CODE_CHALLENGE = "code-challenge";
   private static final String TOKEN = "TEST_ACCESS_TOKEN";
+  private static final String REFRESH_TOKEN = "TEST_REFRESH_TOKEN";
+  private static final String NEW_ACCESS_TOKEN = "TEST_NEW_ACCESS_TOKEN";
 
   private static final String USER_LOGIN = "deman";
   private static final String USER_PASSWORD = "password";
@@ -53,6 +55,8 @@ class OIDCClientOidcServiceTest {
   private static final String ACCESS_TOKEN_TEMPLATE_BODY = "username=%s&password=%s";
   private static final String CODE_EXCHANGE_TEMPLATE_BODY =
       "redirect_uri=https://%s/oidc/callback&code=%s&code_verifier=%s";
+  private static final String REFRESH_TOKEN_TEMPLATE_BODY =
+      "grant_type=refresh_token&refresh_token=%s";
 
   @Mock private JWTServicePort jwtService;
 
@@ -74,6 +78,8 @@ class OIDCClientOidcServiceTest {
         authenticationService, "oidcAccessTokenBodyTemplate", ACCESS_TOKEN_TEMPLATE_BODY);
     ReflectionTestUtils.setField(
         authenticationService, "oidcCodeExchangeBodyTemplate", CODE_EXCHANGE_TEMPLATE_BODY);
+    ReflectionTestUtils.setField(
+        authenticationService, "oidcRefreshTokenBodyTemplate", REFRESH_TOKEN_TEMPLATE_BODY);
     ReflectionTestUtils.setField(
         authenticationService,
         "oidcAccessTokenURL",
@@ -191,6 +197,27 @@ class OIDCClientOidcServiceTest {
 
         assertNotNull(response);
         assertEquals(TOKEN, response.accessToken());
+        assertEquals(REFRESH_TOKEN, response.refreshToken());
+      }
+    }
+
+    @Nested
+    class WhenRefreshingAccessToken {
+
+      @Test
+      void thenItShouldReturnRefreshedAccessToken() {
+        BddLogger.when("refreshing an access token");
+
+        OIDCAccessToken response = authenticationService.refreshAccessToken(REFRESH_TOKEN);
+
+        BddLogger.then("it should return a refreshed access token");
+
+        assertNotNull(response);
+        assertEquals(NEW_ACCESS_TOKEN, response.accessToken());
+        assertEquals(REFRESH_TOKEN, response.refreshToken());
+        assertEquals("Bearer", response.tokenType());
+        assertEquals(3600, response.expiresIn());
+        assertEquals("openid", response.scope());
       }
     }
 
@@ -291,6 +318,7 @@ class OIDCClientOidcServiceTest {
 
           assertNotNull(oidcAccessToken.accessToken());
           assertFalse(oidcAccessToken.accessToken().isEmpty());
+          assertEquals(REFRESH_TOKEN, oidcAccessToken.refreshToken());
         }
       }
 
@@ -410,9 +438,21 @@ class OIDCClientOidcServiceTest {
       return jsonResponse("");
     }
 
+    if (body.contains("grant_type=refresh_token")
+        && body.contains("refresh_token=" + REFRESH_TOKEN)) {
+      return jsonResponse(
+          "{\"access_token\":\""
+              + NEW_ACCESS_TOKEN
+              + "\",\"refresh_token\":\""
+              + REFRESH_TOKEN
+              + "\",\"token_type\":\"Bearer\",\"expires_in\":3600,\"scope\":\"openid\"}");
+    }
+
     return jsonResponse(
         "{\"access_token\":\""
             + TOKEN
+            + "\",\"refresh_token\":\""
+            + REFRESH_TOKEN
             + "\",\"token_type\":\"Bearer\",\"expires_in\":3600,\"scope\":\"openid\"}");
   }
 

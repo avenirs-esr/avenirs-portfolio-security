@@ -10,4 +10,6 @@ public interface AuthenticationService {
   OIDCSession createSessionFromAuthorizationCode(String host, String code, String codeVerifier);
 
   AuthContext getAuthenticatedContext(OIDCSession oidcSession);
+
+  OIDCSession refreshSessionIfNeeded(OIDCSession oidcSession);
 }

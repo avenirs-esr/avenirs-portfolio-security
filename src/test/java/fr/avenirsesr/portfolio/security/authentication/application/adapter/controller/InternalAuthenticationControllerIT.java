@@ -1,7 +1,9 @@
 package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,6 +15,7 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.AuthenticationSessionReader;
+import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.session.SessionAttributes;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -69,6 +73,7 @@ class InternalAuthenticationControllerIT {
 
           when(authenticationSessionReader.readOidcSession(any()))
               .thenReturn(Optional.of(oidcSession));
+          when(authenticationService.refreshSessionIfNeeded(oidcSession)).thenReturn(oidcSession);
           when(authenticationService.getAuthenticatedContext(oidcSession)).thenReturn(authContext);
         }
 
@@ -84,7 +89,59 @@ class InternalAuthenticationControllerIT {
               .andExpect(jsonPath("$.login").value("gribonvald"));
 
           verify(authenticationSessionReader).readOidcSession(any());
+          verify(authenticationService).refreshSessionIfNeeded(oidcSession);
           verify(authenticationService).getAuthenticatedContext(oidcSession);
+        }
+      }
+
+      @Nested
+      class AndTheSessionHasBeenRefreshed {
+        private OIDCSession oidcSession;
+        private OIDCSession refreshedSession;
+        private MockHttpSession httpSession;
+        private UUID userId;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the OIDC session has been refreshed");
+
+          oidcSession = oidcSession();
+          refreshedSession =
+              new OIDCSession(
+                  "new-access-token",
+                  "new-refresh-token",
+                  "new-id-token",
+                  Instant.parse("2026-05-13T14:30:00Z"));
+
+          httpSession = new MockHttpSession();
+          userId = UUID.fromString("00000000-0000-0000-0000-000000000101");
+
+          AuthContext authContext = new AuthContext(true, userId, "gribonvald");
+
+          when(authenticationSessionReader.readOidcSession(any()))
+              .thenReturn(Optional.of(oidcSession));
+          when(authenticationService.refreshSessionIfNeeded(oidcSession))
+              .thenReturn(refreshedSession);
+          when(authenticationService.getAuthenticatedContext(refreshedSession))
+              .thenReturn(authContext);
+        }
+
+        @Test
+        void thenItShouldStoreRefreshedSessionAndReturnAuthContext() throws Exception {
+          BddLogger.then("it should store refreshed session and return auth context");
+
+          mockMvc
+              .perform(get("/internal/auth/context").session(httpSession))
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$.authenticated").value(true))
+              .andExpect(jsonPath("$.userId").value(userId.toString()))
+              .andExpect(jsonPath("$.login").value("gribonvald"));
+
+          assertEquals(refreshedSession, httpSession.getAttribute(SessionAttributes.OIDC_SESSION));
+
+          verify(authenticationSessionReader).readOidcSession(any());
+          verify(authenticationService).refreshSessionIfNeeded(oidcSession);
+          verify(authenticationService).getAuthenticatedContext(refreshedSession);
         }
       }
 
@@ -105,6 +162,34 @@ class InternalAuthenticationControllerIT {
           mockMvc.perform(get("/internal/auth/context")).andExpect(status().isUnauthorized());
 
           verify(authenticationSessionReader).readOidcSession(any());
+          verifyNoInteractions(authenticationService);
+        }
+      }
+
+      @Nested
+      class AndRefreshSessionThrowsUnauthenticatedSessionException {
+        private OIDCSession oidcSession;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("refresh session throws unauthenticated session exception");
+
+          oidcSession = oidcSession();
+
+          when(authenticationSessionReader.readOidcSession(any()))
+              .thenReturn(Optional.of(oidcSession));
+          when(authenticationService.refreshSessionIfNeeded(oidcSession))
+              .thenThrow(new UnauthenticatedSessionException());
+        }
+
+        @Test
+        void thenItShouldReturnUnauthorized() throws Exception {
+          BddLogger.then("it should return unauthorized");
+
+          mockMvc.perform(get("/internal/auth/context")).andExpect(status().isUnauthorized());
+
+          verify(authenticationSessionReader).readOidcSession(any());
+          verify(authenticationService).refreshSessionIfNeeded(oidcSession);
         }
       }
 
@@ -120,6 +205,7 @@ class InternalAuthenticationControllerIT {
 
           when(authenticationSessionReader.readOidcSession(any()))
               .thenReturn(Optional.of(oidcSession));
+          when(authenticationService.refreshSessionIfNeeded(oidcSession)).thenReturn(oidcSession);
           when(authenticationService.getAuthenticatedContext(oidcSession))
               .thenThrow(new UnauthenticatedSessionException());
         }
@@ -131,6 +217,7 @@ class InternalAuthenticationControllerIT {
           mockMvc.perform(get("/internal/auth/context")).andExpect(status().isUnauthorized());
 
           verify(authenticationSessionReader).readOidcSession(any());
+          verify(authenticationService).refreshSessionIfNeeded(oidcSession);
           verify(authenticationService).getAuthenticatedContext(oidcSession);
         }
       }

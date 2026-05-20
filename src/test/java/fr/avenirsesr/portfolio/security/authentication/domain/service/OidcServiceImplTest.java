@@ -3,19 +3,19 @@ package fr.avenirsesr.portfolio.security.authentication.domain.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
+import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.OidcAuthenticationPort;
 import fr.avenirsesr.portfolio.security.principal.domain.exception.PrincipalNotFoundException;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -294,6 +294,194 @@ class OidcServiceImplTest {
 
         verify(oidcAuthenticationPort).profile(TOKEN);
         verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+  }
+
+  @Nested
+  class WhenRefreshingSessionIfNeeded {
+
+    @Nested
+    class AndAccessTokenIsStillValid {
+      private OIDCSession session;
+      private OIDCSession result;
+
+      @BeforeEach
+      void setupAnd() {
+        BddLogger.when("refreshing session if needed");
+        BddLogger.and("access token is still valid");
+
+        session =
+            new OIDCSession(
+                "access-token", "refresh-token", "id-token", Instant.now().plusSeconds(120));
+
+        result = service.refreshSessionIfNeeded(session);
+      }
+
+      @Test
+      void thenItShouldReturnSameSessionWithoutRefreshingToken() {
+        BddLogger.then("it should return same session without refreshing token");
+
+        assertEquals(session, result);
+
+        verify(oidcAuthenticationPort, never()).refreshAccessToken("refresh-token");
+        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+
+    @Nested
+    class AndAccessTokenIsExpired {
+      private OIDCSession session;
+      private OIDCAccessToken refreshedToken;
+      private OIDCSession result;
+
+      @BeforeEach
+      void setupAnd() {
+        BddLogger.when("refreshing session if needed");
+        BddLogger.and("access token is expired");
+
+        session =
+            new OIDCSession(
+                "old-access-token",
+                "old-refresh-token",
+                "old-id-token",
+                Instant.now().minusSeconds(1));
+
+        refreshedToken =
+            new OIDCAccessToken(
+                "new-access-token",
+                "new-refresh-token",
+                "Bearer",
+                3600,
+                "openid",
+                "new-id-token",
+                Map.of(),
+                false);
+
+        when(oidcAuthenticationPort.refreshAccessToken("old-refresh-token"))
+            .thenReturn(refreshedToken);
+
+        result = service.refreshSessionIfNeeded(session);
+      }
+
+      @Test
+      void thenItShouldReturnRefreshedSession() {
+        BddLogger.then("it should return refreshed session");
+
+        assertEquals("new-access-token", result.accessToken());
+        assertEquals("new-refresh-token", result.refreshToken());
+        assertEquals("new-id-token", result.idToken());
+        assertTrue(result.accessTokenExpiresAt().isAfter(Instant.now()));
+
+        verify(oidcAuthenticationPort).refreshAccessToken("old-refresh-token");
+        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+
+    @Nested
+    class AndRefreshTokenIsNotReturnedByProvider {
+      private OIDCSession result;
+
+      @BeforeEach
+      void setupAnd() {
+        BddLogger.when("refreshing session if needed");
+        BddLogger.and("provider does not return a new refresh token");
+
+        OIDCSession session =
+            new OIDCSession(
+                "old-access-token",
+                "old-refresh-token",
+                "old-id-token",
+                Instant.now().minusSeconds(1));
+
+        OIDCAccessToken refreshedToken =
+            new OIDCAccessToken(
+                "new-access-token",
+                null,
+                "Bearer",
+                3600,
+                "openid",
+                "new-id-token",
+                Map.of(),
+                false);
+
+        when(oidcAuthenticationPort.refreshAccessToken("old-refresh-token"))
+            .thenReturn(refreshedToken);
+
+        result = service.refreshSessionIfNeeded(session);
+      }
+
+      @Test
+      void thenItShouldKeepPreviousRefreshToken() {
+        BddLogger.then("it should keep previous refresh token");
+
+        assertEquals("new-access-token", result.accessToken());
+        assertEquals("old-refresh-token", result.refreshToken());
+        assertEquals("new-id-token", result.idToken());
+        assertTrue(result.accessTokenExpiresAt().isAfter(Instant.now()));
+
+        verify(oidcAuthenticationPort).refreshAccessToken("old-refresh-token");
+        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+
+    @Nested
+    class AndRefreshTokenIsMissing {
+      private OIDCSession session;
+      private UnauthenticatedSessionException exception;
+
+      @BeforeEach
+      void setupAnd() {
+        BddLogger.when("refreshing session if needed");
+        BddLogger.and("refresh token is missing");
+
+        session =
+            new OIDCSession(
+                "expired-access-token", null, "id-token", Instant.now().minusSeconds(1));
+
+        exception =
+            assertThrows(
+                UnauthenticatedSessionException.class,
+                () -> service.refreshSessionIfNeeded(session));
+      }
+
+      @Test
+      void thenItShouldThrowUnauthenticatedSessionException() {
+        BddLogger.then("it should throw unauthenticated session exception");
+
+        assertEquals(UnauthenticatedSessionException.class, exception.getClass());
+
+        verifyNoInteractions(oidcAuthenticationPort, principalService);
+      }
+    }
+
+    @Nested
+    class AndRefreshTokenIsBlank {
+      private OIDCSession session;
+      private UnauthenticatedSessionException exception;
+
+      @BeforeEach
+      void setupAnd() {
+        BddLogger.when("refreshing session if needed");
+        BddLogger.and("refresh token is blank");
+
+        session =
+            new OIDCSession(
+                "expired-access-token", "   ", "id-token", Instant.now().minusSeconds(1));
+
+        exception =
+            assertThrows(
+                UnauthenticatedSessionException.class,
+                () -> service.refreshSessionIfNeeded(session));
+      }
+
+      @Test
+      void thenItShouldThrowUnauthenticatedSessionException() {
+        BddLogger.then("it should throw unauthenticated session exception");
+
+        assertEquals(UnauthenticatedSessionException.class, exception.getClass());
+
+        verifyNoInteractions(oidcAuthenticationPort, principalService);
       }
     }
   }

@@ -56,4 +56,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     return new AuthContext(true, principal.userId(), introspection.uniqueSecurityName());
   }
+
+  @Override
+  public OIDCSession refreshSessionIfNeeded(OIDCSession oidcSession) {
+    return oidcService.refreshSessionIfNeeded(oidcSession);
+  }
 }

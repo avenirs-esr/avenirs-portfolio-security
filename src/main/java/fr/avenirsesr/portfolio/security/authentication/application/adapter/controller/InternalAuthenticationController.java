@@ -6,6 +6,7 @@ import fr.avenirsesr.portfolio.security.authentication.domain.exception.Unauthen
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.AuthenticationSessionReader;
+import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.session.SessionAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +36,14 @@ public class InternalAuthenticationController {
               .readOidcSession(request)
               .orElseThrow(UnauthenticatedSessionException::new);
 
-      return AuthContextMapper.toDTO(authenticationService.getAuthenticatedContext(oidcSession));
+      OIDCSession refreshedSession = authenticationService.refreshSessionIfNeeded(oidcSession);
+
+      if (!refreshedSession.equals(oidcSession)) {
+        request.getSession(false).setAttribute(SessionAttributes.OIDC_SESSION, refreshedSession);
+      }
+
+      return AuthContextMapper.toDTO(
+          authenticationService.getAuthenticatedContext(refreshedSession));
 
     } catch (UnauthenticatedSessionException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);

@@ -84,6 +84,9 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
   @Value("${avenirs.authentication.auth.callback.public-path}")
   private String authCallbackPublicPath;
 
+  @Value("${avenirs.authentication.oidc.refresh.template.body}")
+  private String oidcRefreshTokenBodyTemplate;
+
   public OIDCClientOidcAuthenticationService(JWTServicePort jwtService) {
     this.jwtService = jwtService;
   }
@@ -383,5 +386,22 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
     }
     log.trace("basicAuthentication, basicAuthenticationHeader: {}", basicAuthenticationHeader);
     return basicAuthenticationHeader;
+  }
+
+  @Override
+  public OIDCAccessToken refreshAccessToken(String refreshToken) {
+    String body = String.format(oidcRefreshTokenBodyTemplate, refreshToken);
+
+    OIDCAccessTokenResponse payload =
+        restClient
+            .post()
+            .uri(oidcAccessTokenURL)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+            .body(body)
+            .retrieve()
+            .body(OIDCAccessTokenResponse.class);
+
+    return OIDCAccessTokenMapper.toDomain(payload);
   }
 }
