@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.s
 
 import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeHost;
 
+import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
@@ -279,7 +280,7 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
             .retrieve()
             .body(OIDCIntrospectResponse.class);
 
-    log.debug("introspect, payload: {}", payload);
+    log.info("introspect, payload: {}", payload);
 
     return OIDCIntrospectionMapper.toDomain(payload);
   }
@@ -390,18 +391,23 @@ public class OIDCClientOidcAuthenticationService implements OidcAuthenticationPo
 
   @Override
   public OIDCAccessToken refreshAccessToken(String refreshToken) {
-    String body = String.format(oidcRefreshTokenBodyTemplate, refreshToken);
+    try {
+      String body = String.format(oidcRefreshTokenBodyTemplate, refreshToken);
 
-    OIDCAccessTokenResponse payload =
-        restClient
-            .post()
-            .uri(oidcAccessTokenURL)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .accept(MediaType.APPLICATION_JSON)
-            .body(body)
-            .retrieve()
-            .body(OIDCAccessTokenResponse.class);
+      OIDCAccessTokenResponse payload =
+          restClient
+              .post()
+              .uri(oidcAccessTokenURL)
+              .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+              .accept(MediaType.APPLICATION_JSON)
+              .body(body)
+              .retrieve()
+              .body(OIDCAccessTokenResponse.class);
 
-    return OIDCAccessTokenMapper.toDomain(payload);
+      return OIDCAccessTokenMapper.toDomain(payload);
+
+    } catch (HttpClientErrorException.BadRequest e) {
+      throw new UnauthenticatedSessionException();
+    }
   }
 }
