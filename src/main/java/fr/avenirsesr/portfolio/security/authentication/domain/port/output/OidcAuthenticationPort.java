@@ -23,4 +23,6 @@ public interface OidcAuthenticationPort {
   Optional<OIDCAccessToken> getAccessToken(String login, String password);
 
   String generateAuthorizationUrl(String host, String redirect, String codeChallenge);
+
+  OIDCAccessToken refreshAccessToken(String refreshToken);
 }

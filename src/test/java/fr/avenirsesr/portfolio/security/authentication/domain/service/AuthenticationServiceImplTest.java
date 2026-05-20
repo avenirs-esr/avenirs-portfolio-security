@@ -114,6 +114,37 @@ class AuthenticationServiceImplTest {
     }
 
     @Nested
+    class WhenRefreshingSessionIfNeeded {
+      private OIDCSession oidcSession;
+      private OIDCSession refreshedSession;
+      private OIDCSession result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("refreshing session if needed");
+
+        oidcSession = oidcSession();
+        refreshedSession =
+            new OIDCSession(
+                "new-access-token", REFRESH_TOKEN, ID_TOKEN, Instant.parse("2026-05-13T14:30:00Z"));
+
+        when(oidcService.refreshSessionIfNeeded(oidcSession)).thenReturn(refreshedSession);
+
+        result = service.refreshSessionIfNeeded(oidcSession);
+      }
+
+      @Test
+      void thenItShouldDelegateToOidcService() {
+        BddLogger.then("it should delegate to OIDC service");
+
+        assertEquals(refreshedSession, result);
+
+        verify(oidcService).refreshSessionIfNeeded(oidcSession);
+        verifyNoMoreInteractions(oidcService, principalService);
+      }
+    }
+
+    @Nested
     class WhenGettingAuthenticatedContext {
 
       @BeforeEach
