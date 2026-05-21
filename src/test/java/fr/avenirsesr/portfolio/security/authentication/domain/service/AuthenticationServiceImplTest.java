@@ -9,7 +9,9 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
+import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.time.Instant;
@@ -40,6 +42,7 @@ class AuthenticationServiceImplTest {
 
   @Mock private OidcService oidcService;
   @Mock private PrincipalService principalService;
+  @Mock private AuthContextSigningPort authContextSigningPort;
 
   @InjectMocks private AuthenticationServiceImpl service;
 
@@ -75,7 +78,7 @@ class AuthenticationServiceImplTest {
         assertEquals(expected, result);
 
         verify(oidcService).generateAuthorizationUrl(HOST, REDIRECT, CODE_CHALLENGE);
-        verifyNoMoreInteractions(oidcService, principalService);
+        verifyNoMoreInteractions(oidcService, principalService, authContextSigningPort);
       }
     }
 
@@ -109,7 +112,7 @@ class AuthenticationServiceImplTest {
         assertFalse(result.accessTokenExpiresAt().isAfter(after.plusSeconds(3600)));
 
         verify(oidcService).exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER);
-        verifyNoMoreInteractions(oidcService, principalService);
+        verifyNoMoreInteractions(oidcService, principalService, authContextSigningPort);
       }
     }
 
@@ -140,22 +143,24 @@ class AuthenticationServiceImplTest {
         assertEquals(refreshedSession, result);
 
         verify(oidcService).refreshSessionIfNeeded(oidcSession);
-        verifyNoMoreInteractions(oidcService, principalService);
+        verifyNoMoreInteractions(oidcService, principalService, authContextSigningPort);
       }
     }
 
     @Nested
-    class WhenGettingAuthenticatedContext {
+    class WhenGettingSignedAuthenticatedContext {
 
       @BeforeEach
       void setupWhen() {
-        BddLogger.when("getting authenticated context");
+        BddLogger.when("getting signed authenticated context");
       }
 
       @Nested
       class AndSessionIsActiveAndPrincipalExists {
         private UUID userId;
-        private AuthContext result;
+        private AuthContext expectedAuthContext;
+        private SignedAuthContext expectedSignedAuthContext;
+        private SignedAuthContext result;
 
         @BeforeEach
         void setupAnd() {
@@ -164,25 +169,34 @@ class AuthenticationServiceImplTest {
           userId = UUID.fromString("00000000-0000-0000-0000-000000000101");
 
           OIDCIntrospection introspection = new OIDCIntrospection(ACCESS_TOKEN, true, LOGIN, null);
-
           Principal principal = new Principal(null, LOGIN, "OIDC", LOGIN, userId, Set.of());
+
+          expectedAuthContext = new AuthContext(true, userId, LOGIN);
+          expectedSignedAuthContext =
+              new SignedAuthContext(
+                  "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}",
+                  "signature",
+                  "v2");
 
           when(oidcService.introspectAccessToken(ACCESS_TOKEN)).thenReturn(introspection);
           when(principalService.getPrincipalByProviderAndExternalId("OIDC", LOGIN))
               .thenReturn(Optional.of(principal));
+          when(authContextSigningPort.sign(expectedAuthContext))
+              .thenReturn(expectedSignedAuthContext);
 
-          result = service.getAuthenticatedContext(oidcSession());
+          result = service.getSignedAuthenticatedContext(oidcSession());
         }
 
         @Test
-        void thenItShouldReturnAuthContext() {
-          BddLogger.then("it should return auth context");
+        void thenItShouldReturnSignedAuthContext() {
+          BddLogger.then("it should return signed auth context");
 
-          assertEquals(new AuthContext(true, userId, LOGIN), result);
+          assertEquals(expectedSignedAuthContext, result);
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
           verify(principalService).getPrincipalByProviderAndExternalId("OIDC", LOGIN);
-          verifyNoMoreInteractions(oidcService, principalService);
+          verify(authContextSigningPort).sign(expectedAuthContext);
+          verifyNoMoreInteractions(oidcService, principalService, authContextSigningPort);
         }
       }
 
@@ -202,10 +216,10 @@ class AuthenticationServiceImplTest {
 
           assertThrows(
               UnauthenticatedSessionException.class,
-              () -> service.getAuthenticatedContext(oidcSession()));
+              () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verifyNoInteractions(principalService);
+          verifyNoInteractions(principalService, authContextSigningPort);
           verifyNoMoreInteractions(oidcService);
         }
       }
@@ -227,10 +241,10 @@ class AuthenticationServiceImplTest {
 
           assertThrows(
               UnauthenticatedSessionException.class,
-              () -> service.getAuthenticatedContext(oidcSession()));
+              () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verifyNoInteractions(principalService);
+          verifyNoInteractions(principalService, authContextSigningPort);
           verifyNoMoreInteractions(oidcService);
         }
       }
@@ -255,10 +269,11 @@ class AuthenticationServiceImplTest {
 
           assertThrows(
               UnauthenticatedSessionException.class,
-              () -> service.getAuthenticatedContext(oidcSession()));
+              () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
           verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "unknown-user");
+          verifyNoInteractions(authContextSigningPort);
           verifyNoMoreInteractions(oidcService, principalService);
         }
       }

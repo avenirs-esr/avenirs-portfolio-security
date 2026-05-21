@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
-import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.AuthContextDTO;
-import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.AuthContextMapper;
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.SignedAuthContextDTO;
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.SignedAuthContextMapper;
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
@@ -29,7 +29,7 @@ public class InternalAuthenticationController {
   }
 
   @GetMapping("/context")
-  public AuthContextDTO context(HttpServletRequest request) {
+  public SignedAuthContextDTO context(HttpServletRequest request) {
     try {
       OIDCSession oidcSession =
           authenticationSessionReader
@@ -42,8 +42,8 @@ public class InternalAuthenticationController {
         request.getSession(false).setAttribute(SessionAttributes.OIDC_SESSION, refreshedSession);
       }
 
-      return AuthContextMapper.toDTO(
-          authenticationService.getAuthenticatedContext(refreshedSession));
+      return SignedAuthContextMapper.toDTO(
+          authenticationService.getSignedAuthenticatedContext(refreshedSession));
 
     } catch (UnauthenticatedSessionException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
