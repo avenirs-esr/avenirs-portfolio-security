@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.authentication.domain.port.input;
 
-import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
+import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 
 public interface AuthenticationService {
 
@@ -9,7 +9,7 @@ public interface AuthenticationService {
 
   OIDCSession createSessionFromAuthorizationCode(String host, String code, String codeVerifier);
 
-  AuthContext getAuthenticatedContext(OIDCSession oidcSession);
+  SignedAuthContext getSignedAuthenticatedContext(OIDCSession oidcSession);
 
   OIDCSession refreshSessionIfNeeded(OIDCSession oidcSession);
 }

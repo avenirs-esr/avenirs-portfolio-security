@@ -1,12 +1,10 @@
 package fr.avenirsesr.portfolio.security.authentication.domain.service;
 
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
+import fr.avenirsesr.portfolio.security.authentication.domain.model.*;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.time.Instant;
@@ -15,10 +13,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final OidcService oidcService;
   private final PrincipalService principalService;
+  private final AuthContextSigningPort authContextSigningPort;
 
-  public AuthenticationServiceImpl(OidcService oidcService, PrincipalService principalService) {
+  public AuthenticationServiceImpl(
+      OidcService oidcService,
+      PrincipalService principalService,
+      AuthContextSigningPort authContextSigningPort) {
     this.oidcService = oidcService;
     this.principalService = principalService;
+    this.authContextSigningPort = authContextSigningPort;
   }
 
   @Override
@@ -42,7 +45,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   @Override
-  public AuthContext getAuthenticatedContext(OIDCSession oidcSession) {
+  public SignedAuthContext getSignedAuthenticatedContext(OIDCSession oidcSession) {
+    AuthContext authContext = getAuthenticatedContext(oidcSession);
+    return authContextSigningPort.sign(authContext);
+  }
+
+  private AuthContext getAuthenticatedContext(OIDCSession oidcSession) {
     OIDCIntrospection introspection = oidcService.introspectAccessToken(oidcSession.accessToken());
 
     if (introspection == null || !introspection.active()) {

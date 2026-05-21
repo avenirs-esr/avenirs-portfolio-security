@@ -11,14 +11,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
+import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.AuthenticationSessionReader;
 import fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.session.SessionAttributes;
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,37 +59,36 @@ class InternalAuthenticationControllerIT {
       @Nested
       class AndTheSessionIsAuthenticated {
         private OIDCSession oidcSession;
-        private UUID userId;
+        private SignedAuthContext signedAuthContext;
 
         @BeforeEach
         void setupAnd() {
           BddLogger.and("the session is authenticated");
 
           oidcSession = oidcSession();
-          userId = UUID.fromString("00000000-0000-0000-0000-000000000101");
-
-          AuthContext authContext = new AuthContext(true, userId, "gribonvald");
+          signedAuthContext = signedAuthContext();
 
           when(authenticationSessionReader.readOidcSession(any()))
               .thenReturn(Optional.of(oidcSession));
           when(authenticationService.refreshSessionIfNeeded(oidcSession)).thenReturn(oidcSession);
-          when(authenticationService.getAuthenticatedContext(oidcSession)).thenReturn(authContext);
+          when(authenticationService.getSignedAuthenticatedContext(oidcSession))
+              .thenReturn(signedAuthContext);
         }
 
         @Test
-        void thenItShouldReturnAuthContext() throws Exception {
-          BddLogger.then("it should return auth context");
+        void thenItShouldReturnSignedAuthContext() throws Exception {
+          BddLogger.then("it should return signed auth context");
 
           mockMvc
               .perform(get("/internal/auth/context"))
               .andExpect(status().isOk())
-              .andExpect(jsonPath("$.authenticated").value(true))
-              .andExpect(jsonPath("$.userId").value(userId.toString()))
-              .andExpect(jsonPath("$.login").value("gribonvald"));
+              .andExpect(jsonPath("$.payload").value(signedAuthContext.payload()))
+              .andExpect(jsonPath("$.signature").value(signedAuthContext.signature()))
+              .andExpect(jsonPath("$.kid").value(signedAuthContext.kid()));
 
           verify(authenticationSessionReader).readOidcSession(any());
           verify(authenticationService).refreshSessionIfNeeded(oidcSession);
-          verify(authenticationService).getAuthenticatedContext(oidcSession);
+          verify(authenticationService).getSignedAuthenticatedContext(oidcSession);
         }
       }
 
@@ -99,7 +97,7 @@ class InternalAuthenticationControllerIT {
         private OIDCSession oidcSession;
         private OIDCSession refreshedSession;
         private MockHttpSession httpSession;
-        private UUID userId;
+        private SignedAuthContext signedAuthContext;
 
         @BeforeEach
         void setupAnd() {
@@ -114,34 +112,32 @@ class InternalAuthenticationControllerIT {
                   Instant.parse("2026-05-13T14:30:00Z"));
 
           httpSession = new MockHttpSession();
-          userId = UUID.fromString("00000000-0000-0000-0000-000000000101");
-
-          AuthContext authContext = new AuthContext(true, userId, "gribonvald");
+          signedAuthContext = signedAuthContext();
 
           when(authenticationSessionReader.readOidcSession(any()))
               .thenReturn(Optional.of(oidcSession));
           when(authenticationService.refreshSessionIfNeeded(oidcSession))
               .thenReturn(refreshedSession);
-          when(authenticationService.getAuthenticatedContext(refreshedSession))
-              .thenReturn(authContext);
+          when(authenticationService.getSignedAuthenticatedContext(refreshedSession))
+              .thenReturn(signedAuthContext);
         }
 
         @Test
-        void thenItShouldStoreRefreshedSessionAndReturnAuthContext() throws Exception {
-          BddLogger.then("it should store refreshed session and return auth context");
+        void thenItShouldStoreRefreshedSessionAndReturnSignedAuthContext() throws Exception {
+          BddLogger.then("it should store refreshed session and return signed auth context");
 
           mockMvc
               .perform(get("/internal/auth/context").session(httpSession))
               .andExpect(status().isOk())
-              .andExpect(jsonPath("$.authenticated").value(true))
-              .andExpect(jsonPath("$.userId").value(userId.toString()))
-              .andExpect(jsonPath("$.login").value("gribonvald"));
+              .andExpect(jsonPath("$.payload").value(signedAuthContext.payload()))
+              .andExpect(jsonPath("$.signature").value(signedAuthContext.signature()))
+              .andExpect(jsonPath("$.kid").value(signedAuthContext.kid()));
 
           assertEquals(refreshedSession, httpSession.getAttribute(SessionAttributes.OIDC_SESSION));
 
           verify(authenticationSessionReader).readOidcSession(any());
           verify(authenticationService).refreshSessionIfNeeded(oidcSession);
-          verify(authenticationService).getAuthenticatedContext(refreshedSession);
+          verify(authenticationService).getSignedAuthenticatedContext(refreshedSession);
         }
       }
 
@@ -206,7 +202,7 @@ class InternalAuthenticationControllerIT {
           when(authenticationSessionReader.readOidcSession(any()))
               .thenReturn(Optional.of(oidcSession));
           when(authenticationService.refreshSessionIfNeeded(oidcSession)).thenReturn(oidcSession);
-          when(authenticationService.getAuthenticatedContext(oidcSession))
+          when(authenticationService.getSignedAuthenticatedContext(oidcSession))
               .thenThrow(new UnauthenticatedSessionException());
         }
 
@@ -218,7 +214,7 @@ class InternalAuthenticationControllerIT {
 
           verify(authenticationSessionReader).readOidcSession(any());
           verify(authenticationService).refreshSessionIfNeeded(oidcSession);
-          verify(authenticationService).getAuthenticatedContext(oidcSession);
+          verify(authenticationService).getSignedAuthenticatedContext(oidcSession);
         }
       }
     }
@@ -227,5 +223,12 @@ class InternalAuthenticationControllerIT {
   private OIDCSession oidcSession() {
     return new OIDCSession(
         "access-token", "refresh-token", "id-token", Instant.parse("2026-05-13T13:30:00Z"));
+  }
+
+  private SignedAuthContext signedAuthContext() {
+    return new SignedAuthContext(
+        "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}",
+        "signature",
+        "v2");
   }
 }
