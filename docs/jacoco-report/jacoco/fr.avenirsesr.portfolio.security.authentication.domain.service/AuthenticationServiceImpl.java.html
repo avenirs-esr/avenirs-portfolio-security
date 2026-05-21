@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.authentication.domain.service</a> &gt; <span class="el_source">AuthenticationServiceImpl.java</span></div><h1>AuthenticationServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.authentication.domain.service;
 
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
-import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
+import fr.avenirsesr.portfolio.security.authentication.domain.model.*;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.time.Instant;
@@ -15,51 +13,61 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final OidcService oidcService;
   private final PrincipalService principalService;
+  private final AuthContextSigningPort authContextSigningPort;
 
-<span class="fc" id="L19">  public AuthenticationServiceImpl(OidcService oidcService, PrincipalService principalService) {</span>
-<span class="fc" id="L20">    this.oidcService = oidcService;</span>
-<span class="fc" id="L21">    this.principalService = principalService;</span>
-<span class="fc" id="L22">  }</span>
+  public AuthenticationServiceImpl(
+      OidcService oidcService,
+      PrincipalService principalService,
+<span class="fc" id="L21">      AuthContextSigningPort authContextSigningPort) {</span>
+<span class="fc" id="L22">    this.oidcService = oidcService;</span>
+<span class="fc" id="L23">    this.principalService = principalService;</span>
+<span class="fc" id="L24">    this.authContextSigningPort = authContextSigningPort;</span>
+<span class="fc" id="L25">  }</span>
 
   @Override
   public String generateAuthorizationUrl(String host, String redirect, String codeChallenge) {
-<span class="fc" id="L26">    return oidcService.generateAuthorizationUrl(host, redirect, codeChallenge);</span>
+<span class="fc" id="L29">    return oidcService.generateAuthorizationUrl(host, redirect, codeChallenge);</span>
   }
 
   @Override
   public OIDCSession createSessionFromAuthorizationCode(
       String host, String code, String codeVerifier) {
-<span class="fc" id="L32">    OIDCAccessToken accessToken =</span>
-<span class="fc" id="L33">        oidcService.exchangeAuthorizationCodeForToken(host, code, codeVerifier);</span>
+<span class="fc" id="L35">    OIDCAccessToken accessToken =</span>
+<span class="fc" id="L36">        oidcService.exchangeAuthorizationCodeForToken(host, code, codeVerifier);</span>
 
-<span class="fc" id="L35">    Instant accessTokenExpiresAt = Instant.now().plusSeconds(accessToken.expiresIn());</span>
+<span class="fc" id="L38">    Instant accessTokenExpiresAt = Instant.now().plusSeconds(accessToken.expiresIn());</span>
 
-<span class="fc" id="L37">    return new OIDCSession(</span>
-<span class="fc" id="L38">        accessToken.accessToken(),</span>
-<span class="fc" id="L39">        accessToken.refreshToken(),</span>
-<span class="fc" id="L40">        accessToken.rawIdToken(),</span>
+<span class="fc" id="L40">    return new OIDCSession(</span>
+<span class="fc" id="L41">        accessToken.accessToken(),</span>
+<span class="fc" id="L42">        accessToken.refreshToken(),</span>
+<span class="fc" id="L43">        accessToken.rawIdToken(),</span>
         accessTokenExpiresAt);
   }
 
   @Override
-  public AuthContext getAuthenticatedContext(OIDCSession oidcSession) {
-<span class="fc" id="L46">    OIDCIntrospection introspection = oidcService.introspectAccessToken(oidcSession.accessToken());</span>
+  public SignedAuthContext getSignedAuthenticatedContext(OIDCSession oidcSession) {
+<span class="fc" id="L49">    AuthContext authContext = getAuthenticatedContext(oidcSession);</span>
+<span class="fc" id="L50">    return authContextSigningPort.sign(authContext);</span>
+  }
 
-<span class="fc bfc" id="L48" title="All 4 branches covered.">    if (introspection == null || !introspection.active()) {</span>
-<span class="fc" id="L49">      throw new UnauthenticatedSessionException();</span>
+  private AuthContext getAuthenticatedContext(OIDCSession oidcSession) {
+<span class="fc" id="L54">    OIDCIntrospection introspection = oidcService.introspectAccessToken(oidcSession.accessToken());</span>
+
+<span class="fc bfc" id="L56" title="All 4 branches covered.">    if (introspection == null || !introspection.active()) {</span>
+<span class="fc" id="L57">      throw new UnauthenticatedSessionException();</span>
     }
 
-<span class="fc" id="L52">    Principal principal =</span>
+<span class="fc" id="L60">    Principal principal =</span>
         principalService
-<span class="fc" id="L54">            .getPrincipalByProviderAndExternalId(&quot;OIDC&quot;, introspection.uniqueSecurityName())</span>
-<span class="fc" id="L55">            .orElseThrow(UnauthenticatedSessionException::new);</span>
+<span class="fc" id="L62">            .getPrincipalByProviderAndExternalId(&quot;OIDC&quot;, introspection.uniqueSecurityName())</span>
+<span class="fc" id="L63">            .orElseThrow(UnauthenticatedSessionException::new);</span>
 
-<span class="fc" id="L57">    return new AuthContext(true, principal.userId(), introspection.uniqueSecurityName());</span>
+<span class="fc" id="L65">    return new AuthContext(true, principal.userId(), introspection.uniqueSecurityName());</span>
   }
 
   @Override
   public OIDCSession refreshSessionIfNeeded(OIDCSession oidcSession) {
-<span class="fc" id="L62">    return oidcService.refreshSessionIfNeeded(oidcSession);</span>
+<span class="fc" id="L70">    return oidcService.refreshSessionIfNeeded(oidcSession);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

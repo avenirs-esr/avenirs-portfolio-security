@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InternalAuthenticationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.authentication.application.adapter.controller</a> &gt; <span class="el_source">InternalAuthenticationController.java</span></div><h1>InternalAuthenticationController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
-import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.AuthContextDTO;
-import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.AuthContextMapper;
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.SignedAuthContextDTO;
+import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.SignedAuthContextMapper;
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
@@ -29,7 +29,7 @@ public class InternalAuthenticationController {
 <span class="nc" id="L29">  }</span>
 
   @GetMapping(&quot;/context&quot;)
-  public AuthContextDTO context(HttpServletRequest request) {
+  public SignedAuthContextDTO context(HttpServletRequest request) {
     try {
 <span class="nc" id="L34">      OIDCSession oidcSession =</span>
           authenticationSessionReader
@@ -42,8 +42,8 @@ public class InternalAuthenticationController {
 <span class="nc" id="L42">        request.getSession(false).setAttribute(SessionAttributes.OIDC_SESSION, refreshedSession);</span>
       }
 
-<span class="nc" id="L45">      return AuthContextMapper.toDTO(</span>
-<span class="nc" id="L46">          authenticationService.getAuthenticatedContext(refreshedSession));</span>
+<span class="nc" id="L45">      return SignedAuthContextMapper.toDTO(</span>
+<span class="nc" id="L46">          authenticationService.getSignedAuthenticatedContext(refreshedSession));</span>
 
 <span class="nc" id="L48">    } catch (UnauthenticatedSessionException e) {</span>
 <span class="nc" id="L49">      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);</span>
