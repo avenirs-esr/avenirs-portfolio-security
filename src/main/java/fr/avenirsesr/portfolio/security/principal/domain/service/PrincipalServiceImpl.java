@@ -27,6 +27,12 @@ public class PrincipalServiceImpl implements PrincipalService {
   }
 
   @Override
+  public Optional<Principal> getPrincipalByEppn(String eppn) {
+    log.trace("getPrincipalByEppn, eppn: {}", eppn);
+    return principalRepository.findByEppn(eppn);
+  }
+
+  @Override
   public Optional<Principal> getPrincipalByProviderAndExternalId(
       String provider, String externalId) {
     log.trace(

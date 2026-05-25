@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
@@ -435,9 +437,18 @@ class RBACRoleServiceImplTest {
   }
 
   private RBACAssignment assignment(RBACRole role) {
+    Principal principal =
+        Principal.create(
+            "user@university.com",
+            LOGIN,
+            "OIDC",
+            LOGIN,
+            EUserCategory.STUDENT,
+            EUserStatus.ACTIVE,
+            Set.of());
     return new RBACAssignment(
         UUID.randomUUID(),
-        new Principal(UUID.randomUUID(), LOGIN, "OIDC", LOGIN, UUID.randomUUID(), Set.of()),
+        principal,
         role,
         new RBACScope(UUID.randomUUID(), List.of()),
         new RBACContext(UUID.randomUUID(), null, null, Set.of()));

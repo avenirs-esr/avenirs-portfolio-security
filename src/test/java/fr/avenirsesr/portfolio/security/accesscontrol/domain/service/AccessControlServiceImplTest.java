@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlInvalidDateException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
@@ -15,6 +17,7 @@ import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Structure;
 import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
 import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.StructureRepository;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +77,18 @@ class AccessControlServiceImplTest {
     ReflectionTestUtils.setField(service, "dateFormat", DATE_FORMAT);
 
     structure = new Structure(STRUCTURE_ID, "RECIA", "Structure RECIA");
-    principal = new Principal(PRINCIPAL_ID, LOGIN, "OIDC", LOGIN, USER_ID, Set.of(structure));
+    principal =
+        Principal.toDomain(
+            PRINCIPAL_ID,
+            Instant.now(),
+            Instant.now(),
+            "user@university.com",
+            LOGIN,
+            "OIDC",
+            LOGIN,
+            EUserCategory.STUDENT,
+            EUserStatus.ACTIVE,
+            Set.of(structure));
 
     readPermission =
         new RBACPermission(

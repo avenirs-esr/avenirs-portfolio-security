@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder;
 
+import fr.avenirsesr.portfolio.common.dependency.domain.port.input.DependencyChecker;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration.SeedingState;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.seeder.PrincipalSeeder;
@@ -19,6 +20,14 @@ public class SeederOrchestrator {
   @Value("${seeder.schema:dev}")
   private String schemaName;
 
+  @Value("${seeder.dependencies-check:false}")
+  private boolean dependenciesCheck;
+
+  @Value("${avenirs.interoperability.actuator.health}")
+  private String interoperabilityHealthUrl;
+
+  private final DependencyChecker dependencyChecker;
+
   private final ReentrantLock lock = new ReentrantLock();
   private final JdbcTemplate jdbcTemplate;
 
@@ -29,6 +38,10 @@ public class SeederOrchestrator {
   public void seedAll() {
     try {
       log.info("Security seeding enabled and starting...");
+
+      if (dependenciesCheck) {
+        dependencyChecker.checkAndWait("Interoperability", interoperabilityHealthUrl);
+      }
 
       List<PrincipalEntity> principalsSaved = principalSeeder.seed();
 

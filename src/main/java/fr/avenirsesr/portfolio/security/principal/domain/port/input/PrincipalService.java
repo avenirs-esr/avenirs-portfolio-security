@@ -11,4 +11,6 @@ public interface PrincipalService {
   Optional<Principal> getPrincipalByLogin(String login);
 
   Optional<Principal> getPrincipalByProviderAndExternalId(String provider, String externalId);
+
+  Optional<Principal> getPrincipalByEppn(String eppn);
 }

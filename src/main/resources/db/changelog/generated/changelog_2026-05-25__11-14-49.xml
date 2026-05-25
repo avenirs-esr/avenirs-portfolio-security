@@ -1,0 +1,85 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+      http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd
+      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="nathp" id="2026-05-25-principal-add-new-columns">
+        <addColumn tableName="principal">
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="created_at" type="TIMESTAMP(6) WITH TIME ZONE"/>
+            <column name="eppn" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(50)"/>
+            <column name="updated_at" type="TIMESTAMP(6) WITH TIME ZONE"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="nathp" id="2026-05-25-principal-backfill-new-columns">
+        <sql>
+            UPDATE principal
+            SET
+                category = COALESCE(category, 'STUDENT'),
+                created_at = COALESCE(created_at, CURRENT_TIMESTAMP),
+                updated_at = COALESCE(updated_at, CURRENT_TIMESTAMP),
+                status = COALESCE(status, 'ACTIVE'),
+                eppn = COALESCE(eppn, login)
+            WHERE
+                category IS NULL
+               OR created_at IS NULL
+               OR updated_at IS NULL
+               OR status IS NULL
+               OR eppn IS NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet author="nathp" id="2026-05-25-principal-add-not-null-constraints">
+        <addNotNullConstraint tableName="principal" columnName="category" columnDataType="VARCHAR(50)"/>
+        <addNotNullConstraint tableName="principal" columnName="created_at" columnDataType="TIMESTAMP(6) WITH TIME ZONE"/>
+        <addNotNullConstraint tableName="principal" columnName="eppn" columnDataType="VARCHAR(255)"/>
+        <addNotNullConstraint tableName="principal" columnName="status" columnDataType="VARCHAR(50)"/>
+        <addNotNullConstraint tableName="principal" columnName="updated_at" columnDataType="TIMESTAMP(6) WITH TIME ZONE"/>
+    </changeSet>
+
+    <changeSet author="nathp" id="2026-05-25-principal-add-eppn-unique-constraint">
+        <addUniqueConstraint
+                tableName="principal"
+                columnNames="eppn"
+                constraintName="principal_eppn_uk"/>
+    </changeSet>
+
+    <changeSet author="nathp" id="2026-05-25-principal-create-status-index">
+        <createIndex indexName="principal_status_idx" tableName="principal">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="nathp" id="2026-05-25-principal-drop-user-id-constraint">
+        <preConditions onFail="MARK_RAN">
+            <uniqueConstraintExists
+                    tableName="principal"
+                    constraintName="principal_user_id_uk"/>
+        </preConditions>
+        <dropUniqueConstraint
+                tableName="principal"
+                constraintName="principal_user_id_uk"/>
+    </changeSet>
+
+    <changeSet author="nathp" id="2026-05-25-principal-drop-user-id-column">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="principal" columnName="user_id"/>
+        </preConditions>
+        <dropColumn tableName="principal" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet author="nathp (generated)" id="1779713972929-3">
+        <addColumn tableName="principal">
+            <column name="password_hash" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

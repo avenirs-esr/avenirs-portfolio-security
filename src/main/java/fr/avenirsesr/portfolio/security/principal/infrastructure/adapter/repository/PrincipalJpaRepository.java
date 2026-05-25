@@ -10,4 +10,6 @@ public interface PrincipalJpaRepository extends JpaRepository<PrincipalEntity, U
   Optional<PrincipalEntity> findByLogin(String login);
 
   Optional<PrincipalEntity> findByProviderAndExternalId(String provider, String externalId);
+
+  Optional<PrincipalEntity> findByEppn(String eppn);
 }

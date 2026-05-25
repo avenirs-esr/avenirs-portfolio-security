@@ -3,7 +3,9 @@ package fr.avenirsesr.portfolio.security.authentication.domain.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
@@ -157,7 +159,7 @@ class AuthenticationServiceImplTest {
 
       @Nested
       class AndSessionIsActiveAndPrincipalExists {
-        private UUID userId;
+        private UUID principalId;
         private AuthContext expectedAuthContext;
         private SignedAuthContext expectedSignedAuthContext;
         private SignedAuthContext result;
@@ -166,12 +168,24 @@ class AuthenticationServiceImplTest {
         void setupAnd() {
           BddLogger.and("session is active and principal exists");
 
-          userId = UUID.fromString("00000000-0000-0000-0000-000000000101");
+          principalId = UUID.fromString("00000000-0000-0000-0000-000000000101");
 
           OIDCIntrospection introspection = new OIDCIntrospection(ACCESS_TOKEN, true, LOGIN, null);
-          Principal principal = new Principal(null, LOGIN, "OIDC", LOGIN, userId, Set.of());
 
-          expectedAuthContext = new AuthContext(true, userId, LOGIN);
+          Principal principal =
+              Principal.toDomain(
+                  principalId,
+                  Instant.parse("2026-01-01T00:00:00Z"),
+                  Instant.parse("2026-01-01T00:00:00Z"),
+                  "gribonvald@university.com",
+                  LOGIN,
+                  "OIDC",
+                  LOGIN,
+                  EUserCategory.STUDENT,
+                  EUserStatus.ACTIVE,
+                  Set.of());
+
+          expectedAuthContext = new AuthContext(true, principalId, LOGIN);
           expectedSignedAuthContext =
               new SignedAuthContext(
                   "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}",

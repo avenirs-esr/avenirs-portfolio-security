@@ -61,7 +61,7 @@ public class OidcServiceImpl implements OidcService {
                             + introspection.uniqueSecurityName()));
 
     return new OIDCIntrospection(
-        introspection.token(), true, introspection.uniqueSecurityName(), principal.userId());
+        introspection.token(), true, introspection.uniqueSecurityName(), principal.getId());
   }
 
   @Override

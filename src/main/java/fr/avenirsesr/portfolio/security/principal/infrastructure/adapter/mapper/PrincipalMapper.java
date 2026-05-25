@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.mapper;
 
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Structure;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity;
@@ -7,27 +8,47 @@ import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.S
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
-public interface PrincipalMapper {
+public class PrincipalMapper implements Mapper<PrincipalEntity, Principal> {
 
-  @Mapping(
-      source = "structureEntities",
-      target = "structures",
-      qualifiedByName = "toDomainStructures")
-  Principal toDomain(PrincipalEntity entity);
+  public static final PrincipalMapper INSTANCE = new PrincipalMapper();
 
-  @Mapping(
-      source = "structures",
-      target = "structureEntities",
-      qualifiedByName = "toEntityStructures")
-  PrincipalEntity fromDomain(Principal domain);
+  @Override
+  public PrincipalEntity fromDomain(Principal principal) {
+    return principal != null
+        ? PrincipalEntity.of(
+            principal.getId(),
+            principal.getEppn(),
+            principal.getLogin(),
+            null,
+            principal.getProvider(),
+            principal.getExternalId(),
+            principal.getCategory(),
+            principal.getStatus(),
+            toEntityStructures(principal.getStructures()),
+            principal.getCreatedAt(),
+            principal.getUpdatedAt())
+        : null;
+  }
 
-  @Named("toDomainStructures")
-  default Set<Structure> toDomainStructures(Set<StructureEntity> entities) {
+  @Override
+  public Principal toDomain(PrincipalEntity principalEntity) {
+    return principalEntity != null
+        ? Principal.toDomain(
+            principalEntity.getId(),
+            principalEntity.getCreatedAt(),
+            principalEntity.getUpdatedAt(),
+            principalEntity.getEppn(),
+            principalEntity.getLogin(),
+            principalEntity.getProvider(),
+            principalEntity.getExternalId(),
+            principalEntity.getCategory(),
+            principalEntity.getStatus(),
+            toDomainStructures(principalEntity.getStructureEntities()))
+        : null;
+  }
+
+  private Set<Structure> toDomainStructures(Set<StructureEntity> entities) {
     if (entities == null) {
       return Collections.emptySet();
     }
@@ -37,8 +58,7 @@ public interface PrincipalMapper {
         .collect(Collectors.toSet());
   }
 
-  @Named("toEntityStructures")
-  default Set<StructureEntity> toEntityStructures(Set<Structure> domains) {
+  private Set<StructureEntity> toEntityStructures(Set<Structure> domains) {
     if (domains == null) {
       return Collections.emptySet();
     }

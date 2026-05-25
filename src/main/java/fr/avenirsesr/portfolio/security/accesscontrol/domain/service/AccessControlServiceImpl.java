@@ -117,7 +117,7 @@ public class AccessControlServiceImpl implements AccessControlService {
   }
 
   private RBACContext createExecutionContext(Principal principal) {
-    return new RBACContext(null, null, null, new HashSet<>(principal.structures()));
+    return new RBACContext(null, null, null, new HashSet<>(principal.getStructures()));
   }
 
   private List<RBACResource> resolveResources(List<UUID> resourceIds) {

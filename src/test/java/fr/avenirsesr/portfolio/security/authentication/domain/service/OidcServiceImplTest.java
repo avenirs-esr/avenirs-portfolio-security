@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
@@ -188,7 +190,15 @@ class OidcServiceImplTest {
           userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
           OIDCIntrospection introspection = new OIDCIntrospection(TOKEN, true, "user", null);
-          Principal principal = new Principal(null, "user", "OIDC", "user", userId, Set.of());
+          Principal principal =
+              Principal.create(
+                  "user@university.com",
+                  "user",
+                  "OIDC",
+                  "user",
+                  EUserCategory.STUDENT,
+                  EUserStatus.ACTIVE,
+                  Set.of());
 
           when(oidcAuthenticationPort.introspectAccessToken(TOKEN)).thenReturn(introspection);
           when(principalService.getPrincipalByProviderAndExternalId("OIDC", "user"))
@@ -198,7 +208,7 @@ class OidcServiceImplTest {
         }
 
         @Test
-        void thenItShouldReturnIntrospectionWithUserId() {
+        void thenItShouldReturnIntrospectionWithid() {
           BddLogger.then("it should return introspection with user id");
 
           assertEquals(new OIDCIntrospection(TOKEN, true, "user", userId), result);

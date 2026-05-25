@@ -28,13 +28,6 @@ public class SeederRunner implements CommandLineRunner {
       return;
     }
 
-    long principalCount = principalJpaRepository.count();
-    if (principalCount > 0) {
-      log.info("{} principals found. Security seeder skipped.", principalCount);
-      seedingState.markCompleted();
-      return;
-    }
-
-    seederOrchestrator.seedAll();
+    seederOrchestrator.resetAndSeed();
   }
 }
