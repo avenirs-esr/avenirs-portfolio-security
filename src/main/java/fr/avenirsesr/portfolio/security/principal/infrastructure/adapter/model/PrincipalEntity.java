@@ -100,6 +100,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
     this.setId(id);
     this.eppn = eppn;
     this.login = login;
+    this.passwordHash = passwordHash;
     this.provider = provider;
     this.externalId = externalId;
     this.category = category;

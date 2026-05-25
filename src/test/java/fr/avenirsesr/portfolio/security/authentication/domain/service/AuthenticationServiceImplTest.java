@@ -15,10 +15,8 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthCo
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
-import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +41,6 @@ class AuthenticationServiceImplTest {
   private static final String LOGIN = "gribonvald";
 
   @Mock private OidcService oidcService;
-  @Mock private PrincipalService principalService;
   @Mock private AuthContextSigningPort authContextSigningPort;
 
   @InjectMocks private AuthenticationServiceImpl service;
@@ -80,7 +77,7 @@ class AuthenticationServiceImplTest {
         assertEquals(expected, result);
 
         verify(oidcService).generateAuthorizationUrl(HOST, REDIRECT, CODE_CHALLENGE);
-        verifyNoMoreInteractions(oidcService, principalService, authContextSigningPort);
+        verifyNoMoreInteractions(oidcService, authContextSigningPort);
       }
     }
 
@@ -114,7 +111,7 @@ class AuthenticationServiceImplTest {
         assertFalse(result.accessTokenExpiresAt().isAfter(after.plusSeconds(3600)));
 
         verify(oidcService).exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER);
-        verifyNoMoreInteractions(oidcService, principalService, authContextSigningPort);
+        verifyNoMoreInteractions(oidcService, authContextSigningPort);
       }
     }
 
@@ -145,7 +142,7 @@ class AuthenticationServiceImplTest {
         assertEquals(refreshedSession, result);
 
         verify(oidcService).refreshSessionIfNeeded(oidcSession);
-        verifyNoMoreInteractions(oidcService, principalService, authContextSigningPort);
+        verifyNoMoreInteractions(oidcService, authContextSigningPort);
       }
     }
 
@@ -170,7 +167,7 @@ class AuthenticationServiceImplTest {
 
           principalId = UUID.fromString("00000000-0000-0000-0000-000000000101");
 
-          OIDCIntrospection introspection = new OIDCIntrospection(ACCESS_TOKEN, true, LOGIN, null);
+          OIDCIntrospection introspection = new OIDCIntrospection(ACCESS_TOKEN, true, LOGIN);
 
           Principal principal =
               Principal.toDomain(
@@ -185,7 +182,7 @@ class AuthenticationServiceImplTest {
                   EUserStatus.ACTIVE,
                   Set.of());
 
-          expectedAuthContext = new AuthContext(true, principalId, LOGIN);
+          expectedAuthContext = new AuthContext(true, LOGIN);
           expectedSignedAuthContext =
               new SignedAuthContext(
                   "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}",
@@ -193,8 +190,6 @@ class AuthenticationServiceImplTest {
                   "v2");
 
           when(oidcService.introspectAccessToken(ACCESS_TOKEN)).thenReturn(introspection);
-          when(principalService.getPrincipalByProviderAndExternalId("OIDC", LOGIN))
-              .thenReturn(Optional.of(principal));
           when(authContextSigningPort.sign(expectedAuthContext))
               .thenReturn(expectedSignedAuthContext);
 
@@ -208,9 +203,8 @@ class AuthenticationServiceImplTest {
           assertEquals(expectedSignedAuthContext, result);
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verify(principalService).getPrincipalByProviderAndExternalId("OIDC", LOGIN);
           verify(authContextSigningPort).sign(expectedAuthContext);
-          verifyNoMoreInteractions(oidcService, principalService, authContextSigningPort);
+          verifyNoMoreInteractions(oidcService, authContextSigningPort);
         }
       }
 
@@ -233,7 +227,7 @@ class AuthenticationServiceImplTest {
               () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verifyNoInteractions(principalService, authContextSigningPort);
+          verifyNoInteractions(authContextSigningPort);
           verifyNoMoreInteractions(oidcService);
         }
       }
@@ -246,7 +240,7 @@ class AuthenticationServiceImplTest {
           BddLogger.and("token is inactive");
 
           when(oidcService.introspectAccessToken(ACCESS_TOKEN))
-              .thenReturn(new OIDCIntrospection(ACCESS_TOKEN, false, LOGIN, null));
+              .thenReturn(new OIDCIntrospection(ACCESS_TOKEN, false, LOGIN));
         }
 
         @Test
@@ -258,7 +252,7 @@ class AuthenticationServiceImplTest {
               () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verifyNoInteractions(principalService, authContextSigningPort);
+          verifyNoInteractions(authContextSigningPort);
           verifyNoMoreInteractions(oidcService);
         }
       }
@@ -271,24 +265,21 @@ class AuthenticationServiceImplTest {
           BddLogger.and("principal is missing");
 
           when(oidcService.introspectAccessToken(ACCESS_TOKEN))
-              .thenReturn(new OIDCIntrospection(ACCESS_TOKEN, true, "unknown-user", null));
-
-          when(principalService.getPrincipalByProviderAndExternalId("OIDC", "unknown-user"))
-              .thenReturn(Optional.empty());
+              .thenReturn(new OIDCIntrospection(ACCESS_TOKEN, true, "unknown-user"));
         }
 
         @Test
         void thenItShouldThrowUnauthenticatedSessionException() {
           BddLogger.then("it should throw unauthenticated session exception");
-
+          when(oidcService.introspectAccessToken(ACCESS_TOKEN))
+              .thenReturn(new OIDCIntrospection(ACCESS_TOKEN, false, "unknown-user"));
           assertThrows(
               UnauthenticatedSessionException.class,
               () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "unknown-user");
           verifyNoInteractions(authContextSigningPort);
-          verifyNoMoreInteractions(oidcService, principalService);
+          verifyNoMoreInteractions(oidcService);
         }
       }
     }

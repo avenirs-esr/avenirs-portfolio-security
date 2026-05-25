@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.authentication.application.adapter.cont
 
 import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeHost;
 import static fr.avenirsesr.portfolio.common.utils.RedirectUtils.toSafeRelativePath;
+import static reactor.netty.http.HttpConnectionLiveness.log;
 
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.PkceChallenge;
@@ -56,6 +57,8 @@ public class AuthenticationController {
     String authorizeUrl =
         authenticationService.generateAuthorizationUrl(host, safeRedirect, pkce.challenge());
 
+    log.info("Generated OIDC authorize URL: {}", authorizeUrl);
+
     response.sendRedirect(authorizeUrl);
   }
 
@@ -67,27 +70,33 @@ public class AuthenticationController {
       HttpSession session,
       HttpServletResponse response)
       throws IOException {
-    if (code == null || code.isBlank()) {
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing authorization code");
-      return;
+    try {
+      log.info("Received OIDC callback with code: {} and state: {}", code, state);
+      if (code == null || code.isBlank()) {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing authorization code");
+        return;
+      }
+
+      String codeVerifier = (String) session.getAttribute(SessionAttributes.PKCE_CODE_VERIFIER);
+
+      if (codeVerifier == null || codeVerifier.isBlank()) {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing PKCE code verifier");
+        return;
+      }
+
+      session.removeAttribute(SessionAttributes.PKCE_CODE_VERIFIER);
+
+      OIDCSession oidcSession =
+          authenticationService.createSessionFromAuthorizationCode(host, code, codeVerifier);
+
+      session.setAttribute(SessionAttributes.OIDC_SESSION, oidcSession);
+
+      String safeRedirect = toSafeRelativePath(state, "/cofolio/student");
+      response.sendRedirect("https://" + toSafeHost(host) + safeRedirect);
+    } catch (Exception e) {
+      log.error("OIDC callback failed during code exchange", e);
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "OIDC callback failed");
     }
-
-    String codeVerifier = (String) session.getAttribute(SessionAttributes.PKCE_CODE_VERIFIER);
-
-    if (codeVerifier == null || codeVerifier.isBlank()) {
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing PKCE code verifier");
-      return;
-    }
-
-    session.removeAttribute(SessionAttributes.PKCE_CODE_VERIFIER);
-
-    OIDCSession oidcSession =
-        authenticationService.createSessionFromAuthorizationCode(host, code, codeVerifier);
-
-    session.setAttribute(SessionAttributes.OIDC_SESSION, oidcSession);
-
-    String safeRedirect = toSafeRelativePath(state, "/cofolio/student");
-    response.sendRedirect("https://" + (toSafeHost(host)) + safeRedirect);
   }
 
   @GetMapping("/logout")

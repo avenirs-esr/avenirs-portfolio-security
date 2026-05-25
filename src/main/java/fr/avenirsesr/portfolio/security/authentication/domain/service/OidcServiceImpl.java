@@ -7,9 +7,6 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.OidcAuthenticationPort;
-import fr.avenirsesr.portfolio.security.principal.domain.exception.PrincipalNotFoundException;
-import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
-import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -18,12 +15,9 @@ public class OidcServiceImpl implements OidcService {
   private static final long REFRESH_SKEW_SECONDS = 30;
 
   private final OidcAuthenticationPort oidcAuthenticationPort;
-  private final PrincipalService principalService;
 
-  public OidcServiceImpl(
-      OidcAuthenticationPort oidcAuthenticationPort, PrincipalService principalService) {
+  public OidcServiceImpl(OidcAuthenticationPort oidcAuthenticationPort) {
     this.oidcAuthenticationPort = oidcAuthenticationPort;
-    this.principalService = principalService;
   }
 
   @Override
@@ -51,17 +45,7 @@ public class OidcServiceImpl implements OidcService {
       return introspection;
     }
 
-    Principal principal =
-        principalService
-            .getPrincipalByProviderAndExternalId("OIDC", introspection.uniqueSecurityName())
-            .orElseThrow(
-                () ->
-                    new PrincipalNotFoundException(
-                        "No principal found for external id: "
-                            + introspection.uniqueSecurityName()));
-
-    return new OIDCIntrospection(
-        introspection.token(), true, introspection.uniqueSecurityName(), principal.getId());
+    return new OIDCIntrospection(introspection.token(), true, introspection.uniqueSecurityName());
   }
 
   @Override

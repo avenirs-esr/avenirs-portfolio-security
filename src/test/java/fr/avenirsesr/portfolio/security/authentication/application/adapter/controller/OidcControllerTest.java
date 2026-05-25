@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
+import static fr.avenirsesr.portfolio.security.shared.infrastructure.configuration.UserServiceConfig.USER_ID_MOCK;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -20,7 +21,6 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration.SpringSecurityConfig;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -281,7 +281,7 @@ class OidcControllerTest {
           token = "AT";
 
           when(oidcService.introspectAccessToken(token))
-              .thenReturn(new OIDCIntrospection(token, true, "usn", null));
+              .thenReturn(new OIDCIntrospection(token, true, "usn"));
           when(oidcService.profile(token))
               .thenReturn(new OIDCProfile("id", "svc", "fn", "ln", "mail"));
         }
@@ -315,7 +315,7 @@ class OidcControllerTest {
           token = "inactive";
 
           when(oidcService.introspectAccessToken(token))
-              .thenReturn(new OIDCIntrospection(token, false, null, null));
+              .thenReturn(new OIDCIntrospection(token, false, null));
         }
 
         @Test
@@ -343,9 +343,7 @@ class OidcControllerTest {
         token = "AT";
 
         when(oidcService.introspectAccessToken(token))
-            .thenReturn(
-                new OIDCIntrospection(
-                    token, true, "usn", UUID.fromString("00000000-0000-0000-0000-000000000101")));
+            .thenReturn(new OIDCIntrospection(token, true, "usn"));
       }
 
       @Test
@@ -356,7 +354,7 @@ class OidcControllerTest {
             .perform(post("/oidc/callback/introspect").header("x-authorization", token))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.active").value(true))
-            .andExpect(jsonPath("$.userId").value("00000000-0000-0000-0000-000000000101"))
+            .andExpect(jsonPath("$.userId").value(USER_ID_MOCK))
             .andExpect(jsonPath("$.uniqueSecurityName").value("usn"));
 
         verify(oidcService).introspectAccessToken(token);

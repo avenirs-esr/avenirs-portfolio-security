@@ -5,22 +5,16 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.*;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
-import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
-import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.time.Instant;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final OidcService oidcService;
-  private final PrincipalService principalService;
   private final AuthContextSigningPort authContextSigningPort;
 
   public AuthenticationServiceImpl(
-      OidcService oidcService,
-      PrincipalService principalService,
-      AuthContextSigningPort authContextSigningPort) {
+      OidcService oidcService, AuthContextSigningPort authContextSigningPort) {
     this.oidcService = oidcService;
-    this.principalService = principalService;
     this.authContextSigningPort = authContextSigningPort;
   }
 
@@ -57,12 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       throw new UnauthenticatedSessionException();
     }
 
-    Principal principal =
-        principalService
-            .getPrincipalByProviderAndExternalId("OIDC", introspection.uniqueSecurityName())
-            .orElseThrow(UnauthenticatedSessionException::new);
-
-    return new AuthContext(true, principal.getId(), introspection.uniqueSecurityName());
+    return new AuthContext(true, introspection.uniqueSecurityName());
   }
 
   @Override

@@ -9,7 +9,6 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,6 @@ class HmacAuthContextSigningServiceTest {
   private static final String KID = "v2";
   private static final long TTL_SECONDS = 300L;
   private static final String ALGORITHM = "HmacSHA256";
-  private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000101");
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -46,7 +44,7 @@ class HmacAuthContextSigningServiceTest {
       void setupWhen() {
         BddLogger.when("signing an auth context");
 
-        authContext = new AuthContext(true, USER_ID, "gribonvald");
+        authContext = new AuthContext(true, "gribonvald");
         result = service.sign(authContext);
       }
 
@@ -68,7 +66,6 @@ class HmacAuthContextSigningServiceTest {
 
         SignedPayload payload = objectMapper.readValue(result.payload(), SignedPayload.class);
 
-        assertEquals(USER_ID.toString(), payload.sub());
         assertTrue(payload.iat() > 0);
         assertEquals(TTL_SECONDS, payload.exp() - payload.iat());
       }
@@ -101,7 +98,7 @@ class HmacAuthContextSigningServiceTest {
 
         assertThrows(
             IllegalStateException.class,
-            () -> serviceWithInvalidKid.sign(new AuthContext(true, USER_ID, "gribonvald")));
+            () -> serviceWithInvalidKid.sign(new AuthContext(true, "gribonvald")));
       }
     }
   }

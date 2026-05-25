@@ -2,7 +2,6 @@ package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.m
 
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCAccessTokenResponse;
-import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.OIDCIdToken;
 import java.util.Map;
 
 public final class OIDCAccessTokenMapper {
@@ -20,7 +19,7 @@ public final class OIDCAccessTokenMapper {
         payload.getTokenType(),
         payload.getExpireIn(),
         payload.getScope(),
-        payload.getIdToken() != null ? payload.getIdToken().getRawIdToken() : null,
+        payload.getIdToken(),
         payload.getClaims(),
         payload.isJwt());
   }
@@ -38,10 +37,7 @@ public final class OIDCAccessTokenMapper {
     payload.setScope(domain.scope());
     payload.setClaims(domain.claims());
     payload.setJwt(domain.jwt());
-
-    if (domain.rawIdToken() != null) {
-      payload.setIdToken(new OIDCIdToken(domain.rawIdToken()));
-    }
+    payload.setIdToken(domain.rawIdToken());
 
     return payload;
   }
