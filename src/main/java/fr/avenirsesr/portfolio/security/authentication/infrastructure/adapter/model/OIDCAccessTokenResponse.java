@@ -25,7 +25,7 @@ public class OIDCAccessTokenResponse {
 
   /** Id token value */
   @JsonProperty("id_token")
-  private OIDCIdToken idToken;
+  private String idToken;
 
   /** Access token type (e.g. "Bearer") */
   @JsonProperty("token_type")

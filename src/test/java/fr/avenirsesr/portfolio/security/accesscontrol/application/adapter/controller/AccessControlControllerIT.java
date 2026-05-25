@@ -285,7 +285,7 @@ class AccessControlControllerIT {
                 new OIDCAccessToken(token, token, "Bearer", 3600, "openid", null, null, false)));
 
     when(oidcService.introspectAccessToken(token))
-        .thenReturn(new OIDCIntrospection(token, true, login, null));
+        .thenReturn(new OIDCIntrospection(token, true, login));
 
     return accessTokenHelper.provideAccessToken(login, password);
   }

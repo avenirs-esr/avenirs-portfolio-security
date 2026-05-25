@@ -1,5 +1,7 @@
 package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
+import static reactor.netty.http.HttpConnectionLiveness.log;
+
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.SignedAuthContextDTO;
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.SignedAuthContextMapper;
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
@@ -31,6 +33,7 @@ public class InternalAuthenticationController {
   @GetMapping("/context")
   public SignedAuthContextDTO context(HttpServletRequest request) {
     try {
+      log.info("Received request for authentication context from IP: {}", request.getRemoteAddr());
       OIDCSession oidcSession =
           authenticationSessionReader
               .readOidcSession(request)

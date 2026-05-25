@@ -93,7 +93,7 @@ class RoleControllerIT {
         token = "invalid-token";
 
         when(oidcService.introspectAccessToken(token))
-            .thenReturn(new OIDCIntrospection(token, false, null, null));
+            .thenReturn(new OIDCIntrospection(token, false, null));
       }
 
       @Test
@@ -188,7 +188,7 @@ class RoleControllerIT {
                 new OIDCAccessToken(token, token, "Bearer", 3600, "openid", null, null, false)));
 
     when(oidcService.introspectAccessToken(token))
-        .thenReturn(new OIDCIntrospection(token, true, login, null));
+        .thenReturn(new OIDCIntrospection(token, true, login));
 
     return accessTokenHelper.provideAccessToken(login, password);
   }

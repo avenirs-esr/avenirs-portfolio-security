@@ -16,12 +16,10 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.OidcAuthenticationPort;
 import fr.avenirsesr.portfolio.security.principal.domain.exception.PrincipalNotFoundException;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
-import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,7 +40,6 @@ class OidcServiceImplTest {
   private static final String TOKEN = "token";
 
   @Mock private OidcAuthenticationPort oidcAuthenticationPort;
-  @Mock private PrincipalService principalService;
 
   @InjectMocks private OidcServiceImpl service;
 
@@ -79,7 +76,7 @@ class OidcServiceImplTest {
         assertEquals(expected, result.get());
 
         verify(oidcAuthenticationPort).getAccessToken(LOGIN, PASSWORD);
-        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        verifyNoMoreInteractions(oidcAuthenticationPort);
       }
     }
 
@@ -107,7 +104,7 @@ class OidcServiceImplTest {
         assertEquals(expected, result);
 
         verify(oidcAuthenticationPort).exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER);
-        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        verifyNoMoreInteractions(oidcAuthenticationPort);
       }
     }
 
@@ -134,7 +131,7 @@ class OidcServiceImplTest {
         assertEquals(expected, result);
 
         verify(oidcAuthenticationPort).generateServiceURL(HOST);
-        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        verifyNoMoreInteractions(oidcAuthenticationPort);
       }
     }
 
@@ -166,7 +163,7 @@ class OidcServiceImplTest {
 
         verify(oidcAuthenticationPort)
             .generateAuthorizationUrl("dev.avenirs-esr.fr", redirect, CODE_CHALLENGE);
-        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        verifyNoMoreInteractions(oidcAuthenticationPort);
       }
     }
 
@@ -180,16 +177,13 @@ class OidcServiceImplTest {
 
       @Nested
       class AndTokenIsActiveAndPrincipalExists {
-        private UUID userId;
         private OIDCIntrospection result;
 
         @BeforeEach
         void setupAnd() {
           BddLogger.and("token is active and principal exists");
 
-          userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
-
-          OIDCIntrospection introspection = new OIDCIntrospection(TOKEN, true, "user", null);
+          OIDCIntrospection introspection = new OIDCIntrospection(TOKEN, true, "user");
           Principal principal =
               Principal.create(
                   "user@university.com",
@@ -201,8 +195,6 @@ class OidcServiceImplTest {
                   Set.of());
 
           when(oidcAuthenticationPort.introspectAccessToken(TOKEN)).thenReturn(introspection);
-          when(principalService.getPrincipalByProviderAndExternalId("OIDC", "user"))
-              .thenReturn(Optional.of(principal));
 
           result = service.introspectAccessToken(TOKEN);
         }
@@ -211,11 +203,10 @@ class OidcServiceImplTest {
         void thenItShouldReturnIntrospectionWithid() {
           BddLogger.then("it should return introspection with user id");
 
-          assertEquals(new OIDCIntrospection(TOKEN, true, "user", userId), result);
+          assertEquals(new OIDCIntrospection(TOKEN, true, "user"), result);
 
           verify(oidcAuthenticationPort).introspectAccessToken(TOKEN);
-          verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "user");
-          verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+          verifyNoMoreInteractions(oidcAuthenticationPort);
         }
       }
 
@@ -228,7 +219,7 @@ class OidcServiceImplTest {
         void setupAnd() {
           BddLogger.and("token is inactive");
 
-          introspection = new OIDCIntrospection(TOKEN, false, "user", null);
+          introspection = new OIDCIntrospection(TOKEN, false, "user");
 
           when(oidcAuthenticationPort.introspectAccessToken(TOKEN)).thenReturn(introspection);
 
@@ -242,7 +233,6 @@ class OidcServiceImplTest {
           assertEquals(introspection, result);
 
           verify(oidcAuthenticationPort).introspectAccessToken(TOKEN);
-          verifyNoInteractions(principalService);
           verifyNoMoreInteractions(oidcAuthenticationPort);
         }
       }
@@ -255,27 +245,13 @@ class OidcServiceImplTest {
         void setupAnd() {
           BddLogger.and("token is active but principal is missing");
 
-          OIDCIntrospection introspection =
-              new OIDCIntrospection(TOKEN, true, "unknown-user", null);
+          OIDCIntrospection introspection = new OIDCIntrospection(TOKEN, true, "unknown-user");
 
           when(oidcAuthenticationPort.introspectAccessToken(TOKEN)).thenReturn(introspection);
-          when(principalService.getPrincipalByProviderAndExternalId("OIDC", "unknown-user"))
-              .thenReturn(Optional.empty());
 
           exception =
               assertThrows(
                   PrincipalNotFoundException.class, () -> service.introspectAccessToken(TOKEN));
-        }
-
-        @Test
-        void thenItShouldThrowPrincipalNotFoundException() {
-          BddLogger.then("it should throw principal not found exception");
-
-          assertEquals("No principal found for external id: unknown-user", exception.getMessage());
-
-          verify(oidcAuthenticationPort).introspectAccessToken(TOKEN);
-          verify(principalService).getPrincipalByProviderAndExternalId("OIDC", "unknown-user");
-          verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
         }
       }
     }
@@ -303,7 +279,7 @@ class OidcServiceImplTest {
         assertEquals(expected, result);
 
         verify(oidcAuthenticationPort).profile(TOKEN);
-        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        verifyNoMoreInteractions(oidcAuthenticationPort);
       }
     }
   }
@@ -335,7 +311,7 @@ class OidcServiceImplTest {
         assertEquals(session, result);
 
         verify(oidcAuthenticationPort, never()).refreshAccessToken("refresh-token");
-        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        verifyNoMoreInteractions(oidcAuthenticationPort);
       }
     }
 
@@ -384,7 +360,7 @@ class OidcServiceImplTest {
         assertTrue(result.accessTokenExpiresAt().isAfter(Instant.now()));
 
         verify(oidcAuthenticationPort).refreshAccessToken("old-refresh-token");
-        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        verifyNoMoreInteractions(oidcAuthenticationPort);
       }
     }
 
@@ -431,7 +407,7 @@ class OidcServiceImplTest {
         assertTrue(result.accessTokenExpiresAt().isAfter(Instant.now()));
 
         verify(oidcAuthenticationPort).refreshAccessToken("old-refresh-token");
-        verifyNoMoreInteractions(oidcAuthenticationPort, principalService);
+        verifyNoMoreInteractions(oidcAuthenticationPort);
       }
     }
 
@@ -461,7 +437,7 @@ class OidcServiceImplTest {
 
         assertEquals(UnauthenticatedSessionException.class, exception.getClass());
 
-        verifyNoInteractions(oidcAuthenticationPort, principalService);
+        verifyNoInteractions(oidcAuthenticationPort);
       }
     }
 
@@ -491,7 +467,7 @@ class OidcServiceImplTest {
 
         assertEquals(UnauthenticatedSessionException.class, exception.getClass());
 
-        verifyNoInteractions(oidcAuthenticationPort, principalService);
+        verifyNoInteractions(oidcAuthenticationPort);
       }
     }
   }
