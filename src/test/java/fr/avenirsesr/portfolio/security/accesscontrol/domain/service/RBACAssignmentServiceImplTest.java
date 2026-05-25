@@ -4,11 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -299,7 +302,17 @@ class RBACAssignmentServiceImplTest {
   }
 
   private Principal principal() {
-    return new Principal(PRINCIPAL_ID, "deman", "OIDC", "deman", UUID.randomUUID(), Set.of());
+    return Principal.toDomain(
+        PRINCIPAL_ID,
+        Instant.now(),
+        Instant.now(),
+        "user@university.com",
+        "deman",
+        "OIDC",
+        "deman",
+        EUserCategory.STUDENT,
+        EUserStatus.ACTIVE,
+        Set.of());
   }
 
   private RBACRole role() {

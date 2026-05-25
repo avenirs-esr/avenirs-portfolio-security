@@ -1,17 +1,20 @@
 package fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
+import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -24,41 +27,51 @@ import lombok.Setter;
 @Table(
     name = "principal",
     indexes = {
+      @Index(name = "principal_eppn_idx", columnList = "eppn"),
       @Index(name = "principal_login_idx", columnList = "login"),
       @Index(name = "principal_external_id_idx", columnList = "external_id"),
-      @Index(name = "principal_user_id_idx", columnList = "user_id")
+      @Index(name = "principal_provider_external_id_idx", columnList = "provider, external_id"),
+      @Index(name = "principal_status_idx", columnList = "status")
     },
     uniqueConstraints = {
+      @UniqueConstraint(name = "principal_eppn_uk", columnNames = "eppn"),
       @UniqueConstraint(
           name = "principal_provider_external_id_uk",
-          columnNames = {"provider", "external_id"}),
-      @UniqueConstraint(name = "principal_user_id_uk", columnNames = "user_id")
+          columnNames = {"provider", "external_id"})
     })
 @NoArgsConstructor
 @Getter
 @Setter
-public class PrincipalEntity {
+public class PrincipalEntity extends AvenirsBaseEntity {
 
-  /** Database Id. */
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+  /** Globally unique stable identifier used between microservices. */
+  @Column(length = 255, nullable = false, unique = true)
+  private String eppn;
 
-  /** Login of the principal. */
+  /** Login of the principal. Usually equals eppn or email. */
   @Column(length = 255, nullable = false)
   private String login;
 
-  /** Authentication provider, for example CAS, OIDC, LDAP, or LOCAL. */
+  @Column(name = "password_hash", length = 255)
+  private String passwordHash;
+
+  /** Authentication provider, for example CAS, OIDC, PEGASE, APOGEE, LOCAL. */
   @Column(length = 100, nullable = false)
   private String provider;
 
-  /** Stable external identifier, for example OIDC sub or LDAP uid. */
+  /** Stable external identifier from the source/provider. */
   @Column(name = "external_id", length = 255, nullable = false)
   private String externalId;
 
-  /** Business user identifier handled by the user domain/module. */
-  @Column(name = "user_id", nullable = false, unique = true)
-  private UUID userId;
+  /** User category from a security point of view. */
+  @Column(length = 50, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private EUserCategory category;
+
+  /** Security status of the principal. */
+  @Column(length = 50, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private EUserStatus status;
 
   /** Structures associated to the principal. */
   @ManyToMany(fetch = FetchType.LAZY)
@@ -74,31 +87,76 @@ public class PrincipalEntity {
 
   private PrincipalEntity(
       UUID id,
+      String eppn,
       String login,
+      String passwordHash,
       String provider,
       String externalId,
-      UUID userId,
-      Set<StructureEntity> structureEntities) {
-    this.id = id;
+      EUserCategory category,
+      EUserStatus status,
+      Set<StructureEntity> structureEntities,
+      Instant createdAt,
+      Instant updatedAt) {
+    this.setId(id);
+    this.eppn = eppn;
     this.login = login;
     this.provider = provider;
     this.externalId = externalId;
-    this.userId = userId;
+    this.category = category;
+    this.status = status;
     this.structureEntities = structureEntities != null ? structureEntities : new HashSet<>();
+    this.setCreatedAt(createdAt);
+    this.setUpdatedAt(updatedAt);
   }
 
   public static PrincipalEntity of(
       UUID id,
+      String eppn,
       String login,
+      String passwordHash,
       String provider,
       String externalId,
-      UUID userId,
-      Set<StructureEntity> structureEntities) {
-    return new PrincipalEntity(id, login, provider, externalId, userId, structureEntities);
+      EUserCategory category,
+      EUserStatus status,
+      Set<StructureEntity> structureEntities,
+      Instant createdAt,
+      Instant updatedAt) {
+    return new PrincipalEntity(
+        id,
+        eppn,
+        login,
+        passwordHash,
+        provider,
+        externalId,
+        category,
+        status,
+        structureEntities,
+        createdAt,
+        updatedAt);
   }
 
   public static PrincipalEntity of(
-      UUID id, String login, String provider, String externalId, UUID userId) {
-    return new PrincipalEntity(id, login, provider, externalId, userId, new HashSet<>());
+      UUID id,
+      String eppn,
+      String login,
+      String passwordHash,
+      String provider,
+      String externalId,
+      EUserCategory category,
+      EUserStatus status,
+      Instant createdAt,
+      Instant updatedAt) {
+    return new PrincipalEntity(
+        id,
+        eppn,
+        login,
+        passwordHash,
+        provider,
+        externalId,
+        category,
+        status,
+        new HashSet<>(),
+        createdAt,
+        updatedAt);
   }
 }

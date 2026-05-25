@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Structure;
 import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,10 +26,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PrincipalServiceImplTest {
 
   private static final UUID PRINCIPAL_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
-  private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000101");
   private static final UUID STRUCTURE_ID = UUID.fromString("00000000-0000-0000-0000-000000000201");
 
-  private static final String LOGIN = "gribonvald";
+  private static final String EPPN = "gribonvald@university.com";
+  private static final String UNKNOWN_EPPN = "unknown@university.com";
+
+  private static final String LOGIN = "gribonvald@university.com";
   private static final String UNKNOWN_LOGIN = "unknown";
 
   private static final String PROVIDER = "OIDC";
@@ -172,6 +177,67 @@ class PrincipalServiceImplTest {
     }
 
     @Nested
+    class WhenGettingPrincipalByEppn {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("getting principal by eppn");
+      }
+
+      @Nested
+      class AndThePrincipalExists {
+        private Principal principal;
+        private Optional<Principal> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal exists");
+
+          principal = principal();
+
+          when(principalRepository.findByEppn(EPPN)).thenReturn(Optional.of(principal));
+
+          result = service.getPrincipalByEppn(EPPN);
+        }
+
+        @Test
+        void thenItShouldReturnPrincipal() {
+          BddLogger.then("it should return principal");
+
+          assertTrue(result.isPresent());
+          assertEquals(principal, result.orElseThrow());
+
+          verify(principalRepository).findByEppn(EPPN);
+          verifyNoMoreInteractions(principalRepository);
+        }
+      }
+
+      @Nested
+      class AndThePrincipalDoesNotExist {
+        private Optional<Principal> result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("the principal does not exist");
+
+          when(principalRepository.findByEppn(UNKNOWN_EPPN)).thenReturn(Optional.empty());
+
+          result = service.getPrincipalByEppn(UNKNOWN_EPPN);
+        }
+
+        @Test
+        void thenItShouldReturnEmpty() {
+          BddLogger.then("it should return empty");
+
+          assertTrue(result.isEmpty());
+
+          verify(principalRepository).findByEppn(UNKNOWN_EPPN);
+          verifyNoMoreInteractions(principalRepository);
+        }
+      }
+    }
+
+    @Nested
     class WhenGettingPrincipalByProviderAndExternalId {
 
       @BeforeEach
@@ -236,12 +302,16 @@ class PrincipalServiceImplTest {
   }
 
   private Principal principal() {
-    return new Principal(
+    return Principal.toDomain(
         PRINCIPAL_ID,
+        Instant.parse("2026-01-01T00:00:00Z"),
+        Instant.parse("2026-01-01T00:00:00Z"),
+        EPPN,
         LOGIN,
         PROVIDER,
         EXTERNAL_ID,
-        USER_ID,
+        EUserCategory.STUDENT,
+        EUserStatus.ACTIVE,
         Set.of(new Structure(STRUCTURE_ID, "RECIA", "Structure description")));
   }
 }

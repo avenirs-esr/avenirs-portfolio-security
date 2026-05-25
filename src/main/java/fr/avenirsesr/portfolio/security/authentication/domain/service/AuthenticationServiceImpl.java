@@ -62,7 +62,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             .getPrincipalByProviderAndExternalId("OIDC", introspection.uniqueSecurityName())
             .orElseThrow(UnauthenticatedSessionException::new);
 
-    return new AuthContext(true, principal.userId(), introspection.uniqueSecurityName());
+    return new AuthContext(true, principal.getId(), introspection.uniqueSecurityName());
   }
 
   @Override

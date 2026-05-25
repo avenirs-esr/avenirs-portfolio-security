@@ -11,4 +11,6 @@ public interface PrincipalRepository {
   Optional<Principal> findByLogin(String login);
 
   Optional<Principal> findByProviderAndExternalId(String provider, String externalId);
+
+  Optional<Principal> findByEppn(String eppn);
 }
