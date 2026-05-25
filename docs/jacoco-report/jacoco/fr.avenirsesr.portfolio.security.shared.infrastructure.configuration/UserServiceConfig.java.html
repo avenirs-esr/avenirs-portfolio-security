@@ -7,9 +7,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 <span class="nc" id="L9">public class UserServiceConfig {</span>
+
+  // TODO: remove this mock in #1683
+  public static final String USER_ID_MOCK = &quot;0a8700ab-90b6-4a38-8338-acbdd4fbcd3d&quot;;
+
   @Bean
   public BaseUserService baseUserService() {
-<span class="nc" id="L12">    return new NoOpUserService();</span>
+<span class="nc" id="L16">    return new NoOpUserService();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

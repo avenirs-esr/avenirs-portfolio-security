@@ -13,7 +13,7 @@ public final class OIDCIntrospectionMapper {
     }
 
 <span class="fc" id="L15">    return new OIDCIntrospection(</span>
-<span class="fc" id="L16">        payload.getToken(), payload.isActive(), payload.getUniqueSecurityName(), null);</span>
+<span class="fc" id="L16">        payload.getToken(), payload.isActive(), payload.getUniqueSecurityName());</span>
   }
 
   public static OIDCIntrospectResponse fromDomain(OIDCIntrospection domain) {

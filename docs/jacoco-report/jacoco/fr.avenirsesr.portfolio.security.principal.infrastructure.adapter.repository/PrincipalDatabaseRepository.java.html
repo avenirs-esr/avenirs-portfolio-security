@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PrincipalDatabaseRepository implements PrincipalRepository {
 
   private final PrincipalJpaRepository principalJpaRepository;
-  private final PrincipalMapper principalMapper;
+<span class="nc" id="L17">  private static final PrincipalMapper principalMapper = PrincipalMapper.INSTANCE;</span>
 
   @Override
   @Transactional
@@ -34,6 +34,11 @@ public class PrincipalDatabaseRepository implements PrincipalRepository {
 <span class="nc" id="L34">    return principalJpaRepository</span>
 <span class="nc" id="L35">        .findByProviderAndExternalId(provider, externalId)</span>
 <span class="nc" id="L36">        .map(principalMapper::toDomain);</span>
+  }
+
+  @Override
+  public Optional&lt;Principal&gt; findByEppn(String eppn) {
+<span class="nc" id="L41">    return principalJpaRepository.findByEppn(eppn).map(principalMapper::toDomain);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

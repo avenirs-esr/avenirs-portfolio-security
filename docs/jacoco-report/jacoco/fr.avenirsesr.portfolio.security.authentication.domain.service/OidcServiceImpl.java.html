@@ -7,9 +7,6 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.OidcAuthenticationPort;
-import fr.avenirsesr.portfolio.security.principal.domain.exception.PrincipalNotFoundException;
-import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
-import fr.avenirsesr.portfolio.security.principal.domain.port.input.PrincipalService;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -18,82 +15,69 @@ public class OidcServiceImpl implements OidcService {
   private static final long REFRESH_SKEW_SECONDS = 30;
 
   private final OidcAuthenticationPort oidcAuthenticationPort;
-  private final PrincipalService principalService;
 
-  public OidcServiceImpl(
-<span class="fc" id="L24">      OidcAuthenticationPort oidcAuthenticationPort, PrincipalService principalService) {</span>
-<span class="fc" id="L25">    this.oidcAuthenticationPort = oidcAuthenticationPort;</span>
-<span class="fc" id="L26">    this.principalService = principalService;</span>
-<span class="fc" id="L27">  }</span>
+<span class="fc" id="L19">  public OidcServiceImpl(OidcAuthenticationPort oidcAuthenticationPort) {</span>
+<span class="fc" id="L20">    this.oidcAuthenticationPort = oidcAuthenticationPort;</span>
+<span class="fc" id="L21">  }</span>
 
   @Override
   public Optional&lt;OIDCAccessToken&gt; getAccessToken(String login, String password) {
-<span class="fc" id="L31">    return oidcAuthenticationPort.getAccessToken(login, password);</span>
+<span class="fc" id="L25">    return oidcAuthenticationPort.getAccessToken(login, password);</span>
   }
 
   @Override
   public OIDCAccessToken exchangeAuthorizationCodeForToken(
       String host, String code, String codeVerifier) {
-<span class="fc" id="L37">    return oidcAuthenticationPort.exchangeAuthorizationCodeForToken(host, code, codeVerifier);</span>
+<span class="fc" id="L31">    return oidcAuthenticationPort.exchangeAuthorizationCodeForToken(host, code, codeVerifier);</span>
   }
 
   @Override
   public String generateServiceURL(String host) {
-<span class="fc" id="L42">    return oidcAuthenticationPort.generateServiceURL(host);</span>
+<span class="fc" id="L36">    return oidcAuthenticationPort.generateServiceURL(host);</span>
   }
 
   @Override
   public OIDCIntrospection introspectAccessToken(String token) {
 
-<span class="fc" id="L48">    OIDCIntrospection introspection = oidcAuthenticationPort.introspectAccessToken(token);</span>
+<span class="fc" id="L42">    OIDCIntrospection introspection = oidcAuthenticationPort.introspectAccessToken(token);</span>
 
-<span class="fc bfc" id="L50" title="All 2 branches covered.">    if (!introspection.active()) {</span>
-<span class="fc" id="L51">      return introspection;</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">    if (!introspection.active()) {</span>
+<span class="fc" id="L45">      return introspection;</span>
     }
 
-<span class="fc" id="L54">    Principal principal =</span>
-        principalService
-<span class="fc" id="L56">            .getPrincipalByProviderAndExternalId(&quot;OIDC&quot;, introspection.uniqueSecurityName())</span>
-<span class="fc" id="L57">            .orElseThrow(</span>
-                () -&gt;
-<span class="fc" id="L59">                    new PrincipalNotFoundException(</span>
-                        &quot;No principal found for external id: &quot;
-<span class="fc" id="L61">                            + introspection.uniqueSecurityName()));</span>
-
-<span class="fc" id="L63">    return new OIDCIntrospection(</span>
-<span class="fc" id="L64">        introspection.token(), true, introspection.uniqueSecurityName(), principal.userId());</span>
+<span class="fc" id="L48">    return new OIDCIntrospection(introspection.token(), true, introspection.uniqueSecurityName());</span>
   }
 
   @Override
   public OIDCProfile profile(String token) {
-<span class="fc" id="L69">    return oidcAuthenticationPort.profile(token);</span>
+<span class="fc" id="L53">    return oidcAuthenticationPort.profile(token);</span>
   }
 
   @Override
   public String generateAuthorizationUrl(String host, String redirect, String codeChallenge) {
-<span class="fc" id="L74">    return oidcAuthenticationPort.generateAuthorizationUrl(host, redirect, codeChallenge);</span>
+<span class="fc" id="L58">    return oidcAuthenticationPort.generateAuthorizationUrl(host, redirect, codeChallenge);</span>
   }
 
   @Override
   public OIDCSession refreshSessionIfNeeded(OIDCSession session) {
-<span class="fc bfc" id="L79" title="All 2 branches covered.">    if (session.accessTokenExpiresAt().isAfter(Instant.now().plusSeconds(REFRESH_SKEW_SECONDS))) {</span>
-<span class="fc" id="L80">      return session;</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">    if (session.accessTokenExpiresAt().isAfter(Instant.now().plusSeconds(REFRESH_SKEW_SECONDS))) {</span>
+<span class="fc" id="L64">      return session;</span>
     }
 
-<span class="fc bfc" id="L83" title="All 4 branches covered.">    if (session.refreshToken() == null || session.refreshToken().isBlank()) {</span>
-<span class="fc" id="L84">      throw new UnauthenticatedSessionException();</span>
+<span class="fc bfc" id="L67" title="All 4 branches covered.">    if (session.refreshToken() == null || session.refreshToken().isBlank()) {</span>
+<span class="fc" id="L68">      throw new UnauthenticatedSessionException();</span>
     }
 
-<span class="fc" id="L87">    OIDCAccessToken refreshedToken =</span>
-<span class="fc" id="L88">        oidcAuthenticationPort.refreshAccessToken(session.refreshToken());</span>
+<span class="fc" id="L71">    OIDCAccessToken refreshedToken =</span>
+<span class="fc" id="L72">        oidcAuthenticationPort.refreshAccessToken(session.refreshToken());</span>
 
-<span class="fc" id="L90">    return new OIDCSession(</span>
-<span class="fc" id="L91">        refreshedToken.accessToken(),</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">        refreshedToken.refreshToken() != null</span>
-<span class="fc" id="L93">            ? refreshedToken.refreshToken()</span>
-<span class="fc" id="L94">            : session.refreshToken(),</span>
-<span class="fc" id="L95">        refreshedToken.rawIdToken(),</span>
-<span class="fc" id="L96">        Instant.now().plusSeconds(refreshedToken.expiresIn()));</span>
+<span class="fc" id="L74">    return new OIDCSession(</span>
+<span class="fc" id="L75">        refreshedToken.accessToken(),</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        refreshedToken.refreshToken() != null</span>
+<span class="fc" id="L77">            ? refreshedToken.refreshToken()</span>
+<span class="fc" id="L78">            : session.refreshToken(),</span>
+<span class="fc" id="L79">        refreshedToken.rawIdToken(),</span>
+<span class="fc" id="L80">        Instant.now().plusSeconds(refreshedToken.expiresIn()));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

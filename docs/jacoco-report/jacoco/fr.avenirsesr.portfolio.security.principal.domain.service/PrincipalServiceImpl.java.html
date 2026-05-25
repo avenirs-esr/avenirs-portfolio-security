@@ -27,11 +27,17 @@ public class PrincipalServiceImpl implements PrincipalService {
   }
 
   @Override
+  public Optional&lt;Principal&gt; getPrincipalByEppn(String eppn) {
+<span class="fc" id="L31">    log.trace(&quot;getPrincipalByEppn, eppn: {}&quot;, eppn);</span>
+<span class="fc" id="L32">    return principalRepository.findByEppn(eppn);</span>
+  }
+
+  @Override
   public Optional&lt;Principal&gt; getPrincipalByProviderAndExternalId(
       String provider, String externalId) {
-<span class="fc" id="L32">    log.trace(</span>
+<span class="fc" id="L38">    log.trace(</span>
         &quot;getPrincipalByProviderAndExternalId, provider: {}, externalId: {}&quot;, provider, externalId);
-<span class="fc" id="L34">    return principalRepository.findByProviderAndExternalId(provider, externalId);</span>
+<span class="fc" id="L40">    return principalRepository.findByProviderAndExternalId(provider, externalId);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
