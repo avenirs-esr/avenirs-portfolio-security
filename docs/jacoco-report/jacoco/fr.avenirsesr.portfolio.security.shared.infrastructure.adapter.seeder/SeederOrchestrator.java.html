@@ -45,8 +45,8 @@ public class SeederOrchestrator {
 
 <span class="nc" id="L46">      List&lt;PrincipalEntity&gt; principalsSaved = principalSeeder.seed();</span>
 
-<span class="nc" id="L48">      log.info(&quot;✔ Security seeding successfully finished&quot;);</span>
-<span class="nc" id="L49">      seedingState.markCompleted();</span>
+<span class="nc" id="L48">      seedingState.markCompleted();</span>
+<span class="nc" id="L49">      log.info(&quot;✔ Security seeding successfully finished&quot;);</span>
 <span class="nc" id="L50">    } catch (Exception e) {</span>
 <span class="nc" id="L51">      seedingState.markFailed(e);</span>
 <span class="nc" id="L52">      log.error(&quot;✘ Security seeding failed&quot;, e);</span>
