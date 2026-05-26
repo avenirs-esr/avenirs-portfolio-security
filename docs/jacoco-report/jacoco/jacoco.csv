@@ -98,7 +98,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infras
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model,RBACResourceEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model,RBACScopeEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.validation.infrastructure.adapter.utils,ValidationUtils,14,0,4,0,4,0,4,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model,PrincipalEntity,76,0,2,0,15,0,4,0,3,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model,PrincipalEntity,79,0,2,0,16,0,4,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model,PrincipalEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model,StructureEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.utils,FileReader,39,0,0,0,10,0,2,0,2,0

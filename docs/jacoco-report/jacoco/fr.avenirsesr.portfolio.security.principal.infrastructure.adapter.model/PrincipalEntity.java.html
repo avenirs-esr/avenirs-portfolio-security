@@ -100,14 +100,15 @@ public class PrincipalEntity extends AvenirsBaseEntity {
 <span class="nc" id="L100">    this.setId(id);</span>
 <span class="nc" id="L101">    this.eppn = eppn;</span>
 <span class="nc" id="L102">    this.login = login;</span>
-<span class="nc" id="L103">    this.provider = provider;</span>
-<span class="nc" id="L104">    this.externalId = externalId;</span>
-<span class="nc" id="L105">    this.category = category;</span>
-<span class="nc" id="L106">    this.status = status;</span>
-<span class="nc bnc" id="L107" title="All 2 branches missed.">    this.structureEntities = structureEntities != null ? structureEntities : new HashSet&lt;&gt;();</span>
-<span class="nc" id="L108">    this.setCreatedAt(createdAt);</span>
-<span class="nc" id="L109">    this.setUpdatedAt(updatedAt);</span>
-<span class="nc" id="L110">  }</span>
+<span class="nc" id="L103">    this.passwordHash = passwordHash;</span>
+<span class="nc" id="L104">    this.provider = provider;</span>
+<span class="nc" id="L105">    this.externalId = externalId;</span>
+<span class="nc" id="L106">    this.category = category;</span>
+<span class="nc" id="L107">    this.status = status;</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">    this.structureEntities = structureEntities != null ? structureEntities : new HashSet&lt;&gt;();</span>
+<span class="nc" id="L109">    this.setCreatedAt(createdAt);</span>
+<span class="nc" id="L110">    this.setUpdatedAt(updatedAt);</span>
+<span class="nc" id="L111">  }</span>
 
   public static PrincipalEntity of(
       UUID id,
@@ -121,7 +122,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
       Set&lt;StructureEntity&gt; structureEntities,
       Instant createdAt,
       Instant updatedAt) {
-<span class="nc" id="L124">    return new PrincipalEntity(</span>
+<span class="nc" id="L125">    return new PrincipalEntity(</span>
         id,
         eppn,
         login,
@@ -146,7 +147,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
       EUserStatus status,
       Instant createdAt,
       Instant updatedAt) {
-<span class="nc" id="L149">    return new PrincipalEntity(</span>
+<span class="nc" id="L150">    return new PrincipalEntity(</span>
         id,
         eppn,
         login,
