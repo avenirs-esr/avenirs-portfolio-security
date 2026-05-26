@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InternalAuthenticationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.authentication.application.adapter.controller</a> &gt; <span class="el_source">InternalAuthenticationController.java</span></div><h1>InternalAuthenticationController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
+import static reactor.netty.http.HttpConnectionLiveness.log;
+
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.dto.SignedAuthContextDTO;
 import fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper.SignedAuthContextMapper;
 import fr.avenirsesr.portfolio.security.authentication.domain.exception.UnauthenticatedSessionException;
@@ -23,30 +25,31 @@ public class InternalAuthenticationController {
 
   public InternalAuthenticationController(
       AuthenticationService authenticationService,
-<span class="nc" id="L26">      AuthenticationSessionReader authenticationSessionReader) {</span>
-<span class="nc" id="L27">    this.authenticationService = authenticationService;</span>
-<span class="nc" id="L28">    this.authenticationSessionReader = authenticationSessionReader;</span>
-<span class="nc" id="L29">  }</span>
+<span class="nc" id="L28">      AuthenticationSessionReader authenticationSessionReader) {</span>
+<span class="nc" id="L29">    this.authenticationService = authenticationService;</span>
+<span class="nc" id="L30">    this.authenticationSessionReader = authenticationSessionReader;</span>
+<span class="nc" id="L31">  }</span>
 
   @GetMapping(&quot;/context&quot;)
   public SignedAuthContextDTO context(HttpServletRequest request) {
     try {
-<span class="nc" id="L34">      OIDCSession oidcSession =</span>
+<span class="nc" id="L36">      log.info(&quot;Received request for authentication context from IP: {}&quot;, request.getRemoteAddr());</span>
+<span class="nc" id="L37">      OIDCSession oidcSession =</span>
           authenticationSessionReader
-<span class="nc" id="L36">              .readOidcSession(request)</span>
-<span class="nc" id="L37">              .orElseThrow(UnauthenticatedSessionException::new);</span>
+<span class="nc" id="L39">              .readOidcSession(request)</span>
+<span class="nc" id="L40">              .orElseThrow(UnauthenticatedSessionException::new);</span>
 
-<span class="nc" id="L39">      OIDCSession refreshedSession = authenticationService.refreshSessionIfNeeded(oidcSession);</span>
+<span class="nc" id="L42">      OIDCSession refreshedSession = authenticationService.refreshSessionIfNeeded(oidcSession);</span>
 
-<span class="nc bnc" id="L41" title="All 2 branches missed.">      if (!refreshedSession.equals(oidcSession)) {</span>
-<span class="nc" id="L42">        request.getSession(false).setAttribute(SessionAttributes.OIDC_SESSION, refreshedSession);</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">      if (!refreshedSession.equals(oidcSession)) {</span>
+<span class="nc" id="L45">        request.getSession(false).setAttribute(SessionAttributes.OIDC_SESSION, refreshedSession);</span>
       }
 
-<span class="nc" id="L45">      return SignedAuthContextMapper.toDTO(</span>
-<span class="nc" id="L46">          authenticationService.getSignedAuthenticatedContext(refreshedSession));</span>
+<span class="nc" id="L48">      return SignedAuthContextMapper.toDTO(</span>
+<span class="nc" id="L49">          authenticationService.getSignedAuthenticatedContext(refreshedSession));</span>
 
-<span class="nc" id="L48">    } catch (UnauthenticatedSessionException e) {</span>
-<span class="nc" id="L49">      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L51">    } catch (UnauthenticatedSessionException e) {</span>
+<span class="nc" id="L52">      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);</span>
     }
   }
 }
