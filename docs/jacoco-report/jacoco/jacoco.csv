@@ -34,10 +34,10 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infra
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,AuthenticationSessionReader,24,0,4,0,7,0,3,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,JWTService,128,275,8,22,38,66,6,16,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,HmacAuthContextSigningService.SignedContextPayload,0,12,0,0,0,1,0,1,0,1
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,OIDCClientOidcAuthenticationService,158,504,14,12,23,123,10,18,0,15
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,OIDCClientOidcAuthenticationService,158,541,14,12,23,133,10,18,0,15
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCProfileMapper,4,49,2,2,2,15,2,2,0,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCIntrospectionMapper,27,12,3,1,8,3,3,1,1,1
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCAccessTokenMapper,23,70,6,4,4,21,6,2,1,2
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCAccessTokenMapper,11,70,4,2,3,21,4,2,1,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederRunner,18,0,2,0,7,0,3,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederOrchestrator,109,0,6,0,33,0,9,0,6,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.user.application.adapter.dto,ExternalUserDTO,32,0,0,0,2,0,2,0,2,0
@@ -57,7 +57,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.domain,FetchGraph
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter,EntityGrapher,259,0,19,0,53,0,21,0,10,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,OidcController,0,114,3,11,0,27,3,12,0,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,InternalAuthenticationController,54,0,2,0,15,0,3,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,AuthenticationController,150,0,10,0,46,0,9,0,4,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,AuthenticationController,160,0,10,0,50,0,9,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,AccessControlRevokeResult,0,15,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,RBACResourceType,0,12,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model,AccessControlGrantCommand,0,21,0,0,0,1,0,1,0,1
