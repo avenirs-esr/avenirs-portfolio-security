@@ -1,6 +1,5 @@
 package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
-import static fr.avenirsesr.portfolio.security.shared.infrastructure.configuration.UserServiceConfig.USER_ID_MOCK;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -354,7 +353,6 @@ class OidcControllerTest {
             .perform(post("/oidc/callback/introspect").header("x-authorization", token))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.active").value(true))
-            .andExpect(jsonPath("$.userId").value(USER_ID_MOCK))
             .andExpect(jsonPath("$.uniqueSecurityName").value("usn"));
 
         verify(oidcService).introspectAccessToken(token);

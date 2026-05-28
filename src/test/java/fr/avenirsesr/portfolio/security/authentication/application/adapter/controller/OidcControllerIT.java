@@ -1,6 +1,5 @@
 package fr.avenirsesr.portfolio.security.authentication.application.adapter.controller;
 
-import static fr.avenirsesr.portfolio.security.shared.infrastructure.configuration.UserServiceConfig.USER_ID_MOCK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -206,7 +205,6 @@ class OidcControllerIT {
               .perform(post("/oidc/callback/introspect").header("x-authorization", "AT"))
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.active").value(true))
-              .andExpect(jsonPath("$.userId").value(USER_ID_MOCK))
               .andExpect(jsonPath("$.uniqueSecurityName").value("gribonvald"));
         }
       }

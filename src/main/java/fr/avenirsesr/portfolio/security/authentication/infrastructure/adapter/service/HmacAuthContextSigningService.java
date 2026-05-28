@@ -1,7 +1,5 @@
 package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service;
 
-import static fr.avenirsesr.portfolio.security.shared.infrastructure.configuration.UserServiceConfig.USER_ID_MOCK;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums.ESecurityKeys;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
@@ -40,7 +38,8 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
       long now = Instant.now().getEpochSecond();
 
       // TODO: Mock while waiting #1683
-      SignedContextPayload payload = new SignedContextPayload(USER_ID_MOCK, now, now + ttlSeconds);
+      SignedContextPayload payload =
+          new SignedContextPayload(authContext.login(), now, now + ttlSeconds);
 
       String jsonPayload = objectMapper.writeValueAsString(payload);
       String secret = ESecurityKeys.getSecretByKey(currentKid);
