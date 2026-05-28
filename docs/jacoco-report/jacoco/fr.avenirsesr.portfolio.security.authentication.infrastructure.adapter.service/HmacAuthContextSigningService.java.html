@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HmacAuthContextSigningService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service</a> &gt; <span class="el_source">HmacAuthContextSigningService.java</span></div><h1>HmacAuthContextSigningService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service;
 
-import static fr.avenirsesr.portfolio.security.shared.infrastructure.configuration.UserServiceConfig.USER_ID_MOCK;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums.ESecurityKeys;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
@@ -27,38 +25,39 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
       ObjectMapper objectMapper,
       @Value(&quot;${avenirs.security.context.signature.current-kid:v2}&quot;) String currentKid,
       @Value(&quot;${avenirs.security.context.signature.ttl-seconds:300}&quot;) long ttlSeconds,
-<span class="fc" id="L30">      @Value(&quot;${avenirs.security.context.signature.algorithm:HmacSHA256}&quot;) String algorithm) {</span>
-<span class="fc" id="L31">    this.objectMapper = objectMapper;</span>
-<span class="fc" id="L32">    this.currentKid = currentKid;</span>
-<span class="fc" id="L33">    this.ttlSeconds = ttlSeconds;</span>
-<span class="fc" id="L34">    this.algorithm = algorithm;</span>
-<span class="fc" id="L35">  }</span>
+<span class="fc" id="L28">      @Value(&quot;${avenirs.security.context.signature.algorithm:HmacSHA256}&quot;) String algorithm) {</span>
+<span class="fc" id="L29">    this.objectMapper = objectMapper;</span>
+<span class="fc" id="L30">    this.currentKid = currentKid;</span>
+<span class="fc" id="L31">    this.ttlSeconds = ttlSeconds;</span>
+<span class="fc" id="L32">    this.algorithm = algorithm;</span>
+<span class="fc" id="L33">  }</span>
 
   @Override
   public SignedAuthContext sign(AuthContext authContext) {
     try {
-<span class="fc" id="L40">      long now = Instant.now().getEpochSecond();</span>
+<span class="fc" id="L38">      long now = Instant.now().getEpochSecond();</span>
 
       // TODO: Mock while waiting #1683
-<span class="fc" id="L43">      SignedContextPayload payload = new SignedContextPayload(USER_ID_MOCK, now, now + ttlSeconds);</span>
+<span class="fc" id="L41">      SignedContextPayload payload =</span>
+<span class="fc" id="L42">          new SignedContextPayload(authContext.login(), now, now + ttlSeconds);</span>
 
-<span class="fc" id="L45">      String jsonPayload = objectMapper.writeValueAsString(payload);</span>
-<span class="fc" id="L46">      String secret = ESecurityKeys.getSecretByKey(currentKid);</span>
+<span class="fc" id="L44">      String jsonPayload = objectMapper.writeValueAsString(payload);</span>
+<span class="fc" id="L45">      String secret = ESecurityKeys.getSecretByKey(currentKid);</span>
 
-<span class="fc" id="L48">      Mac mac = Mac.getInstance(algorithm);</span>
-<span class="fc" id="L49">      mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), algorithm));</span>
+<span class="fc" id="L47">      Mac mac = Mac.getInstance(algorithm);</span>
+<span class="fc" id="L48">      mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), algorithm));</span>
 
       String signature =
-<span class="fc" id="L52">          Base64.getEncoder()</span>
-<span class="fc" id="L53">              .encodeToString(mac.doFinal(jsonPayload.getBytes(StandardCharsets.UTF_8)));</span>
+<span class="fc" id="L51">          Base64.getEncoder()</span>
+<span class="fc" id="L52">              .encodeToString(mac.doFinal(jsonPayload.getBytes(StandardCharsets.UTF_8)));</span>
 
-<span class="fc" id="L55">      return new SignedAuthContext(jsonPayload, signature, currentKid);</span>
+<span class="fc" id="L54">      return new SignedAuthContext(jsonPayload, signature, currentKid);</span>
 
-<span class="fc" id="L57">    } catch (Exception e) {</span>
-<span class="fc" id="L58">      throw new IllegalStateException(&quot;Unable to sign authentication context&quot;, e);</span>
+<span class="fc" id="L56">    } catch (Exception e) {</span>
+<span class="fc" id="L57">      throw new IllegalStateException(&quot;Unable to sign authentication context&quot;, e);</span>
     }
   }
 
-<span class="fc" id="L62">  private record SignedContextPayload(String sub, long iat, long exp) {}</span>
+<span class="fc" id="L61">  private record SignedContextPayload(String sub, long iat, long exp) {}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

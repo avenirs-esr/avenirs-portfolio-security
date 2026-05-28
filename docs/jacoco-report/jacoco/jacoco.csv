@@ -30,7 +30,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.domain.exception
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.specification,StructureSpecificationHelper,25,0,2,0,5,0,5,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums,ESecurityFilter,78,0,4,0,14,0,6,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums,ESecurityKeys,0,60,0,4,0,11,0,5,0,3
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,HmacAuthContextSigningService,0,74,0,0,0,17,0,2,0,2
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,HmacAuthContextSigningService,0,75,0,0,0,18,0,2,0,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,AuthenticationSessionReader,24,0,4,0,7,0,3,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,JWTService,128,275,8,22,38,66,6,16,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,HmacAuthContextSigningService.SignedContextPayload,0,12,0,0,0,1,0,1,0,1
@@ -81,7 +81,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infras
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.specification,RBACActionRouteSpecificationHelper,43,0,2,0,10,0,5,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.specification,RBACAssignmentSpecificationHelper,230,0,2,0,62,0,9,0,8,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper,SignedAuthContextMapper,10,0,0,0,2,0,1,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper,IntrospectResponseMapper,0,10,0,0,0,2,0,1,0,1
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.mapper,IntrospectResponseMapper,0,8,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration,SpringSecurityConfig,0,97,0,0,0,16,0,7,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration,OidcServiceConfig,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration,AuthenticationServiceConfig,9,0,0,0,2,0,2,0,2,0
@@ -210,7 +210,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.service,RBACResourceServiceImpl,0,60,0,0,0,15,0,7,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.service,RBACScopeServiceImpl,0,69,0,0,0,17,0,8,0,8
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.application.adapter.dto,PageInfoDTO,34,0,0,0,6,0,2,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.dto,IntrospectResponseDTO,0,12,0,0,0,1,0,1,0,1
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.dto,IntrospectResponseDTO,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.dto,LoginRequestDTO,7,0,2,0,1,0,2,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.dto,SignedAuthContextDTO,12,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.application.adapter.dto,ExternalSkillDetailsDTO,15,0,0,0,1,0,1,0,1,0
