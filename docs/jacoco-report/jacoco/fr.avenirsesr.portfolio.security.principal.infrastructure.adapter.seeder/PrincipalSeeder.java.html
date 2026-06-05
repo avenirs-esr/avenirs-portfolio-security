@@ -22,43 +22,93 @@ public class PrincipalSeeder {
   @Value(&quot;${seeder.principal.default-password}&quot;)
   private String defaultPassword;
 
+  @Value(&quot;${seeder.principal.amu.default-password}&quot;)
+  private String amuDefaultPassword;
+
+  @Value(&quot;${seeder.principal.ubo.default-password}&quot;)
+  private String uboDefaultPassword;
+
+  @Value(&quot;${seeder.principal.usmb.default-password}&quot;)
+  private String usmbDefaultPassword;
+
+  @Value(&quot;${seeder.principal.ulille.default-password}&quot;)
+  private String ulilleDefaultPassword;
+
+  @Value(&quot;${seeder.principal.rpltk.default-password}&quot;)
+  private String rpltkDefaultPassword;
+
+  @Value(&quot;${seeder.principal.utln.default-password}&quot;)
+  private String utlnDefaultPassword;
+
+  @Value(&quot;${seeder.principal.nu.default-password}&quot;)
+  private String nuDefaultPassword;
+
   private final ExternalUserClient externalUserClient;
   private final PrincipalJpaRepository principalJpaRepository;
 
   @Transactional
   public List&lt;PrincipalEntity&gt; seed() {
-<span class="nc" id="L30">    List&lt;ExternalUserDTO&gt; externalUsers = externalUserClient.getAll();</span>
+<span class="nc" id="L51">    List&lt;ExternalUserDTO&gt; externalUsers = externalUserClient.getAll();</span>
 
-<span class="nc" id="L32">    List&lt;PrincipalEntity&gt; principalEntities =</span>
-<span class="nc" id="L33">        externalUsers.stream()</span>
-<span class="nc" id="L34">            .filter(ExternalUserDTO::isActive)</span>
-<span class="nc" id="L35">            .map(this::toPrincipalEntity)</span>
-<span class="nc" id="L36">            .toList();</span>
+<span class="nc" id="L53">    List&lt;PrincipalEntity&gt; principalEntities =</span>
+<span class="nc" id="L54">        externalUsers.stream().map(this::toPrincipalEntity).toList();</span>
 
-<span class="nc" id="L38">    List&lt;PrincipalEntity&gt; savedPrincipalEntities =</span>
-<span class="nc" id="L39">        principalJpaRepository.saveAll(principalEntities);</span>
+<span class="nc" id="L56">    List&lt;PrincipalEntity&gt; savedPrincipalEntities =</span>
+<span class="nc" id="L57">        principalJpaRepository.saveAll(principalEntities);</span>
 
-<span class="nc" id="L41">    log.info(</span>
+<span class="nc" id="L59">    log.info(</span>
         &quot;✔ {} principals created from interoperability external users&quot;,
-<span class="nc" id="L43">        savedPrincipalEntities.size());</span>
+<span class="nc" id="L61">        savedPrincipalEntities.size());</span>
 
-<span class="nc" id="L45">    return savedPrincipalEntities;</span>
+<span class="nc" id="L63">    return savedPrincipalEntities;</span>
   }
 
   private PrincipalEntity toPrincipalEntity(ExternalUserDTO externalUser) {
-<span class="nc" id="L49">    Instant now = Instant.now();</span>
+<span class="nc" id="L67">    Instant now = Instant.now();</span>
 
-<span class="nc" id="L51">    return PrincipalEntity.of(</span>
-<span class="nc" id="L52">        UUID.randomUUID(),</span>
-<span class="nc" id="L53">        externalUser.eppn(),</span>
-<span class="nc" id="L54">        externalUser.eppn(),</span>
-        defaultPassword,
-<span class="nc" id="L56">        externalUser.source(),</span>
-<span class="nc" id="L57">        externalUser.externalId(),</span>
-<span class="nc" id="L58">        externalUser.category(),</span>
+<span class="nc" id="L69">    return PrincipalEntity.of(</span>
+<span class="nc" id="L70">        UUID.randomUUID(),</span>
+<span class="nc" id="L71">        externalUser.eppn(),</span>
+<span class="nc" id="L72">        externalUser.eppn(),</span>
+<span class="nc" id="L73">        resolvePassword(externalUser.eppn()),</span>
+<span class="nc" id="L74">        externalUser.source(),</span>
+<span class="nc" id="L75">        externalUser.externalId(),</span>
+<span class="nc" id="L76">        externalUser.category(),</span>
         EUserStatus.ACTIVE,
         now,
         now);
+  }
+
+  private String resolvePassword(String eppn) {
+<span class="nc bnc" id="L83" title="All 4 branches missed.">    if (eppn == null || eppn.isBlank()) {</span>
+<span class="nc" id="L84">      return defaultPassword;</span>
+    }
+
+<span class="nc" id="L87">    String normalizedEppn = eppn.toUpperCase();</span>
+
+<span class="nc bnc" id="L89" title="All 2 branches missed.">    if (normalizedEppn.contains(&quot;ULILLE&quot;)) {</span>
+<span class="nc" id="L90">      return ulilleDefaultPassword;</span>
+    }
+<span class="nc bnc" id="L92" title="All 2 branches missed.">    if (normalizedEppn.contains(&quot;RPLTK&quot;)) {</span>
+<span class="nc" id="L93">      return rpltkDefaultPassword;</span>
+    }
+<span class="nc bnc" id="L95" title="All 2 branches missed.">    if (normalizedEppn.contains(&quot;USMB&quot;)) {</span>
+<span class="nc" id="L96">      return usmbDefaultPassword;</span>
+    }
+<span class="nc bnc" id="L98" title="All 2 branches missed.">    if (normalizedEppn.contains(&quot;UTLN&quot;)) {</span>
+<span class="nc" id="L99">      return utlnDefaultPassword;</span>
+    }
+<span class="nc bnc" id="L101" title="All 2 branches missed.">    if (normalizedEppn.contains(&quot;AMU&quot;)) {</span>
+<span class="nc" id="L102">      return amuDefaultPassword;</span>
+    }
+<span class="nc bnc" id="L104" title="All 2 branches missed.">    if (normalizedEppn.contains(&quot;UBO&quot;)) {</span>
+<span class="nc" id="L105">      return uboDefaultPassword;</span>
+    }
+<span class="nc bnc" id="L107" title="All 2 branches missed.">    if (normalizedEppn.contains(&quot;NU&quot;)) {</span>
+<span class="nc" id="L108">      return nuDefaultPassword;</span>
+    }
+
+<span class="nc" id="L111">    return defaultPassword;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
