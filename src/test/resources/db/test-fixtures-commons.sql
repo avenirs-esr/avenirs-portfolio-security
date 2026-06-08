@@ -18,10 +18,10 @@ DELETE FROM principal;
 
 INSERT INTO principal (id, login, provider, external_id, eppn, category, status, created_at, updated_at)
 VALUES
-    ('00000000-0000-0000-0000-000000000001', 'gribonvald', 'OIDC', 'gribonvald', 'gribonvald@univ.com', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-000000000002', 'deman', 'OIDC', 'deman', 'deman@univ.com', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-000000000003', 'dugat', 'OIDC', 'dugat', 'dugat@univ.com', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-000000000004', 'patterson', 'OIDC', 'patterson', 'patterson@univ.com', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    ('00000000-0000-0000-0000-000000000001', 'gribonvald', 'OIDC', 'gribonvald', 'gribonvald', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-000000000002', 'deman', 'OIDC', 'deman', 'deman', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-000000000003', 'dugat', 'OIDC', 'dugat', 'dugat', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-000000000004', 'patterson', 'OIDC', 'patterson', 'patterson', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO structure (id, name, description)
 VALUES
