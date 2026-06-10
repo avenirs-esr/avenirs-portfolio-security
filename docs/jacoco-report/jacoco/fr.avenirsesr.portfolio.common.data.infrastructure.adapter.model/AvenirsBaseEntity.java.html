@@ -21,16 +21,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
   @Id private UUID id;
 
   @CreatedDate
-  @Column(
-      name = &quot;created_at&quot;,
-      nullable = false,
-      updatable = false)
+  @Column(name = &quot;created_at&quot;, nullable = false, updatable = false)
   private Instant createdAt;
 
   @LastModifiedDate
-  @Column(
-      name = &quot;updated_at&quot;,
-      nullable = false)
+  @Column(name = &quot;updated_at&quot;, nullable = false)
   private Instant updatedAt;
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DependencyCheckConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.dependency.application.adapter.config</a> &gt; <span class="el_source">DependencyCheckConfiguration.java</span></div><h1>DependencyCheckConfiguration.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.dependency.application.adapter.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.common.dependency.domain.model.DependencyCheckConfig;
 import fr.avenirsesr.portfolio.common.dependency.domain.model.EDependencyBehaviour;
+import fr.avenirsesr.portfolio.common.dependency.domain.model.enums.EHealthCheckMode;
 import fr.avenirsesr.portfolio.common.dependency.domain.port.input.DependencyChecker;
 import fr.avenirsesr.portfolio.common.dependency.domain.service.DependencyCheckerImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @ConditionalOnProperty(prefix = &quot;avenirs.microservice.dependency&quot;, name = &quot;behaviour&quot;)
-<span class="nc" id="L15">public class DependencyCheckConfiguration {</span>
+<span class="nc" id="L17">public class DependencyCheckConfiguration {</span>
 
   @Value(&quot;${avenirs.microservice.dependency.behaviour}&quot;)
   private String behaviour;
@@ -23,35 +25,45 @@ import org.springframework.web.reactive.function.client.WebClient;
   @Value(&quot;${avenirs.microservice.dependency.retry.interval.seconds:10}&quot;)
   private int retryIntervalSeconds;
 
+  @Value(&quot;${avenirs.microservice.dependency.health-check-mode:RESPONSE_EXISTS}&quot;)
+  private String healthCheckMode;
+
   @Bean
   public DependencyCheckConfig dependencyCheckConfig() {
-<span class="nc" id="L28">    EDependencyBehaviour behaviourEnum = parseBehaviour(behaviour);</span>
-<span class="nc" id="L29">    return new DependencyCheckConfig(behaviourEnum, timeoutSeconds, retryIntervalSeconds);</span>
+<span class="nc" id="L33">    EDependencyBehaviour behaviourEnum = parseBehaviour(behaviour);</span>
+<span class="nc" id="L34">    EHealthCheckMode healthCheckModeEnum = parseHealthCheckMode(healthCheckMode);</span>
+<span class="nc" id="L35">    return new DependencyCheckConfig(</span>
+        behaviourEnum, timeoutSeconds, retryIntervalSeconds, healthCheckModeEnum);
   }
 
   @Bean
-  public DependencyChecker dependencyChecker(DependencyCheckConfig config, WebClient webClient) {
-<span class="nc" id="L34">    return new DependencyCheckerImpl(config, webClient);</span>
+  public DependencyChecker dependencyChecker(
+      DependencyCheckConfig config, WebClient webClient, ObjectMapper objectMapper) {
+<span class="nc" id="L42">    return new DependencyCheckerImpl(config, webClient, objectMapper);</span>
   }
 
   @Bean
   public WebClient dependencyWebClient() {
-<span class="nc" id="L39">    return WebClient.builder().build();</span>
+<span class="nc" id="L47">    return WebClient.builder().build();</span>
   }
 
   private EDependencyBehaviour parseBehaviour(String behaviourValue) {
-<span class="nc" id="L43">    String cleanValue = behaviourValue.trim().toUpperCase();</span>
-<span class="nc bnc" id="L44" title="All 2 branches missed.">    if (cleanValue.contains(&quot;|&quot;)) {</span>
-<span class="nc" id="L45">      cleanValue = cleanValue.split(&quot;\\|&quot;)[0].trim();</span>
+<span class="nc" id="L51">    String cleanValue = behaviourValue.trim().toUpperCase();</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">    if (cleanValue.contains(&quot;|&quot;)) {</span>
+<span class="nc" id="L53">      cleanValue = cleanValue.split(&quot;\\|&quot;)[0].trim();</span>
     }
 
     try {
-<span class="nc" id="L49">      return EDependencyBehaviour.valueOf(cleanValue);</span>
-<span class="nc" id="L50">    } catch (IllegalArgumentException e) {</span>
-<span class="nc" id="L51">      throw new IllegalArgumentException(</span>
-<span class="nc" id="L52">          String.format(&quot;Invalid dependency behaviour: '%s'. Must be WAIT or FAIL&quot;, behaviourValue),</span>
+<span class="nc" id="L57">      return EDependencyBehaviour.valueOf(cleanValue);</span>
+<span class="nc" id="L58">    } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L59">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L60">          String.format(&quot;Invalid dependency behaviour: '%s'. Must be WAIT or FAIL&quot;, behaviourValue),</span>
           e);
     }
+  }
+
+  private EHealthCheckMode parseHealthCheckMode(String value) {
+<span class="nc" id="L66">    return EHealthCheckMode.valueOf(value.trim().toUpperCase());</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

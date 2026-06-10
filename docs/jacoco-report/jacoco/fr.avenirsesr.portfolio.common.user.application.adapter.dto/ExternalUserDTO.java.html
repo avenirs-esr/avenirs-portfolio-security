@@ -4,17 +4,17 @@ import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 
 <span class="nc" id="L6">public record ExternalUserDTO(</span>
-        String eppn,
-        String firstName,
-        String lastName,
-        String email,
-        EUserCategory category,
-        String externalId,
-        String source,
-        EUserStatus status) {
+    String eppn,
+    String firstName,
+    String lastName,
+    String email,
+    EUserCategory category,
+    String externalId,
+    String source,
+    EUserStatus status) {
 
-    public boolean isActive() {
-<span class="nc" id="L17">        return EUserStatus.ACTIVE.equals(status);</span>
-    }
+  public boolean isActive() {
+<span class="nc" id="L17">    return EUserStatus.ACTIVE.equals(status);</span>
+  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
