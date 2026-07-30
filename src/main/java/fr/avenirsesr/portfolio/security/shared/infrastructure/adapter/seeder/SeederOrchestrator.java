@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder;
 
 import fr.avenirsesr.portfolio.common.dependency.domain.port.input.DependencyChecker;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration.SeedingState;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder.RBACCatalogSeeder;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.seeder.PrincipalSeeder;
 import jakarta.transaction.Transactional;
@@ -32,6 +33,7 @@ public class SeederOrchestrator {
   private final JdbcTemplate jdbcTemplate;
 
   private final PrincipalSeeder principalSeeder;
+  private final RBACCatalogSeeder rbacCatalogSeeder;
   private final SeedingState seedingState;
 
   @Transactional
@@ -42,6 +44,8 @@ public class SeederOrchestrator {
       if (dependenciesCheck) {
         dependencyChecker.checkAndWait("Interoperability", interoperabilityHealthUrl);
       }
+
+      rbacCatalogSeeder.seed();
 
       List<PrincipalEntity> principalsSaved = principalSeeder.seed();
 

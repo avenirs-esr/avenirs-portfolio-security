@@ -27,4 +27,11 @@ public class RBACPermissionDatabaseRepository implements RBACPermissionRepositor
   public List<RBACPermission> findAll() {
     return rbacPermissionJpaRepository.findAll().stream().map(permissionMapper::toDomain).toList();
   }
+
+  @Override
+  @Transactional
+  public RBACPermission save(RBACPermission permission) {
+    return permissionMapper.toDomain(
+        rbacPermissionJpaRepository.save(permissionMapper.fromDomain(permission)));
+  }
 }
