@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="perm-catalog-profile-001" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_PROFILE_READ_OWN already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_PROFILE_READ_OWN' AND id = 'a1000000-0000-0000-0000-000000000001' AND description = 'Consulter son propre profil'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a1000000-0000-0000-0000-000000000001"/>
+            <column name="name" value="PERM_PROFILE_READ_OWN"/>
+            <column name="description" value="Consulter son propre profil"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a1000000-0000-0000-0000-000000000001'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-profile-002" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_PROFILE_UPDATE_OWN already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_PROFILE_UPDATE_OWN' AND id = 'a1000000-0000-0000-0000-000000000002' AND description = 'Modifier son propre profil ou sa photo'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a1000000-0000-0000-0000-000000000002"/>
+            <column name="name" value="PERM_PROFILE_UPDATE_OWN"/>
+            <column name="description" value="Modifier son propre profil ou sa photo"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a1000000-0000-0000-0000-000000000002'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

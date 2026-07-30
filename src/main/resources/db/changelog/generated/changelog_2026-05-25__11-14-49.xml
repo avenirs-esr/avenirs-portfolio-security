@@ -10,6 +10,11 @@
       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet author="nathp" id="2026-05-25-principal-add-new-columns">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="principal" columnName="category"/>
+            </not>
+        </preConditions>
         <addColumn tableName="principal">
             <column name="category" type="VARCHAR(50)"/>
             <column name="created_at" type="TIMESTAMP(6) WITH TIME ZONE"/>
@@ -46,6 +51,11 @@
     </changeSet>
 
     <changeSet author="nathp" id="2026-05-25-principal-add-eppn-unique-constraint">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="principal_eppn_uk" tableName="principal"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint
                 tableName="principal"
                 columnNames="eppn"
@@ -53,6 +63,11 @@
     </changeSet>
 
     <changeSet author="nathp" id="2026-05-25-principal-create-status-index">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="principal_status_idx" tableName="principal"/>
+            </not>
+        </preConditions>
         <createIndex indexName="principal_status_idx" tableName="principal">
             <column name="status"/>
         </createIndex>
@@ -77,6 +92,11 @@
     </changeSet>
 
     <changeSet author="nathp (generated)" id="1779713972929-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="principal" columnName="password_hash"/>
+            </not>
+        </preConditions>
         <addColumn tableName="principal">
             <column name="password_hash" type="VARCHAR(255)"/>
         </addColumn>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="perm-catalog-competency-001" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_COMPETENCY_READ already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_COMPETENCY_READ' AND id = 'a3000000-0000-0000-0000-000000000001' AND description = 'Consulter les compétences visées du référentiel'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a3000000-0000-0000-0000-000000000001"/>
+            <column name="name" value="PERM_COMPETENCY_READ"/>
+            <column name="description" value="Consulter les compétences visées du référentiel"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a3000000-0000-0000-0000-000000000001'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

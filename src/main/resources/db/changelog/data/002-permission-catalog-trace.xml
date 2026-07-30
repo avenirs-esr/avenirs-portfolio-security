@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="perm-catalog-trace-001" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_TRACE_CREATE_OWN already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_TRACE_CREATE_OWN' AND id = 'a2000000-0000-0000-0000-000000000001' AND description = 'Ajouter une trace dans son espace personnel'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a2000000-0000-0000-0000-000000000001"/>
+            <column name="name" value="PERM_TRACE_CREATE_OWN"/>
+            <column name="description" value="Ajouter une trace dans son espace personnel"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a2000000-0000-0000-0000-000000000001'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-trace-002" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_TRACE_LIST_OWN already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_TRACE_LIST_OWN' AND id = 'a2000000-0000-0000-0000-000000000002' AND description = 'Consulter la liste de ses propres traces'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a2000000-0000-0000-0000-000000000002"/>
+            <column name="name" value="PERM_TRACE_LIST_OWN"/>
+            <column name="description" value="Consulter la liste de ses propres traces"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a2000000-0000-0000-0000-000000000002'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-trace-003" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_TRACE_READ_CONTEXTUAL already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_TRACE_READ_CONTEXTUAL' AND id = 'a2000000-0000-0000-0000-000000000003' AND description = 'Consulter une trace rendue accessible dans un contexte autorisé'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a2000000-0000-0000-0000-000000000003"/>
+            <column name="name" value="PERM_TRACE_READ_CONTEXTUAL"/>
+            <column name="description" value="Consulter une trace rendue accessible dans un contexte autorisé"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a2000000-0000-0000-0000-000000000003'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-trace-004" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_TRACE_DOWNLOAD_CONTEXTUAL already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_TRACE_DOWNLOAD_CONTEXTUAL' AND id = 'a2000000-0000-0000-0000-000000000004' AND description = 'Télécharger une trace rendue accessible dans un contexte autorisé'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a2000000-0000-0000-0000-000000000004"/>
+            <column name="name" value="PERM_TRACE_DOWNLOAD_CONTEXTUAL"/>
+            <column name="description" value="Télécharger une trace rendue accessible dans un contexte autorisé"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a2000000-0000-0000-0000-000000000004'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-trace-005" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_TRACE_ASSOCIATION_MANAGE_OWN already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_TRACE_ASSOCIATION_MANAGE_OWN' AND id = 'a2000000-0000-0000-0000-000000000005' AND description = 'Associer une trace à une compétence, une activité ou une expérience'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a2000000-0000-0000-0000-000000000005"/>
+            <column name="name" value="PERM_TRACE_ASSOCIATION_MANAGE_OWN"/>
+            <column name="description" value="Associer une trace à une compétence, une activité ou une expérience"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a2000000-0000-0000-0000-000000000005'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

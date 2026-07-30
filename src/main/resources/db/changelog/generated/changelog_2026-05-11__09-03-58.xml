@@ -1,6 +1,11 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="nathp (generated)" id="1778490244009-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="principal" columnName="external_id"/>
+            </not>
+        </preConditions>
         <addColumn tableName="principal">
             <column name="external_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -8,6 +13,11 @@
         </addColumn>
     </changeSet>
     <changeSet author="nathp (generated)" id="1778490244009-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="principal" columnName="provider"/>
+            </not>
+        </preConditions>
         <addColumn tableName="principal">
             <column name="provider" type="VARCHAR(100)">
                 <constraints nullable="false"/>
@@ -15,6 +25,11 @@
         </addColumn>
     </changeSet>
     <changeSet author="nathp (generated)" id="1778490244009-7">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="principal" columnName="user_id"/>
+            </not>
+        </preConditions>
         <addColumn tableName="principal">
             <column name="user_id" type="UUID">
                 <constraints nullable="false"/>
@@ -22,17 +37,35 @@
         </addColumn>
     </changeSet>
     <changeSet author="nathp (generated)" id="1778490244009-8">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="principal_provider_external_id_uk" tableName="principal"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="provider, external_id" constraintName="principal_provider_external_id_uk" tableName="principal"/>
     </changeSet>
     <changeSet author="nathp (generated)" id="1778490244009-9">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="principal_user_id_uk" tableName="principal"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="user_id" constraintName="principal_user_id_uk" tableName="principal"/>
     </changeSet>
     <changeSet author="nathp (generated)" id="1778490244009-10">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="principal_external_id_idx" tableName="principal"/>
+            </not>
+        </preConditions>
         <createIndex indexName="principal_external_id_idx" tableName="principal">
             <column name="external_id"/>
         </createIndex>
     </changeSet>
     <changeSet author="nathp (generated)" id="1778490244009-11">
+        <preConditions onFail="MARK_RAN">
+            <uniqueConstraintExists constraintName="uc_principallogin_col" tableName="principal"/>
+        </preConditions>
         <dropUniqueConstraint constraintName="uc_principallogin_col" tableName="principal"/>
     </changeSet>
     <changeSet author="nathp (generated)" id="1778490244009-1">
@@ -42,6 +75,11 @@
         <addDefaultValue columnDataType="timestamp" columnName="timestamp" defaultValueComputed="CURRENT_TIMESTAMP" tableName="assignment"/>
     </changeSet>
     <changeSet author="nathp (generated)" id="1778490244009-4">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="principal_login_idx" tableName="principal"/>
+            </not>
+        </preConditions>
         <createIndex indexName="principal_login_idx" tableName="principal" unique="false">
             <column name="login"/>
         </createIndex>
