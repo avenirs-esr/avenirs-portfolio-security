@@ -12,21 +12,25 @@ public class User extends AvenirsBaseModel {
   private String lastName;
   private String email;
 
+  private boolean notificationEnabled;
+
   private User(
       UUID id,
       String firstName,
       String lastName,
       String email,
+      boolean notificationEnabled,
       Instant createdAt,
       Instant updatedAt) {
-<span class="nc" id="L22">    super(id, createdAt, updatedAt);</span>
-<span class="nc" id="L23">    this.firstName = firstName;</span>
-<span class="nc" id="L24">    this.lastName = lastName;</span>
-<span class="nc" id="L25">    this.email = email;</span>
-<span class="nc" id="L26">  }</span>
+<span class="nc" id="L25">    super(id, createdAt, updatedAt);</span>
+<span class="nc" id="L26">    this.firstName = firstName;</span>
+<span class="nc" id="L27">    this.lastName = lastName;</span>
+<span class="nc" id="L28">    this.email = email;</span>
+<span class="nc" id="L29">    this.notificationEnabled = notificationEnabled;</span>
+<span class="nc" id="L30">  }</span>
 
   public static User create(UUID id, String firstName, String lastName, String email) {
-<span class="nc" id="L29">    return new User(id, firstName, lastName, email, null, null);</span>
+<span class="nc" id="L33">    return new User(id, firstName, lastName, email, false, null, null);</span>
   }
 
   public static User toDomain(
@@ -34,9 +38,10 @@ public class User extends AvenirsBaseModel {
       String firstName,
       String lastName,
       String email,
+      boolean notificationEnabled,
       Instant createdAt,
       Instant updatedAt) {
-<span class="nc" id="L39">    return new User(id, firstName, lastName, email, createdAt, updatedAt);</span>
+<span class="nc" id="L44">    return new User(id, firstName, lastName, email, notificationEnabled, createdAt, updatedAt);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

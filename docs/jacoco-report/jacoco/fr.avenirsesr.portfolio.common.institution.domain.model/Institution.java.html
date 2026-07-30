@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Institution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.institution.domain.model</a> &gt; <span class="el_source">Institution.java</span></div><h1>Institution.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.institution.domain.model;
+
+import fr.avenirsesr.portfolio.common.data.domain.model.AvenirsBaseModel;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
+import java.time.Instant;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class Institution extends AvenirsBaseModel {
+  private String name;
+  private String hai;
+  private String siret;
+  private String siren;
+  private EInstitutionType type;
+
+  @Getter(AccessLevel.NONE)
+  private Institution parent;
+
+  private Institution(
+      UUID id,
+      String name,
+      String hai,
+      String siret,
+      String siren,
+      EInstitutionType type,
+      Institution parent,
+      Instant createdAt,
+      Instant updatedAt) {
+<span class="nc" id="L34">    super(id, createdAt, updatedAt);</span>
+<span class="nc" id="L35">    this.name = name;</span>
+<span class="nc" id="L36">    this.hai = hai;</span>
+<span class="nc" id="L37">    this.siret = siret;</span>
+<span class="nc" id="L38">    this.siren = siren;</span>
+<span class="nc" id="L39">    this.type = type;</span>
+<span class="nc" id="L40">    this.parent = parent;</span>
+<span class="nc" id="L41">  }</span>
+
+  public static Institution create(
+      UUID id,
+      String name,
+      String hai,
+      String siret,
+      String siren,
+      EInstitutionType type,
+      Institution parent) {
+<span class="nc" id="L51">    Instant now = Instant.now();</span>
+<span class="nc" id="L52">    return new Institution(id, name, hai, siret, siren, type, parent, now, now);</span>
+  }
+
+  public static Institution toDomain(
+      UUID id,
+      String name,
+      String hai,
+      String siret,
+      String siren,
+      EInstitutionType type,
+      Institution parent,
+      Instant createdAt,
+      Instant updatedAt) {
+<span class="nc" id="L65">    return new Institution(id, name, hai, siret, siren, type, parent, createdAt, updatedAt);</span>
+  }
+
+  public Optional&lt;Institution&gt; getParent() {
+<span class="nc" id="L69">    return Optional.ofNullable(parent);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
