@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="perm-catalog-feedback-001" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_FEEDBACK_REQUEST_CREATE_OWN already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_FEEDBACK_REQUEST_CREATE_OWN' AND id = 'a7000000-0000-0000-0000-000000000001' AND description = 'Faire une demande de feedback'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a7000000-0000-0000-0000-000000000001"/>
+            <column name="name" value="PERM_FEEDBACK_REQUEST_CREATE_OWN"/>
+            <column name="description" value="Faire une demande de feedback"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a7000000-0000-0000-0000-000000000001'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-feedback-002" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_FEEDBACK_RECEIVED_READ_OWN already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_FEEDBACK_RECEIVED_READ_OWN' AND id = 'a7000000-0000-0000-0000-000000000002' AND description = 'Consulter les feedbacks reçus'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a7000000-0000-0000-0000-000000000002"/>
+            <column name="name" value="PERM_FEEDBACK_RECEIVED_READ_OWN"/>
+            <column name="description" value="Consulter les feedbacks reçus"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a7000000-0000-0000-0000-000000000002'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-feedback-003" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_FEEDBACK_REQUEST_READ_ASSIGNED already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_FEEDBACK_REQUEST_READ_ASSIGNED' AND id = 'a7000000-0000-0000-0000-000000000003' AND description = 'Consulter les demandes de feedback qui lui sont assignées'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a7000000-0000-0000-0000-000000000003"/>
+            <column name="name" value="PERM_FEEDBACK_REQUEST_READ_ASSIGNED"/>
+            <column name="description" value="Consulter les demandes de feedback qui lui sont assignées"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a7000000-0000-0000-0000-000000000003'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-feedback-004" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED' AND id = 'a7000000-0000-0000-0000-000000000004' AND description = 'Répondre à une demande de feedback assignée'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a7000000-0000-0000-0000-000000000004"/>
+            <column name="name" value="PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED"/>
+            <column name="description" value="Répondre à une demande de feedback assignée"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a7000000-0000-0000-0000-000000000004'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-feedback-005" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_FEEDBACK_HISTORY_READ already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_FEEDBACK_HISTORY_READ' AND id = 'a7000000-0000-0000-0000-000000000005' AND description = 'Consulter l''historique des feedbacks de son établissement'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a7000000-0000-0000-0000-000000000005"/>
+            <column name="name" value="PERM_FEEDBACK_HISTORY_READ"/>
+            <column name="description" value="Consulter l'historique des feedbacks de son établissement"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a7000000-0000-0000-0000-000000000005'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-feedback-006" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_FEEDBACK_DASHBOARD_READ already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_FEEDBACK_DASHBOARD_READ' AND id = 'a7000000-0000-0000-0000-000000000006' AND description = 'Consulter le tableau de bord des feedbacks de son établissement'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a7000000-0000-0000-0000-000000000006"/>
+            <column name="name" value="PERM_FEEDBACK_DASHBOARD_READ"/>
+            <column name="description" value="Consulter le tableau de bord des feedbacks de son établissement"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a7000000-0000-0000-0000-000000000006'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

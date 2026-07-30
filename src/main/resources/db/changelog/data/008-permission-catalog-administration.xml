@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="perm-catalog-administration-001" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_PRIMARY_ESTABLISHMENT_READ already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_PRIMARY_ESTABLISHMENT_READ' AND id = 'a8000000-0000-0000-0000-000000000001' AND description = 'Consulter un établissement principal'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000001"/>
+            <column name="name" value="PERM_PRIMARY_ESTABLISHMENT_READ"/>
+            <column name="description" value="Consulter un établissement principal"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000001'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-002" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_PRIMARY_ESTABLISHMENT_CREATE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_PRIMARY_ESTABLISHMENT_CREATE' AND id = 'a8000000-0000-0000-0000-000000000002' AND description = 'Créer un établissement principal'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000002"/>
+            <column name="name" value="PERM_PRIMARY_ESTABLISHMENT_CREATE"/>
+            <column name="description" value="Créer un établissement principal"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000002'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-003" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_PRIMARY_ESTABLISHMENT_UPDATE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_PRIMARY_ESTABLISHMENT_UPDATE' AND id = 'a8000000-0000-0000-0000-000000000003' AND description = 'Modifier un établissement principal'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000003"/>
+            <column name="name" value="PERM_PRIMARY_ESTABLISHMENT_UPDATE"/>
+            <column name="description" value="Modifier un établissement principal"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000003'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-004" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_PRIMARY_ESTABLISHMENT_DELETE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_PRIMARY_ESTABLISHMENT_DELETE' AND id = 'a8000000-0000-0000-0000-000000000004' AND description = 'Supprimer un établissement principal'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000004"/>
+            <column name="name" value="PERM_PRIMARY_ESTABLISHMENT_DELETE"/>
+            <column name="description" value="Supprimer un établissement principal"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000004'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-005" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_SECONDARY_ESTABLISHMENT_READ already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_SECONDARY_ESTABLISHMENT_READ' AND id = 'a8000000-0000-0000-0000-000000000005' AND description = 'Consulter un établissement secondaire'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000005"/>
+            <column name="name" value="PERM_SECONDARY_ESTABLISHMENT_READ"/>
+            <column name="description" value="Consulter un établissement secondaire"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000005'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-006" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_SECONDARY_ESTABLISHMENT_CREATE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_SECONDARY_ESTABLISHMENT_CREATE' AND id = 'a8000000-0000-0000-0000-000000000006' AND description = 'Créer un établissement secondaire'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000006"/>
+            <column name="name" value="PERM_SECONDARY_ESTABLISHMENT_CREATE"/>
+            <column name="description" value="Créer un établissement secondaire"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000006'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-007" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_SECONDARY_ESTABLISHMENT_UPDATE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_SECONDARY_ESTABLISHMENT_UPDATE' AND id = 'a8000000-0000-0000-0000-000000000007' AND description = 'Modifier un établissement secondaire'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000007"/>
+            <column name="name" value="PERM_SECONDARY_ESTABLISHMENT_UPDATE"/>
+            <column name="description" value="Modifier un établissement secondaire"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000007'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-008" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_SECONDARY_ESTABLISHMENT_DELETE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_SECONDARY_ESTABLISHMENT_DELETE' AND id = 'a8000000-0000-0000-0000-000000000008' AND description = 'Supprimer un établissement secondaire'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000008"/>
+            <column name="name" value="PERM_SECONDARY_ESTABLISHMENT_DELETE"/>
+            <column name="description" value="Supprimer un établissement secondaire"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000008'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-009" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_GROUP_READ already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_GROUP_READ' AND id = 'a8000000-0000-0000-0000-000000000009' AND description = 'Consulter un groupe'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000009"/>
+            <column name="name" value="PERM_GROUP_READ"/>
+            <column name="description" value="Consulter un groupe"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000009'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-010" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_GROUP_IMPORT already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_GROUP_IMPORT' AND id = 'a8000000-0000-0000-0000-000000000010' AND description = 'Alimenter un groupe par import'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000010"/>
+            <column name="name" value="PERM_GROUP_IMPORT"/>
+            <column name="description" value="Alimenter un groupe par import"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000010'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-011" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_GROUP_CREATE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_GROUP_CREATE' AND id = 'a8000000-0000-0000-0000-000000000011' AND description = 'Créer un groupe'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000011"/>
+            <column name="name" value="PERM_GROUP_CREATE"/>
+            <column name="description" value="Créer un groupe"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000011'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-012" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_GROUP_UPDATE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_GROUP_UPDATE' AND id = 'a8000000-0000-0000-0000-000000000012' AND description = 'Modifier un groupe'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000012"/>
+            <column name="name" value="PERM_GROUP_UPDATE"/>
+            <column name="description" value="Modifier un groupe"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000012'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="perm-catalog-administration-013" author="nathp">
+        <preConditions onFail="MARK_RAN" onFailMessage="PERM_GROUP_DELETE already present with matching id/description: insert skipped">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permission WHERE name = 'PERM_GROUP_DELETE' AND id = 'a8000000-0000-0000-0000-000000000013' AND description = 'Supprimer un groupe'</sqlCheck>
+        </preConditions>
+        <insert tableName="permission">
+            <column name="id" value="a8000000-0000-0000-0000-000000000013"/>
+            <column name="name" value="PERM_GROUP_DELETE"/>
+            <column name="description" value="Supprimer un groupe"/>
+        </insert>
+        <rollback>
+            <delete tableName="permission">
+                <where>id='a8000000-0000-0000-0000-000000000013'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

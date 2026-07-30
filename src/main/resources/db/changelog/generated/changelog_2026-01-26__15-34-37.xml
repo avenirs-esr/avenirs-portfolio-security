@@ -1,6 +1,11 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="ardem (generated)" id="1769441701322-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="action"/>
+            </not>
+        </preConditions>
         <createTable tableName="action">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="actionPK"/>
@@ -14,6 +19,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="action_permission"/>
+            </not>
+        </preConditions>
         <createTable tableName="action_permission">
             <column name="id_action" type="UUID">
                 <constraints nullable="false"/>
@@ -24,6 +34,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="action_route"/>
+            </not>
+        </preConditions>
         <createTable tableName="action_route">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="action_routePK"/>
@@ -40,6 +55,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-4">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="assignment"/>
+            </not>
+        </preConditions>
         <createTable tableName="assignment">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="assignmentPK"/>
@@ -60,6 +80,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="context"/>
+            </not>
+        </preConditions>
         <createTable tableName="context">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="contextPK"/>
@@ -69,6 +94,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="context_structure"/>
+            </not>
+        </preConditions>
         <createTable tableName="context_structure">
             <column name="id_context" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="context_structurePK"/>
@@ -79,6 +109,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-7">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="permission"/>
+            </not>
+        </preConditions>
         <createTable tableName="permission">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="permissionPK"/>
@@ -92,6 +127,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-8">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="principal"/>
+            </not>
+        </preConditions>
         <createTable tableName="principal">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="principalPK"/>
@@ -102,6 +142,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-9">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="principal_structure"/>
+            </not>
+        </preConditions>
         <createTable tableName="principal_structure">
             <column name="id_principal" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="principal_structurePK"/>
@@ -112,6 +157,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-10">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="resource"/>
+            </not>
+        </preConditions>
         <createTable tableName="resource">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="resourcePK"/>
@@ -125,6 +175,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-11">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="resource_type"/>
+            </not>
+        </preConditions>
         <createTable tableName="resource_type">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="resource_typePK"/>
@@ -138,6 +193,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-12">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="role"/>
+            </not>
+        </preConditions>
         <createTable tableName="role">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="rolePK"/>
@@ -151,6 +211,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-13">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="role_permission"/>
+            </not>
+        </preConditions>
         <createTable tableName="role_permission">
             <column name="id_role" type="UUID">
                 <constraints nullable="false"/>
@@ -161,6 +226,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-14">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="scope"/>
+            </not>
+        </preConditions>
         <createTable tableName="scope">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="scopePK"/>
@@ -169,6 +239,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-15">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="scope_resource"/>
+            </not>
+        </preConditions>
         <createTable tableName="scope_resource">
             <column name="id_scope" type="UUID">
                 <constraints nullable="false"/>
@@ -179,6 +254,11 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-16">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="structure"/>
+            </not>
+        </preConditions>
         <createTable tableName="structure">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="structurePK"/>
@@ -192,102 +272,257 @@
         </createTable>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-17">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="UC_ACTIONNAME_COL" tableName="action"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="name" constraintName="UC_ACTIONNAME_COL" tableName="action"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-18">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="UC_ASSIGNMENTID_CONTEXT_COL" tableName="assignment"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="id_context" constraintName="UC_ASSIGNMENTID_CONTEXT_COL" tableName="assignment"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-19">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="UC_ASSIGNMENTID_SCOPE_COL" tableName="assignment"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="id_scope" constraintName="UC_ASSIGNMENTID_SCOPE_COL" tableName="assignment"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-20">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="UC_PERMISSIONNAME_COL" tableName="permission"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="name" constraintName="UC_PERMISSIONNAME_COL" tableName="permission"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-21">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="UC_PRINCIPALLOGIN_COL" tableName="principal"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="login" constraintName="UC_PRINCIPALLOGIN_COL" tableName="principal"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-22">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="UC_RESOURCE_TYPENAME_COL" tableName="resource_type"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="name" constraintName="UC_RESOURCE_TYPENAME_COL" tableName="resource_type"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-23">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="UC_ROLENAME_COL" tableName="role"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="name" constraintName="UC_ROLENAME_COL" tableName="role"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-24">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="action_permission_pk" tableName="action_permission"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="id_action, id_permission" constraintName="action_permission_pk" tableName="action_permission"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-25">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="action_route_uri_method_unique_cstr" tableName="action_route"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="uri, method" constraintName="action_route_uri_method_unique_cstr" tableName="action_route"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-26">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="role_permission_pk" tableName="role_permission"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="id_role, id_permission" constraintName="role_permission_pk" tableName="role_permission"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-27">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="scope_resource_pk" tableName="scope_resource"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="id_scope, id_resource" constraintName="scope_resource_pk" tableName="scope_resource"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-28">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="unique_assignment_constraint" tableName="assignment"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="id_role, id_principal, id_scope, id_context" constraintName="unique_assignment_constraint" tableName="assignment"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-29">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="context_validity_end_idx" tableName="context"/>
+            </not>
+        </preConditions>
         <createIndex indexName="context_validity_end_idx" tableName="context">
             <column name="validity_end"/>
         </createIndex>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-30">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="context_validity_start_idx" tableName="context"/>
+            </not>
+        </preConditions>
         <createIndex indexName="context_validity_start_idx" tableName="context">
             <column name="validity_start"/>
         </createIndex>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-31">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="structure_name_idx" tableName="structure"/>
+            </not>
+        </preConditions>
         <createIndex indexName="structure_name_idx" tableName="structure">
             <column name="name"/>
         </createIndex>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-32">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK2ws6nbakjvnk1p41enwua5c2j"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_permission" baseTableName="role_permission" constraintName="FK2ws6nbakjvnk1p41enwua5c2j" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="permission" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-33">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK46y4f3lwocc603thgwloif4a"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_context" baseTableName="context_structure" constraintName="FK46y4f3lwocc603thgwloif4a" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="context" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-34">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK4mqvliy9oxgi2g5h2tqpvvd3l"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_role" baseTableName="role_permission" constraintName="FK4mqvliy9oxgi2g5h2tqpvvd3l" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="role" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-35">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK5vxot5le2pj1rduacy3uhgt98"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_action" baseTableName="action_permission" constraintName="FK5vxot5le2pj1rduacy3uhgt98" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="action" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-36">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK94gm5fvf44yrep1m3ydg772t5"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_scope" baseTableName="scope_resource" constraintName="FK94gm5fvf44yrep1m3ydg772t5" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="scope" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-37">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK9amouryl0fv2hol6vgwpk2jm0"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_principal" baseTableName="assignment" constraintName="FK9amouryl0fv2hol6vgwpk2jm0" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="principal" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-38">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK9j461d9prdyfbwdc6a2rntvr9"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_permission" baseTableName="action_permission" constraintName="FK9j461d9prdyfbwdc6a2rntvr9" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="permission" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-39">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKcy57gtlt2rrs1dl1lnu9q2b70"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_context" baseTableName="assignment" constraintName="FKcy57gtlt2rrs1dl1lnu9q2b70" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="context" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-40">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKmkbifanyw56oisv2b8m2d93n8"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_action" baseTableName="action_route" constraintName="FKmkbifanyw56oisv2b8m2d93n8" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="action" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-41">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKnqs3hkssv825vcv96fr5epj5h"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_structure" baseTableName="context_structure" constraintName="FKnqs3hkssv825vcv96fr5epj5h" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="structure" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-42">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKp2autr052xlxiaqf9u913w8px"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_scope" baseTableName="assignment" constraintName="FKp2autr052xlxiaqf9u913w8px" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="scope" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-43">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKp811wiw1rsc3cndalo1am91w8"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_structure" baseTableName="principal_structure" constraintName="FKp811wiw1rsc3cndalo1am91w8" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="structure" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-44">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKpuxd6nqyilrtbrkqichtrbxsh"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_role" baseTableName="assignment" constraintName="FKpuxd6nqyilrtbrkqichtrbxsh" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="role" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-45">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKqtyyn2ekx1vtm9urxnwyqknxm"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_principal" baseTableName="principal_structure" constraintName="FKqtyyn2ekx1vtm9urxnwyqknxm" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="principal" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-46">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKr1xbkgifxrt37ytvv1i39re3g"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_resource" baseTableName="scope_resource" constraintName="FKr1xbkgifxrt37ytvv1i39re3g" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="resource" validate="true"/>
     </changeSet>
     <changeSet author="ardem (generated)" id="1769441701322-47">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FKtqr793u8cu50s2as7f11qpe43"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="id_resource_type" baseTableName="resource" constraintName="FKtqr793u8cu50s2as7f11qpe43" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="resource_type" validate="true"/>
     </changeSet>
 </databaseChangeLog>
