@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public enum ERole {
@@ -8,28 +9,14 @@ public enum ERole {
       Set.of(
           EPermission.PERM_PROFILE_READ_OWN,
           EPermission.PERM_PROFILE_UPDATE_OWN,
-          EPermission.PERM_TRACE_CREATE_OWN,
-          EPermission.PERM_TRACE_LIST_OWN,
-          EPermission.PERM_TRACE_READ_CONTEXTUAL,
-          EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL,
-          EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN,
           EPermission.PERM_COMPETENCY_READ,
-          EPermission.PERM_DECLARED_SKILL_LIST_OWN,
-          EPermission.PERM_DECLARED_SKILL_CREATE_OWN,
-          EPermission.PERM_DECLARED_SKILL_UPDATE_OWN,
-          EPermission.PERM_DECLARED_SKILL_DELETE_OWN,
-          EPermission.PERM_DECLARED_SKILL_ASSOCIATION_MANAGE_OWN,
-          EPermission.PERM_DECLARED_EXPERIENCE_LIST_OWN,
-          EPermission.PERM_DECLARED_EXPERIENCE_CREATE_OWN,
-          EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN,
-          EPermission.PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN,
-          EPermission.PERM_ACTIVITY_CATALOG_READ,
-          EPermission.PERM_ACTIVITY_REGISTER_OWN,
-          EPermission.PERM_ACTIVITY_READ,
-          EPermission.PERM_ACTIVITY_DOCUMENT_READ,
-          EPermission.PERM_EMPLOYMENT_KIT_READ_OWN,
-          EPermission.PERM_FEEDBACK_REQUEST_CREATE_OWN,
-          EPermission.PERM_FEEDBACK_RECEIVED_READ_OWN)),
+          EPermission.PERM_EMPLOYMENT_KIT_READ_OWN),
+      Set.of(
+          EPermissionGroup.TRACE_MANAGEMENT_OWN,
+          EPermissionGroup.DECLARED_SKILL_MANAGEMENT_OWN,
+          EPermissionGroup.DECLARED_EXPERIENCE_MANAGEMENT_OWN,
+          EPermissionGroup.STUDENT_ACTIVITY_ACCESS,
+          EPermissionGroup.STUDENT_FEEDBACK_ACCESS)),
 
   ROLE_STAFF(
       "Staff member providing educational guidance and handling feedback",
@@ -37,40 +24,27 @@ public enum ERole {
           EPermission.PERM_PROFILE_READ_OWN,
           EPermission.PERM_PROFILE_UPDATE_OWN,
           EPermission.PERM_TRACE_READ_CONTEXTUAL,
-          EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL,
-          EPermission.PERM_ACTIVITY_CATALOG_READ,
-          EPermission.PERM_ACTIVITY_READ,
-          EPermission.PERM_ACTIVITY_DOCUMENT_READ,
-          EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
-          EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE,
-          EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED,
-          EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED,
-          EPermission.PERM_FEEDBACK_HISTORY_READ,
-          EPermission.PERM_FEEDBACK_DASHBOARD_READ)),
+          EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL),
+      Set.of(EPermissionGroup.STAFF_ACTIVITY_ACCESS, EPermissionGroup.STAFF_FEEDBACK_MANAGEMENT)),
 
   ROLE_SUPER_ADMIN(
       "Global administrator of the COFOLIO platform",
-      Set.of(
-          EPermission.PERM_PRIMARY_ESTABLISHMENT_READ,
-          EPermission.PERM_PRIMARY_ESTABLISHMENT_CREATE,
-          EPermission.PERM_PRIMARY_ESTABLISHMENT_UPDATE,
-          EPermission.PERM_PRIMARY_ESTABLISHMENT_DELETE,
-          EPermission.PERM_SECONDARY_ESTABLISHMENT_READ,
-          EPermission.PERM_SECONDARY_ESTABLISHMENT_CREATE,
-          EPermission.PERM_SECONDARY_ESTABLISHMENT_UPDATE,
-          EPermission.PERM_SECONDARY_ESTABLISHMENT_DELETE,
-          EPermission.PERM_GROUP_READ,
-          EPermission.PERM_GROUP_IMPORT,
-          EPermission.PERM_GROUP_CREATE,
-          EPermission.PERM_GROUP_UPDATE,
-          EPermission.PERM_GROUP_DELETE));
+      Set.of(),
+      Set.of(EPermissionGroup.ESTABLISHMENT_MANAGEMENT, EPermissionGroup.GROUP_MANAGEMENT));
 
   private final String description;
+  private final Set<EPermission> directPermissions;
+  private final Set<EPermissionGroup> permissionGroups;
   private final Set<EPermission> permissions;
 
-  ERole(String description, Set<EPermission> permissions) {
+  ERole(
+      String description,
+      Set<EPermission> directPermissions,
+      Set<EPermissionGroup> permissionGroups) {
     this.description = description;
-    this.permissions = permissions;
+    this.directPermissions = Set.copyOf(directPermissions);
+    this.permissionGroups = Set.copyOf(permissionGroups);
+    this.permissions = flatten(this.directPermissions, this.permissionGroups);
   }
 
   public String description() {
@@ -79,5 +53,33 @@ public enum ERole {
 
   public Set<EPermission> permissions() {
     return permissions;
+  }
+
+  public Set<EPermission> directPermissions() {
+    return directPermissions;
+  }
+
+  public Set<EPermissionGroup> permissionGroups() {
+    return permissionGroups;
+  }
+
+  private static Set<EPermission> flatten(
+      Set<EPermission> directPermissions, Set<EPermissionGroup> permissionGroups) {
+    Set<EPermission> flattened = new HashSet<>(directPermissions);
+
+    for (EPermissionGroup group : permissionGroups) {
+      for (EPermission permission : group.permissions()) {
+        if (!flattened.add(permission)) {
+          throw new IllegalStateException(
+              "Permission "
+                  + permission
+                  + " is declared both directly and via group "
+                  + group
+                  + "; remove the redundant declaration.");
+        }
+      }
+    }
+
+    return Set.copyOf(flattened);
   }
 }
