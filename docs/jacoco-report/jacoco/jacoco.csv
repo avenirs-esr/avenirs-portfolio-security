@@ -43,8 +43,9 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infra
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederRunner,18,0,2,0,7,0,3,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederOrchestrator,112,0,6,0,34,0,9,0,6,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.user.application.adapter.dto,ExternalUserDTO,32,0,0,0,2,0,2,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,EPermission,343,0,0,0,52,0,3,0,3,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,ERole,250,0,0,0,13,0,4,0,4,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,EPermission,3,347,0,0,1,52,1,2,1,2
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,ERole,3,123,0,6,1,27,1,9,1,6
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,EPermissionGroup,7,122,1,1,1,24,1,3,0,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.domain.service,PrincipalServiceImpl,0,40,0,0,0,9,0,5,0,5
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.domain.service,StructureServiceImpl,0,89,0,0,0,21,0,9,0,9
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data,ESeederSource,15,0,0,0,3,0,1,0,1,0
