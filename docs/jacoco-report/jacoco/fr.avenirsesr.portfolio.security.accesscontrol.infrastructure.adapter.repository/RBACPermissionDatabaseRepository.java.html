@@ -27,5 +27,12 @@ public class RBACPermissionDatabaseRepository implements RBACPermissionRepositor
   public List&lt;RBACPermission&gt; findAll() {
 <span class="nc" id="L28">    return rbacPermissionJpaRepository.findAll().stream().map(permissionMapper::toDomain).toList();</span>
   }
+
+  @Override
+  @Transactional
+  public RBACPermission save(RBACPermission permission) {
+<span class="nc" id="L34">    return permissionMapper.toDomain(</span>
+<span class="nc" id="L35">        rbacPermissionJpaRepository.save(permissionMapper.fromDomain(permission)));</span>
+  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

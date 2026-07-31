@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EPermission.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums</a> &gt; <span class="el_source">EPermission.java</span></div><h1>EPermission.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums;
+
+<span class="nc" id="L3">public enum EPermission {</span>
+<span class="nc" id="L4">  PERM_PROFILE_READ_OWN(&quot;View own profile&quot;),</span>
+<span class="nc" id="L5">  PERM_PROFILE_UPDATE_OWN(&quot;Update own profile or photo&quot;),</span>
+
+<span class="nc" id="L7">  PERM_TRACE_CREATE_OWN(&quot;Add a trace to own personal space&quot;),</span>
+<span class="nc" id="L8">  PERM_TRACE_LIST_OWN(&quot;View the list of own traces&quot;),</span>
+<span class="nc" id="L9">  PERM_TRACE_READ_CONTEXTUAL(&quot;View a trace made accessible in an authorized context&quot;),</span>
+<span class="nc" id="L10">  PERM_TRACE_DOWNLOAD_CONTEXTUAL(&quot;Download a trace made accessible in an authorized context&quot;),</span>
+<span class="nc" id="L11">  PERM_TRACE_ASSOCIATION_MANAGE_OWN(</span>
+      &quot;Associate a trace with a competency, an activity or an experience&quot;),
+
+<span class="nc" id="L14">  PERM_COMPETENCY_READ(&quot;View the target competencies of the framework&quot;),</span>
+
+<span class="nc" id="L16">  PERM_DECLARED_SKILL_LIST_OWN(&quot;View the list of own declared skills&quot;),</span>
+<span class="nc" id="L17">  PERM_DECLARED_SKILL_CREATE_OWN(&quot;Add a declared skill&quot;),</span>
+<span class="nc" id="L18">  PERM_DECLARED_SKILL_UPDATE_OWN(&quot;Update a declared skill&quot;),</span>
+<span class="nc" id="L19">  PERM_DECLARED_SKILL_DELETE_OWN(&quot;Delete a declared skill&quot;),</span>
+<span class="nc" id="L20">  PERM_DECLARED_SKILL_ASSOCIATION_MANAGE_OWN(&quot;Add or remove associations of a declared skill&quot;),</span>
+
+<span class="nc" id="L22">  PERM_DECLARED_EXPERIENCE_LIST_OWN(&quot;View the list of own declared experiences&quot;),</span>
+<span class="nc" id="L23">  PERM_DECLARED_EXPERIENCE_CREATE_OWN(&quot;Add a declared experience&quot;),</span>
+<span class="nc" id="L24">  PERM_DECLARED_EXPERIENCE_DELETE_OWN(&quot;Delete a declared experience&quot;),</span>
+<span class="nc" id="L25">  PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN(</span>
+      &quot;Associate a trace or a competency with a declared experience&quot;),
+
+<span class="nc" id="L28">  PERM_ACTIVITY_CATALOG_READ(&quot;View the activity catalog&quot;),</span>
+<span class="nc" id="L29">  PERM_ACTIVITY_REGISTER_OWN(&quot;Register for an activity&quot;),</span>
+<span class="nc" id="L30">  PERM_ACTIVITY_READ(&quot;View activity details&quot;),</span>
+<span class="nc" id="L31">  PERM_ACTIVITY_DOCUMENT_READ(&quot;View an activity's documents and links&quot;),</span>
+<span class="nc" id="L32">  PERM_EMPLOYMENT_KIT_READ_OWN(&quot;View the My employment kit page&quot;),</span>
+<span class="nc" id="L33">  PERM_ACTIVITY_LIBRARY_STAFF_READ(&quot;View the staff activity library&quot;),</span>
+<span class="nc" id="L34">  PERM_ACTIVITY_NATIONAL_CREATE(&quot;Create a national activity&quot;),</span>
+<span class="nc" id="L35">  PERM_ACTIVITY_NATIONAL_UPDATE(&quot;Update the content of an unpublished national activity&quot;),</span>
+<span class="nc" id="L36">  PERM_ACTIVITY_PUBLISHED_UPDATE(&quot;Update a published national activity&quot;),</span>
+<span class="nc" id="L37">  PERM_ACTIVITY_NATIONAL_DELETE(&quot;Delete an unpublished national activity&quot;),</span>
+<span class="nc" id="L38">  PERM_ACTIVITY_FEEDBACK_SETTINGS_UPDATE(</span>
+      &quot;Configure the feedback request settings of a national activity&quot;),
+
+<span class="nc" id="L41">  PERM_FEEDBACK_REQUEST_CREATE_OWN(&quot;Request feedback&quot;),</span>
+<span class="nc" id="L42">  PERM_FEEDBACK_RECEIVED_READ_OWN(&quot;View received feedback&quot;),</span>
+<span class="nc" id="L43">  PERM_FEEDBACK_REQUEST_READ_ASSIGNED(&quot;View feedback requests assigned to them&quot;),</span>
+<span class="nc" id="L44">  PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED(&quot;Respond to an assigned feedback request&quot;),</span>
+<span class="nc" id="L45">  PERM_FEEDBACK_HISTORY_READ(&quot;View the feedback history of their institution&quot;),</span>
+<span class="nc" id="L46">  PERM_FEEDBACK_DASHBOARD_READ(&quot;View the feedback dashboard of their institution&quot;),</span>
+
+<span class="nc" id="L48">  PERM_PRIMARY_ESTABLISHMENT_READ(&quot;View a primary institution&quot;),</span>
+<span class="nc" id="L49">  PERM_PRIMARY_ESTABLISHMENT_CREATE(&quot;Create a primary institution&quot;),</span>
+<span class="nc" id="L50">  PERM_PRIMARY_ESTABLISHMENT_UPDATE(&quot;Update a primary institution&quot;),</span>
+<span class="nc" id="L51">  PERM_PRIMARY_ESTABLISHMENT_DELETE(&quot;Delete a primary institution&quot;),</span>
+<span class="nc" id="L52">  PERM_SECONDARY_ESTABLISHMENT_READ(&quot;View a secondary institution&quot;),</span>
+<span class="nc" id="L53">  PERM_SECONDARY_ESTABLISHMENT_CREATE(&quot;Create a secondary institution&quot;),</span>
+<span class="nc" id="L54">  PERM_SECONDARY_ESTABLISHMENT_UPDATE(&quot;Update a secondary institution&quot;),</span>
+<span class="nc" id="L55">  PERM_SECONDARY_ESTABLISHMENT_DELETE(&quot;Delete a secondary institution&quot;),</span>
+<span class="nc" id="L56">  PERM_GROUP_READ(&quot;View a group&quot;),</span>
+<span class="nc" id="L57">  PERM_GROUP_IMPORT(&quot;Populate a group via import&quot;),</span>
+<span class="nc" id="L58">  PERM_GROUP_CREATE(&quot;Create a group&quot;),</span>
+<span class="nc" id="L59">  PERM_GROUP_UPDATE(&quot;Update a group&quot;),</span>
+<span class="nc" id="L60">  PERM_GROUP_DELETE(&quot;Delete a group&quot;);</span>
+
+  private final String description;
+
+<span class="nc" id="L64">  EPermission(String description) {</span>
+<span class="nc" id="L65">    this.description = description;</span>
+<span class="nc" id="L66">  }</span>
+
+  public String description() {
+<span class="nc" id="L69">    return description;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

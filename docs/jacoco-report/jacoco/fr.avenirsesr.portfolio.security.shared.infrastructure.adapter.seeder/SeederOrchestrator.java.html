@@ -2,6 +2,7 @@
 
 import fr.avenirsesr.portfolio.common.dependency.domain.port.input.DependencyChecker;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration.SeedingState;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder.RBACCatalogSeeder;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.seeder.PrincipalSeeder;
 import jakarta.transaction.Transactional;
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-<span class="nc" id="L16">@Slf4j</span>
+<span class="nc" id="L17">@Slf4j</span>
 @Service
 @RequiredArgsConstructor
 public class SeederOrchestrator {
@@ -32,32 +33,35 @@ public class SeederOrchestrator {
   private final JdbcTemplate jdbcTemplate;
 
   private final PrincipalSeeder principalSeeder;
+  private final RBACCatalogSeeder rbacCatalogSeeder;
   private final SeedingState seedingState;
 
   @Transactional
   public void seedAll() {
     try {
-<span class="nc" id="L40">      log.info(&quot;Security seeding enabled and starting...&quot;);</span>
+<span class="nc" id="L42">      log.info(&quot;Security seeding enabled and starting...&quot;);</span>
 
-<span class="nc bnc" id="L42" title="All 2 branches missed.">      if (dependenciesCheck) {</span>
-<span class="nc" id="L43">        dependencyChecker.checkAndWait(&quot;Interoperability&quot;, interoperabilityHealthUrl);</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">      if (dependenciesCheck) {</span>
+<span class="nc" id="L45">        dependencyChecker.checkAndWait(&quot;Interoperability&quot;, interoperabilityHealthUrl);</span>
       }
 
-<span class="nc" id="L46">      List&lt;PrincipalEntity&gt; principalsSaved = principalSeeder.seed();</span>
+<span class="nc" id="L48">      rbacCatalogSeeder.seed();</span>
 
-<span class="nc" id="L48">      seedingState.markCompleted();</span>
-<span class="nc" id="L49">      log.info(&quot;✔ Security seeding successfully finished&quot;);</span>
-<span class="nc" id="L50">    } catch (Exception e) {</span>
-<span class="nc" id="L51">      seedingState.markFailed(e);</span>
-<span class="nc" id="L52">      log.error(&quot;✘ Security seeding failed&quot;, e);</span>
-<span class="nc" id="L53">      throw e;</span>
-<span class="nc" id="L54">    }</span>
-<span class="nc" id="L55">  }</span>
+<span class="nc" id="L50">      List&lt;PrincipalEntity&gt; principalsSaved = principalSeeder.seed();</span>
+
+<span class="nc" id="L52">      seedingState.markCompleted();</span>
+<span class="nc" id="L53">      log.info(&quot;✔ Security seeding successfully finished&quot;);</span>
+<span class="nc" id="L54">    } catch (Exception e) {</span>
+<span class="nc" id="L55">      seedingState.markFailed(e);</span>
+<span class="nc" id="L56">      log.error(&quot;✘ Security seeding failed&quot;, e);</span>
+<span class="nc" id="L57">      throw e;</span>
+<span class="nc" id="L58">    }</span>
+<span class="nc" id="L59">  }</span>
 
   @Transactional
   public void clearAll() {
-<span class="nc" id="L59">    List&lt;String&gt; tables =</span>
-<span class="nc" id="L60">        jdbcTemplate.queryForList(</span>
+<span class="nc" id="L63">    List&lt;String&gt; tables =</span>
+<span class="nc" id="L64">        jdbcTemplate.queryForList(</span>
             &quot;&quot;&quot;
             SELECT tablename
             FROM pg_tables
@@ -67,34 +71,34 @@ public class SeederOrchestrator {
             String.class,
             schemaName);
 
-<span class="nc bnc" id="L70" title="All 2 branches missed.">    if (tables.isEmpty()) {</span>
-<span class="nc" id="L71">      log.warn(&quot;No tables found in security schema '{}'&quot;, schemaName);</span>
-<span class="nc" id="L72">      return;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">    if (tables.isEmpty()) {</span>
+<span class="nc" id="L75">      log.warn(&quot;No tables found in security schema '{}'&quot;, schemaName);</span>
+<span class="nc" id="L76">      return;</span>
     }
 
-<span class="nc" id="L75">    String joined =</span>
-<span class="nc" id="L76">        tables.stream()</span>
-<span class="nc" id="L77">            .map(table -&gt; &quot;\&quot;&quot; + schemaName + &quot;\&quot;.\&quot;&quot; + table + &quot;\&quot;&quot;)</span>
-<span class="nc" id="L78">            .reduce((left, right) -&gt; left + &quot;, &quot; + right)</span>
-<span class="nc" id="L79">            .orElseThrow();</span>
+<span class="nc" id="L79">    String joined =</span>
+<span class="nc" id="L80">        tables.stream()</span>
+<span class="nc" id="L81">            .map(table -&gt; &quot;\&quot;&quot; + schemaName + &quot;\&quot;.\&quot;&quot; + table + &quot;\&quot;&quot;)</span>
+<span class="nc" id="L82">            .reduce((left, right) -&gt; left + &quot;, &quot; + right)</span>
+<span class="nc" id="L83">            .orElseThrow();</span>
 
-<span class="nc" id="L81">    String sql = &quot;TRUNCATE TABLE &quot; + joined + &quot; RESTART IDENTITY CASCADE&quot;;</span>
+<span class="nc" id="L85">    String sql = &quot;TRUNCATE TABLE &quot; + joined + &quot; RESTART IDENTITY CASCADE&quot;;</span>
 
-<span class="nc" id="L83">    log.warn(&quot;Resetting security DB: {}&quot;, sql);</span>
-<span class="nc" id="L84">    jdbcTemplate.execute(sql);</span>
-<span class="nc" id="L85">  }</span>
+<span class="nc" id="L87">    log.warn(&quot;Resetting security DB: {}&quot;, sql);</span>
+<span class="nc" id="L88">    jdbcTemplate.execute(sql);</span>
+<span class="nc" id="L89">  }</span>
 
   public void resetAndSeed() {
-<span class="nc bnc" id="L88" title="All 2 branches missed.">    if (!lock.tryLock()) {</span>
-<span class="nc" id="L89">      throw new IllegalStateException(&quot;Security seeding already running&quot;);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">    if (!lock.tryLock()) {</span>
+<span class="nc" id="L93">      throw new IllegalStateException(&quot;Security seeding already running&quot;);</span>
     }
 
     try {
-<span class="nc" id="L93">      clearAll();</span>
-<span class="nc" id="L94">      seedAll();</span>
+<span class="nc" id="L97">      clearAll();</span>
+<span class="nc" id="L98">      seedAll();</span>
     } finally {
-<span class="nc" id="L96">      lock.unlock();</span>
+<span class="nc" id="L100">      lock.unlock();</span>
     }
-<span class="nc" id="L98">  }</span>
+<span class="nc" id="L102">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
