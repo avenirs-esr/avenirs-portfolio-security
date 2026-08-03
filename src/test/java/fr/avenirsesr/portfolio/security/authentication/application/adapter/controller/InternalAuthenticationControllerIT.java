@@ -83,8 +83,7 @@ class InternalAuthenticationControllerIT {
               .perform(get("/internal/auth/context"))
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.payload").value(signedAuthContext.payload()))
-              .andExpect(jsonPath("$.signature").value(signedAuthContext.signature()))
-              .andExpect(jsonPath("$.kid").value(signedAuthContext.kid()));
+              .andExpect(jsonPath("$.signature").value(signedAuthContext.signature()));
 
           verify(authenticationSessionReader).readOidcSession(any());
           verify(authenticationService).refreshSessionIfNeeded(oidcSession);
@@ -130,8 +129,7 @@ class InternalAuthenticationControllerIT {
               .perform(get("/internal/auth/context").session(httpSession))
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.payload").value(signedAuthContext.payload()))
-              .andExpect(jsonPath("$.signature").value(signedAuthContext.signature()))
-              .andExpect(jsonPath("$.kid").value(signedAuthContext.kid()));
+              .andExpect(jsonPath("$.signature").value(signedAuthContext.signature()));
 
           assertEquals(refreshedSession, httpSession.getAttribute(SessionAttributes.OIDC_SESSION));
 
@@ -227,8 +225,6 @@ class InternalAuthenticationControllerIT {
 
   private SignedAuthContext signedAuthContext() {
     return new SignedAuthContext(
-        "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}",
-        "signature",
-        "v2");
+        "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}", "signature");
   }
 }
