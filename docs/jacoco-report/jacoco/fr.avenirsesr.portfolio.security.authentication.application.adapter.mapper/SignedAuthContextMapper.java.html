@@ -7,8 +7,7 @@ public final class SignedAuthContextMapper {
   private SignedAuthContextMapper() {}
 
   public static SignedAuthContextDTO toDTO(SignedAuthContext signedAuthContext) {
-<span class="nc" id="L10">    return new SignedAuthContextDTO(</span>
-<span class="nc" id="L11">        signedAuthContext.payload(), signedAuthContext.signature(), signedAuthContext.kid());</span>
+<span class="nc" id="L10">    return new SignedAuthContextDTO(signedAuthContext.payload(), signedAuthContext.signature());</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
