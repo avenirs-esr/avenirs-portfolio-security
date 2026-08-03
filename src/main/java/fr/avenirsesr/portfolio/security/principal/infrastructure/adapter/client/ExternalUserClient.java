@@ -15,14 +15,11 @@ public class ExternalUserClient {
 
   private final WebClient webClient;
 
-  @Value("${avenirs.interoperability.api-key}")
+  @Value("${avenirs.back-office.api-key}")
   private String apiKey;
 
-  @Value("${avenirs.interoperability.external-user.endpoint}")
+  @Value("${avenirs.back-office.external-user.endpoint}")
   private String externalUserEndpoint;
-
-  @Value("${avenirs.interoperability.actuator.health}")
-  private String healthEndpoint;
 
   public ExternalUserClient(WebClient webClient) {
     this.webClient = webClient;
@@ -30,7 +27,7 @@ public class ExternalUserClient {
 
   public List<ExternalUserDTO> getAll() {
     try {
-      log.debug("Fetching external users from interoperability");
+      log.debug("Fetching external users from back office");
 
       List<ExternalUserDTO> result =
           webClient
@@ -44,31 +41,11 @@ public class ExternalUserClient {
       return result != null ? result : List.of();
     } catch (Exception e) {
       log.error(
-          "Failed to fetch external users from interoperability at '{}'. Error: {}",
+          "Failed to fetch external users from back office at '{}'. Error: {}",
           externalUserEndpoint,
           e.getMessage());
       log.debug("Full error details:", e);
       return List.of();
-    }
-  }
-
-  public boolean checkInteroperabilityMicroservice() {
-    try {
-      log.debug("Checking interoperability microservice health at: {}", healthEndpoint);
-
-      String response =
-          webClient.get().uri(healthEndpoint).retrieve().bodyToMono(String.class).block();
-
-      log.info("Interoperability microservice is UP");
-
-      return response != null && response.contains("\"status\":\"UP\"");
-    } catch (Exception e) {
-      log.error(
-          "Interoperability microservice health check failed at '{}'. Error: {}",
-          healthEndpoint,
-          e.getMessage());
-      log.debug("Full error details:", e);
-      return false;
     }
   }
 }
