@@ -15,60 +15,37 @@ public class ExternalUserClient {
 
   private final WebClient webClient;
 
-  @Value(&quot;${avenirs.interoperability.api-key}&quot;)
+  @Value(&quot;${avenirs.back-office.api-key}&quot;)
   private String apiKey;
 
-  @Value(&quot;${avenirs.interoperability.external-user.endpoint}&quot;)
+  @Value(&quot;${avenirs.back-office.external-user.endpoint}&quot;)
   private String externalUserEndpoint;
 
-  @Value(&quot;${avenirs.interoperability.actuator.health}&quot;)
-  private String healthEndpoint;
-
-<span class="nc" id="L27">  public ExternalUserClient(WebClient webClient) {</span>
-<span class="nc" id="L28">    this.webClient = webClient;</span>
-<span class="nc" id="L29">  }</span>
+<span class="nc" id="L24">  public ExternalUserClient(WebClient webClient) {</span>
+<span class="nc" id="L25">    this.webClient = webClient;</span>
+<span class="nc" id="L26">  }</span>
 
   public List&lt;ExternalUserDTO&gt; getAll() {
     try {
-<span class="nc" id="L33">      log.debug(&quot;Fetching external users from interoperability&quot;);</span>
+<span class="nc" id="L30">      log.debug(&quot;Fetching external users from back office&quot;);</span>
 
-<span class="nc" id="L35">      List&lt;ExternalUserDTO&gt; result =</span>
+<span class="nc" id="L32">      List&lt;ExternalUserDTO&gt; result =</span>
           webClient
-<span class="nc" id="L37">              .get()</span>
-<span class="nc" id="L38">              .uri(externalUserEndpoint)</span>
-<span class="nc" id="L39">              .header(AvenirsSecurityHeaders.API_KEY, apiKey)</span>
-<span class="nc" id="L40">              .retrieve()</span>
-<span class="nc" id="L41">              .bodyToMono(new ParameterizedTypeReference&lt;List&lt;ExternalUserDTO&gt;&gt;() {})</span>
-<span class="nc" id="L42">              .block();</span>
+<span class="nc" id="L34">              .get()</span>
+<span class="nc" id="L35">              .uri(externalUserEndpoint)</span>
+<span class="nc" id="L36">              .header(AvenirsSecurityHeaders.API_KEY, apiKey)</span>
+<span class="nc" id="L37">              .retrieve()</span>
+<span class="nc" id="L38">              .bodyToMono(new ParameterizedTypeReference&lt;List&lt;ExternalUserDTO&gt;&gt;() {})</span>
+<span class="nc" id="L39">              .block();</span>
 
-<span class="nc bnc" id="L44" title="All 2 branches missed.">      return result != null ? result : List.of();</span>
-<span class="nc" id="L45">    } catch (Exception e) {</span>
-<span class="nc" id="L46">      log.error(</span>
-          &quot;Failed to fetch external users from interoperability at '{}'. Error: {}&quot;,
+<span class="nc bnc" id="L41" title="All 2 branches missed.">      return result != null ? result : List.of();</span>
+<span class="nc" id="L42">    } catch (Exception e) {</span>
+<span class="nc" id="L43">      log.error(</span>
+          &quot;Failed to fetch external users from back office at '{}'. Error: {}&quot;,
           externalUserEndpoint,
-<span class="nc" id="L49">          e.getMessage());</span>
-<span class="nc" id="L50">      log.debug(&quot;Full error details:&quot;, e);</span>
-<span class="nc" id="L51">      return List.of();</span>
-    }
-  }
-
-  public boolean checkInteroperabilityMicroservice() {
-    try {
-<span class="nc" id="L57">      log.debug(&quot;Checking interoperability microservice health at: {}&quot;, healthEndpoint);</span>
-
-<span class="nc" id="L59">      String response =</span>
-<span class="nc" id="L60">          webClient.get().uri(healthEndpoint).retrieve().bodyToMono(String.class).block();</span>
-
-<span class="nc" id="L62">      log.info(&quot;Interoperability microservice is UP&quot;);</span>
-
-<span class="nc bnc" id="L64" title="All 4 branches missed.">      return response != null &amp;&amp; response.contains(&quot;\&quot;status\&quot;:\&quot;UP\&quot;&quot;);</span>
-<span class="nc" id="L65">    } catch (Exception e) {</span>
-<span class="nc" id="L66">      log.error(</span>
-          &quot;Interoperability microservice health check failed at '{}'. Error: {}&quot;,
-          healthEndpoint,
-<span class="nc" id="L69">          e.getMessage());</span>
-<span class="nc" id="L70">      log.debug(&quot;Full error details:&quot;, e);</span>
-<span class="nc" id="L71">      return false;</span>
+<span class="nc" id="L46">          e.getMessage());</span>
+<span class="nc" id="L47">      log.debug(&quot;Full error details:&quot;, e);</span>
+<span class="nc" id="L48">      return List.of();</span>
     }
   }
 }
