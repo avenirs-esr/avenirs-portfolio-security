@@ -3,7 +3,6 @@ package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.s
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums.ESecurityKeys;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
@@ -17,9 +16,9 @@ import org.junit.jupiter.api.Test;
 
 class HmacAuthContextSigningServiceTest {
 
-  private static final String KID = "v2";
   private static final long TTL_SECONDS = 300L;
   private static final String ALGORITHM = "HmacSHA256";
+  private static final String SECRET = "test-secret";
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -32,7 +31,7 @@ class HmacAuthContextSigningServiceTest {
     void setupGiven() {
       BddLogger.given("an HMAC auth context signing service");
 
-      service = new HmacAuthContextSigningService(objectMapper, KID, TTL_SECONDS, ALGORITHM);
+      service = new HmacAuthContextSigningService(objectMapper, TTL_SECONDS, ALGORITHM, SECRET);
     }
 
     @Nested
@@ -53,7 +52,6 @@ class HmacAuthContextSigningServiceTest {
         BddLogger.then("it should return a signed auth context");
 
         assertNotNull(result);
-        assertEquals(KID, result.kid());
         assertNotNull(result.payload());
         assertNotNull(result.signature());
         assertFalse(result.payload().isBlank());
@@ -74,31 +72,9 @@ class HmacAuthContextSigningServiceTest {
       void thenItShouldGenerateValidHmacSignature() throws Exception {
         BddLogger.then("it should generate a valid HMAC signature");
 
-        String expectedSignature = sign(result.payload(), ESecurityKeys.getSecretByKey(KID));
+        String expectedSignature = sign(result.payload(), SECRET);
 
         assertEquals(expectedSignature, result.signature());
-      }
-    }
-
-    @Nested
-    class WhenSigningAuthContextWithInvalidKid {
-      private HmacAuthContextSigningService serviceWithInvalidKid;
-
-      @BeforeEach
-      void setupWhen() {
-        BddLogger.when("signing an auth context with invalid kid");
-
-        serviceWithInvalidKid =
-            new HmacAuthContextSigningService(objectMapper, "unknown", TTL_SECONDS, ALGORITHM);
-      }
-
-      @Test
-      void thenItShouldThrowIllegalStateException() {
-        BddLogger.then("it should throw illegal state exception");
-
-        assertThrows(
-            IllegalStateException.class,
-            () -> serviceWithInvalidKid.sign(new AuthContext(true, "gribonvald")));
       }
     }
   }

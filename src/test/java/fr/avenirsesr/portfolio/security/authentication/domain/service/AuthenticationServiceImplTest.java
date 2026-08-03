@@ -186,8 +186,7 @@ class AuthenticationServiceImplTest {
           expectedSignedAuthContext =
               new SignedAuthContext(
                   "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}",
-                  "signature",
-                  "v2");
+                  "signature");
 
           when(oidcService.introspectAccessToken(ACCESS_TOKEN)).thenReturn(introspection);
           when(authContextSigningPort.sign(expectedAuthContext))

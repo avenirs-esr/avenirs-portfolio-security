@@ -1,7 +1,6 @@
 package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums.ESecurityKeys;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
@@ -17,19 +16,19 @@ import org.springframework.stereotype.Service;
 public class HmacAuthContextSigningService implements AuthContextSigningPort {
 
   private final ObjectMapper objectMapper;
-  private final String currentKid;
   private final long ttlSeconds;
   private final String algorithm;
+  private final String secret;
 
   public HmacAuthContextSigningService(
       ObjectMapper objectMapper,
-      @Value("${avenirs.security.context.signature.current-kid:v2}") String currentKid,
       @Value("${avenirs.security.context.signature.ttl-seconds:300}") long ttlSeconds,
-      @Value("${avenirs.security.context.signature.algorithm:HmacSHA256}") String algorithm) {
+      @Value("${avenirs.security.context.signature.algorithm:HmacSHA256}") String algorithm,
+      @Value("${security.hmac.secret}") String secret) {
     this.objectMapper = objectMapper;
-    this.currentKid = currentKid;
     this.ttlSeconds = ttlSeconds;
     this.algorithm = algorithm;
+    this.secret = secret;
   }
 
   @Override
@@ -42,7 +41,6 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
           new SignedContextPayload(authContext.login(), now, now + ttlSeconds);
 
       String jsonPayload = objectMapper.writeValueAsString(payload);
-      String secret = ESecurityKeys.getSecretByKey(currentKid);
 
       Mac mac = Mac.getInstance(algorithm);
       mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), algorithm));
@@ -51,7 +49,7 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
           Base64.getEncoder()
               .encodeToString(mac.doFinal(jsonPayload.getBytes(StandardCharsets.UTF_8)));
 
-      return new SignedAuthContext(jsonPayload, signature, currentKid);
+      return new SignedAuthContext(jsonPayload, signature);
 
     } catch (Exception e) {
       throw new IllegalStateException("Unable to sign authentication context", e);

@@ -7,7 +7,6 @@ public final class SignedAuthContextMapper {
   private SignedAuthContextMapper() {}
 
   public static SignedAuthContextDTO toDTO(SignedAuthContext signedAuthContext) {
-    return new SignedAuthContextDTO(
-        signedAuthContext.payload(), signedAuthContext.signature(), signedAuthContext.kid());
+    return new SignedAuthContextDTO(signedAuthContext.payload(), signedAuthContext.signature());
   }
 }
