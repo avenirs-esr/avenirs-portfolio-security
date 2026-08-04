@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder;
 
 import fr.avenirsesr.portfolio.common.dependency.domain.port.input.DependencyChecker;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration.SeedingState;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder.RBACAssignmentSeeder;
 import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder.RBACCatalogSeeder;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity;
 import fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.seeder.PrincipalSeeder;
@@ -24,8 +25,8 @@ public class SeederOrchestrator {
   @Value("${seeder.dependencies-check:false}")
   private boolean dependenciesCheck;
 
-  @Value("${avenirs.interoperability.actuator.health}")
-  private String interoperabilityHealthUrl;
+  @Value("${avenirs.back-office.actuator.health}")
+  private String backOfficeHealthUrl;
 
   private final DependencyChecker dependencyChecker;
 
@@ -34,6 +35,7 @@ public class SeederOrchestrator {
 
   private final PrincipalSeeder principalSeeder;
   private final RBACCatalogSeeder rbacCatalogSeeder;
+  private final RBACAssignmentSeeder rbacAssignmentSeeder;
   private final SeedingState seedingState;
 
   @Transactional
@@ -42,12 +44,14 @@ public class SeederOrchestrator {
       log.info("Security seeding enabled and starting...");
 
       if (dependenciesCheck) {
-        dependencyChecker.checkAndWait("Interoperability", interoperabilityHealthUrl);
+        dependencyChecker.checkAndWait("Back-office", backOfficeHealthUrl);
       }
 
       rbacCatalogSeeder.seed();
 
       List<PrincipalEntity> principalsSaved = principalSeeder.seed();
+
+      rbacAssignmentSeeder.seed();
 
       seedingState.markCompleted();
       log.info("✔ Security seeding successfully finished");
