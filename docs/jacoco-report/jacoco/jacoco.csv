@@ -40,7 +40,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infra
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCIntrospectionMapper,27,12,3,1,8,3,3,1,1,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.mapper,OIDCAccessTokenMapper,11,70,4,2,3,21,4,2,1,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederRunner,18,0,2,0,7,0,3,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederOrchestrator,112,0,6,0,34,0,9,0,6,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederOrchestrator,115,0,6,0,35,0,9,0,6,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.user.application.adapter.dto,ExternalUserDTO,38,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,EPermission,3,347,0,0,1,52,1,2,1,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,ERole,3,123,0,6,1,27,1,9,1,6
@@ -125,15 +125,17 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infras
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACRoleMapperImpl,129,0,12,0,35,0,11,0,5,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACPermissionMapperImpl,56,0,4,0,18,0,5,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACResourceMapperImpl,62,0,4,0,18,0,5,0,3,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACAssignmentMapperImpl,88,0,4,0,22,0,5,0,3,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACAssignmentMapperImpl,100,0,4,0,24,0,5,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACResourceTypeMapperImpl,56,0,4,0,18,0,5,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACScopeMapperImpl,109,0,12,0,29,0,11,0,5,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACActionRouteMapperImpl,73,0,4,0,21,0,5,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACContextMapperImpl,59,0,4,0,19,0,5,0,3,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACAssignmentMapper,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.configuration.domain.exception,ConfigurationException,9,0,0,0,4,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.domain.exception,LanguageException,9,0,0,0,4,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.application.adapter.exception,BaseRestExceptionHandler,89,0,0,0,23,0,8,0,8,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACCatalogSeeder,139,0,12,0,22,0,11,0,5,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACAssignmentSeeder,64,0,2,0,14,0,5,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContext,7,12,0,0,2,5,2,3,2,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContextFilter,27,47,1,1,7,16,2,3,1,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestData,0,9,0,0,0,1,0,1,0,1

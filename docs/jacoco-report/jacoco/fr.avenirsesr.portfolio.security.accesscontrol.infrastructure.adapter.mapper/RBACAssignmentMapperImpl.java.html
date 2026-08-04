@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2026-08-03T13:46:01+0000&quot;,
+    date = &quot;2026-08-04T12:44:31+0000&quot;,
     comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.11 (Eclipse Adoptium)&quot;
 )
 @Component
@@ -32,17 +32,17 @@ import org.springframework.stereotype.Component;
 <span class="nc" id="L32">            return null;</span>
         }
 
-<span class="nc" id="L35">        UUID id = null;</span>
-<span class="nc" id="L36">        RBACRole role = null;</span>
-<span class="nc" id="L37">        RBACScope scope = null;</span>
-<span class="nc" id="L38">        RBACContext context = null;</span>
+<span class="nc" id="L35">        Principal principal = null;</span>
+<span class="nc" id="L36">        UUID id = null;</span>
+<span class="nc" id="L37">        RBACRole role = null;</span>
+<span class="nc" id="L38">        RBACScope scope = null;</span>
+<span class="nc" id="L39">        RBACContext context = null;</span>
 
-<span class="nc" id="L40">        id = entity.getId();</span>
-<span class="nc" id="L41">        role = rBACRoleMapper.toDomain( entity.getRole() );</span>
-<span class="nc" id="L42">        scope = rBACScopeMapper.toDomain( entity.getScope() );</span>
-<span class="nc" id="L43">        context = rBACContextMapper.toDomain( entity.getContext() );</span>
-
-<span class="nc" id="L45">        Principal principal = null;</span>
+<span class="nc" id="L41">        principal = map( entity.getPrincipalEntity() );</span>
+<span class="nc" id="L42">        id = entity.getId();</span>
+<span class="nc" id="L43">        role = rBACRoleMapper.toDomain( entity.getRole() );</span>
+<span class="nc" id="L44">        scope = rBACScopeMapper.toDomain( entity.getScope() );</span>
+<span class="nc" id="L45">        context = rBACContextMapper.toDomain( entity.getContext() );</span>
 
 <span class="nc" id="L47">        RBACAssignment rBACAssignment = new RBACAssignment( id, principal, role, scope, context );</span>
 
@@ -57,12 +57,13 @@ import org.springframework.stereotype.Component;
 
 <span class="nc" id="L58">        RBACAssignmentEntity rBACAssignmentEntity = new RBACAssignmentEntity();</span>
 
-<span class="nc" id="L60">        rBACAssignmentEntity.setId( domain.id() );</span>
-<span class="nc" id="L61">        rBACAssignmentEntity.setRole( rBACRoleMapper.fromDomain( domain.role() ) );</span>
-<span class="nc" id="L62">        rBACAssignmentEntity.setScope( rBACScopeMapper.fromDomain( domain.scope() ) );</span>
-<span class="nc" id="L63">        rBACAssignmentEntity.setContext( rBACContextMapper.fromDomain( domain.context() ) );</span>
+<span class="nc" id="L60">        rBACAssignmentEntity.setPrincipalEntity( map( domain.principal() ) );</span>
+<span class="nc" id="L61">        rBACAssignmentEntity.setId( domain.id() );</span>
+<span class="nc" id="L62">        rBACAssignmentEntity.setRole( rBACRoleMapper.fromDomain( domain.role() ) );</span>
+<span class="nc" id="L63">        rBACAssignmentEntity.setScope( rBACScopeMapper.fromDomain( domain.scope() ) );</span>
+<span class="nc" id="L64">        rBACAssignmentEntity.setContext( rBACContextMapper.fromDomain( domain.context() ) );</span>
 
-<span class="nc" id="L65">        return rBACAssignmentEntity;</span>
+<span class="nc" id="L66">        return rBACAssignmentEntity;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
