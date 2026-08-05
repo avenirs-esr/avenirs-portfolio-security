@@ -19,6 +19,8 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospe
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCProfile;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.configuration.SpringSecurityConfig;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.PrincipalGrantedAuthoritiesService;
+import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -52,6 +54,10 @@ class OidcControllerTest {
   @MockitoBean private OidcService oidcService;
 
   @MockitoBean private BaseUserService baseUserService;
+
+  @MockitoBean private PrincipalGrantedAuthoritiesService principalGrantedAuthoritiesService;
+
+  @MockitoBean private PrincipalRepository principalRepository;
 
   @Nested
   class GivenOidcController {

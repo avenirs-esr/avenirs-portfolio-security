@@ -2,12 +2,12 @@ package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.f
 
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.PrincipalGrantedAuthoritiesService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -40,6 +40,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
 
   private OidcService oidcService;
+  private PrincipalGrantedAuthoritiesService principalGrantedAuthoritiesService;
 
   @Override
   protected void doFilterInternal(
@@ -63,7 +64,8 @@ public class CASTokenAuthenticationFilter extends OncePerRequestFilter {
         String username = introspection.uniqueSecurityName();
         SecurityContextHolder.getContext()
             .setAuthentication(
-                new UsernamePasswordAuthenticationToken(username, token, new ArrayList<>()));
+                new UsernamePasswordAuthenticationToken(
+                    username, token, principalGrantedAuthoritiesService.loadAuthorities(username)));
       } else {
         log.trace("doFilterInternal introspectResponse is not active");
       }

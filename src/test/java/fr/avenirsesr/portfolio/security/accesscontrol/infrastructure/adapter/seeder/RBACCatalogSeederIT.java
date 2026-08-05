@@ -9,11 +9,13 @@ import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums.EPermis
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACPermissionRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,7 @@ class RBACCatalogSeederIT {
       void thenEveryCatalogPermissionShouldExistInDatabase(EPermission permission) {
         BddLogger.then("every EPermission should exist in the permission table");
 
-        Optional<RBACPermission> stored = permissionRepository.findByName(permission.name());
+        Optional<RBACPermission> stored = permissionRepository.findByName(permission.authority());
 
         assertThat(stored).isPresent();
         assertThat(stored.orElseThrow().description()).isEqualTo(permission.description());
@@ -78,10 +80,44 @@ class RBACCatalogSeederIT {
                 .collect(Collectors.toSet());
 
         Set<String> expectedPermissionNames =
-            role.permissions().stream().map(EPermission::name).collect(Collectors.toSet());
+            role.permissions().stream().map(EPermission::authority).collect(Collectors.toSet());
 
         assertThat(storedPermissionNames)
             .containsExactlyInAnyOrderElementsOf(expectedPermissionNames);
+      }
+
+      @Test
+      void thenNoPermissionShouldBePersistedUnderItsLegacyPermPrefixedName() {
+        BddLogger.then("no permission row should be persisted under a legacy PERM_* name");
+
+        List<RBACPermission> all = permissionRepository.findAll();
+
+        assertThat(all)
+            .extracting(RBACPermission::name)
+            .noneMatch(name -> name.startsWith("PERM_"));
+      }
+
+      @Test
+      void thenReSeedingShouldBeIdempotent() {
+        BddLogger.then("re-running the synchronization should not create duplicates");
+
+        int permissionCountBefore = permissionRepository.findAll().size();
+        int superAdminPermissionCountBefore =
+            roleRepository
+                .findByName(ERole.ROLE_SUPER_ADMIN.name())
+                .orElseThrow()
+                .permissions()
+                .size();
+
+        rbacCatalogSeeder.seed();
+
+        assertThat(permissionRepository.findAll()).hasSize(permissionCountBefore);
+        assertThat(
+                roleRepository
+                    .findByName(ERole.ROLE_SUPER_ADMIN.name())
+                    .orElseThrow()
+                    .permissions())
+            .hasSize(superAdminPermissionCountBefore);
       }
     }
   }

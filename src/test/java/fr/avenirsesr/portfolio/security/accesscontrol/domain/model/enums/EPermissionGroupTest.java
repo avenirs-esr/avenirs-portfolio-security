@@ -202,6 +202,20 @@ class EPermissionGroupTest {
                 EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
                 EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL);
       }
+
+      @Test
+      void thenRbacManagementShouldContainExactlyTheFourAtomicRbacPermissions() {
+        BddLogger.then(
+            "RBAC_MANAGEMENT should contain exactly the four atomic RBAC administration"
+                + " permissions");
+
+        assertThat(EPermissionGroup.RBAC_MANAGEMENT.permissions())
+            .containsExactlyInAnyOrder(
+                EPermission.PERM_RBAC_READ,
+                EPermission.PERM_RBAC_ASSIGN,
+                EPermission.PERM_RBAC_REVOKE,
+                EPermission.PERM_RBAC_MANAGE);
+      }
     }
   }
 }

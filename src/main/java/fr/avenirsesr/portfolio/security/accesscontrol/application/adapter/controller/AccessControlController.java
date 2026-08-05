@@ -10,6 +10,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +20,7 @@ public class AccessControlController {
 
   private final AccessControlService accessControlService;
 
+  @PreAuthorize("hasAuthority('rbac:assign')")
   @PostMapping("/grant")
   public ResponseEntity<AccessControlGrantResponseDTO> grantAccess(
       @RequestBody AccessControlGrantRequestDTO request) {
@@ -35,6 +37,7 @@ public class AccessControlController {
     }
   }
 
+  @PreAuthorize("hasAuthority('rbac:revoke')")
   @PostMapping("/revoke")
   public ResponseEntity<AccessControlRevokeResponseDTO> revokeAccess(
       @RequestBody AccessControlRevokeRequestDTO request) {

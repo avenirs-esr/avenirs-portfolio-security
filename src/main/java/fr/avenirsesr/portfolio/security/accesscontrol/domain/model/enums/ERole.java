@@ -30,7 +30,10 @@ public enum ERole {
   ROLE_SUPER_ADMIN(
       "Global administrator of the COFOLIO platform",
       Set.of(),
-      Set.of(EPermissionGroup.ESTABLISHMENT_MANAGEMENT, EPermissionGroup.GROUP_MANAGEMENT));
+      Set.of(
+          EPermissionGroup.ESTABLISHMENT_MANAGEMENT,
+          EPermissionGroup.GROUP_MANAGEMENT,
+          EPermissionGroup.RBAC_MANAGEMENT));
 
   private final String description;
   private final Set<EPermission> directPermissions;

@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 public class AccessControlGrantRequestDTO {
-
   private String login;
   private UUID roleId;
   private List<UUID> resourceIds;

@@ -157,7 +157,37 @@ class ERoleTest {
                 EPermission.PERM_GROUP_IMPORT,
                 EPermission.PERM_GROUP_CREATE,
                 EPermission.PERM_GROUP_UPDATE,
-                EPermission.PERM_GROUP_DELETE);
+                EPermission.PERM_GROUP_DELETE,
+                EPermission.PERM_RBAC_READ,
+                EPermission.PERM_RBAC_ASSIGN,
+                EPermission.PERM_RBAC_REVOKE,
+                EPermission.PERM_RBAC_MANAGE);
+      }
+    }
+
+    @Nested
+    class WhenCheckingRbacAdministrationPermissions {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("checking which roles carry RBAC administration permissions");
+      }
+
+      @Test
+      void thenOnlySuperAdminShouldHaveThem() {
+        BddLogger.then("ROLE_SUPER_ADMIN should have all four, and no other role should have any");
+
+        assertThat(ERole.ROLE_SUPER_ADMIN.permissions())
+            .contains(
+                EPermission.PERM_RBAC_READ,
+                EPermission.PERM_RBAC_ASSIGN,
+                EPermission.PERM_RBAC_REVOKE,
+                EPermission.PERM_RBAC_MANAGE);
+
+        assertThat(ERole.ROLE_STUDENT.permissions())
+            .noneMatch(permission -> permission.name().startsWith("PERM_RBAC_"));
+        assertThat(ERole.ROLE_STAFF.permissions())
+            .noneMatch(permission -> permission.name().startsWith("PERM_RBAC_"));
       }
     }
 

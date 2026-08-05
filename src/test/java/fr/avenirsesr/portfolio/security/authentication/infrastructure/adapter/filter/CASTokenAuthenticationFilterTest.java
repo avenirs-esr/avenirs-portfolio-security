@@ -6,12 +6,16 @@ import static org.mockito.Mockito.*;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.PrincipalGrantedAuthoritiesService;
 import jakarta.servlet.FilterChain;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 class CASTokenAuthenticationFilterTest {
@@ -25,7 +29,10 @@ class CASTokenAuthenticationFilterTest {
   void doFilterInternal_withoutToken_doesNotAuthenticate() throws Exception {
     BddLogger.given("a CAS token authentication filter");
     OidcService oidcService = mock(OidcService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
+    PrincipalGrantedAuthoritiesService authoritiesService =
+        mock(PrincipalGrantedAuthoritiesService.class);
+    CASTokenAuthenticationFilter filter =
+        new CASTokenAuthenticationFilter(oidcService, authoritiesService);
 
     BddLogger.and("a request without Authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -48,7 +55,10 @@ class CASTokenAuthenticationFilterTest {
   void doFilterInternal_withActiveToken_setsAuthentication() throws Exception {
     BddLogger.given("a CAS token authentication filter");
     OidcService oidcService = mock(OidcService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
+    PrincipalGrantedAuthoritiesService authoritiesService =
+        mock(PrincipalGrantedAuthoritiesService.class);
+    CASTokenAuthenticationFilter filter =
+        new CASTokenAuthenticationFilter(oidcService, authoritiesService);
 
     BddLogger.and("a request with an Authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -58,13 +68,15 @@ class CASTokenAuthenticationFilterTest {
 
     BddLogger.and("an introspect response indicating the token is active");
     OIDCIntrospection introspection = new OIDCIntrospection(null, true, "deman");
+    Set<GrantedAuthority> authorities = Set.of(new SimpleGrantedAuthority("rbac:read"));
 
     when(oidcService.introspectAccessToken("TEST_ACCESS_TOKEN")).thenReturn(introspection);
+    when(authoritiesService.loadAuthorities("deman")).thenReturn(authorities);
 
     BddLogger.when("filtering the request");
     filter.doFilter(request, response, chain);
 
-    BddLogger.then("it should authenticate the user and continue the filter chain");
+    BddLogger.then("it should authenticate the user with its RBAC authorities");
     verify(oidcService, times(1)).introspectAccessToken("TEST_ACCESS_TOKEN");
     verify(chain, times(1)).doFilter(request, response);
 
@@ -72,13 +84,17 @@ class CASTokenAuthenticationFilterTest {
     assertNotNull(authentication);
     assertEquals("deman", authentication.getPrincipal());
     assertEquals("TEST_ACCESS_TOKEN", authentication.getCredentials());
+    assertEquals(authorities, new java.util.HashSet<>(authentication.getAuthorities()));
   }
 
   @Test
   void doFilterInternal_withInactiveToken_doesNotSetAuthentication() throws Exception {
     BddLogger.given("a CAS token authentication filter");
     OidcService oidcService = mock(OidcService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
+    PrincipalGrantedAuthoritiesService authoritiesService =
+        mock(PrincipalGrantedAuthoritiesService.class);
+    CASTokenAuthenticationFilter filter =
+        new CASTokenAuthenticationFilter(oidcService, authoritiesService);
 
     BddLogger.and("a request with an Authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -106,7 +122,10 @@ class CASTokenAuthenticationFilterTest {
   void doFilterInternal_withXAuthorizationHeader_setsAuthentication() throws Exception {
     BddLogger.given("a CAS token authentication filter");
     OidcService oidcService = mock(OidcService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
+    PrincipalGrantedAuthoritiesService authoritiesService =
+        mock(PrincipalGrantedAuthoritiesService.class);
+    CASTokenAuthenticationFilter filter =
+        new CASTokenAuthenticationFilter(oidcService, authoritiesService);
 
     BddLogger.and("a request with an x-authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -117,6 +136,7 @@ class CASTokenAuthenticationFilterTest {
     BddLogger.and("an introspect response indicating the token is active");
     OIDCIntrospection introspection = new OIDCIntrospection(null, true, "deman");
     when(oidcService.introspectAccessToken("TEST_ACCESS_TOKEN")).thenReturn(introspection);
+    when(authoritiesService.loadAuthorities("deman")).thenReturn(Set.of());
 
     BddLogger.when("filtering the request");
     filter.doFilter(request, response, chain);
@@ -135,7 +155,10 @@ class CASTokenAuthenticationFilterTest {
   void doFilterInternal_withNonBearerOrEmptyBearerToken_doesNotAuthenticate() throws Exception {
     BddLogger.given("a CAS token authentication filter");
     OidcService oidcService = mock(OidcService.class);
-    CASTokenAuthenticationFilter filter = new CASTokenAuthenticationFilter(oidcService);
+    PrincipalGrantedAuthoritiesService authoritiesService =
+        mock(PrincipalGrantedAuthoritiesService.class);
+    CASTokenAuthenticationFilter filter =
+        new CASTokenAuthenticationFilter(oidcService, authoritiesService);
 
     BddLogger.and("a request with a non-bearer authorization header");
     MockHttpServletRequest request = new MockHttpServletRequest();
