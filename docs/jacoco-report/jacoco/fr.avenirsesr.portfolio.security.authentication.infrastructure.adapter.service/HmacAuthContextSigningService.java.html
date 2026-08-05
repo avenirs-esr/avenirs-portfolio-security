@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.SignedContextPayload;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
@@ -24,38 +25,36 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
       ObjectMapper objectMapper,
       @Value(&quot;${avenirs.security.context.signature.ttl-seconds:300}&quot;) long ttlSeconds,
       @Value(&quot;${avenirs.security.context.signature.algorithm:HmacSHA256}&quot;) String algorithm,
-<span class="fc" id="L27">      @Value(&quot;${security.hmac.secret}&quot;) String secret) {</span>
-<span class="fc" id="L28">    this.objectMapper = objectMapper;</span>
-<span class="fc" id="L29">    this.ttlSeconds = ttlSeconds;</span>
-<span class="fc" id="L30">    this.algorithm = algorithm;</span>
-<span class="fc" id="L31">    this.secret = secret;</span>
-<span class="fc" id="L32">  }</span>
+<span class="fc" id="L28">      @Value(&quot;${security.hmac.secret}&quot;) String secret) {</span>
+<span class="fc" id="L29">    this.objectMapper = objectMapper;</span>
+<span class="fc" id="L30">    this.ttlSeconds = ttlSeconds;</span>
+<span class="fc" id="L31">    this.algorithm = algorithm;</span>
+<span class="fc" id="L32">    this.secret = secret;</span>
+<span class="fc" id="L33">  }</span>
 
   @Override
   public SignedAuthContext sign(AuthContext authContext) {
     try {
-<span class="fc" id="L37">      long now = Instant.now().getEpochSecond();</span>
+<span class="fc" id="L38">      long now = Instant.now().getEpochSecond();</span>
 
-      // TODO: Mock while waiting #1683
 <span class="fc" id="L40">      SignedContextPayload payload =</span>
-<span class="fc" id="L41">          new SignedContextPayload(authContext.login(), now, now + ttlSeconds);</span>
+          new SignedContextPayload(
+<span class="fc" id="L42">              authContext.login(), now, now + ttlSeconds, authContext.authorities());</span>
 
-<span class="fc" id="L43">      String jsonPayload = objectMapper.writeValueAsString(payload);</span>
+<span class="fc" id="L44">      String jsonPayload = objectMapper.writeValueAsString(payload);</span>
 
-<span class="fc" id="L45">      Mac mac = Mac.getInstance(algorithm);</span>
-<span class="fc" id="L46">      mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), algorithm));</span>
+<span class="fc" id="L46">      Mac mac = Mac.getInstance(algorithm);</span>
+<span class="fc" id="L47">      mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), algorithm));</span>
 
       String signature =
-<span class="fc" id="L49">          Base64.getEncoder()</span>
-<span class="fc" id="L50">              .encodeToString(mac.doFinal(jsonPayload.getBytes(StandardCharsets.UTF_8)));</span>
+<span class="fc" id="L50">          Base64.getEncoder()</span>
+<span class="fc" id="L51">              .encodeToString(mac.doFinal(jsonPayload.getBytes(StandardCharsets.UTF_8)));</span>
 
-<span class="fc" id="L52">      return new SignedAuthContext(jsonPayload, signature);</span>
+<span class="fc" id="L53">      return new SignedAuthContext(jsonPayload, signature);</span>
 
-<span class="nc" id="L54">    } catch (Exception e) {</span>
-<span class="nc" id="L55">      throw new IllegalStateException(&quot;Unable to sign authentication context&quot;, e);</span>
+<span class="nc" id="L55">    } catch (Exception e) {</span>
+<span class="nc" id="L56">      throw new IllegalStateException(&quot;Unable to sign authentication context&quot;, e);</span>
     }
   }
-
-<span class="fc" id="L59">  private record SignedContextPayload(String sub, long iat, long exp) {}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

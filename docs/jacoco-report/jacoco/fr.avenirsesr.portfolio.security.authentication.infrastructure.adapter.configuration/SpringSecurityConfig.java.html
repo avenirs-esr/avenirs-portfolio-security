@@ -140,7 +140,7 @@ public class SpringSecurityConfig {
 <span class="nc" id="L140">          DevAuthenticationFilter.class.getSimpleName());</span>
 <span class="nc" id="L141">      return new DevAuthenticationFilter(principalRepository, principalGrantedAuthoritiesService);</span>
     }
-<span class="fc" id="L143">    return new HmacAuthenticationFilter(hmacSecret, principalGrantedAuthoritiesService);</span>
+<span class="fc" id="L143">    return new HmacAuthenticationFilter(hmacSecret);</span>
   }
 
   Filter casTokenAuthenticationFilter() {

@@ -3,17 +3,20 @@
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthorizationsPort;
 import fr.avenirsesr.portfolio.security.authentication.domain.service.AuthenticationServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-<span class="nc" id="L11">public class AuthenticationServiceConfig {</span>
+<span class="nc" id="L12">public class AuthenticationServiceConfig {</span>
 
   @Bean
   AuthenticationService authenticationService(
-      OidcService oidcService, AuthContextSigningPort authContextSigningPort) {
-<span class="nc" id="L16">    return new AuthenticationServiceImpl(oidcService, authContextSigningPort);</span>
+      OidcService oidcService,
+      AuthContextSigningPort authContextSigningPort,
+      AuthorizationsPort authorizationsPort) {
+<span class="nc" id="L19">    return new AuthenticationServiceImpl(oidcService, authContextSigningPort, authorizationsPort);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
