@@ -8,6 +8,7 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Set;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,7 @@ class HmacAuthContextSigningServiceTest {
       void setupWhen() {
         BddLogger.when("signing an auth context");
 
-        authContext = new AuthContext(true, "gribonvald");
+        authContext = new AuthContext(true, "gribonvald", Set.of("rbac:read", "profile:read:own"));
         result = service.sign(authContext);
       }
 
@@ -59,13 +60,15 @@ class HmacAuthContextSigningServiceTest {
       }
 
       @Test
-      void thenItShouldCreatePayloadWithSubIatAndExp() throws Exception {
-        BddLogger.then("it should create payload with sub, iat and exp");
+      void thenItShouldCreatePayloadWithSubIatExpAndAuthorities() throws Exception {
+        BddLogger.then("it should create payload with sub, iat, exp and authorities");
 
         SignedPayload payload = objectMapper.readValue(result.payload(), SignedPayload.class);
 
+        assertEquals("gribonvald", payload.sub());
         assertTrue(payload.iat() > 0);
         assertEquals(TTL_SECONDS, payload.exp() - payload.iat());
+        assertEquals(Set.of("rbac:read", "profile:read:own"), payload.authorities());
       }
 
       @Test
@@ -87,5 +90,5 @@ class HmacAuthContextSigningServiceTest {
         .encodeToString(mac.doFinal(payload.getBytes(StandardCharsets.UTF_8)));
   }
 
-  private record SignedPayload(String sub, long iat, long exp) {}
+  private record SignedPayload(String sub, long iat, long exp, Set<String> authorities) {}
 }

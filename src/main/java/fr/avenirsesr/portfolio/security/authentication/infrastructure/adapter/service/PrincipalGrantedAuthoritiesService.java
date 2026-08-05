@@ -4,6 +4,7 @@ import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAssignmen
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACContext;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACPermission;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthorizationsPort;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,25 +17,30 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PrincipalGrantedAuthoritiesService {
+public class PrincipalGrantedAuthoritiesService implements AuthorizationsPort {
 
   private final RBACAssignmentRepository assignmentRepository;
 
   public Set<GrantedAuthority> loadAuthorities(String login) {
-    LocalDateTime now = LocalDateTime.now();
-
     Set<GrantedAuthority> authorities =
-        assignmentRepository.findByPrincipal(login).stream()
-            .filter(assignment -> isCurrentlyValid(assignment, now))
-            .flatMap(assignment -> assignment.role().permissions().stream())
-            .map(RBACPermission::name)
-            .distinct()
+        resolveAuthorities(login).stream()
             .map((String authority) -> (GrantedAuthority) new SimpleGrantedAuthority(authority))
             .collect(Collectors.toUnmodifiableSet());
 
     log.trace("loadAuthorities, login: {}, authorities: {}", login, authorities);
 
     return authorities;
+  }
+
+  @Override
+  public Set<String> resolveAuthorities(String login) {
+    LocalDateTime now = LocalDateTime.now();
+
+    return assignmentRepository.findByPrincipal(login).stream()
+        .filter(assignment -> isCurrentlyValid(assignment, now))
+        .flatMap(assignment -> assignment.role().permissions().stream())
+        .map(RBACPermission::name)
+        .collect(Collectors.toUnmodifiableSet());
   }
 
   private boolean isCurrentlyValid(RBACAssignment assignment, LocalDateTime now) {

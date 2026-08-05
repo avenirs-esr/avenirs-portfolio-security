@@ -1,3 +1,5 @@
 package fr.avenirsesr.portfolio.security.authentication.domain.model;
 
-public record AuthContext(boolean authenticated, String login) {}
+import java.util.Set;
+
+public record AuthContext(boolean authenticated, String login, Set<String> authorities) {}

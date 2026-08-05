@@ -140,7 +140,7 @@ public class SpringSecurityConfig {
           DevAuthenticationFilter.class.getSimpleName());
       return new DevAuthenticationFilter(principalRepository, principalGrantedAuthoritiesService);
     }
-    return new HmacAuthenticationFilter(hmacSecret, principalGrantedAuthoritiesService);
+    return new HmacAuthenticationFilter(hmacSecret);
   }
 
   Filter casTokenAuthenticationFilter() {

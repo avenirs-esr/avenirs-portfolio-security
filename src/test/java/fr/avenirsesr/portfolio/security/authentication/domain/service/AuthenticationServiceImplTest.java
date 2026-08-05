@@ -14,6 +14,7 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCSession;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthorizationsPort;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import java.time.Instant;
 import java.util.Map;
@@ -42,6 +43,7 @@ class AuthenticationServiceImplTest {
 
   @Mock private OidcService oidcService;
   @Mock private AuthContextSigningPort authContextSigningPort;
+  @Mock private AuthorizationsPort authorizationsPort;
 
   @InjectMocks private AuthenticationServiceImpl service;
 
@@ -77,7 +79,7 @@ class AuthenticationServiceImplTest {
         assertEquals(expected, result);
 
         verify(oidcService).generateAuthorizationUrl(HOST, REDIRECT, CODE_CHALLENGE);
-        verifyNoMoreInteractions(oidcService, authContextSigningPort);
+        verifyNoMoreInteractions(oidcService, authContextSigningPort, authorizationsPort);
       }
     }
 
@@ -111,7 +113,7 @@ class AuthenticationServiceImplTest {
         assertFalse(result.accessTokenExpiresAt().isAfter(after.plusSeconds(3600)));
 
         verify(oidcService).exchangeAuthorizationCodeForToken(HOST, CODE, CODE_VERIFIER);
-        verifyNoMoreInteractions(oidcService, authContextSigningPort);
+        verifyNoMoreInteractions(oidcService, authContextSigningPort, authorizationsPort);
       }
     }
 
@@ -142,7 +144,7 @@ class AuthenticationServiceImplTest {
         assertEquals(refreshedSession, result);
 
         verify(oidcService).refreshSessionIfNeeded(oidcSession);
-        verifyNoMoreInteractions(oidcService, authContextSigningPort);
+        verifyNoMoreInteractions(oidcService, authContextSigningPort, authorizationsPort);
       }
     }
 
@@ -157,6 +159,7 @@ class AuthenticationServiceImplTest {
       @Nested
       class AndSessionIsActiveAndPrincipalExists {
         private UUID principalId;
+        private Set<String> authorities;
         private AuthContext expectedAuthContext;
         private SignedAuthContext expectedSignedAuthContext;
         private SignedAuthContext result;
@@ -182,13 +185,15 @@ class AuthenticationServiceImplTest {
                   EUserStatus.ACTIVE,
                   Set.of());
 
-          expectedAuthContext = new AuthContext(true, LOGIN);
+          authorities = Set.of("trace:create:own", "profile:read:own");
+          expectedAuthContext = new AuthContext(true, LOGIN, authorities);
           expectedSignedAuthContext =
               new SignedAuthContext(
                   "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}",
                   "signature");
 
           when(oidcService.introspectAccessToken(ACCESS_TOKEN)).thenReturn(introspection);
+          when(authorizationsPort.resolveAuthorities(LOGIN)).thenReturn(authorities);
           when(authContextSigningPort.sign(expectedAuthContext))
               .thenReturn(expectedSignedAuthContext);
 
@@ -202,8 +207,9 @@ class AuthenticationServiceImplTest {
           assertEquals(expectedSignedAuthContext, result);
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
+          verify(authorizationsPort).resolveAuthorities(LOGIN);
           verify(authContextSigningPort).sign(expectedAuthContext);
-          verifyNoMoreInteractions(oidcService, authContextSigningPort);
+          verifyNoMoreInteractions(oidcService, authContextSigningPort, authorizationsPort);
         }
       }
 
@@ -226,7 +232,7 @@ class AuthenticationServiceImplTest {
               () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verifyNoInteractions(authContextSigningPort);
+          verifyNoInteractions(authContextSigningPort, authorizationsPort);
           verifyNoMoreInteractions(oidcService);
         }
       }
@@ -251,7 +257,7 @@ class AuthenticationServiceImplTest {
               () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verifyNoInteractions(authContextSigningPort);
+          verifyNoInteractions(authContextSigningPort, authorizationsPort);
           verifyNoMoreInteractions(oidcService);
         }
       }
@@ -277,7 +283,7 @@ class AuthenticationServiceImplTest {
               () -> service.getSignedAuthenticatedContext(oidcSession()));
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
-          verifyNoInteractions(authContextSigningPort);
+          verifyNoInteractions(authContextSigningPort, authorizationsPort);
           verifyNoMoreInteractions(oidcService);
         }
       }
