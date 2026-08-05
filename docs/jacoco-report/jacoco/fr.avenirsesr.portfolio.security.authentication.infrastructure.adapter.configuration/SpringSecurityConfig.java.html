@@ -3,12 +3,17 @@ package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.c
 
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter.CASTokenAuthenticationFilter;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter.DevAuthenticationFilter;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter.HmacAuthenticationFilter;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service.PrincipalGrantedAuthoritiesService;
+import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
 import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -34,9 +39,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *
  * 07/11/2024
  */
-<span class="fc" id="L37">@Slf4j</span>
+<span class="fc" id="L42">@Slf4j</span>
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SpringSecurityConfig {
 
   private static final String LOGIN = &quot;/login&quot;;
@@ -58,19 +64,38 @@ public class SpringSecurityConfig {
   private String swaggerUIPath;
 
   private final OidcService oidcService;
+  private final PrincipalGrantedAuthoritiesService principalGrantedAuthoritiesService;
+  private final PrincipalRepository principalRepository;
 
   @Value(&quot;${management.actuator.health.path}&quot;)
   private String actuatorHealth;
 
-<span class="fc" id="L65">  public SpringSecurityConfig(OidcService oidcService) {</span>
-<span class="fc" id="L66">    this.oidcService = oidcService;</span>
-<span class="fc" id="L67">  }</span>
+  @Value(&quot;${avenirs.access.control.grant}&quot;)
+  private String accessControlGrantPath;
+
+  @Value(&quot;${avenirs.access.control.revoke}&quot;)
+  private String accessControlRevokePath;
+
+  @Value(&quot;${security.authentication.filter:hmac}&quot;)
+  private String accessControlFilterMode;
+
+  @Value(&quot;${security.hmac.secret}&quot;)
+  private String hmacSecret;
+
+  public SpringSecurityConfig(
+      OidcService oidcService,
+      PrincipalGrantedAuthoritiesService principalGrantedAuthoritiesService,
+<span class="fc" id="L88">      PrincipalRepository principalRepository) {</span>
+<span class="fc" id="L89">    this.oidcService = oidcService;</span>
+<span class="fc" id="L90">    this.principalGrantedAuthoritiesService = principalGrantedAuthoritiesService;</span>
+<span class="fc" id="L91">    this.principalRepository = principalRepository;</span>
+<span class="fc" id="L92">  }</span>
 
   @Bean
   @Order(1)
   SecurityFilterChain publicFilterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L72">    return httpSecurity</span>
-<span class="fc" id="L73">        .securityMatcher(</span>
+<span class="fc" id="L97">    return httpSecurity</span>
+<span class="fc" id="L98">        .securityMatcher(</span>
             swaggerUIPath + &quot;/**&quot;,
             swaggerAPIDocPath + &quot;/**&quot;,
             LOGIN,
@@ -79,24 +104,47 @@ public class SpringSecurityConfig {
             oidcRedirect,
             &quot;/auth/**&quot;,
             &quot;/internal/**&quot;)
-<span class="fc" id="L82">        .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L83">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
-<span class="fc" id="L84">        .build();</span>
+<span class="fc" id="L107">        .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L108">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
+<span class="fc" id="L109">        .build();</span>
   }
 
   @Bean
   @Order(2)
+  SecurityFilterChain accessControlFilterChain(HttpSecurity httpSecurity) throws Exception {
+<span class="fc" id="L115">    return httpSecurity</span>
+<span class="fc" id="L116">        .securityMatcher(accessControlGrantPath, accessControlRevokePath)</span>
+<span class="fc" id="L117">        .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L118">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
+<span class="fc" id="L119">        .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L120">        .addFilterBefore(</span>
+<span class="fc" id="L121">            accessControlAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L122">        .build();</span>
+  }
+
+  @Bean
+  @Order(3)
   SecurityFilterChain protectedFilterChain(HttpSecurity httpSecurity) throws Exception {
-<span class="fc" id="L90">    return httpSecurity</span>
-<span class="fc" id="L91">        .securityMatcher(&quot;/**&quot;)</span>
-<span class="fc" id="L92">        .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L93">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
-<span class="fc" id="L94">        .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
-<span class="fc" id="L95">        .build();</span>
+<span class="fc" id="L128">    return httpSecurity</span>
+<span class="fc" id="L129">        .securityMatcher(&quot;/**&quot;)</span>
+<span class="fc" id="L130">        .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L131">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().authenticated())</span>
+<span class="fc" id="L132">        .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L133">        .build();</span>
+  }
+
+  Filter accessControlAuthenticationFilter() {
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">    if (&quot;dev&quot;.equalsIgnoreCase(accessControlFilterMode)) {</span>
+<span class="nc" id="L138">      log.warn(</span>
+          &quot;access-control endpoints are running in DEV mode ({}), do not use in production&quot;,
+<span class="nc" id="L140">          DevAuthenticationFilter.class.getSimpleName());</span>
+<span class="nc" id="L141">      return new DevAuthenticationFilter(principalRepository, principalGrantedAuthoritiesService);</span>
+    }
+<span class="fc" id="L143">    return new HmacAuthenticationFilter(hmacSecret, principalGrantedAuthoritiesService);</span>
   }
 
   Filter casTokenAuthenticationFilter() {
-<span class="fc" id="L99">    return new CASTokenAuthenticationFilter(oidcService);</span>
+<span class="fc" id="L147">    return new CASTokenAuthenticationFilter(oidcService, principalGrantedAuthoritiesService);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

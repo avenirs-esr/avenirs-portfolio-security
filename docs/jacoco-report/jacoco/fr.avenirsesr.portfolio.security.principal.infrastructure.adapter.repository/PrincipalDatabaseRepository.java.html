@@ -37,8 +37,9 @@ public class PrincipalDatabaseRepository implements PrincipalRepository {
   }
 
   @Override
+  @Transactional
   public Optional&lt;Principal&gt; findByEppn(String eppn) {
-<span class="nc" id="L41">    return principalJpaRepository.findByEppn(eppn).map(principalMapper::toDomain);</span>
+<span class="nc" id="L42">    return principalJpaRepository.findByEppn(eppn).map(principalMapper::toDomain);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

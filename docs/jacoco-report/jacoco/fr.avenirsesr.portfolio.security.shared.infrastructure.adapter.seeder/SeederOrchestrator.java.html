@@ -39,33 +39,44 @@ public class SeederOrchestrator {
   private final SeedingState seedingState;
 
   @Transactional
+  public void synchronizeCatalog() {
+    try {
+<span class="nc" id="L44">      rbacCatalogSeeder.seed();</span>
+<span class="nc" id="L45">    } catch (Exception e) {</span>
+<span class="nc" id="L46">      seedingState.markFailed(e);</span>
+<span class="nc" id="L47">      log.error(&quot;✘ RBAC catalog synchronization failed&quot;, e);</span>
+<span class="nc" id="L48">      throw e;</span>
+<span class="nc" id="L49">    }</span>
+<span class="nc" id="L50">  }</span>
+
+  @Transactional
   public void seedAll() {
     try {
-<span class="nc" id="L44">      log.info(&quot;Security seeding enabled and starting...&quot;);</span>
+<span class="nc" id="L55">      log.info(&quot;Security seeding enabled and starting...&quot;);</span>
 
-<span class="nc bnc" id="L46" title="All 2 branches missed.">      if (dependenciesCheck) {</span>
-<span class="nc" id="L47">        dependencyChecker.checkAndWait(&quot;Back-office&quot;, backOfficeHealthUrl);</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">      if (dependenciesCheck) {</span>
+<span class="nc" id="L58">        dependencyChecker.checkAndWait(&quot;Back-office&quot;, backOfficeHealthUrl);</span>
       }
 
-<span class="nc" id="L50">      rbacCatalogSeeder.seed();</span>
+<span class="nc" id="L61">      rbacCatalogSeeder.seed();</span>
 
-<span class="nc" id="L52">      List&lt;PrincipalEntity&gt; principalsSaved = principalSeeder.seed();</span>
+<span class="nc" id="L63">      List&lt;PrincipalEntity&gt; principalsSaved = principalSeeder.seed();</span>
 
-<span class="nc" id="L54">      rbacAssignmentSeeder.seed();</span>
+<span class="nc" id="L65">      rbacAssignmentSeeder.seed();</span>
 
-<span class="nc" id="L56">      seedingState.markCompleted();</span>
-<span class="nc" id="L57">      log.info(&quot;✔ Security seeding successfully finished&quot;);</span>
-<span class="nc" id="L58">    } catch (Exception e) {</span>
-<span class="nc" id="L59">      seedingState.markFailed(e);</span>
-<span class="nc" id="L60">      log.error(&quot;✘ Security seeding failed&quot;, e);</span>
-<span class="nc" id="L61">      throw e;</span>
-<span class="nc" id="L62">    }</span>
-<span class="nc" id="L63">  }</span>
+<span class="nc" id="L67">      seedingState.markCompleted();</span>
+<span class="nc" id="L68">      log.info(&quot;✔ Security seeding successfully finished&quot;);</span>
+<span class="nc" id="L69">    } catch (Exception e) {</span>
+<span class="nc" id="L70">      seedingState.markFailed(e);</span>
+<span class="nc" id="L71">      log.error(&quot;✘ Security seeding failed&quot;, e);</span>
+<span class="nc" id="L72">      throw e;</span>
+<span class="nc" id="L73">    }</span>
+<span class="nc" id="L74">  }</span>
 
   @Transactional
   public void clearAll() {
-<span class="nc" id="L67">    List&lt;String&gt; tables =</span>
-<span class="nc" id="L68">        jdbcTemplate.queryForList(</span>
+<span class="nc" id="L78">    List&lt;String&gt; tables =</span>
+<span class="nc" id="L79">        jdbcTemplate.queryForList(</span>
             &quot;&quot;&quot;
             SELECT tablename
             FROM pg_tables
@@ -75,34 +86,34 @@ public class SeederOrchestrator {
             String.class,
             schemaName);
 
-<span class="nc bnc" id="L78" title="All 2 branches missed.">    if (tables.isEmpty()) {</span>
-<span class="nc" id="L79">      log.warn(&quot;No tables found in security schema '{}'&quot;, schemaName);</span>
-<span class="nc" id="L80">      return;</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">    if (tables.isEmpty()) {</span>
+<span class="nc" id="L90">      log.warn(&quot;No tables found in security schema '{}'&quot;, schemaName);</span>
+<span class="nc" id="L91">      return;</span>
     }
 
-<span class="nc" id="L83">    String joined =</span>
-<span class="nc" id="L84">        tables.stream()</span>
-<span class="nc" id="L85">            .map(table -&gt; &quot;\&quot;&quot; + schemaName + &quot;\&quot;.\&quot;&quot; + table + &quot;\&quot;&quot;)</span>
-<span class="nc" id="L86">            .reduce((left, right) -&gt; left + &quot;, &quot; + right)</span>
-<span class="nc" id="L87">            .orElseThrow();</span>
+<span class="nc" id="L94">    String joined =</span>
+<span class="nc" id="L95">        tables.stream()</span>
+<span class="nc" id="L96">            .map(table -&gt; &quot;\&quot;&quot; + schemaName + &quot;\&quot;.\&quot;&quot; + table + &quot;\&quot;&quot;)</span>
+<span class="nc" id="L97">            .reduce((left, right) -&gt; left + &quot;, &quot; + right)</span>
+<span class="nc" id="L98">            .orElseThrow();</span>
 
-<span class="nc" id="L89">    String sql = &quot;TRUNCATE TABLE &quot; + joined + &quot; RESTART IDENTITY CASCADE&quot;;</span>
+<span class="nc" id="L100">    String sql = &quot;TRUNCATE TABLE &quot; + joined + &quot; RESTART IDENTITY CASCADE&quot;;</span>
 
-<span class="nc" id="L91">    log.warn(&quot;Resetting security DB: {}&quot;, sql);</span>
-<span class="nc" id="L92">    jdbcTemplate.execute(sql);</span>
-<span class="nc" id="L93">  }</span>
+<span class="nc" id="L102">    log.warn(&quot;Resetting security DB: {}&quot;, sql);</span>
+<span class="nc" id="L103">    jdbcTemplate.execute(sql);</span>
+<span class="nc" id="L104">  }</span>
 
   public void resetAndSeed() {
-<span class="nc bnc" id="L96" title="All 2 branches missed.">    if (!lock.tryLock()) {</span>
-<span class="nc" id="L97">      throw new IllegalStateException(&quot;Security seeding already running&quot;);</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">    if (!lock.tryLock()) {</span>
+<span class="nc" id="L108">      throw new IllegalStateException(&quot;Security seeding already running&quot;);</span>
     }
 
     try {
-<span class="nc" id="L101">      clearAll();</span>
-<span class="nc" id="L102">      seedAll();</span>
+<span class="nc" id="L112">      clearAll();</span>
+<span class="nc" id="L113">      seedAll();</span>
     } finally {
-<span class="nc" id="L104">      lock.unlock();</span>
+<span class="nc" id="L115">      lock.unlock();</span>
     }
-<span class="nc" id="L106">  }</span>
+<span class="nc" id="L117">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -69,19 +69,26 @@ import java.util.Set;
           EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
-          EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL));
+          EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL)),
+
+<span class="fc" id="L74">  RBAC_MANAGEMENT(</span>
+<span class="fc" id="L75">      Set.of(</span>
+          EPermission.PERM_RBAC_READ,
+          EPermission.PERM_RBAC_ASSIGN,
+          EPermission.PERM_RBAC_REVOKE,
+          EPermission.PERM_RBAC_MANAGE));
 
   private final Set&lt;EPermission&gt; permissions;
 
-<span class="fc" id="L76">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
-<span class="pc bpc" id="L77" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
-<span class="nc" id="L78">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
+<span class="fc" id="L83">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
+<span class="nc" id="L85">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
     }
-<span class="fc" id="L80">    this.permissions = Set.copyOf(permissions);</span>
-<span class="fc" id="L81">  }</span>
+<span class="fc" id="L87">    this.permissions = Set.copyOf(permissions);</span>
+<span class="fc" id="L88">  }</span>
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L84">    return permissions;</span>
+<span class="fc" id="L91">    return permissions;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
