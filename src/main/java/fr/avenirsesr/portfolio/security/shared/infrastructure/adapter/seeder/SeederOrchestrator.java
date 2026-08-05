@@ -39,6 +39,17 @@ public class SeederOrchestrator {
   private final SeedingState seedingState;
 
   @Transactional
+  public void synchronizeCatalog() {
+    try {
+      rbacCatalogSeeder.seed();
+    } catch (Exception e) {
+      seedingState.markFailed(e);
+      log.error("✘ RBAC catalog synchronization failed", e);
+      throw e;
+    }
+  }
+
+  @Transactional
   public void seedAll() {
     try {
       log.info("Security seeding enabled and starting...");

@@ -37,6 +37,7 @@ public class PrincipalDatabaseRepository implements PrincipalRepository {
   }
 
   @Override
+  @Transactional
   public Optional<Principal> findByEppn(String eppn) {
     return principalJpaRepository.findByEppn(eppn).map(principalMapper::toDomain);
   }

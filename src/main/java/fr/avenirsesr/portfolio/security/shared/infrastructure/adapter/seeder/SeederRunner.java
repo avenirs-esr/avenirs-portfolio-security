@@ -22,8 +22,10 @@ public class SeederRunner implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
+    seederOrchestrator.synchronizeCatalog();
+
     if (!seedEnabled) {
-      log.info("Security seeder disabled: skipped");
+      log.info("Security demo/dev seeder disabled: RBAC catalog synchronized, nothing else to do");
       seedingState.markCompleted();
       return;
     }

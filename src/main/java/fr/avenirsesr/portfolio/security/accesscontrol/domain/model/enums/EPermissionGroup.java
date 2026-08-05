@@ -69,7 +69,14 @@ public enum EPermissionGroup {
           EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
-          EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL));
+          EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL)),
+
+  RBAC_MANAGEMENT(
+      Set.of(
+          EPermission.PERM_RBAC_READ,
+          EPermission.PERM_RBAC_ASSIGN,
+          EPermission.PERM_RBAC_REVOKE,
+          EPermission.PERM_RBAC_MANAGE));
 
   private final Set<EPermission> permissions;
 
