@@ -5,17 +5,22 @@ import fr.avenirsesr.portfolio.security.authentication.domain.model.*;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.AuthenticationService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
+import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthorizationsPort;
 import java.time.Instant;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final OidcService oidcService;
   private final AuthContextSigningPort authContextSigningPort;
+  private final AuthorizationsPort authorizationsPort;
 
   public AuthenticationServiceImpl(
-      OidcService oidcService, AuthContextSigningPort authContextSigningPort) {
+      OidcService oidcService,
+      AuthContextSigningPort authContextSigningPort,
+      AuthorizationsPort authorizationsPort) {
     this.oidcService = oidcService;
     this.authContextSigningPort = authContextSigningPort;
+    this.authorizationsPort = authorizationsPort;
   }
 
   @Override
@@ -51,7 +56,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       throw new UnauthenticatedSessionException();
     }
 
-    return new AuthContext(true, introspection.uniqueSecurityName());
+    String login = introspection.uniqueSecurityName();
+    return new AuthContext(true, login, authorizationsPort.resolveAuthorities(login));
   }
 
   @Override

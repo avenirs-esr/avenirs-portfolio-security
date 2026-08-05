@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.AuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.SignedAuthContext;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthContextSigningPort;
+import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.model.SignedContextPayload;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
@@ -36,9 +37,9 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
     try {
       long now = Instant.now().getEpochSecond();
 
-      // TODO: Mock while waiting #1683
       SignedContextPayload payload =
-          new SignedContextPayload(authContext.login(), now, now + ttlSeconds);
+          new SignedContextPayload(
+              authContext.login(), now, now + ttlSeconds, authContext.authorities());
 
       String jsonPayload = objectMapper.writeValueAsString(payload);
 
@@ -55,6 +56,4 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
       throw new IllegalStateException("Unable to sign authentication context", e);
     }
   }
-
-  private record SignedContextPayload(String sub, long iat, long exp) {}
 }
