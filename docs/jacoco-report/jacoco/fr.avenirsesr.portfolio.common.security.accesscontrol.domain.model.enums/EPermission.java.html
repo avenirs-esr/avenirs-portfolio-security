@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EPermission.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums</a> &gt; <span class="el_source">EPermission.java</span></div><h1>EPermission.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums;
+
+<span class="fc" id="L3">public enum EPermission {</span>
+<span class="fc" id="L4">  PERM_PROFILE_READ_OWN(&quot;profile:read:own&quot;, &quot;View own profile&quot;),</span>
+<span class="fc" id="L5">  PERM_PROFILE_UPDATE_OWN(&quot;profile:update:own&quot;, &quot;Update own profile or photo&quot;),</span>
+
+<span class="fc" id="L7">  PERM_TRACE_CREATE_OWN(&quot;trace:create:own&quot;, &quot;Add a trace to own personal space&quot;),</span>
+<span class="fc" id="L8">  PERM_TRACE_LIST_OWN(&quot;trace:list:own&quot;, &quot;View the list of own traces&quot;),</span>
+<span class="fc" id="L9">  PERM_TRACE_READ_CONTEXTUAL(</span>
+      &quot;trace:read:contextual&quot;, &quot;View a trace made accessible in an authorized context&quot;),
+<span class="fc" id="L11">  PERM_TRACE_DOWNLOAD_CONTEXTUAL(</span>
+      &quot;trace:download:contextual&quot;, &quot;Download a trace made accessible in an authorized context&quot;),
+<span class="fc" id="L13">  PERM_TRACE_ASSOCIATION_MANAGE_OWN(</span>
+      &quot;trace:association:manage:own&quot;,
+      &quot;Associate a trace with a competency, an activity or an experience&quot;),
+<span class="fc" id="L16">  PERM_TRACE_UPDATE_OWN(&quot;trace:update:own&quot;, &quot;Update own trace or add an attachment&quot;),</span>
+<span class="fc" id="L17">  PERM_TRACE_DELETE_OWN(&quot;trace:delete:own&quot;, &quot;Delete own traces&quot;),</span>
+
+<span class="fc" id="L19">  PERM_COMPETENCY_READ(&quot;competency:read&quot;, &quot;View the target competencies of the framework&quot;),</span>
+
+<span class="fc" id="L21">  PERM_DECLARED_ACTIVITY_LIST_OWN(</span>
+      &quot;declared-activity:list:own&quot;,
+      &quot;View the list of own declared activities and their associations&quot;),
+<span class="fc" id="L24">  PERM_DECLARED_ACTIVITY_UPDATE_OWN(</span>
+      &quot;declared-activity:update:own&quot;,
+      &quot;Update, finish or add a reflection to a declared activity&quot;),
+<span class="fc" id="L27">  PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN(</span>
+      &quot;declared-activity:association:manage:own&quot;,
+      &quot;Remove associations of a declared activity&quot;),
+
+<span class="fc" id="L31">  PERM_DECLARED_SKILL_LIST_OWN(&quot;declared-skill:list:own&quot;, &quot;View the list of own declared skills&quot;),</span>
+<span class="fc" id="L32">  PERM_DECLARED_SKILL_CREATE_OWN(&quot;declared-skill:create:own&quot;, &quot;Add a declared skill&quot;),</span>
+<span class="fc" id="L33">  PERM_DECLARED_SKILL_UPDATE_OWN(&quot;declared-skill:update:own&quot;, &quot;Update a declared skill&quot;),</span>
+<span class="fc" id="L34">  PERM_DECLARED_SKILL_DELETE_OWN(&quot;declared-skill:delete:own&quot;, &quot;Delete a declared skill&quot;),</span>
+<span class="fc" id="L35">  PERM_DECLARED_SKILL_ASSOCIATION_MANAGE_OWN(</span>
+      &quot;declared-skill:association:manage:own&quot;, &quot;Add or remove associations of a declared skill&quot;),
+
+<span class="fc" id="L38">  PERM_DECLARED_EXPERIENCE_LIST_OWN(</span>
+      &quot;declared-experience:list:own&quot;, &quot;View the list of own declared experiences&quot;),
+<span class="fc" id="L40">  PERM_DECLARED_EXPERIENCE_CREATE_OWN(</span>
+      &quot;declared-experience:create:own&quot;, &quot;Add a declared experience&quot;),
+<span class="fc" id="L42">  PERM_DECLARED_EXPERIENCE_UPDATE_OWN(</span>
+      &quot;declared-experience:update:own&quot;, &quot;Update a declared experience&quot;),
+<span class="fc" id="L44">  PERM_DECLARED_EXPERIENCE_DELETE_OWN(</span>
+      &quot;declared-experience:delete:own&quot;, &quot;Delete a declared experience&quot;),
+<span class="fc" id="L46">  PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN(</span>
+      &quot;declared-experience:association:manage:own&quot;,
+      &quot;Associate a trace or a competency with a declared experience&quot;),
+
+<span class="fc" id="L50">  PERM_DECLARED_PROGRAM_LIST_OWN(</span>
+      &quot;declared-program:list:own&quot;, &quot;View the list of own declared programs&quot;),
+<span class="fc" id="L52">  PERM_DECLARED_PROGRAM_CREATE_OWN(&quot;declared-program:create:own&quot;, &quot;Add a declared program&quot;),</span>
+<span class="fc" id="L53">  PERM_DECLARED_PROGRAM_UPDATE_OWN(&quot;declared-program:update:own&quot;, &quot;Update a declared program&quot;),</span>
+<span class="fc" id="L54">  PERM_DECLARED_PROGRAM_DELETE_OWN(&quot;declared-program:delete:own&quot;, &quot;Delete a declared program&quot;),</span>
+
+<span class="fc" id="L56">  PERM_SELF_KNOWLEDGE_LIST_OWN(</span>
+      &quot;self-knowledge:list:own&quot;, &quot;View own self-knowledge elements and categories&quot;),
+<span class="fc" id="L58">  PERM_SELF_KNOWLEDGE_CREATE_OWN(</span>
+      &quot;self-knowledge:create:own&quot;, &quot;Add a self-knowledge element or category&quot;),
+<span class="fc" id="L60">  PERM_SELF_KNOWLEDGE_UPDATE_OWN(</span>
+      &quot;self-knowledge:update:own&quot;, &quot;Update a self-knowledge element&quot;),
+<span class="fc" id="L62">  PERM_SELF_KNOWLEDGE_DELETE_OWN(</span>
+      &quot;self-knowledge:delete:own&quot;, &quot;Delete a self-knowledge element or category&quot;),
+
+<span class="fc" id="L65">  PERM_NOTIFICATION_READ_OWN(&quot;notification:read:own&quot;, &quot;View own notifications&quot;),</span>
+<span class="fc" id="L66">  PERM_NOTIFICATION_UPDATE_OWN(&quot;notification:update:own&quot;, &quot;Mark own notification as seen&quot;),</span>
+
+<span class="fc" id="L68">  PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL(</span>
+      &quot;activity:catalog:read:contextual&quot;, &quot;View the activity catalog&quot;),
+<span class="fc" id="L70">  PERM_ACTIVITY_REGISTER_OWN(&quot;activity:register:own&quot;, &quot;Register for an activity&quot;),</span>
+<span class="fc" id="L71">  PERM_ACTIVITY_READ_CONTEXTUAL(&quot;activity:read:contextual&quot;, &quot;View activity details&quot;),</span>
+<span class="fc" id="L72">  PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL(</span>
+      &quot;activity:document:download:contextual&quot;, &quot;Download an activity's documents and links&quot;),
+<span class="fc" id="L74">  PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL(</span>
+      &quot;activity:document:read:contextual&quot;, &quot;View an activity's documents and links&quot;),
+<span class="fc" id="L76">  PERM_EMPLOYMENT_KIT_READ_OWN(&quot;employment-kit:read:own&quot;, &quot;View the My employment kit page&quot;),</span>
+<span class="fc" id="L77">  PERM_ACTIVITY_LIBRARY_STAFF_READ(</span>
+      &quot;activity:library:staff:read&quot;, &quot;View the staff activity library&quot;),
+<span class="fc" id="L79">  PERM_ACTIVITY_NATIONAL_CREATE(&quot;activity:national:create&quot;, &quot;Create a national activity&quot;),</span>
+<span class="fc" id="L80">  PERM_ACTIVITY_NATIONAL_UPDATE(</span>
+      &quot;activity:national:update&quot;, &quot;Update the content of an unpublished national activity&quot;),
+<span class="fc" id="L82">  PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL(</span>
+      &quot;activity:published:update:contextual&quot;, &quot;Update a published national activity&quot;),
+<span class="fc" id="L84">  PERM_ACTIVITY_NATIONAL_DELETE(</span>
+      &quot;activity:national:delete&quot;, &quot;Delete an unpublished national activity&quot;),
+<span class="fc" id="L86">  PERM_ACTIVITY_FEEDBACK_SETTINGS_UPDATE(</span>
+      &quot;activity:feedback-settings:update&quot;,
+      &quot;Configure the feedback request settings of a national activity&quot;),
+
+<span class="fc" id="L90">  PERM_FEEDBACK_REQUEST_CREATE_OWN(&quot;feedback:request:create:own&quot;, &quot;Request feedback&quot;),</span>
+<span class="fc" id="L91">  PERM_FEEDBACK_RECEIVED_READ_OWN(&quot;feedback:received:read:own&quot;, &quot;View received feedback&quot;),</span>
+<span class="fc" id="L92">  PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL(</span>
+      &quot;feedback:request:read:assigned&quot;, &quot;View feedback requests assigned to them&quot;),
+<span class="fc" id="L94">  PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL(</span>
+      &quot;feedback:request:respond:assigned&quot;, &quot;Respond to an assigned feedback request&quot;),
+<span class="fc" id="L96">  PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL(</span>
+      &quot;feedback:history:read:contextual&quot;, &quot;View the feedback history of their institution&quot;),
+<span class="fc" id="L98">  PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL(</span>
+      &quot;feedback:dashboard:read:contextual&quot;, &quot;View the feedback dashboard of their institution&quot;),
+
+<span class="fc" id="L101">  PERM_PRIMARY_ESTABLISHMENT_READ(&quot;primary-establishment:read&quot;, &quot;View a primary institution&quot;),</span>
+<span class="fc" id="L102">  PERM_PRIMARY_ESTABLISHMENT_CREATE(&quot;primary-establishment:create&quot;, &quot;Create a primary institution&quot;),</span>
+<span class="fc" id="L103">  PERM_PRIMARY_ESTABLISHMENT_UPDATE(&quot;primary-establishment:update&quot;, &quot;Update a primary institution&quot;),</span>
+<span class="fc" id="L104">  PERM_PRIMARY_ESTABLISHMENT_DELETE(&quot;primary-establishment:delete&quot;, &quot;Delete a primary institution&quot;),</span>
+<span class="fc" id="L105">  PERM_SECONDARY_ESTABLISHMENT_READ(&quot;secondary-establishment:read&quot;, &quot;View a secondary institution&quot;),</span>
+<span class="fc" id="L106">  PERM_SECONDARY_ESTABLISHMENT_CREATE(</span>
+      &quot;secondary-establishment:create&quot;, &quot;Create a secondary institution&quot;),
+<span class="fc" id="L108">  PERM_SECONDARY_ESTABLISHMENT_UPDATE(</span>
+      &quot;secondary-establishment:update&quot;, &quot;Update a secondary institution&quot;),
+<span class="fc" id="L110">  PERM_SECONDARY_ESTABLISHMENT_DELETE(</span>
+      &quot;secondary-establishment:delete&quot;, &quot;Delete a secondary institution&quot;),
+<span class="fc" id="L112">  PERM_GROUP_READ(&quot;group:read&quot;, &quot;View a group&quot;),</span>
+<span class="fc" id="L113">  PERM_GROUP_IMPORT(&quot;group:import&quot;, &quot;Populate a group via import&quot;),</span>
+<span class="fc" id="L114">  PERM_GROUP_CREATE(&quot;group:create&quot;, &quot;Create a group&quot;),</span>
+<span class="fc" id="L115">  PERM_GROUP_UPDATE(&quot;group:update&quot;, &quot;Update a group&quot;),</span>
+<span class="fc" id="L116">  PERM_GROUP_DELETE(&quot;group:delete&quot;, &quot;Delete a group&quot;),</span>
+
+<span class="fc" id="L118">  PERM_RBAC_READ(</span>
+      &quot;rbac:read&quot;,
+      &quot;Read RBAC administration data: roles, permissions, assignments, scopes and contexts&quot;),
+<span class="fc" id="L121">  PERM_RBAC_ASSIGN(&quot;rbac:assign&quot;, &quot;Create or grant an RBAC assignment to a principal&quot;),</span>
+<span class="fc" id="L122">  PERM_RBAC_REVOKE(&quot;rbac:revoke&quot;, &quot;Revoke an RBAC assignment&quot;),</span>
+<span class="fc" id="L123">  PERM_RBAC_MANAGE(</span>
+      &quot;rbac:manage&quot;, &quot;Create, update or delete structuring RBAC elements such as roles&quot;);
+
+  private final String authority;
+  private final String description;
+
+<span class="fc" id="L129">  EPermission(String authority, String description) {</span>
+<span class="fc" id="L130">    this.authority = authority;</span>
+<span class="fc" id="L131">    this.description = description;</span>
+<span class="fc" id="L132">  }</span>
+
+  public String authority() {
+<span class="fc" id="L135">    return authority;</span>
+  }
+
+  public String description() {
+<span class="fc" id="L139">    return description;</span>
+  }
+
+  public String legacyAuthority() {
+<span class="fc" id="L143">    return name();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

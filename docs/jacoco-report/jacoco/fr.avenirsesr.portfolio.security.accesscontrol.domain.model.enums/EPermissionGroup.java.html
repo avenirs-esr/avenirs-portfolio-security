@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EPermissionGroup.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums</a> &gt; <span class="el_source">EPermissionGroup.java</span></div><h1>EPermissionGroup.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import java.util.Set;
 
-<span class="fc" id="L5">public enum EPermissionGroup {</span>
-<span class="fc" id="L6">  ESTABLISHMENT_MANAGEMENT(</span>
-<span class="fc" id="L7">      Set.of(</span>
+<span class="fc" id="L6">public enum EPermissionGroup {</span>
+<span class="fc" id="L7">  ESTABLISHMENT_MANAGEMENT(</span>
+<span class="fc" id="L8">      Set.of(</span>
           EPermission.PERM_PRIMARY_ESTABLISHMENT_READ,
           EPermission.PERM_PRIMARY_ESTABLISHMENT_CREATE,
           EPermission.PERM_PRIMARY_ESTABLISHMENT_UPDATE,
@@ -14,65 +15,91 @@ import java.util.Set;
           EPermission.PERM_SECONDARY_ESTABLISHMENT_UPDATE,
           EPermission.PERM_SECONDARY_ESTABLISHMENT_DELETE)),
 
-<span class="fc" id="L17">  GROUP_MANAGEMENT(</span>
-<span class="fc" id="L18">      Set.of(</span>
+<span class="fc" id="L18">  GROUP_MANAGEMENT(</span>
+<span class="fc" id="L19">      Set.of(</span>
           EPermission.PERM_GROUP_READ,
           EPermission.PERM_GROUP_IMPORT,
           EPermission.PERM_GROUP_CREATE,
           EPermission.PERM_GROUP_UPDATE,
           EPermission.PERM_GROUP_DELETE)),
 
-<span class="fc" id="L25">  TRACE_MANAGEMENT_OWN(</span>
-<span class="fc" id="L26">      Set.of(</span>
+<span class="fc" id="L26">  TRACE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L27">      Set.of(</span>
           EPermission.PERM_TRACE_CREATE_OWN,
           EPermission.PERM_TRACE_LIST_OWN,
+          EPermission.PERM_TRACE_UPDATE_OWN,
+          EPermission.PERM_TRACE_DELETE_OWN,
           EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN)),
 
-<span class="fc" id="L31">  DECLARED_SKILL_MANAGEMENT_OWN(</span>
-<span class="fc" id="L32">      Set.of(</span>
+<span class="fc" id="L34">  DECLARED_ACTIVITY_MANAGEMENT_OWN(</span>
+<span class="fc" id="L35">      Set.of(</span>
+          EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN,
+          EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN,
+          EPermission.PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN)),
+
+<span class="fc" id="L40">  DECLARED_SKILL_MANAGEMENT_OWN(</span>
+<span class="fc" id="L41">      Set.of(</span>
           EPermission.PERM_DECLARED_SKILL_LIST_OWN,
           EPermission.PERM_DECLARED_SKILL_CREATE_OWN,
           EPermission.PERM_DECLARED_SKILL_UPDATE_OWN,
           EPermission.PERM_DECLARED_SKILL_DELETE_OWN,
           EPermission.PERM_DECLARED_SKILL_ASSOCIATION_MANAGE_OWN)),
 
-<span class="fc" id="L39">  DECLARED_EXPERIENCE_MANAGEMENT_OWN(</span>
-<span class="fc" id="L40">      Set.of(</span>
+<span class="fc" id="L48">  DECLARED_EXPERIENCE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L49">      Set.of(</span>
           EPermission.PERM_DECLARED_EXPERIENCE_LIST_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_CREATE_OWN,
+          EPermission.PERM_DECLARED_EXPERIENCE_UPDATE_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN)),
 
-<span class="fc" id="L46">  STUDENT_ACTIVITY_ACCESS(</span>
-<span class="fc" id="L47">      Set.of(</span>
+<span class="fc" id="L56">  DECLARED_PROGRAM_MANAGEMENT_OWN(</span>
+<span class="fc" id="L57">      Set.of(</span>
+          EPermission.PERM_DECLARED_PROGRAM_LIST_OWN,
+          EPermission.PERM_DECLARED_PROGRAM_CREATE_OWN,
+          EPermission.PERM_DECLARED_PROGRAM_UPDATE_OWN,
+          EPermission.PERM_DECLARED_PROGRAM_DELETE_OWN)),
+
+<span class="fc" id="L63">  SELF_KNOWLEDGE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L64">      Set.of(</span>
+          EPermission.PERM_SELF_KNOWLEDGE_LIST_OWN,
+          EPermission.PERM_SELF_KNOWLEDGE_CREATE_OWN,
+          EPermission.PERM_SELF_KNOWLEDGE_UPDATE_OWN,
+          EPermission.PERM_SELF_KNOWLEDGE_DELETE_OWN)),
+
+<span class="fc" id="L70">  NOTIFICATION_MANAGEMENT_OWN(</span>
+<span class="fc" id="L71">      Set.of(EPermission.PERM_NOTIFICATION_READ_OWN, EPermission.PERM_NOTIFICATION_UPDATE_OWN)),</span>
+
+<span class="fc" id="L73">  STUDENT_ACTIVITY_ACCESS(</span>
+<span class="fc" id="L74">      Set.of(</span>
           EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_REGISTER_OWN,
           EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL)),
 
-<span class="fc" id="L54">  STUDENT_FEEDBACK_ACCESS(</span>
-<span class="fc" id="L55">      Set.of(</span>
+<span class="fc" id="L81">  STUDENT_FEEDBACK_ACCESS(</span>
+<span class="fc" id="L82">      Set.of(</span>
           EPermission.PERM_FEEDBACK_REQUEST_CREATE_OWN,
           EPermission.PERM_FEEDBACK_RECEIVED_READ_OWN)),
 
-<span class="fc" id="L59">  STAFF_ACTIVITY_ACCESS(</span>
-<span class="fc" id="L60">      Set.of(</span>
+<span class="fc" id="L86">  STAFF_ACTIVITY_ACCESS(</span>
+<span class="fc" id="L87">      Set.of(</span>
           EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
           EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL)),
 
-<span class="fc" id="L67">  STAFF_FEEDBACK_MANAGEMENT(</span>
-<span class="fc" id="L68">      Set.of(</span>
+<span class="fc" id="L94">  STAFF_FEEDBACK_MANAGEMENT(</span>
+<span class="fc" id="L95">      Set.of(</span>
           EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL)),
 
-<span class="fc" id="L74">  RBAC_MANAGEMENT(</span>
-<span class="fc" id="L75">      Set.of(</span>
+<span class="fc" id="L101">  RBAC_MANAGEMENT(</span>
+<span class="fc" id="L102">      Set.of(</span>
           EPermission.PERM_RBAC_READ,
           EPermission.PERM_RBAC_ASSIGN,
           EPermission.PERM_RBAC_REVOKE,
@@ -80,15 +107,15 @@ import java.util.Set;
 
   private final Set&lt;EPermission&gt; permissions;
 
-<span class="fc" id="L83">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
-<span class="nc" id="L85">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
+<span class="fc" id="L110">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
+<span class="nc" id="L112">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
     }
-<span class="fc" id="L87">    this.permissions = Set.copyOf(permissions);</span>
-<span class="fc" id="L88">  }</span>
+<span class="fc" id="L114">    this.permissions = Set.copyOf(permissions);</span>
+<span class="fc" id="L115">  }</span>
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L91">    return permissions;</span>
+<span class="fc" id="L118">    return permissions;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

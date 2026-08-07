@@ -7,63 +7,72 @@ import fr.avenirsesr.portfolio.common.error.domain.model.enums.EErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-<span class="nc" id="L15">@Slf4j</span>
-<span class="nc" id="L16">public abstract class BaseRestExceptionHandler {</span>
+<span class="nc" id="L16">@Slf4j</span>
+<span class="nc" id="L17">public abstract class BaseRestExceptionHandler {</span>
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity&lt;ErrorResponse&gt; handleGenericException(Exception ex) {
-<span class="nc" id="L20">    log.error(&quot;Erreur technique inattendue&quot;, ex);</span>
+<span class="nc" id="L21">    log.error(&quot;Erreur technique inattendue&quot;, ex);</span>
 
-<span class="nc" id="L22">    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
-<span class="nc" id="L23">        .body(new ErrorResponse(&quot;INTERNAL_ERROR&quot;, &quot;Une erreur technique est survenue.&quot;));</span>
+<span class="nc" id="L23">    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L24">        .body(new ErrorResponse(&quot;INTERNAL_ERROR&quot;, &quot;Une erreur technique est survenue.&quot;));</span>
+  }
+
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ResponseEntity&lt;ErrorResponse&gt; handleAuthorizationDenied(AuthorizationDeniedException ex) {
+<span class="nc" id="L29">    log.warn(&quot;Accès refusé : {}&quot;, ex.getMessage());</span>
+
+<span class="nc" id="L31">    return ResponseEntity.status(HttpStatus.FORBIDDEN)</span>
+<span class="nc" id="L32">        .body(new ErrorResponse(EErrorCode.ACCESS_DENIED.name(), EErrorCode.ACCESS_DENIED.getMessage()));</span>
   }
 
   @ExceptionHandler(BusinessException.class)
   public ResponseEntity&lt;ErrorResponse&gt; handleBusinessException(BusinessException ex) {
-<span class="nc" id="L28">    log.error(&quot;Erreur métier : {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L37">    log.error(&quot;Erreur métier : {}&quot;, ex.getMessage());</span>
 
-<span class="nc" id="L30">    return ResponseEntity.status(ex.getErrorCode().getHttpStatus())</span>
-<span class="nc" id="L31">        .body(new ErrorResponse(ex.getErrorCode().name(), ex.getMessage()));</span>
+<span class="nc" id="L39">    return ResponseEntity.status(ex.getErrorCode().getHttpStatus())</span>
+<span class="nc" id="L40">        .body(new ErrorResponse(ex.getErrorCode().name(), ex.getMessage()));</span>
   }
 
   @ExceptionHandler(MaxUploadSizeExceededException.class)
   public ResponseEntity&lt;ErrorResponse&gt; handle(MaxUploadSizeExceededException ex) {
-<span class="nc" id="L36">    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)</span>
-<span class="nc" id="L37">        .body(</span>
+<span class="nc" id="L45">    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)</span>
+<span class="nc" id="L46">        .body(</span>
             new ErrorResponse(
-<span class="nc" id="L39">                EErrorCode.MAX_FILE_SIZE_EXCEEDED.name(),</span>
-<span class="nc" id="L40">                EErrorCode.MAX_FILE_SIZE_EXCEEDED.getMessage()));</span>
+<span class="nc" id="L48">                EErrorCode.MAX_FILE_SIZE_EXCEEDED.name(),</span>
+<span class="nc" id="L49">                EErrorCode.MAX_FILE_SIZE_EXCEEDED.getMessage()));</span>
   }
 
   @ExceptionHandler(MissingServletRequestParameterException.class)
   public ResponseEntity&lt;String&gt; handleMissingParams(MissingServletRequestParameterException ex) {
-<span class="nc" id="L45">    String name = ex.getParameterName();</span>
-<span class="nc" id="L46">    String message = String.format(&quot;Missing required parameter: %s&quot;, name);</span>
-<span class="nc" id="L47">    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);</span>
+<span class="nc" id="L54">    String name = ex.getParameterName();</span>
+<span class="nc" id="L55">    String message = String.format(&quot;Missing required parameter: %s&quot;, name);</span>
+<span class="nc" id="L56">    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);</span>
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity&lt;ErrorResponse&gt; handleMethodArgumentTypeMismatch(
       MethodArgumentTypeMismatchException ex) {
-<span class="nc" id="L53">    return ResponseEntity.status(HttpStatus.BAD_REQUEST)</span>
-<span class="nc" id="L54">        .body(</span>
+<span class="nc" id="L62">    return ResponseEntity.status(HttpStatus.BAD_REQUEST)</span>
+<span class="nc" id="L63">        .body(</span>
             new ErrorResponse(
-<span class="nc" id="L56">                EErrorCode.INVALID_ARGUMENT_TYPE.name(),</span>
-<span class="nc" id="L57">                EErrorCode.INVALID_ARGUMENT_TYPE.getMessage()));</span>
+<span class="nc" id="L65">                EErrorCode.INVALID_ARGUMENT_TYPE.name(),</span>
+<span class="nc" id="L66">                EErrorCode.INVALID_ARGUMENT_TYPE.getMessage()));</span>
   }
 
   @ExceptionHandler(ConfigurationException.class)
   public ResponseEntity&lt;ErrorResponse&gt; handleConfigurationError(ConfigurationException ex) {
-<span class="nc" id="L62">    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
-<span class="nc" id="L63">        .body(</span>
+<span class="nc" id="L71">    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L72">        .body(</span>
             new ErrorResponse(
-<span class="nc" id="L65">                EErrorCode.CONFIGURATION_ERROR.name(),</span>
-<span class="nc" id="L66">                EErrorCode.CONFIGURATION_ERROR.getMessage()));</span>
+<span class="nc" id="L74">                EErrorCode.CONFIGURATION_ERROR.name(),</span>
+<span class="nc" id="L75">                EErrorCode.CONFIGURATION_ERROR.getMessage()));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -42,9 +42,8 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infra
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederRunner,21,0,2,0,8,0,3,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.adapter.seeder,SeederOrchestrator,131,0,6,0,42,0,10,0,7,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.user.application.adapter.dto,ExternalUserDTO,38,0,0,0,2,0,2,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,EPermission,0,439,0,0,0,60,0,5,0,5
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,ERole,0,127,0,6,0,28,0,10,0,7
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,EPermissionGroup,7,133,1,1,1,26,1,3,0,3
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,ERole,0,132,0,6,0,28,0,10,0,7
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums,EPermissionGroup,7,177,1,1,1,34,1,3,0,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.domain.service,PrincipalServiceImpl,0,40,0,0,0,9,0,5,0,5
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.domain.service,StructureServiceImpl,0,89,0,0,0,21,0,9,0,9
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data,ESeederSource,15,0,0,0,3,0,1,0,1,0
@@ -57,6 +56,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.application.adap
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.user.domain.model.enums,EUserStatus,0,27,0,0,0,5,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.infrastructure.adapter.model,TranslationEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.infrastructure.adapter.model,TranslationEntity,3,0,0,0,1,0,1,0,1,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums,EPermission,0,567,0,0,0,76,0,5,0,5
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.domain,FetchGraph,97,0,6,0,23,0,10,0,7,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter,EntityGrapher,259,0,19,0,53,0,21,0,10,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.application.adapter.controller,OidcController,0,114,3,11,0,27,3,12,0,8
@@ -134,7 +134,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infras
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper,RBACAssignmentMapper,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.configuration.domain.exception,ConfigurationException,9,0,0,0,4,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.language.domain.exception,LanguageException,9,0,0,0,4,0,2,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.application.adapter.exception,BaseRestExceptionHandler,89,0,0,0,23,0,8,0,8,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.application.adapter.exception,BaseRestExceptionHandler,105,0,0,0,26,0,9,0,9,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACCatalogSeeder,380,0,24,0,76,0,21,0,9,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACCatalogSeeder.RoleSyncSummary,18,0,0,0,4,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACCatalogSeeder.PermissionSyncOutcome,27,0,0,0,5,0,1,0,1,0
@@ -169,12 +169,12 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infras
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DisabledAuthenticationFilter,45,0,8,0,10,0,8,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DevAuthenticationFilter,63,0,12,0,14,0,10,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,ApiKeyAuthenticationFilter,177,0,32,0,43,0,22,0,6,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,HmacAuthenticationFilter,193,0,22,0,47,0,18,0,7,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,HmacAuthenticationFilter,219,0,24,0,56,0,19,0,7,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.temporal.infrastructure.adapter.model,PeriodEntity,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.temporal.infrastructure.adapter.model,PeriodEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification,DateFilterSpecificationBuilder,50,0,6,0,8,0,9,0,6,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification,FilterSpecificationBuilder,39,0,6,0,8,0,5,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model,HmacAuthenticationToken,15,0,0,0,6,0,3,0,3,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model,HmacAuthenticationToken,20,0,0,0,8,0,4,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.repository,PrincipalDatabaseRepository,49,0,0,0,7,0,5,0,5,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.repository,StructureDatabaseRepository,68,0,0,0,8,0,6,0,6,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.user.infrastructure.service,NoOpUserService,7,0,0,0,3,0,3,0,3,0
@@ -194,7 +194,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.domain.model.enums,EExternalSkillType,27,0,0,0,5,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.domain.model.enums,EExternalSkillCategoryType,27,0,0,0,5,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.domain.port.output,DataGenerator,3,0,0,0,1,0,1,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.domain.model.enums,EErrorCode,5,667,0,0,1,92,1,3,1,3
+avenirs-portfolio-security,fr.avenirsesr.portfolio.common.error.domain.model.enums,EErrorCode,5,675,0,0,1,93,1,3,1,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter,HmacAuthenticationFilter,8,114,3,11,5,24,3,11,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter,CASTokenAuthenticationFilter,0,99,1,13,0,27,1,9,0,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.filter,DevAuthenticationFilter,0,41,0,2,0,10,0,3,0,2

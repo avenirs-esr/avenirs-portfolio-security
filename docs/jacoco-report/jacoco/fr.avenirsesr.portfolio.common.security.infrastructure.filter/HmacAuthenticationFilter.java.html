@@ -15,16 +15,19 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-<span class="nc" id="L27">@Slf4j</span>
+<span class="nc" id="L30">@Slf4j</span>
 public class HmacAuthenticationFilter extends OncePerRequestFilter {
 
   private final String permitAllPathsString;
@@ -32,78 +35,89 @@ public class HmacAuthenticationFilter extends OncePerRequestFilter {
 
   private List&lt;String&gt; permitAllPathsList;
 
-<span class="nc" id="L35">  public HmacAuthenticationFilter(String permitAllPathsString, String secret) {</span>
-<span class="nc" id="L36">    this.permitAllPathsString = permitAllPathsString;</span>
-<span class="nc" id="L37">    this.secret = secret;</span>
-<span class="nc" id="L38">  }</span>
+<span class="nc" id="L38">  public HmacAuthenticationFilter(String permitAllPathsString, String secret) {</span>
+<span class="nc" id="L39">    this.permitAllPathsString = permitAllPathsString;</span>
+<span class="nc" id="L40">    this.secret = secret;</span>
+<span class="nc" id="L41">  }</span>
 
   @Override
   public void doFilterInternal(
-<span class="nc bnc" id="L42" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
-<span class="nc bnc" id="L43" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
-<span class="nc bnc" id="L44" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
       throws ServletException, IOException {
 
-<span class="nc" id="L47">    String signature = request.getHeader(AvenirsSecurityHeaders.CONTEXT_SIGNATURE);</span>
-<span class="nc" id="L48">    String payload = request.getHeader(AvenirsSecurityHeaders.SIGNED_CONTEXT);</span>
-<span class="nc" id="L49">    ObjectMapper objectMapper = new ObjectMapper();</span>
-<span class="nc" id="L50">    objectMapper.registerModule(new JavaTimeModule());</span>
-<span class="nc" id="L51">    UserSecurityPayload userSecurityPayload =</span>
-<span class="nc" id="L52">        objectMapper.readValue(payload, UserSecurityPayload.class);</span>
+<span class="nc" id="L50">    String signature = request.getHeader(AvenirsSecurityHeaders.CONTEXT_SIGNATURE);</span>
+<span class="nc" id="L51">    String payload = request.getHeader(AvenirsSecurityHeaders.SIGNED_CONTEXT);</span>
+<span class="nc" id="L52">    ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L53">    objectMapper.registerModule(new JavaTimeModule());</span>
+<span class="nc" id="L54">    UserSecurityPayload userSecurityPayload =</span>
+<span class="nc" id="L55">        objectMapper.readValue(payload, UserSecurityPayload.class);</span>
 
-<span class="nc bnc" id="L54" title="All 2 branches missed.">    if (!payloadIsValid(userSecurityPayload)) {</span>
-<span class="nc" id="L55">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
-<span class="nc" id="L56">      log.error(&quot;Invalid HMAC authentication attempt. Payload is expired or invalid. {}&quot;, payload);</span>
-<span class="nc" id="L57">      throw exception;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">    if (!payloadIsValid(userSecurityPayload)) {</span>
+<span class="nc" id="L58">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
+<span class="nc" id="L59">      log.error(&quot;Invalid HMAC authentication attempt. Payload is expired or invalid. {}&quot;, payload);</span>
+<span class="nc" id="L60">      throw exception;</span>
     }
 
-<span class="nc bnc" id="L60" title="All 4 branches missed.">    if (signature != null &amp;&amp; verifySignature(payload, signature, secret)) {</span>
-<span class="nc" id="L61">      Authentication auth = new HmacAuthenticationToken(userSecurityPayload.getSub());</span>
-<span class="nc" id="L62">      SecurityContextHolder.getContext().setAuthentication(auth);</span>
+<span class="nc bnc" id="L63" title="All 4 branches missed.">    if (signature != null &amp;&amp; verifySignature(payload, signature, secret)) {</span>
+      List&lt;GrantedAuthority&gt; authorities =
+<span class="nc bnc" id="L65" title="All 2 branches missed.">          userSecurityPayload.getAuthorities() == null</span>
+<span class="nc" id="L66">              ? Collections.emptyList()</span>
+<span class="nc" id="L67">              : userSecurityPayload.getAuthorities().stream()</span>
+<span class="nc" id="L68">                  .map(SimpleGrantedAuthority::new)</span>
+<span class="nc" id="L69">                  .map(GrantedAuthority.class::cast)</span>
+<span class="nc" id="L70">                  .toList();</span>
+<span class="nc" id="L71">      Authentication auth = new HmacAuthenticationToken(userSecurityPayload.getSub(), authorities);</span>
+<span class="nc" id="L72">      SecurityContextHolder.getContext().setAuthentication(auth);</span>
+<span class="nc" id="L73">      log.info(</span>
+          &quot;HMAC authentication succeeded for user [{}] with authorities {}&quot;,
+<span class="nc" id="L75">          userSecurityPayload.getSub(),</span>
+<span class="nc" id="L76">          userSecurityPayload.getAuthorities());</span>
 
-<span class="nc" id="L64">      filterChain.doFilter(request, response);</span>
-<span class="nc" id="L65">    } else {</span>
-<span class="nc" id="L66">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
-<span class="nc" id="L67">      log.error(&quot;Invalid HMAC authentication attempt.{}&quot;, String.valueOf(exception));</span>
-<span class="nc" id="L68">      throw exception;</span>
+<span class="nc" id="L78">      filterChain.doFilter(request, response);</span>
+<span class="nc" id="L79">    } else {</span>
+<span class="nc" id="L80">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
+<span class="nc" id="L81">      log.error(&quot;Invalid HMAC authentication attempt.{}&quot;, String.valueOf(exception));</span>
+<span class="nc" id="L82">      throw exception;</span>
     }
-<span class="nc" id="L70">  }</span>
+<span class="nc" id="L84">  }</span>
 
   @Override
-<span class="nc bnc" id="L73" title="All 2 branches missed.">  public boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">  public boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {</span>
 
-<span class="nc bnc" id="L75" title="All 2 branches missed.">    if (SecurityContextHolder.getContext().getAuthentication() != null) {</span>
-<span class="nc" id="L76">      return true;</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">    if (SecurityContextHolder.getContext().getAuthentication() != null) {</span>
+<span class="nc" id="L90">      return true;</span>
     }
 
-<span class="nc bnc" id="L79" title="All 2 branches missed.">    if (permitAllPathsList == null) {</span>
-<span class="nc" id="L80">      permitAllPathsList =</span>
-<span class="nc" id="L81">          Arrays.stream(permitAllPathsString.split(&quot;,&quot;))</span>
-<span class="nc" id="L82">              .map(path -&gt; path.trim().replace(&quot;/**&quot;, &quot;&quot;))</span>
-<span class="nc" id="L83">              .toList();</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">    if (permitAllPathsList == null) {</span>
+<span class="nc" id="L94">      permitAllPathsList =</span>
+<span class="nc" id="L95">          Arrays.stream(permitAllPathsString.split(&quot;,&quot;))</span>
+<span class="nc" id="L96">              .map(path -&gt; path.trim().replace(&quot;/**&quot;, &quot;&quot;))</span>
+<span class="nc" id="L97">              .toList();</span>
     }
 
-<span class="nc" id="L86">    String path = request.getRequestURI();</span>
-<span class="nc" id="L87">    return permitAllPathsList.stream().anyMatch(path::startsWith);</span>
+<span class="nc" id="L100">    String path = request.getRequestURI();</span>
+<span class="nc" id="L101">    return permitAllPathsList.stream().anyMatch(path::startsWith);</span>
   }
 
   private boolean payloadIsValid(UserSecurityPayload payload) {
-<span class="nc bnc" id="L91" title="All 4 branches missed.">    return payload != null &amp;&amp; payload.getExp().isAfter(Instant.now());</span>
+<span class="nc bnc" id="L105" title="All 4 branches missed.">    return payload != null &amp;&amp; payload.getExp().isAfter(Instant.now());</span>
   }
 
   private boolean verifySignature(String payload, String signature, String secretKey) {
     try {
-<span class="nc" id="L96">      Mac sha256Hmac = Mac.getInstance(&quot;HmacSHA256&quot;);</span>
-<span class="nc" id="L97">      SecretKeySpec secretKeySpec =</span>
-<span class="nc" id="L98">          new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), &quot;HmacSHA256&quot;);</span>
-<span class="nc" id="L99">      sha256Hmac.init(secretKeySpec);</span>
+<span class="nc" id="L110">      Mac sha256Hmac = Mac.getInstance(&quot;HmacSHA256&quot;);</span>
+<span class="nc" id="L111">      SecretKeySpec secretKeySpec =</span>
+<span class="nc" id="L112">          new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), &quot;HmacSHA256&quot;);</span>
+<span class="nc" id="L113">      sha256Hmac.init(secretKeySpec);</span>
 
-<span class="nc" id="L101">      byte[] signedBytes = sha256Hmac.doFinal(payload.getBytes(StandardCharsets.UTF_8));</span>
-<span class="nc" id="L102">      String computedSignature = Base64.getEncoder().encodeToString(signedBytes);</span>
+<span class="nc" id="L115">      byte[] signedBytes = sha256Hmac.doFinal(payload.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L116">      String computedSignature = Base64.getEncoder().encodeToString(signedBytes);</span>
 
-<span class="nc" id="L104">      return computedSignature.equals(signature);</span>
-<span class="nc" id="L105">    } catch (Exception e) {</span>
-<span class="nc" id="L106">      return false;</span>
+<span class="nc" id="L118">      return computedSignature.equals(signature);</span>
+<span class="nc" id="L119">    } catch (Exception e) {</span>
+<span class="nc" id="L120">      return false;</span>
     }
   }
 }
