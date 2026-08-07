@@ -41,6 +41,7 @@ import java.util.Set;
 <span class="fc" id="L41">      Set.of(</span>
           EPermissionGroup.ESTABLISHMENT_MANAGEMENT,
           EPermissionGroup.GROUP_MANAGEMENT,
+          EPermissionGroup.ACTIVITY_MANAGEMENT,
           EPermissionGroup.RBAC_MANAGEMENT));
 
   private final String description;
@@ -51,47 +52,47 @@ import java.util.Set;
   ERole(
       String description,
       Set&lt;EPermission&gt; directPermissions,
-<span class="fc" id="L54">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
-<span class="fc" id="L55">    this.description = description;</span>
-<span class="fc" id="L56">    this.directPermissions = Set.copyOf(directPermissions);</span>
-<span class="fc" id="L57">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
-<span class="fc" id="L58">    this.permissions = flatten(this.directPermissions, this.permissionGroups);</span>
-<span class="fc" id="L59">  }</span>
+<span class="fc" id="L55">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
+<span class="fc" id="L56">    this.description = description;</span>
+<span class="fc" id="L57">    this.directPermissions = Set.copyOf(directPermissions);</span>
+<span class="fc" id="L58">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
+<span class="fc" id="L59">    this.permissions = flatten(this.directPermissions, this.permissionGroups);</span>
+<span class="fc" id="L60">  }</span>
 
   public String description() {
-<span class="fc" id="L62">    return description;</span>
+<span class="fc" id="L63">    return description;</span>
   }
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L66">    return permissions;</span>
+<span class="fc" id="L67">    return permissions;</span>
   }
 
   public Set&lt;EPermission&gt; directPermissions() {
-<span class="fc" id="L70">    return directPermissions;</span>
+<span class="fc" id="L71">    return directPermissions;</span>
   }
 
   public Set&lt;EPermissionGroup&gt; permissionGroups() {
-<span class="fc" id="L74">    return permissionGroups;</span>
+<span class="fc" id="L75">    return permissionGroups;</span>
   }
 
   private static Set&lt;EPermission&gt; flatten(
       Set&lt;EPermission&gt; directPermissions, Set&lt;EPermissionGroup&gt; permissionGroups) {
-<span class="fc" id="L79">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
+<span class="fc" id="L80">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
 
-<span class="fc bfc" id="L81" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
-<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
-<span class="fc" id="L84">          throw new IllegalStateException(</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
+<span class="fc" id="L85">          throw new IllegalStateException(</span>
               &quot;Permission &quot;
                   + permission
                   + &quot; is declared both directly and via group &quot;
                   + group
                   + &quot;; remove the redundant declaration.&quot;);
         }
-<span class="fc" id="L91">      }</span>
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L92">      }</span>
+<span class="fc" id="L93">    }</span>
 
-<span class="fc" id="L94">    return Set.copyOf(flattened);</span>
+<span class="fc" id="L95">    return Set.copyOf(flattened);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

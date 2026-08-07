@@ -76,71 +76,70 @@
 <span class="fc" id="L76">  PERM_EMPLOYMENT_KIT_READ_OWN(&quot;employment-kit:read:own&quot;, &quot;View the My employment kit page&quot;),</span>
 <span class="fc" id="L77">  PERM_ACTIVITY_LIBRARY_STAFF_READ(</span>
       &quot;activity:library:staff:read&quot;, &quot;View the staff activity library&quot;),
-<span class="fc" id="L79">  PERM_ACTIVITY_NATIONAL_CREATE(&quot;activity:national:create&quot;, &quot;Create a national activity&quot;),</span>
-<span class="fc" id="L80">  PERM_ACTIVITY_NATIONAL_UPDATE(</span>
-      &quot;activity:national:update&quot;, &quot;Update the content of an unpublished national activity&quot;),
+<span class="fc" id="L79">  PERM_ACTIVITY_CREATE(&quot;activity:create&quot;, &quot;Create an activity&quot;),</span>
+<span class="fc" id="L80">  PERM_ACTIVITY_DUPLICATE(&quot;activity:duplicate&quot;, &quot;Duplicate an activity&quot;),</span>
+<span class="fc" id="L81">  PERM_ACTIVITY_UPDATE(&quot;activity:update&quot;, &quot;Update the content of an unpublished activity&quot;),</span>
 <span class="fc" id="L82">  PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL(</span>
-      &quot;activity:published:update:contextual&quot;, &quot;Update a published national activity&quot;),
-<span class="fc" id="L84">  PERM_ACTIVITY_NATIONAL_DELETE(</span>
-      &quot;activity:national:delete&quot;, &quot;Delete an unpublished national activity&quot;),
-<span class="fc" id="L86">  PERM_ACTIVITY_FEEDBACK_SETTINGS_UPDATE(</span>
+      &quot;activity:published:update:contextual&quot;, &quot;Update a published activity&quot;),
+<span class="fc" id="L84">  PERM_ACTIVITY_DELETE(&quot;activity:delete&quot;, &quot;Delete an unpublished activity&quot;),</span>
+<span class="fc" id="L85">  PERM_ACTIVITY_FEEDBACK_SETTINGS_UPDATE(</span>
       &quot;activity:feedback-settings:update&quot;,
-      &quot;Configure the feedback request settings of a national activity&quot;),
+      &quot;Configure the feedback request settings of an activity&quot;),
 
-<span class="fc" id="L90">  PERM_FEEDBACK_REQUEST_CREATE_OWN(&quot;feedback:request:create:own&quot;, &quot;Request feedback&quot;),</span>
-<span class="fc" id="L91">  PERM_FEEDBACK_RECEIVED_READ_OWN(&quot;feedback:received:read:own&quot;, &quot;View received feedback&quot;),</span>
-<span class="fc" id="L92">  PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL(</span>
+<span class="fc" id="L89">  PERM_FEEDBACK_REQUEST_CREATE_OWN(&quot;feedback:request:create:own&quot;, &quot;Request feedback&quot;),</span>
+<span class="fc" id="L90">  PERM_FEEDBACK_RECEIVED_READ_OWN(&quot;feedback:received:read:own&quot;, &quot;View received feedback&quot;),</span>
+<span class="fc" id="L91">  PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL(</span>
       &quot;feedback:request:read:assigned&quot;, &quot;View feedback requests assigned to them&quot;),
-<span class="fc" id="L94">  PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL(</span>
+<span class="fc" id="L93">  PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL(</span>
       &quot;feedback:request:respond:assigned&quot;, &quot;Respond to an assigned feedback request&quot;),
-<span class="fc" id="L96">  PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL(</span>
+<span class="fc" id="L95">  PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL(</span>
       &quot;feedback:history:read:contextual&quot;, &quot;View the feedback history of their institution&quot;),
-<span class="fc" id="L98">  PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL(</span>
+<span class="fc" id="L97">  PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL(</span>
       &quot;feedback:dashboard:read:contextual&quot;, &quot;View the feedback dashboard of their institution&quot;),
 
-<span class="fc" id="L101">  PERM_PRIMARY_ESTABLISHMENT_READ(&quot;primary-establishment:read&quot;, &quot;View a primary institution&quot;),</span>
-<span class="fc" id="L102">  PERM_PRIMARY_ESTABLISHMENT_CREATE(&quot;primary-establishment:create&quot;, &quot;Create a primary institution&quot;),</span>
-<span class="fc" id="L103">  PERM_PRIMARY_ESTABLISHMENT_UPDATE(&quot;primary-establishment:update&quot;, &quot;Update a primary institution&quot;),</span>
-<span class="fc" id="L104">  PERM_PRIMARY_ESTABLISHMENT_DELETE(&quot;primary-establishment:delete&quot;, &quot;Delete a primary institution&quot;),</span>
-<span class="fc" id="L105">  PERM_SECONDARY_ESTABLISHMENT_READ(&quot;secondary-establishment:read&quot;, &quot;View a secondary institution&quot;),</span>
-<span class="fc" id="L106">  PERM_SECONDARY_ESTABLISHMENT_CREATE(</span>
+<span class="fc" id="L100">  PERM_PRIMARY_ESTABLISHMENT_READ(&quot;primary-establishment:read&quot;, &quot;View a primary institution&quot;),</span>
+<span class="fc" id="L101">  PERM_PRIMARY_ESTABLISHMENT_CREATE(&quot;primary-establishment:create&quot;, &quot;Create a primary institution&quot;),</span>
+<span class="fc" id="L102">  PERM_PRIMARY_ESTABLISHMENT_UPDATE(&quot;primary-establishment:update&quot;, &quot;Update a primary institution&quot;),</span>
+<span class="fc" id="L103">  PERM_PRIMARY_ESTABLISHMENT_DELETE(&quot;primary-establishment:delete&quot;, &quot;Delete a primary institution&quot;),</span>
+<span class="fc" id="L104">  PERM_SECONDARY_ESTABLISHMENT_READ(&quot;secondary-establishment:read&quot;, &quot;View a secondary institution&quot;),</span>
+<span class="fc" id="L105">  PERM_SECONDARY_ESTABLISHMENT_CREATE(</span>
       &quot;secondary-establishment:create&quot;, &quot;Create a secondary institution&quot;),
-<span class="fc" id="L108">  PERM_SECONDARY_ESTABLISHMENT_UPDATE(</span>
+<span class="fc" id="L107">  PERM_SECONDARY_ESTABLISHMENT_UPDATE(</span>
       &quot;secondary-establishment:update&quot;, &quot;Update a secondary institution&quot;),
-<span class="fc" id="L110">  PERM_SECONDARY_ESTABLISHMENT_DELETE(</span>
+<span class="fc" id="L109">  PERM_SECONDARY_ESTABLISHMENT_DELETE(</span>
       &quot;secondary-establishment:delete&quot;, &quot;Delete a secondary institution&quot;),
-<span class="fc" id="L112">  PERM_GROUP_READ(&quot;group:read&quot;, &quot;View a group&quot;),</span>
-<span class="fc" id="L113">  PERM_GROUP_IMPORT(&quot;group:import&quot;, &quot;Populate a group via import&quot;),</span>
-<span class="fc" id="L114">  PERM_GROUP_CREATE(&quot;group:create&quot;, &quot;Create a group&quot;),</span>
-<span class="fc" id="L115">  PERM_GROUP_UPDATE(&quot;group:update&quot;, &quot;Update a group&quot;),</span>
-<span class="fc" id="L116">  PERM_GROUP_DELETE(&quot;group:delete&quot;, &quot;Delete a group&quot;),</span>
+<span class="fc" id="L111">  PERM_GROUP_READ(&quot;group:read&quot;, &quot;View a group&quot;),</span>
+<span class="fc" id="L112">  PERM_GROUP_IMPORT(&quot;group:import&quot;, &quot;Populate a group via import&quot;),</span>
+<span class="fc" id="L113">  PERM_GROUP_CREATE(&quot;group:create&quot;, &quot;Create a group&quot;),</span>
+<span class="fc" id="L114">  PERM_GROUP_UPDATE(&quot;group:update&quot;, &quot;Update a group&quot;),</span>
+<span class="fc" id="L115">  PERM_GROUP_DELETE(&quot;group:delete&quot;, &quot;Delete a group&quot;),</span>
 
-<span class="fc" id="L118">  PERM_RBAC_READ(</span>
+<span class="fc" id="L117">  PERM_RBAC_READ(</span>
       &quot;rbac:read&quot;,
       &quot;Read RBAC administration data: roles, permissions, assignments, scopes and contexts&quot;),
-<span class="fc" id="L121">  PERM_RBAC_ASSIGN(&quot;rbac:assign&quot;, &quot;Create or grant an RBAC assignment to a principal&quot;),</span>
-<span class="fc" id="L122">  PERM_RBAC_REVOKE(&quot;rbac:revoke&quot;, &quot;Revoke an RBAC assignment&quot;),</span>
-<span class="fc" id="L123">  PERM_RBAC_MANAGE(</span>
+<span class="fc" id="L120">  PERM_RBAC_ASSIGN(&quot;rbac:assign&quot;, &quot;Create or grant an RBAC assignment to a principal&quot;),</span>
+<span class="fc" id="L121">  PERM_RBAC_REVOKE(&quot;rbac:revoke&quot;, &quot;Revoke an RBAC assignment&quot;),</span>
+<span class="fc" id="L122">  PERM_RBAC_MANAGE(</span>
       &quot;rbac:manage&quot;, &quot;Create, update or delete structuring RBAC elements such as roles&quot;);
 
   private final String authority;
   private final String description;
 
-<span class="fc" id="L129">  EPermission(String authority, String description) {</span>
-<span class="fc" id="L130">    this.authority = authority;</span>
-<span class="fc" id="L131">    this.description = description;</span>
-<span class="fc" id="L132">  }</span>
+<span class="fc" id="L128">  EPermission(String authority, String description) {</span>
+<span class="fc" id="L129">    this.authority = authority;</span>
+<span class="fc" id="L130">    this.description = description;</span>
+<span class="fc" id="L131">  }</span>
 
   public String authority() {
-<span class="fc" id="L135">    return authority;</span>
+<span class="fc" id="L134">    return authority;</span>
   }
 
   public String description() {
-<span class="fc" id="L139">    return description;</span>
+<span class="fc" id="L138">    return description;</span>
   }
 
   public String legacyAuthority() {
-<span class="fc" id="L143">    return name();</span>
+<span class="fc" id="L142">    return name();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
