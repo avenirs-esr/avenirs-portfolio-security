@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,8 +14,12 @@ public enum ERole {
           EPermission.PERM_EMPLOYMENT_KIT_READ_OWN),
       Set.of(
           EPermissionGroup.TRACE_MANAGEMENT_OWN,
+          EPermissionGroup.DECLARED_ACTIVITY_MANAGEMENT_OWN,
           EPermissionGroup.DECLARED_SKILL_MANAGEMENT_OWN,
           EPermissionGroup.DECLARED_EXPERIENCE_MANAGEMENT_OWN,
+          EPermissionGroup.DECLARED_PROGRAM_MANAGEMENT_OWN,
+          EPermissionGroup.SELF_KNOWLEDGE_MANAGEMENT_OWN,
+          EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN,
           EPermissionGroup.STUDENT_ACTIVITY_ACCESS,
           EPermissionGroup.STUDENT_FEEDBACK_ACCESS)),
 
@@ -25,7 +30,10 @@ public enum ERole {
           EPermission.PERM_PROFILE_UPDATE_OWN,
           EPermission.PERM_TRACE_READ_CONTEXTUAL,
           EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL),
-      Set.of(EPermissionGroup.STAFF_ACTIVITY_ACCESS, EPermissionGroup.STAFF_FEEDBACK_MANAGEMENT)),
+      Set.of(
+          EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN,
+          EPermissionGroup.STAFF_ACTIVITY_ACCESS,
+          EPermissionGroup.STAFF_FEEDBACK_MANAGEMENT)),
 
   ROLE_SUPER_ADMIN(
       "Global administrator of the COFOLIO platform",
@@ -33,6 +41,7 @@ public enum ERole {
       Set.of(
           EPermissionGroup.ESTABLISHMENT_MANAGEMENT,
           EPermissionGroup.GROUP_MANAGEMENT,
+          EPermissionGroup.ACTIVITY_MANAGEMENT,
           EPermissionGroup.RBAC_MANAGEMENT));
 
   private final String description;

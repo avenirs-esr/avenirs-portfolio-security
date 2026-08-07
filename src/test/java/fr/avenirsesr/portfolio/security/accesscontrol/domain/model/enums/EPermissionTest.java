@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.util.Arrays;
 import java.util.Map;
@@ -144,7 +145,16 @@ class EPermissionTest {
                 Map.entry(EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL, "trace:download:contextual"),
                 Map.entry(
                     EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN, "trace:association:manage:own"),
+                Map.entry(EPermission.PERM_TRACE_UPDATE_OWN, "trace:update:own"),
+                Map.entry(EPermission.PERM_TRACE_DELETE_OWN, "trace:delete:own"),
                 Map.entry(EPermission.PERM_COMPETENCY_READ, "competency:read"),
+                Map.entry(
+                    EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN, "declared-activity:list:own"),
+                Map.entry(
+                    EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN, "declared-activity:update:own"),
+                Map.entry(
+                    EPermission.PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN,
+                    "declared-activity:association:manage:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_LIST_OWN, "declared-skill:list:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_CREATE_OWN, "declared-skill:create:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_UPDATE_OWN, "declared-skill:update:own"),
@@ -158,11 +168,27 @@ class EPermissionTest {
                     EPermission.PERM_DECLARED_EXPERIENCE_CREATE_OWN,
                     "declared-experience:create:own"),
                 Map.entry(
+                    EPermission.PERM_DECLARED_EXPERIENCE_UPDATE_OWN,
+                    "declared-experience:update:own"),
+                Map.entry(
                     EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN,
                     "declared-experience:delete:own"),
                 Map.entry(
                     EPermission.PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN,
                     "declared-experience:association:manage:own"),
+                Map.entry(EPermission.PERM_DECLARED_PROGRAM_LIST_OWN, "declared-program:list:own"),
+                Map.entry(
+                    EPermission.PERM_DECLARED_PROGRAM_CREATE_OWN, "declared-program:create:own"),
+                Map.entry(
+                    EPermission.PERM_DECLARED_PROGRAM_UPDATE_OWN, "declared-program:update:own"),
+                Map.entry(
+                    EPermission.PERM_DECLARED_PROGRAM_DELETE_OWN, "declared-program:delete:own"),
+                Map.entry(EPermission.PERM_SELF_KNOWLEDGE_LIST_OWN, "self-knowledge:list:own"),
+                Map.entry(EPermission.PERM_SELF_KNOWLEDGE_CREATE_OWN, "self-knowledge:create:own"),
+                Map.entry(EPermission.PERM_SELF_KNOWLEDGE_UPDATE_OWN, "self-knowledge:update:own"),
+                Map.entry(EPermission.PERM_SELF_KNOWLEDGE_DELETE_OWN, "self-knowledge:delete:own"),
+                Map.entry(EPermission.PERM_NOTIFICATION_READ_OWN, "notification:read:own"),
+                Map.entry(EPermission.PERM_NOTIFICATION_UPDATE_OWN, "notification:update:own"),
                 Map.entry(
                     EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
                     "activity:catalog:read:contextual"),
@@ -177,12 +203,13 @@ class EPermissionTest {
                 Map.entry(EPermission.PERM_EMPLOYMENT_KIT_READ_OWN, "employment-kit:read:own"),
                 Map.entry(
                     EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ, "activity:library:staff:read"),
-                Map.entry(EPermission.PERM_ACTIVITY_NATIONAL_CREATE, "activity:national:create"),
-                Map.entry(EPermission.PERM_ACTIVITY_NATIONAL_UPDATE, "activity:national:update"),
+                Map.entry(EPermission.PERM_ACTIVITY_CREATE, "activity:create"),
+                Map.entry(EPermission.PERM_ACTIVITY_DUPLICATE, "activity:duplicate"),
+                Map.entry(EPermission.PERM_ACTIVITY_UPDATE, "activity:update"),
                 Map.entry(
                     EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,
                     "activity:published:update:contextual"),
-                Map.entry(EPermission.PERM_ACTIVITY_NATIONAL_DELETE, "activity:national:delete"),
+                Map.entry(EPermission.PERM_ACTIVITY_DELETE, "activity:delete"),
                 Map.entry(
                     EPermission.PERM_ACTIVITY_FEEDBACK_SETTINGS_UPDATE,
                     "activity:feedback-settings:update"),

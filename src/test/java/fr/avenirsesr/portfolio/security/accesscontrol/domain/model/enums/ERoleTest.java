@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -67,9 +68,8 @@ class ERoleTest {
       }
 
       @Test
-      void thenItShouldExposeTheExactPreRefactorPermissionSet() {
-        BddLogger.then(
-            "it should expose the exact permission set the role had before the refactor");
+      void thenItShouldExposeTheExactExpectedPermissionSet() {
+        BddLogger.then("it should expose exactly the expected permission set");
 
         assertThat(ERole.ROLE_STUDENT.permissions())
             .containsExactlyInAnyOrder(
@@ -77,8 +77,13 @@ class ERoleTest {
                 EPermission.PERM_PROFILE_UPDATE_OWN,
                 EPermission.PERM_TRACE_CREATE_OWN,
                 EPermission.PERM_TRACE_LIST_OWN,
+                EPermission.PERM_TRACE_UPDATE_OWN,
+                EPermission.PERM_TRACE_DELETE_OWN,
                 EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN,
                 EPermission.PERM_COMPETENCY_READ,
+                EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN,
+                EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN,
+                EPermission.PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN,
                 EPermission.PERM_DECLARED_SKILL_LIST_OWN,
                 EPermission.PERM_DECLARED_SKILL_CREATE_OWN,
                 EPermission.PERM_DECLARED_SKILL_UPDATE_OWN,
@@ -86,8 +91,19 @@ class ERoleTest {
                 EPermission.PERM_DECLARED_SKILL_ASSOCIATION_MANAGE_OWN,
                 EPermission.PERM_DECLARED_EXPERIENCE_LIST_OWN,
                 EPermission.PERM_DECLARED_EXPERIENCE_CREATE_OWN,
+                EPermission.PERM_DECLARED_EXPERIENCE_UPDATE_OWN,
                 EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN,
                 EPermission.PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN,
+                EPermission.PERM_DECLARED_PROGRAM_LIST_OWN,
+                EPermission.PERM_DECLARED_PROGRAM_CREATE_OWN,
+                EPermission.PERM_DECLARED_PROGRAM_UPDATE_OWN,
+                EPermission.PERM_DECLARED_PROGRAM_DELETE_OWN,
+                EPermission.PERM_SELF_KNOWLEDGE_LIST_OWN,
+                EPermission.PERM_SELF_KNOWLEDGE_CREATE_OWN,
+                EPermission.PERM_SELF_KNOWLEDGE_UPDATE_OWN,
+                EPermission.PERM_SELF_KNOWLEDGE_DELETE_OWN,
+                EPermission.PERM_NOTIFICATION_READ_OWN,
+                EPermission.PERM_NOTIFICATION_UPDATE_OWN,
                 EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_REGISTER_OWN,
                 EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
@@ -108,9 +124,8 @@ class ERoleTest {
       }
 
       @Test
-      void thenItShouldExposeTheExactPreRefactorPermissionSet() {
-        BddLogger.then(
-            "it should expose the exact permission set the role had before the refactor");
+      void thenItShouldExposeTheExactExpectedPermissionSet() {
+        BddLogger.then("it should expose exactly the expected permission set");
 
         assertThat(ERole.ROLE_STAFF.permissions())
             .containsExactlyInAnyOrder(
@@ -118,11 +133,14 @@ class ERoleTest {
                 EPermission.PERM_PROFILE_UPDATE_OWN,
                 EPermission.PERM_TRACE_READ_CONTEXTUAL,
                 EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL,
+                EPermission.PERM_NOTIFICATION_READ_OWN,
+                EPermission.PERM_NOTIFICATION_UPDATE_OWN,
                 EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
                 EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,
+                EPermission.PERM_ACTIVITY_DUPLICATE,
                 EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL,
                 EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL,
                 EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
@@ -158,6 +176,9 @@ class ERoleTest {
                 EPermission.PERM_GROUP_CREATE,
                 EPermission.PERM_GROUP_UPDATE,
                 EPermission.PERM_GROUP_DELETE,
+                EPermission.PERM_ACTIVITY_CREATE,
+                EPermission.PERM_ACTIVITY_UPDATE,
+                EPermission.PERM_ACTIVITY_DELETE,
                 EPermission.PERM_RBAC_READ,
                 EPermission.PERM_RBAC_ASSIGN,
                 EPermission.PERM_RBAC_REVOKE,

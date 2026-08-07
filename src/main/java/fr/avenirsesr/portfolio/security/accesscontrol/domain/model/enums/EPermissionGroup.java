@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import java.util.Set;
 
 public enum EPermissionGroup {
@@ -22,11 +23,25 @@ public enum EPermissionGroup {
           EPermission.PERM_GROUP_UPDATE,
           EPermission.PERM_GROUP_DELETE)),
 
+  ACTIVITY_MANAGEMENT(
+      Set.of(
+          EPermission.PERM_ACTIVITY_CREATE,
+          EPermission.PERM_ACTIVITY_UPDATE,
+          EPermission.PERM_ACTIVITY_DELETE)),
+
   TRACE_MANAGEMENT_OWN(
       Set.of(
           EPermission.PERM_TRACE_CREATE_OWN,
           EPermission.PERM_TRACE_LIST_OWN,
+          EPermission.PERM_TRACE_UPDATE_OWN,
+          EPermission.PERM_TRACE_DELETE_OWN,
           EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN)),
+
+  DECLARED_ACTIVITY_MANAGEMENT_OWN(
+      Set.of(
+          EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN,
+          EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN,
+          EPermission.PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN)),
 
   DECLARED_SKILL_MANAGEMENT_OWN(
       Set.of(
@@ -40,8 +55,26 @@ public enum EPermissionGroup {
       Set.of(
           EPermission.PERM_DECLARED_EXPERIENCE_LIST_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_CREATE_OWN,
+          EPermission.PERM_DECLARED_EXPERIENCE_UPDATE_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN)),
+
+  DECLARED_PROGRAM_MANAGEMENT_OWN(
+      Set.of(
+          EPermission.PERM_DECLARED_PROGRAM_LIST_OWN,
+          EPermission.PERM_DECLARED_PROGRAM_CREATE_OWN,
+          EPermission.PERM_DECLARED_PROGRAM_UPDATE_OWN,
+          EPermission.PERM_DECLARED_PROGRAM_DELETE_OWN)),
+
+  SELF_KNOWLEDGE_MANAGEMENT_OWN(
+      Set.of(
+          EPermission.PERM_SELF_KNOWLEDGE_LIST_OWN,
+          EPermission.PERM_SELF_KNOWLEDGE_CREATE_OWN,
+          EPermission.PERM_SELF_KNOWLEDGE_UPDATE_OWN,
+          EPermission.PERM_SELF_KNOWLEDGE_DELETE_OWN)),
+
+  NOTIFICATION_MANAGEMENT_OWN(
+      Set.of(EPermission.PERM_NOTIFICATION_READ_OWN, EPermission.PERM_NOTIFICATION_UPDATE_OWN)),
 
   STUDENT_ACTIVITY_ACCESS(
       Set.of(
@@ -62,7 +95,8 @@ public enum EPermissionGroup {
           EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
-          EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL)),
+          EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,
+          EPermission.PERM_ACTIVITY_DUPLICATE)),
 
   STAFF_FEEDBACK_MANAGEMENT(
       Set.of(
