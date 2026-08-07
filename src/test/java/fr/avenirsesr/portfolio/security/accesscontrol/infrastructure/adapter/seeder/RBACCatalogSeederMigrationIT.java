@@ -3,11 +3,11 @@ package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.se
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.RBACCatalogSynchronizationException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACPermission;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACRole;
-import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACPermissionRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity;

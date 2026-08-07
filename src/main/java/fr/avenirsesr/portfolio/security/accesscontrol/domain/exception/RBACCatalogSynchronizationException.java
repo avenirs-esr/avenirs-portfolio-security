@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.domain.exception;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACPermission;
-import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums.EPermission;
 import java.util.UUID;
 
 public class RBACCatalogSynchronizationException extends RuntimeException {

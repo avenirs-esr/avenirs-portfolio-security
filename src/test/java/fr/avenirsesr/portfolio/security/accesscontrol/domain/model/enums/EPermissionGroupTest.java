@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -109,6 +110,19 @@ class EPermissionGroupTest {
       }
 
       @Test
+      void thenActivityManagementShouldContainExactlyActivityCrudPermissions() {
+        BddLogger.then(
+            "ACTIVITY_MANAGEMENT should contain exactly the activity create/update/delete"
+                + " permissions");
+
+        assertThat(EPermissionGroup.ACTIVITY_MANAGEMENT.permissions())
+            .containsExactlyInAnyOrder(
+                EPermission.PERM_ACTIVITY_CREATE,
+                EPermission.PERM_ACTIVITY_UPDATE,
+                EPermission.PERM_ACTIVITY_DELETE);
+      }
+
+      @Test
       void thenTraceManagementOwnShouldContainExactlyOwnTracePermissions() {
         BddLogger.then("TRACE_MANAGEMENT_OWN should contain exactly the own-trace permissions");
 
@@ -116,7 +130,22 @@ class EPermissionGroupTest {
             .containsExactlyInAnyOrder(
                 EPermission.PERM_TRACE_CREATE_OWN,
                 EPermission.PERM_TRACE_LIST_OWN,
+                EPermission.PERM_TRACE_UPDATE_OWN,
+                EPermission.PERM_TRACE_DELETE_OWN,
                 EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN);
+      }
+
+      @Test
+      void thenDeclaredActivityManagementOwnShouldContainExactlyOwnActivityPermissions() {
+        BddLogger.then(
+            "DECLARED_ACTIVITY_MANAGEMENT_OWN should contain exactly the own declared-activity"
+                + " permissions");
+
+        assertThat(EPermissionGroup.DECLARED_ACTIVITY_MANAGEMENT_OWN.permissions())
+            .containsExactlyInAnyOrder(
+                EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN,
+                EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN,
+                EPermission.PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN);
       }
 
       @Test
@@ -144,8 +173,47 @@ class EPermissionGroupTest {
             .containsExactlyInAnyOrder(
                 EPermission.PERM_DECLARED_EXPERIENCE_LIST_OWN,
                 EPermission.PERM_DECLARED_EXPERIENCE_CREATE_OWN,
+                EPermission.PERM_DECLARED_EXPERIENCE_UPDATE_OWN,
                 EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN,
                 EPermission.PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN);
+      }
+
+      @Test
+      void thenDeclaredProgramManagementOwnShouldContainExactlyOwnProgramPermissions() {
+        BddLogger.then(
+            "DECLARED_PROGRAM_MANAGEMENT_OWN should contain exactly the own declared-program"
+                + " permissions");
+
+        assertThat(EPermissionGroup.DECLARED_PROGRAM_MANAGEMENT_OWN.permissions())
+            .containsExactlyInAnyOrder(
+                EPermission.PERM_DECLARED_PROGRAM_LIST_OWN,
+                EPermission.PERM_DECLARED_PROGRAM_CREATE_OWN,
+                EPermission.PERM_DECLARED_PROGRAM_UPDATE_OWN,
+                EPermission.PERM_DECLARED_PROGRAM_DELETE_OWN);
+      }
+
+      @Test
+      void thenSelfKnowledgeManagementOwnShouldContainExactlyOwnSelfKnowledgePermissions() {
+        BddLogger.then(
+            "SELF_KNOWLEDGE_MANAGEMENT_OWN should contain exactly the own self-knowledge"
+                + " permissions");
+
+        assertThat(EPermissionGroup.SELF_KNOWLEDGE_MANAGEMENT_OWN.permissions())
+            .containsExactlyInAnyOrder(
+                EPermission.PERM_SELF_KNOWLEDGE_LIST_OWN,
+                EPermission.PERM_SELF_KNOWLEDGE_CREATE_OWN,
+                EPermission.PERM_SELF_KNOWLEDGE_UPDATE_OWN,
+                EPermission.PERM_SELF_KNOWLEDGE_DELETE_OWN);
+      }
+
+      @Test
+      void thenNotificationManagementOwnShouldContainExactlyOwnNotificationPermissions() {
+        BddLogger.then(
+            "NOTIFICATION_MANAGEMENT_OWN should contain exactly the own notification permissions");
+
+        assertThat(EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN.permissions())
+            .containsExactlyInAnyOrder(
+                EPermission.PERM_NOTIFICATION_READ_OWN, EPermission.PERM_NOTIFICATION_UPDATE_OWN);
       }
 
       @Test
@@ -186,7 +254,8 @@ class EPermissionGroupTest {
                 EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
-                EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL);
+                EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,
+                EPermission.PERM_ACTIVITY_DUPLICATE);
       }
 
       @Test

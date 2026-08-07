@@ -3,9 +3,9 @@ package fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.contr
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.AccessTokenHelper;
-import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCAccessToken;
 import fr.avenirsesr.portfolio.security.authentication.domain.model.OIDCIntrospection;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.input.OidcService;
