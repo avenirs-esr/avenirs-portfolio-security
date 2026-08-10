@@ -57,12 +57,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 <span class="fc" id="L59">    String login = introspection.uniqueSecurityName();</span>
-<span class="fc" id="L60">    return new AuthContext(true, login, authorizationsPort.resolveAuthorities(login));</span>
+<span class="fc" id="L60">    return new AuthContext(</span>
+        true,
+        login,
+<span class="fc" id="L63">        authorizationsPort.resolveAuthorities(login),</span>
+<span class="fc" id="L64">        authorizationsPort.resolveRoles(login));</span>
   }
 
   @Override
   public OIDCSession refreshSessionIfNeeded(OIDCSession oidcSession) {
-<span class="fc" id="L65">    return oidcService.refreshSessionIfNeeded(oidcSession);</span>
+<span class="fc" id="L69">    return oidcService.refreshSessionIfNeeded(oidcSession);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

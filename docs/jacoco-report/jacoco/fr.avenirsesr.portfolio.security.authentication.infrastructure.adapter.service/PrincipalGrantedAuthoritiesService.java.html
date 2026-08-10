@@ -43,17 +43,27 @@ public class PrincipalGrantedAuthoritiesService implements AuthorizationsPort {
 <span class="fc" id="L43">        .collect(Collectors.toUnmodifiableSet());</span>
   }
 
-  private boolean isCurrentlyValid(RBACAssignment assignment, LocalDateTime now) {
-<span class="fc" id="L47">    RBACContext context = assignment.context();</span>
+  @Override
+  public Set&lt;String&gt; resolveRoles(String login) {
+<span class="fc" id="L48">    LocalDateTime now = LocalDateTime.now();</span>
 
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">    if (context == null) {</span>
-<span class="nc" id="L50">      return true;</span>
+<span class="fc" id="L50">    return assignmentRepository.findByPrincipal(login).stream()</span>
+<span class="fc" id="L51">        .filter(assignment -&gt; isCurrentlyValid(assignment, now))</span>
+<span class="fc" id="L52">        .map(assignment -&gt; assignment.role().name())</span>
+<span class="fc" id="L53">        .collect(Collectors.toUnmodifiableSet());</span>
+  }
+
+  private boolean isCurrentlyValid(RBACAssignment assignment, LocalDateTime now) {
+<span class="fc" id="L57">    RBACContext context = assignment.context();</span>
+
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">    if (context == null) {</span>
+<span class="nc" id="L60">      return true;</span>
     }
 
-<span class="pc bpc" id="L53" title="1 of 4 branches missed.">    boolean started = context.validityStart() == null || !context.validityStart().isAfter(now);</span>
-<span class="pc bpc" id="L54" title="1 of 4 branches missed.">    boolean notEnded = context.validityEnd() == null || !context.validityEnd().isBefore(now);</span>
+<span class="pc bpc" id="L63" title="1 of 4 branches missed.">    boolean started = context.validityStart() == null || !context.validityStart().isAfter(now);</span>
+<span class="pc bpc" id="L64" title="1 of 4 branches missed.">    boolean notEnded = context.validityEnd() == null || !context.validityEnd().isBefore(now);</span>
 
-<span class="fc bfc" id="L56" title="All 4 branches covered.">    return started &amp;&amp; notEnded;</span>
+<span class="fc bfc" id="L66" title="All 4 branches covered.">    return started &amp;&amp; notEnded;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

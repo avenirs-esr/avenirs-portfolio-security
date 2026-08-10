@@ -39,21 +39,25 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
 
 <span class="fc" id="L40">      SignedContextPayload payload =</span>
           new SignedContextPayload(
-<span class="fc" id="L42">              authContext.login(), now, now + ttlSeconds, authContext.authorities());</span>
+<span class="fc" id="L42">              authContext.login(),</span>
+              now,
+              now + ttlSeconds,
+<span class="fc" id="L45">              authContext.authorities(),</span>
+<span class="fc" id="L46">              authContext.roles());</span>
 
-<span class="fc" id="L44">      String jsonPayload = objectMapper.writeValueAsString(payload);</span>
+<span class="fc" id="L48">      String jsonPayload = objectMapper.writeValueAsString(payload);</span>
 
-<span class="fc" id="L46">      Mac mac = Mac.getInstance(algorithm);</span>
-<span class="fc" id="L47">      mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), algorithm));</span>
+<span class="fc" id="L50">      Mac mac = Mac.getInstance(algorithm);</span>
+<span class="fc" id="L51">      mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), algorithm));</span>
 
       String signature =
-<span class="fc" id="L50">          Base64.getEncoder()</span>
-<span class="fc" id="L51">              .encodeToString(mac.doFinal(jsonPayload.getBytes(StandardCharsets.UTF_8)));</span>
+<span class="fc" id="L54">          Base64.getEncoder()</span>
+<span class="fc" id="L55">              .encodeToString(mac.doFinal(jsonPayload.getBytes(StandardCharsets.UTF_8)));</span>
 
-<span class="fc" id="L53">      return new SignedAuthContext(jsonPayload, signature);</span>
+<span class="fc" id="L57">      return new SignedAuthContext(jsonPayload, signature);</span>
 
-<span class="nc" id="L55">    } catch (Exception e) {</span>
-<span class="nc" id="L56">      throw new IllegalStateException(&quot;Unable to sign authentication context&quot;, e);</span>
+<span class="nc" id="L59">    } catch (Exception e) {</span>
+<span class="nc" id="L60">      throw new IllegalStateException(&quot;Unable to sign authentication context&quot;, e);</span>
     }
   }
 }
