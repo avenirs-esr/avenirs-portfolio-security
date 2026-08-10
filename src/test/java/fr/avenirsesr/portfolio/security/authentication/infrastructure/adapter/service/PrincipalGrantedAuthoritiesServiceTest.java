@@ -61,6 +61,13 @@ class PrincipalGrantedAuthoritiesServiceTest {
 
         assertThat(service.loadAuthorities(LOGIN)).isEmpty();
       }
+
+      @Test
+      void thenItShouldReturnNoRole() {
+        BddLogger.then("it should return an empty role set");
+
+        assertThat(service.resolveRoles(LOGIN)).isEmpty();
+      }
     }
 
     @Nested
@@ -82,6 +89,13 @@ class PrincipalGrantedAuthoritiesServiceTest {
 
         assertThat(authorityStrings)
             .contains("rbac:read", "rbac:assign", "rbac:revoke", "rbac:manage");
+      }
+
+      @Test
+      void thenItShouldReturnTheSuperAdminRole() {
+        BddLogger.then("it should return the ROLE_SUPER_ADMIN role");
+
+        assertThat(service.resolveRoles(LOGIN)).containsExactly(ERole.ROLE_SUPER_ADMIN.name());
       }
     }
 
@@ -125,6 +139,13 @@ class PrincipalGrantedAuthoritiesServiceTest {
 
         assertThat(service.loadAuthorities(LOGIN)).isEmpty();
       }
+
+      @Test
+      void thenItShouldNotResolveItsRole() {
+        BddLogger.then("it should not resolve the expired assignment's role");
+
+        assertThat(service.resolveRoles(LOGIN)).isEmpty();
+      }
     }
 
     @Nested
@@ -146,6 +167,13 @@ class PrincipalGrantedAuthoritiesServiceTest {
         BddLogger.then("it should not grant the role's permissions");
 
         assertThat(service.loadAuthorities(LOGIN)).isEmpty();
+      }
+
+      @Test
+      void thenItShouldNotResolveItsRole() {
+        BddLogger.then("it should not resolve the not-yet-valid assignment's role");
+
+        assertThat(service.resolveRoles(LOGIN)).isEmpty();
       }
     }
 
@@ -171,6 +199,13 @@ class PrincipalGrantedAuthoritiesServiceTest {
         Set<GrantedAuthority> authorities = service.loadAuthorities(LOGIN);
 
         assertThat(authorities).hasSize(ERole.ROLE_SUPER_ADMIN.permissions().size());
+      }
+
+      @Test
+      void thenItShouldNotDuplicateRoles() {
+        BddLogger.then("it should not contain duplicate roles");
+
+        assertThat(service.resolveRoles(LOGIN)).containsExactly(ERole.ROLE_SUPER_ADMIN.name());
       }
     }
   }

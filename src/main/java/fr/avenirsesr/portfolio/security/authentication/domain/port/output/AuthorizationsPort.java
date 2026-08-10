@@ -4,4 +4,6 @@ import java.util.Set;
 
 public interface AuthorizationsPort {
   Set<String> resolveAuthorities(String login);
+
+  Set<String> resolveRoles(String login);
 }
