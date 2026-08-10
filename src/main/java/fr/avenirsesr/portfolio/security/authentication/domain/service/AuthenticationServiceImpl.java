@@ -57,7 +57,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     String login = introspection.uniqueSecurityName();
-    return new AuthContext(true, login, authorizationsPort.resolveAuthorities(login));
+    return new AuthContext(
+        true,
+        login,
+        authorizationsPort.resolveAuthorities(login),
+        authorizationsPort.resolveRoles(login));
   }
 
   @Override

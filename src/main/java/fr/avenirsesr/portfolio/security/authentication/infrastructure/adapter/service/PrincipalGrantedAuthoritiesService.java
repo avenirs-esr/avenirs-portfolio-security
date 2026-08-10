@@ -43,6 +43,16 @@ public class PrincipalGrantedAuthoritiesService implements AuthorizationsPort {
         .collect(Collectors.toUnmodifiableSet());
   }
 
+  @Override
+  public Set<String> resolveRoles(String login) {
+    LocalDateTime now = LocalDateTime.now();
+
+    return assignmentRepository.findByPrincipal(login).stream()
+        .filter(assignment -> isCurrentlyValid(assignment, now))
+        .map(assignment -> assignment.role().name())
+        .collect(Collectors.toUnmodifiableSet());
+  }
+
   private boolean isCurrentlyValid(RBACAssignment assignment, LocalDateTime now) {
     RBACContext context = assignment.context();
 

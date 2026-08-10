@@ -44,7 +44,9 @@ class HmacAuthContextSigningServiceTest {
       void setupWhen() {
         BddLogger.when("signing an auth context");
 
-        authContext = new AuthContext(true, "gribonvald", Set.of("rbac:read", "profile:read:own"));
+        authContext =
+            new AuthContext(
+                true, "gribonvald", Set.of("rbac:read", "profile:read:own"), Set.of("ROLE_STAFF"));
         result = service.sign(authContext);
       }
 
@@ -60,8 +62,8 @@ class HmacAuthContextSigningServiceTest {
       }
 
       @Test
-      void thenItShouldCreatePayloadWithSubIatExpAndAuthorities() throws Exception {
-        BddLogger.then("it should create payload with sub, iat, exp and authorities");
+      void thenItShouldCreatePayloadWithSubIatExpAuthoritiesAndRoles() throws Exception {
+        BddLogger.then("it should create payload with sub, iat, exp, authorities and roles");
 
         SignedPayload payload = objectMapper.readValue(result.payload(), SignedPayload.class);
 
@@ -69,6 +71,7 @@ class HmacAuthContextSigningServiceTest {
         assertTrue(payload.iat() > 0);
         assertEquals(TTL_SECONDS, payload.exp() - payload.iat());
         assertEquals(Set.of("rbac:read", "profile:read:own"), payload.authorities());
+        assertEquals(Set.of("ROLE_STAFF"), payload.roles());
       }
 
       @Test
@@ -90,5 +93,6 @@ class HmacAuthContextSigningServiceTest {
         .encodeToString(mac.doFinal(payload.getBytes(StandardCharsets.UTF_8)));
   }
 
-  private record SignedPayload(String sub, long iat, long exp, Set<String> authorities) {}
+  private record SignedPayload(
+      String sub, long iat, long exp, Set<String> authorities, Set<String> roles) {}
 }

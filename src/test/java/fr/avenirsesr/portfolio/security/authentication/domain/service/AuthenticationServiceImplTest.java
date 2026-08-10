@@ -160,6 +160,7 @@ class AuthenticationServiceImplTest {
       class AndSessionIsActiveAndPrincipalExists {
         private UUID principalId;
         private Set<String> authorities;
+        private Set<String> roles;
         private AuthContext expectedAuthContext;
         private SignedAuthContext expectedSignedAuthContext;
         private SignedAuthContext result;
@@ -186,7 +187,8 @@ class AuthenticationServiceImplTest {
                   Set.of());
 
           authorities = Set.of("trace:create:own", "profile:read:own");
-          expectedAuthContext = new AuthContext(true, LOGIN, authorities);
+          roles = Set.of("ROLE_STUDENT");
+          expectedAuthContext = new AuthContext(true, LOGIN, authorities, roles);
           expectedSignedAuthContext =
               new SignedAuthContext(
                   "{\"sub\":\"00000000-0000-0000-0000-000000000101\",\"iat\":1,\"exp\":301}",
@@ -194,6 +196,7 @@ class AuthenticationServiceImplTest {
 
           when(oidcService.introspectAccessToken(ACCESS_TOKEN)).thenReturn(introspection);
           when(authorizationsPort.resolveAuthorities(LOGIN)).thenReturn(authorities);
+          when(authorizationsPort.resolveRoles(LOGIN)).thenReturn(roles);
           when(authContextSigningPort.sign(expectedAuthContext))
               .thenReturn(expectedSignedAuthContext);
 
@@ -208,6 +211,7 @@ class AuthenticationServiceImplTest {
 
           verify(oidcService).introspectAccessToken(ACCESS_TOKEN);
           verify(authorizationsPort).resolveAuthorities(LOGIN);
+          verify(authorizationsPort).resolveRoles(LOGIN);
           verify(authContextSigningPort).sign(expectedAuthContext);
           verifyNoMoreInteractions(oidcService, authContextSigningPort, authorizationsPort);
         }

@@ -39,7 +39,11 @@ public class HmacAuthContextSigningService implements AuthContextSigningPort {
 
       SignedContextPayload payload =
           new SignedContextPayload(
-              authContext.login(), now, now + ttlSeconds, authContext.authorities());
+              authContext.login(),
+              now,
+              now + ttlSeconds,
+              authContext.authorities(),
+              authContext.roles());
 
       String jsonPayload = objectMapper.writeValueAsString(payload);
 
