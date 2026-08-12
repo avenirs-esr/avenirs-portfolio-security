@@ -8,13 +8,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACContext;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACRole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACScope;
-import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;

@@ -3,12 +3,12 @@ package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.s
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACContext;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACPermission;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACRole;
-import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
 import java.time.LocalDateTime;
 import java.util.List;
