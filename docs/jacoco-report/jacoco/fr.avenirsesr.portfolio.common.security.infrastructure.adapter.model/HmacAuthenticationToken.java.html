@@ -2,31 +2,43 @@
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 public class HmacAuthenticationToken extends AbstractAuthenticationToken {
 
   private final String eppn;
+  private final Set&lt;String&gt; roles;
 
   public HmacAuthenticationToken(String eppn) {
-<span class="nc" id="L13">    this(eppn, Collections.emptyList());</span>
-<span class="nc" id="L14">  }</span>
+<span class="nc" id="L15">    this(eppn, Collections.emptyList(), Collections.emptySet());</span>
+<span class="nc" id="L16">  }</span>
 
   public HmacAuthenticationToken(String eppn, Collection&lt;? extends GrantedAuthority&gt; authorities) {
-<span class="nc" id="L17">    super(authorities);</span>
-<span class="nc" id="L18">    this.eppn = eppn;</span>
-<span class="nc" id="L19">    setAuthenticated(true);</span>
+<span class="nc" id="L19">    this(eppn, authorities, Collections.emptySet());</span>
 <span class="nc" id="L20">  }</span>
+
+  public HmacAuthenticationToken(
+      String eppn, Collection&lt;? extends GrantedAuthority&gt; authorities, Set&lt;String&gt; roles) {
+<span class="nc" id="L24">    super(authorities);</span>
+<span class="nc" id="L25">    this.eppn = eppn;</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">    this.roles = roles == null ? Collections.emptySet() : roles;</span>
+<span class="nc" id="L27">    setAuthenticated(true);</span>
+<span class="nc" id="L28">  }</span>
+
+  public Set&lt;String&gt; getRoles() {
+<span class="nc" id="L31">    return roles;</span>
+  }
 
   @Override
   public Object getCredentials() {
-<span class="nc" id="L24">    return &quot;&quot;;</span>
+<span class="nc" id="L36">    return &quot;&quot;;</span>
   }
 
   @Override
   public Object getPrincipal() {
-<span class="nc" id="L29">    return eppn;</span>
+<span class="nc" id="L41">    return eppn;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

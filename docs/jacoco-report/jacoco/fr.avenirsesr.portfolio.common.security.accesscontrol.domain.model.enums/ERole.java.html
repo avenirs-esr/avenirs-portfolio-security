@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ERole.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums</a> &gt; <span class="el_source">ERole.java</span></div><h1>ERole.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums;
+
+import java.util.HashSet;
+import java.util.Set;
+
+<span class="fc" id="L6">public enum ERole {</span>
+<span class="fc" id="L7">  ROLE_STUDENT(</span>
+      &quot;Learner with a personal COFOLIO space for their life project and skills-based approach&quot;,
+<span class="fc" id="L9">      Set.of(</span>
+          EPermission.PERM_PROFILE_READ_OWN,
+          EPermission.PERM_PROFILE_UPDATE_OWN,
+          EPermission.PERM_COMPETENCY_READ,
+          EPermission.PERM_EMPLOYMENT_KIT_READ_OWN),
+<span class="fc" id="L14">      Set.of(</span>
+          EPermissionGroup.TRACE_MANAGEMENT_OWN,
+          EPermissionGroup.DECLARED_ACTIVITY_MANAGEMENT_OWN,
+          EPermissionGroup.DECLARED_SKILL_MANAGEMENT_OWN,
+          EPermissionGroup.DECLARED_EXPERIENCE_MANAGEMENT_OWN,
+          EPermissionGroup.DECLARED_PROGRAM_MANAGEMENT_OWN,
+          EPermissionGroup.SELF_KNOWLEDGE_MANAGEMENT_OWN,
+          EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN,
+          EPermissionGroup.STUDENT_ACTIVITY_ACCESS,
+          EPermissionGroup.STUDENT_FEEDBACK_ACCESS)),
+
+<span class="fc" id="L25">  ROLE_STAFF(</span>
+      &quot;Staff member providing educational guidance and handling feedback&quot;,
+<span class="fc" id="L27">      Set.of(</span>
+          EPermission.PERM_PROFILE_READ_OWN,
+          EPermission.PERM_PROFILE_UPDATE_OWN,
+          EPermission.PERM_TRACE_READ_CONTEXTUAL,
+          EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL),
+<span class="fc" id="L32">      Set.of(</span>
+          EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN,
+          EPermissionGroup.STAFF_ACTIVITY_ACCESS,
+          EPermissionGroup.STAFF_FEEDBACK_MANAGEMENT)),
+
+<span class="fc" id="L37">  ROLE_SUPER_ADMIN(</span>
+      &quot;Global administrator of the COFOLIO platform&quot;,
+<span class="fc" id="L39">      Set.of(),</span>
+<span class="fc" id="L40">      Set.of(</span>
+          EPermissionGroup.ESTABLISHMENT_MANAGEMENT,
+          EPermissionGroup.GROUP_MANAGEMENT,
+          EPermissionGroup.ACTIVITY_MANAGEMENT,
+          EPermissionGroup.RBAC_MANAGEMENT));
+
+  private final String description;
+  private final Set&lt;EPermission&gt; directPermissions;
+  private final Set&lt;EPermissionGroup&gt; permissionGroups;
+  private final Set&lt;EPermission&gt; permissions;
+
+  ERole(
+      String description,
+      Set&lt;EPermission&gt; directPermissions,
+<span class="fc" id="L54">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
+<span class="fc" id="L55">    this.description = description;</span>
+<span class="fc" id="L56">    this.directPermissions = Set.copyOf(directPermissions);</span>
+<span class="fc" id="L57">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
+<span class="fc" id="L58">    this.permissions = flatten(this.directPermissions, this.permissionGroups);</span>
+<span class="fc" id="L59">  }</span>
+
+  public String description() {
+<span class="fc" id="L62">    return description;</span>
+  }
+
+  public Set&lt;EPermission&gt; permissions() {
+<span class="fc" id="L66">    return permissions;</span>
+  }
+
+  public Set&lt;EPermission&gt; directPermissions() {
+<span class="fc" id="L70">    return directPermissions;</span>
+  }
+
+  public Set&lt;EPermissionGroup&gt; permissionGroups() {
+<span class="fc" id="L74">    return permissionGroups;</span>
+  }
+
+  private static Set&lt;EPermission&gt; flatten(
+      Set&lt;EPermission&gt; directPermissions, Set&lt;EPermissionGroup&gt; permissionGroups) {
+<span class="fc" id="L79">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
+
+<span class="fc bfc" id="L81" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
+<span class="fc" id="L84">          throw new IllegalStateException(</span>
+              &quot;Permission &quot;
+                  + permission
+                  + &quot; is declared both directly and via group &quot;
+                  + group
+                  + &quot;; remove the redundant declaration.&quot;);
+        }
+<span class="fc" id="L91">      }</span>
+<span class="fc" id="L92">    }</span>
+
+<span class="fc" id="L94">    return Set.copyOf(flattened);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
