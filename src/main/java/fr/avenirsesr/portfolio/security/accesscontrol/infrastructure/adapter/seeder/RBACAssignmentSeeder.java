@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACContext;
@@ -41,13 +42,21 @@ public class RBACAssignmentSeeder {
     int superAdminCount = 0;
 
     for (Principal principal : principals) {
-      ERole role = resolveRole(principal, superAdminLogins);
-      seedAssignment(principal, role);
+      if (superAdminLogins.contains(principal.getLogin())) {
+        seedAssignment(principal, ERole.ROLE_SUPER_ADMIN);
+        superAdminCount++;
+        continue;
+      }
 
-      switch (role) {
-        case ROLE_SUPER_ADMIN -> superAdminCount++;
-        case ROLE_STAFF -> staffCount++;
-        case ROLE_STUDENT -> studentCount++;
+      for (EUserCategory category : principal.getCategories()) {
+        ERole role = resolveRole(category);
+        seedAssignment(principal, role);
+
+        if (role == ERole.ROLE_STAFF) {
+          staffCount++;
+        } else {
+          studentCount++;
+        }
       }
     }
 
@@ -106,12 +115,8 @@ public class RBACAssignmentSeeder {
             new RBACContext(null, null, null, Set.of())));
   }
 
-  private ERole resolveRole(Principal principal, Set<String> superAdminLogins) {
-    if (superAdminLogins.contains(principal.getLogin())) {
-      return ERole.ROLE_SUPER_ADMIN;
-    }
-
-    return switch (principal.getCategory()) {
+  private ERole resolveRole(EUserCategory category) {
+    return switch (category) {
       case STUDENT -> ERole.ROLE_STUDENT;
       case STAFF -> ERole.ROLE_STAFF;
     };

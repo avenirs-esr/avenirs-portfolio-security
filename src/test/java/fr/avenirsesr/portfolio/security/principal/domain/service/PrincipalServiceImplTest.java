@@ -310,7 +310,7 @@ class PrincipalServiceImplTest {
         LOGIN,
         PROVIDER,
         EXTERNAL_ID,
-        EUserCategory.STUDENT,
+        Set.of(EUserCategory.STUDENT),
         EUserStatus.ACTIVE,
         Set.of(new Structure(STRUCTURE_ID, "RECIA", "Structure description")));
   }

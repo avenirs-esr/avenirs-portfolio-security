@@ -73,7 +73,7 @@ public class PrincipalSeeder {
         resolvePassword(externalUser.eppn()),
         externalUser.source(),
         externalUser.externalId(),
-        externalUser.category(),
+        externalUser.categories(),
         EUserStatus.ACTIVE,
         now,
         now);

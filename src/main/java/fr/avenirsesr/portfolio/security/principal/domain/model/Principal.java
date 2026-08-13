@@ -16,7 +16,7 @@ public class Principal extends AvenirsBaseModel {
   private final String login;
   private final String provider;
   private final String externalId;
-  private final EUserCategory category;
+  private final Set<EUserCategory> categories;
   private final EUserStatus status;
   private final Set<Structure> structures;
 
@@ -28,7 +28,7 @@ public class Principal extends AvenirsBaseModel {
       String login,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       EUserStatus status,
       Set<Structure> structures) {
     super(id, createdAt, updatedAt);
@@ -36,7 +36,7 @@ public class Principal extends AvenirsBaseModel {
     this.login = login;
     this.provider = provider;
     this.externalId = externalId;
-    this.category = category;
+    this.categories = categories == null ? Set.of() : Set.copyOf(categories);
     this.status = status;
     this.structures = structures == null ? Set.of() : Set.copyOf(structures);
   }
@@ -46,7 +46,7 @@ public class Principal extends AvenirsBaseModel {
       String login,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       EUserStatus status,
       Set<Structure> structures) {
     Instant now = Instant.now();
@@ -59,7 +59,7 @@ public class Principal extends AvenirsBaseModel {
         login,
         provider,
         externalId,
-        category,
+        categories,
         status,
         structures);
   }
@@ -72,11 +72,20 @@ public class Principal extends AvenirsBaseModel {
       String login,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       EUserStatus status,
       Set<Structure> structures) {
     return new Principal(
-        id, createdAt, updatedAt, eppn, login, provider, externalId, category, status, structures);
+        id,
+        createdAt,
+        updatedAt,
+        eppn,
+        login,
+        provider,
+        externalId,
+        categories,
+        status,
+        structures);
   }
 
   public boolean isActive() {

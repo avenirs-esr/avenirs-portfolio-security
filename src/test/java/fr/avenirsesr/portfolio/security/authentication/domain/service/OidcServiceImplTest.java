@@ -190,7 +190,7 @@ class OidcServiceImplTest {
                   "user",
                   "OIDC",
                   "user",
-                  EUserCategory.STUDENT,
+                  Set.of(EUserCategory.STUDENT),
                   EUserStatus.ACTIVE,
                   Set.of());
 
