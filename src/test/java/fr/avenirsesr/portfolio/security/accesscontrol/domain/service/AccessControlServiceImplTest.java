@@ -86,7 +86,7 @@ class AccessControlServiceImplTest {
             LOGIN,
             "OIDC",
             LOGIN,
-            EUserCategory.STUDENT,
+            Set.of(EUserCategory.STUDENT),
             EUserStatus.ACTIVE,
             Set.of(structure));
 

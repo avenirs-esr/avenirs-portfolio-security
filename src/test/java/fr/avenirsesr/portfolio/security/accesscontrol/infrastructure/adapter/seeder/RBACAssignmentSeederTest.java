@@ -48,8 +48,9 @@ class RBACAssignmentSeederTest {
     ReflectionTestUtils.setField(seeder, "superAdminLoginsProperty", commaSeparatedLogins);
   }
 
-  private Principal principal(String login, EUserCategory category) {
-    return Principal.create(login, login, "OIDC", login, category, EUserStatus.ACTIVE, Set.of());
+  private Principal principal(String login, EUserCategory... categories) {
+    return Principal.create(
+        login, login, "OIDC", login, Set.of(categories), EUserStatus.ACTIVE, Set.of());
   }
 
   private RBACRole role(ERole role) {
@@ -98,6 +99,27 @@ class RBACAssignmentSeederTest {
 
       verify(assignmentRepository)
           .save(argThat(assignment -> assignment.role().name().equals("ROLE_STUDENT")));
+    }
+
+    @Test
+    void thenAPrincipalWithBothCategoriesShouldBeAssignedBothRoles() {
+      BddLogger.when("seeding a principal that is both a student and a staff member");
+      BddLogger.then("it should be assigned ROLE_STUDENT and ROLE_STAFF");
+
+      Principal both = principal("bothLogin", EUserCategory.STUDENT, EUserCategory.STAFF);
+      when(principalRepository.findAll()).thenReturn(List.of(both));
+      when(roleRepository.findByName(ERole.ROLE_STUDENT.name()))
+          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STUDENT)));
+      when(roleRepository.findByName(ERole.ROLE_STAFF.name()))
+          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STAFF)));
+      when(assignmentRepository.findByPrincipal("bothLogin")).thenReturn(List.of());
+
+      seeder.seed();
+
+      verify(assignmentRepository)
+          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STUDENT")));
+      verify(assignmentRepository)
+          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STAFF")));
     }
   }
 

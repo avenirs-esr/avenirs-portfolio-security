@@ -74,7 +74,7 @@ class DevAuthenticationFilterTest {
             "aya.germain",
             "OIDC",
             "aya.germain",
-            EUserCategory.STAFF,
+            Set.of(EUserCategory.STAFF),
             EUserStatus.ACTIVE,
             Set.of());
     Set<GrantedAuthority> authorities = Set.of(new SimpleGrantedAuthority("rbac:assign"));

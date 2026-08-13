@@ -443,7 +443,7 @@ class RBACRoleServiceImplTest {
             LOGIN,
             "OIDC",
             LOGIN,
-            EUserCategory.STUDENT,
+            Set.of(EUserCategory.STUDENT),
             EUserStatus.ACTIVE,
             Set.of());
     return new RBACAssignment(

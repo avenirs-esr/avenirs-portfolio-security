@@ -23,7 +23,7 @@ public class PrincipalMapper implements Mapper<PrincipalEntity, Principal> {
             null,
             principal.getProvider(),
             principal.getExternalId(),
-            principal.getCategory(),
+            principal.getCategories(),
             principal.getStatus(),
             toEntityStructures(principal.getStructures()),
             principal.getCreatedAt(),
@@ -42,7 +42,7 @@ public class PrincipalMapper implements Mapper<PrincipalEntity, Principal> {
             principalEntity.getLogin(),
             principalEntity.getProvider(),
             principalEntity.getExternalId(),
-            principalEntity.getCategory(),
+            principalEntity.getCategories(),
             principalEntity.getStatus(),
             toDomainStructures(principalEntity.getStructureEntities()))
         : null;

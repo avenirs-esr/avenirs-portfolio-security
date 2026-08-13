@@ -182,7 +182,7 @@ class AuthenticationServiceImplTest {
                   LOGIN,
                   "OIDC",
                   LOGIN,
-                  EUserCategory.STUDENT,
+                  Set.of(EUserCategory.STUDENT),
                   EUserStatus.ACTIVE,
                   Set.of());
 

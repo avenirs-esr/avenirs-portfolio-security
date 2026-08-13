@@ -2,6 +2,7 @@ DELETE FROM assignment;
 DELETE FROM scope_resource;
 DELETE FROM context_structure;
 DELETE FROM principal_structure;
+DELETE FROM principal_category;
 DELETE FROM action_route;
 DELETE FROM action_permission;
 DELETE FROM role_permission;
@@ -16,12 +17,19 @@ DELETE FROM role;
 DELETE FROM structure;
 DELETE FROM principal;
 
-INSERT INTO principal (id, login, provider, external_id, eppn, category, status, created_at, updated_at)
+INSERT INTO principal (id, login, provider, external_id, eppn, status, created_at, updated_at)
 VALUES
-    ('00000000-0000-0000-0000-000000000001', 'gribonvald', 'OIDC', 'gribonvald', 'gribonvald', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-000000000002', 'deman', 'OIDC', 'deman', 'deman', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-000000000003', 'dugat', 'OIDC', 'dugat', 'dugat', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-000000000004', 'patterson', 'OIDC', 'patterson', 'patterson', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    ('00000000-0000-0000-0000-000000000001', 'gribonvald', 'OIDC', 'gribonvald', 'gribonvald', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-000000000002', 'deman', 'OIDC', 'deman', 'deman', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-000000000003', 'dugat', 'OIDC', 'dugat', 'dugat', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-000000000004', 'patterson', 'OIDC', 'patterson', 'patterson', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO principal_category (id_principal, category)
+VALUES
+    ('00000000-0000-0000-0000-000000000001', 'STUDENT'),
+    ('00000000-0000-0000-0000-000000000002', 'STUDENT'),
+    ('00000000-0000-0000-0000-000000000003', 'STUDENT'),
+    ('00000000-0000-0000-0000-000000000004', 'STUDENT');
 
 INSERT INTO structure (id, name, description)
 VALUES

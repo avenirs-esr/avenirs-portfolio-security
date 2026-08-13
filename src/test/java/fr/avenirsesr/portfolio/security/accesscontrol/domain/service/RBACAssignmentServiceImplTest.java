@@ -310,7 +310,7 @@ class RBACAssignmentServiceImplTest {
         "deman",
         "OIDC",
         "deman",
-        EUserCategory.STUDENT,
+        Set.of(EUserCategory.STUDENT),
         EUserStatus.ACTIVE,
         Set.of());
   }

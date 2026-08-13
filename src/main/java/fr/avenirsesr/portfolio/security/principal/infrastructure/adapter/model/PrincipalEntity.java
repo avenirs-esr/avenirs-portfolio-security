@@ -3,7 +3,9 @@ package fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -63,10 +65,18 @@ public class PrincipalEntity extends AvenirsBaseEntity {
   @Column(name = "external_id", length = 255, nullable = false)
   private String externalId;
 
-  /** User category from a security point of view. */
-  @Column(length = 50, nullable = false)
+  /** User categories from a security point of view. A principal may hold several. */
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(
+      name = "principal_category",
+      joinColumns = @JoinColumn(name = "id_principal", nullable = false),
+      uniqueConstraints =
+          @UniqueConstraint(
+              name = "principal_category_pk",
+              columnNames = {"id_principal", "category"}))
+  @Column(name = "category", length = 50, nullable = false)
   @Enumerated(EnumType.STRING)
-  private EUserCategory category;
+  private Set<EUserCategory> categories = new HashSet<>();
 
   /** Security status of the principal. */
   @Column(length = 50, nullable = false)
@@ -92,7 +102,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
       String passwordHash,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       EUserStatus status,
       Set<StructureEntity> structureEntities,
       Instant createdAt,
@@ -103,7 +113,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
     this.passwordHash = passwordHash;
     this.provider = provider;
     this.externalId = externalId;
-    this.category = category;
+    this.categories = categories != null ? categories : new HashSet<>();
     this.status = status;
     this.structureEntities = structureEntities != null ? structureEntities : new HashSet<>();
     this.setCreatedAt(createdAt);
@@ -117,7 +127,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
       String passwordHash,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       EUserStatus status,
       Set<StructureEntity> structureEntities,
       Instant createdAt,
@@ -129,7 +139,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
         passwordHash,
         provider,
         externalId,
-        category,
+        categories,
         status,
         structureEntities,
         createdAt,
@@ -143,7 +153,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
       String passwordHash,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       EUserStatus status,
       Instant createdAt,
       Instant updatedAt) {
@@ -154,7 +164,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
         passwordHash,
         provider,
         externalId,
-        category,
+        categories,
         status,
         new HashSet<>(),
         createdAt,

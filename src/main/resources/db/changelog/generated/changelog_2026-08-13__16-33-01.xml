@@ -1,0 +1,49 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="nathp" id="20260813163301-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="principal_category"/>
+            </not>
+        </preConditions>
+        <createTable tableName="principal_category">
+            <column name="id_principal" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="nathp" id="20260813163301-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="principal_category_pk" tableName="principal_category"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint columnNames="id_principal, category" constraintName="principal_category_pk" tableName="principal_category"/>
+    </changeSet>
+    <changeSet author="nathp" id="20260813163301-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="principal_category" foreignKeyName="fk_principal_category_principal"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="id_principal" baseTableName="principal_category" constraintName="fk_principal_category_principal" referencedColumnNames="id" referencedTableName="principal"/>
+    </changeSet>
+    <changeSet author="nathp" id="20260813163301-4">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="principal" columnName="category"/>
+        </preConditions>
+        <sql>
+            INSERT INTO principal_category (id_principal, category)
+            SELECT id, category FROM principal;
+        </sql>
+    </changeSet>
+    <changeSet author="nathp" id="20260813163301-5">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="principal" columnName="category"/>
+        </preConditions>
+        <dropColumn tableName="principal" columnName="category"/>
+    </changeSet>
+</databaseChangeLog>

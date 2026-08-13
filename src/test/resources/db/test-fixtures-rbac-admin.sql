@@ -1,11 +1,19 @@
 
-INSERT INTO principal (id, login, provider, external_id, eppn, category, status, created_at, updated_at)
+INSERT INTO principal (id, login, provider, external_id, eppn, status, created_at, updated_at)
 VALUES
-    ('00000000-0000-0000-0000-0000000000a1', 'superadmin', 'OIDC', 'superadmin', 'superadmin', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-0000000000a2', 'rbacreader', 'OIDC', 'rbacreader', 'rbacreader', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-0000000000a3', 'rbacassigner', 'OIDC', 'rbacassigner', 'rbacassigner', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-0000000000a4', 'rbacrevoker', 'OIDC', 'rbacrevoker', 'rbacrevoker', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-0000000000a5', 'rbacmanager', 'OIDC', 'rbacmanager', 'rbacmanager', 'STUDENT', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    ('00000000-0000-0000-0000-0000000000a1', 'superadmin', 'OIDC', 'superadmin', 'superadmin', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-0000000000a2', 'rbacreader', 'OIDC', 'rbacreader', 'rbacreader', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-0000000000a3', 'rbacassigner', 'OIDC', 'rbacassigner', 'rbacassigner', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-0000000000a4', 'rbacrevoker', 'OIDC', 'rbacrevoker', 'rbacrevoker', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('00000000-0000-0000-0000-0000000000a5', 'rbacmanager', 'OIDC', 'rbacmanager', 'rbacmanager', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO principal_category (id_principal, category)
+VALUES
+    ('00000000-0000-0000-0000-0000000000a1', 'STUDENT'),
+    ('00000000-0000-0000-0000-0000000000a2', 'STUDENT'),
+    ('00000000-0000-0000-0000-0000000000a3', 'STUDENT'),
+    ('00000000-0000-0000-0000-0000000000a4', 'STUDENT'),
+    ('00000000-0000-0000-0000-0000000000a5', 'STUDENT');
 
 INSERT INTO role (id, name, description)
 VALUES
