@@ -16,7 +16,7 @@ public class Principal extends AvenirsBaseModel {
   private final String login;
   private final String provider;
   private final String externalId;
-  private final EUserCategory category;
+  private final Set&lt;EUserCategory&gt; categories;
   private final EUserStatus status;
   private final Set&lt;Structure&gt; structures;
 
@@ -28,7 +28,7 @@ public class Principal extends AvenirsBaseModel {
       String login,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set&lt;EUserCategory&gt; categories,
       EUserStatus status,
       Set&lt;Structure&gt; structures) {
 <span class="fc" id="L34">    super(id, createdAt, updatedAt);</span>
@@ -36,7 +36,7 @@ public class Principal extends AvenirsBaseModel {
 <span class="fc" id="L36">    this.login = login;</span>
 <span class="fc" id="L37">    this.provider = provider;</span>
 <span class="fc" id="L38">    this.externalId = externalId;</span>
-<span class="fc" id="L39">    this.category = category;</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">    this.categories = categories == null ? Set.of() : Set.copyOf(categories);</span>
 <span class="fc" id="L40">    this.status = status;</span>
 <span class="pc bpc" id="L41" title="1 of 2 branches missed.">    this.structures = structures == null ? Set.of() : Set.copyOf(structures);</span>
 <span class="fc" id="L42">  }</span>
@@ -46,7 +46,7 @@ public class Principal extends AvenirsBaseModel {
       String login,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set&lt;EUserCategory&gt; categories,
       EUserStatus status,
       Set&lt;Structure&gt; structures) {
 <span class="fc" id="L52">    Instant now = Instant.now();</span>
@@ -59,7 +59,7 @@ public class Principal extends AvenirsBaseModel {
         login,
         provider,
         externalId,
-        category,
+        categories,
         status,
         structures);
   }
@@ -72,33 +72,42 @@ public class Principal extends AvenirsBaseModel {
       String login,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set&lt;EUserCategory&gt; categories,
       EUserStatus status,
       Set&lt;Structure&gt; structures) {
 <span class="fc" id="L78">    return new Principal(</span>
-        id, createdAt, updatedAt, eppn, login, provider, externalId, category, status, structures);
+        id,
+        createdAt,
+        updatedAt,
+        eppn,
+        login,
+        provider,
+        externalId,
+        categories,
+        status,
+        structures);
   }
 
   public boolean isActive() {
-<span class="nc" id="L83">    return EUserStatus.ACTIVE.equals(status);</span>
+<span class="nc" id="L92">    return EUserStatus.ACTIVE.equals(status);</span>
   }
 
   @Override
   public boolean equals(Object o) {
-<span class="pc bpc" id="L88" title="1 of 2 branches missed.">    if (this == o) return true;</span>
-<span class="nc bnc" id="L89" title="All 4 branches missed.">    if (o == null || getClass() != o.getClass()) return false;</span>
-<span class="nc" id="L90">    Principal principal = (Principal) o;</span>
-<span class="nc" id="L91">    return Objects.equals(eppn, principal.eppn);</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">    if (this == o) return true;</span>
+<span class="nc bnc" id="L98" title="All 4 branches missed.">    if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc" id="L99">    Principal principal = (Principal) o;</span>
+<span class="nc" id="L100">    return Objects.equals(eppn, principal.eppn);</span>
   }
 
   @Override
   public int hashCode() {
-<span class="nc" id="L96">    return Objects.hash(eppn);</span>
+<span class="nc" id="L105">    return Objects.hash(eppn);</span>
   }
 
   @Override
   public String toString() {
-<span class="nc" id="L101">    return &quot;Principal[eppn=&quot; + eppn + &quot;, provider=&quot; + provider + &quot;, externalId=&quot; + externalId + ']';</span>
+<span class="nc" id="L110">    return &quot;Principal[eppn=&quot; + eppn + &quot;, provider=&quot; + provider + &quot;, externalId=&quot; + externalId + ']';</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

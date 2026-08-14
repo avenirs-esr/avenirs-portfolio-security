@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RBACAssignmentSeeder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder</a> &gt; <span class="el_source">RBACAssignmentSeeder.java</span></div><h1>RBACAssignmentSeeder.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACContext;
@@ -19,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-<span class="fc" id="L22">@Slf4j</span>
+<span class="fc" id="L23">@Slf4j</span>
 @Component
 @RequiredArgsConstructor
 public class RBACAssignmentSeeder {
@@ -33,87 +34,91 @@ public class RBACAssignmentSeeder {
 
   @Transactional
   public void seed() {
-<span class="fc" id="L36">    Set&lt;String&gt; superAdminLogins = parseSuperAdminLogins();</span>
-<span class="fc" id="L37">    List&lt;Principal&gt; principals = principalRepository.findAll();</span>
+<span class="fc" id="L37">    Set&lt;String&gt; superAdminLogins = parseSuperAdminLogins();</span>
+<span class="fc" id="L38">    List&lt;Principal&gt; principals = principalRepository.findAll();</span>
 
-<span class="fc" id="L39">    int studentCount = 0;</span>
-<span class="fc" id="L40">    int staffCount = 0;</span>
-<span class="fc" id="L41">    int superAdminCount = 0;</span>
+<span class="fc" id="L40">    int studentCount = 0;</span>
+<span class="fc" id="L41">    int staffCount = 0;</span>
+<span class="fc" id="L42">    int superAdminCount = 0;</span>
 
-<span class="fc bfc" id="L43" title="All 2 branches covered.">    for (Principal principal : principals) {</span>
-<span class="fc" id="L44">      ERole role = resolveRole(principal, superAdminLogins);</span>
-<span class="fc" id="L45">      seedAssignment(principal, role);</span>
-
-<span class="pc bpc" id="L47" title="1 of 4 branches missed.">      switch (role) {</span>
-<span class="fc" id="L48">        case ROLE_SUPER_ADMIN -&gt; superAdminCount++;</span>
-<span class="fc" id="L49">        case ROLE_STAFF -&gt; staffCount++;</span>
-<span class="fc" id="L50">        case ROLE_STUDENT -&gt; studentCount++;</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">    for (Principal principal : principals) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">      if (superAdminLogins.contains(principal.getLogin())) {</span>
+<span class="fc" id="L46">        seedAssignment(principal, ERole.ROLE_SUPER_ADMIN);</span>
+<span class="fc" id="L47">        superAdminCount++;</span>
+<span class="fc" id="L48">        continue;</span>
       }
-<span class="fc" id="L52">    }</span>
 
-<span class="fc" id="L54">    warnOnUnmatchedSuperAdminLogins(superAdminLogins, principals);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">      for (EUserCategory category : principal.getCategories()) {</span>
+<span class="fc" id="L52">        ERole role = resolveRole(category);</span>
+<span class="fc" id="L53">        seedAssignment(principal, role);</span>
 
-<span class="fc" id="L56">    log.info(</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (role == ERole.ROLE_STAFF) {</span>
+<span class="fc" id="L56">          staffCount++;</span>
+        } else {
+<span class="fc" id="L58">          studentCount++;</span>
+        }
+<span class="fc" id="L60">      }</span>
+<span class="fc" id="L61">    }</span>
+
+<span class="fc" id="L63">    warnOnUnmatchedSuperAdminLogins(superAdminLogins, principals);</span>
+
+<span class="fc" id="L65">    log.info(</span>
         &quot;RBAC assignments seeded: {} student, {} staff, {} super-admin&quot;,
-<span class="fc" id="L58">        studentCount,</span>
-<span class="fc" id="L59">        staffCount,</span>
-<span class="fc" id="L60">        superAdminCount);</span>
-<span class="fc" id="L61">  }</span>
+<span class="fc" id="L67">        studentCount,</span>
+<span class="fc" id="L68">        staffCount,</span>
+<span class="fc" id="L69">        superAdminCount);</span>
+<span class="fc" id="L70">  }</span>
 
   private Set&lt;String&gt; parseSuperAdminLogins() {
-<span class="pc bpc" id="L64" title="1 of 4 branches missed.">    if (superAdminLoginsProperty == null || superAdminLoginsProperty.isBlank()) {</span>
-<span class="fc" id="L65">      return Set.of();</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">    if (superAdminLoginsProperty == null || superAdminLoginsProperty.isBlank()) {</span>
+<span class="fc" id="L74">      return Set.of();</span>
     }
 
-<span class="fc" id="L68">    return Arrays.stream(superAdminLoginsProperty.split(&quot;,&quot;))</span>
-<span class="fc" id="L69">        .map(String::trim)</span>
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        .filter(login -&gt; !login.isEmpty())</span>
-<span class="fc" id="L71">        .collect(Collectors.toSet());</span>
+<span class="fc" id="L77">    return Arrays.stream(superAdminLoginsProperty.split(&quot;,&quot;))</span>
+<span class="fc" id="L78">        .map(String::trim)</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        .filter(login -&gt; !login.isEmpty())</span>
+<span class="fc" id="L80">        .collect(Collectors.toSet());</span>
   }
 
   private void warnOnUnmatchedSuperAdminLogins(
       Set&lt;String&gt; superAdminLogins, List&lt;Principal&gt; principals) {
-<span class="fc" id="L76">    Set&lt;String&gt; knownLogins =</span>
-<span class="fc" id="L77">        principals.stream().map(Principal::getLogin).collect(Collectors.toSet());</span>
+<span class="fc" id="L85">    Set&lt;String&gt; knownLogins =</span>
+<span class="fc" id="L86">        principals.stream().map(Principal::getLogin).collect(Collectors.toSet());</span>
 
-<span class="fc" id="L79">    superAdminLogins.stream()</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        .filter(login -&gt; !knownLogins.contains(login))</span>
-<span class="fc" id="L81">        .forEach(</span>
+<span class="fc" id="L88">    superAdminLogins.stream()</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        .filter(login -&gt; !knownLogins.contains(login))</span>
+<span class="fc" id="L90">        .forEach(</span>
             login -&gt;
-<span class="fc" id="L83">                log.warn(</span>
+<span class="fc" id="L92">                log.warn(</span>
                     &quot;seeder.rbac.super-admin-logins configures '{}' as ROLE_SUPER_ADMIN, but no&quot;
                         + &quot; matching principal was found&quot;,
                     login));
-<span class="fc" id="L87">  }</span>
+<span class="fc" id="L96">  }</span>
 
   private void seedAssignment(Principal principal, ERole role) {
-<span class="fc" id="L90">    RBACRole rbacRole = roleRepository.findByName(role.name()).orElseThrow();</span>
+<span class="fc" id="L99">    RBACRole rbacRole = roleRepository.findByName(role.name()).orElseThrow();</span>
 
-<span class="fc" id="L92">    boolean alreadyAssigned =</span>
-<span class="fc" id="L93">        assignmentRepository.findByPrincipal(principal.getLogin()).stream()</span>
-<span class="fc" id="L94">            .anyMatch(assignment -&gt; assignment.role().id().equals(rbacRole.id()));</span>
+<span class="fc" id="L101">    boolean alreadyAssigned =</span>
+<span class="fc" id="L102">        assignmentRepository.findByPrincipal(principal.getLogin()).stream()</span>
+<span class="fc" id="L103">            .anyMatch(assignment -&gt; assignment.role().id().equals(rbacRole.id()));</span>
 
-<span class="fc bfc" id="L96" title="All 2 branches covered.">    if (alreadyAssigned) {</span>
-<span class="fc" id="L97">      return;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">    if (alreadyAssigned) {</span>
+<span class="fc" id="L106">      return;</span>
     }
 
-<span class="fc" id="L100">    assignmentRepository.save(</span>
+<span class="fc" id="L109">    assignmentRepository.save(</span>
         new RBACAssignment(
             null,
             principal,
             rbacRole,
-<span class="fc" id="L105">            new RBACScope(null, List.of()),</span>
-<span class="fc" id="L106">            new RBACContext(null, null, null, Set.of())));</span>
-<span class="fc" id="L107">  }</span>
+<span class="fc" id="L114">            new RBACScope(null, List.of()),</span>
+<span class="fc" id="L115">            new RBACContext(null, null, null, Set.of())));</span>
+<span class="fc" id="L116">  }</span>
 
-  private ERole resolveRole(Principal principal, Set&lt;String&gt; superAdminLogins) {
-<span class="fc bfc" id="L110" title="All 2 branches covered.">    if (superAdminLogins.contains(principal.getLogin())) {</span>
-<span class="fc" id="L111">      return ERole.ROLE_SUPER_ADMIN;</span>
-    }
-
-<span class="fc bfc" id="L114" title="All 2 branches covered.">    return switch (principal.getCategory()) {</span>
-<span class="fc" id="L115">      case STUDENT -&gt; ERole.ROLE_STUDENT;</span>
-<span class="fc" id="L116">      case STAFF -&gt; ERole.ROLE_STAFF;</span>
+  private ERole resolveRole(EUserCategory category) {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">    return switch (category) {</span>
+<span class="fc" id="L120">      case STUDENT -&gt; ERole.ROLE_STUDENT;</span>
+<span class="fc" id="L121">      case STAFF -&gt; ERole.ROLE_STAFF;</span>
     };
   }
 }

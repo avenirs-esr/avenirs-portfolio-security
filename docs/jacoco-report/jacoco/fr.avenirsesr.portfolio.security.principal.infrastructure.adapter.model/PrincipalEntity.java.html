@@ -3,7 +3,9 @@
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -63,10 +65,18 @@ public class PrincipalEntity extends AvenirsBaseEntity {
   @Column(name = &quot;external_id&quot;, length = 255, nullable = false)
   private String externalId;
 
-  /** User category from a security point of view. */
-  @Column(length = 50, nullable = false)
+  /** User categories from a security point of view. A principal may hold several. */
+<span class="nc" id="L69">  @ElementCollection(fetch = FetchType.LAZY)</span>
+  @CollectionTable(
+      name = &quot;principal_category&quot;,
+      joinColumns = @JoinColumn(name = &quot;id_principal&quot;, nullable = false),
+      uniqueConstraints =
+          @UniqueConstraint(
+              name = &quot;principal_category_pk&quot;,
+              columnNames = {&quot;id_principal&quot;, &quot;category&quot;}))
+  @Column(name = &quot;category&quot;, length = 50, nullable = false)
   @Enumerated(EnumType.STRING)
-  private EUserCategory category;
+  private Set&lt;EUserCategory&gt; categories = new HashSet&lt;&gt;();
 
   /** Security status of the principal. */
   @Column(length = 50, nullable = false)
@@ -74,7 +84,7 @@ public class PrincipalEntity extends AvenirsBaseEntity {
   private EUserStatus status;
 
   /** Structures associated to the principal. */
-<span class="nc" id="L77">  @ManyToMany(fetch = FetchType.LAZY)</span>
+<span class="nc" id="L87">  @ManyToMany(fetch = FetchType.LAZY)</span>
   @JoinTable(
       name = &quot;principal_structure&quot;,
       joinColumns = @JoinColumn(name = &quot;id_principal&quot;, nullable = false),
@@ -92,23 +102,23 @@ public class PrincipalEntity extends AvenirsBaseEntity {
       String passwordHash,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set&lt;EUserCategory&gt; categories,
       EUserStatus status,
       Set&lt;StructureEntity&gt; structureEntities,
       Instant createdAt,
-<span class="nc" id="L99">      Instant updatedAt) {</span>
-<span class="nc" id="L100">    this.setId(id);</span>
-<span class="nc" id="L101">    this.eppn = eppn;</span>
-<span class="nc" id="L102">    this.login = login;</span>
-<span class="nc" id="L103">    this.passwordHash = passwordHash;</span>
-<span class="nc" id="L104">    this.provider = provider;</span>
-<span class="nc" id="L105">    this.externalId = externalId;</span>
-<span class="nc" id="L106">    this.category = category;</span>
-<span class="nc" id="L107">    this.status = status;</span>
-<span class="nc bnc" id="L108" title="All 2 branches missed.">    this.structureEntities = structureEntities != null ? structureEntities : new HashSet&lt;&gt;();</span>
-<span class="nc" id="L109">    this.setCreatedAt(createdAt);</span>
-<span class="nc" id="L110">    this.setUpdatedAt(updatedAt);</span>
-<span class="nc" id="L111">  }</span>
+<span class="nc" id="L109">      Instant updatedAt) {</span>
+<span class="nc" id="L110">    this.setId(id);</span>
+<span class="nc" id="L111">    this.eppn = eppn;</span>
+<span class="nc" id="L112">    this.login = login;</span>
+<span class="nc" id="L113">    this.passwordHash = passwordHash;</span>
+<span class="nc" id="L114">    this.provider = provider;</span>
+<span class="nc" id="L115">    this.externalId = externalId;</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">    this.categories = categories != null ? categories : new HashSet&lt;&gt;();</span>
+<span class="nc" id="L117">    this.status = status;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">    this.structureEntities = structureEntities != null ? structureEntities : new HashSet&lt;&gt;();</span>
+<span class="nc" id="L119">    this.setCreatedAt(createdAt);</span>
+<span class="nc" id="L120">    this.setUpdatedAt(updatedAt);</span>
+<span class="nc" id="L121">  }</span>
 
   public static PrincipalEntity of(
       UUID id,
@@ -117,19 +127,19 @@ public class PrincipalEntity extends AvenirsBaseEntity {
       String passwordHash,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set&lt;EUserCategory&gt; categories,
       EUserStatus status,
       Set&lt;StructureEntity&gt; structureEntities,
       Instant createdAt,
       Instant updatedAt) {
-<span class="nc" id="L125">    return new PrincipalEntity(</span>
+<span class="nc" id="L135">    return new PrincipalEntity(</span>
         id,
         eppn,
         login,
         passwordHash,
         provider,
         externalId,
-        category,
+        categories,
         status,
         structureEntities,
         createdAt,
@@ -143,18 +153,18 @@ public class PrincipalEntity extends AvenirsBaseEntity {
       String passwordHash,
       String provider,
       String externalId,
-      EUserCategory category,
+      Set&lt;EUserCategory&gt; categories,
       EUserStatus status,
       Instant createdAt,
       Instant updatedAt) {
-<span class="nc" id="L150">    return new PrincipalEntity(</span>
+<span class="nc" id="L160">    return new PrincipalEntity(</span>
         id,
         eppn,
         login,
         passwordHash,
         provider,
         externalId,
-        category,
+        categories,
         status,
         new HashSet&lt;&gt;(),
         createdAt,

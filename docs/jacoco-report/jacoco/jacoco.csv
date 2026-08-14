@@ -103,7 +103,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infras
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model,RBACResourceEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model,RBACScopeEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.validation.infrastructure.adapter.utils,ValidationUtils,14,0,4,0,4,0,4,0,2,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model,PrincipalEntity,79,0,2,0,16,0,4,0,3,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model,PrincipalEntity,90,0,4,0,17,0,5,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model,PrincipalEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model,StructureEntity_,3,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.seeder.infrastructure.utils,FileReader,39,0,0,0,10,0,2,0,2,0
@@ -139,7 +139,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infras
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACCatalogSeeder.RoleSyncSummary,18,0,0,0,4,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACCatalogSeeder.PermissionSyncOutcome,27,0,0,0,5,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACCatalogSeeder.PermissionSyncSummary,31,0,5,0,6,0,5,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACAssignmentSeeder,1,197,3,17,0,48,3,18,0,10
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder,RBACAssignmentSeeder,1,207,2,18,0,51,2,18,0,10
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContext,7,12,0,0,2,5,2,3,2,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContextFilter,27,47,1,1,7,16,2,3,1,3
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestData,0,9,0,0,0,1,0,1,0,1
@@ -167,7 +167,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infras
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.configuration,RBACContextServiceConfig,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.configuration,RBACScopeServiceConfig,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DisabledAuthenticationFilter,45,0,8,0,10,0,8,0,4,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DevAuthenticationFilter,63,0,12,0,14,0,10,0,4,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DevAuthenticationFilter,74,0,12,0,17,0,11,0,5,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,ApiKeyAuthenticationFilter,177,0,32,0,43,0,22,0,6,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.filter,HmacAuthenticationFilter,240,0,26,0,60,0,20,0,7,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.temporal.infrastructure.adapter.model,PeriodEntity,3,0,0,0,1,0,1,0,1,0
@@ -188,7 +188,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domai
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.model,AuthContext,0,15,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.domain.model,OIDCIntrospection,0,12,0,0,0,1,0,1,0,1
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.domain.model,Structure,0,12,0,0,0,1,0,1,0,1
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.domain.model,Principal,42,65,6,2,6,14,7,4,3,4
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.domain.model,Principal,44,68,7,3,6,14,8,4,3,4
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseOpenApiConfiguration,22,0,0,0,9,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseSwaggerSchema,91,0,0,0,25,0,3,0,3,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.externalskill.domain.model.enums,EExternalSkillType,27,0,0,0,5,0,1,0,1,0

@@ -16,8 +16,8 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	public static final String EPPN = &quot;eppn&quot;;
 	public static final String STRUCTURE_ENTITIES = &quot;structureEntities&quot;;
 	public static final String EXTERNAL_ID = &quot;externalId&quot;;
+	public static final String CATEGORIES = &quot;categories&quot;;
 	public static final String LOGIN = &quot;login&quot;;
-	public static final String CATEGORY = &quot;category&quot;;
 	public static final String PASSWORD_HASH = &quot;passwordHash&quot;;
 	public static final String STATUS = &quot;status&quot;;
 
@@ -43,14 +43,14 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 	public static volatile SingularAttribute&lt;PrincipalEntity, String&gt; externalId;
 	
 	/**
+	 * @see fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity#categories
+	 **/
+	public static volatile SetAttribute&lt;PrincipalEntity, EUserCategory&gt; categories;
+	
+	/**
 	 * @see fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity#login
 	 **/
 	public static volatile SingularAttribute&lt;PrincipalEntity, String&gt; login;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity#category
-	 **/
-	public static volatile SingularAttribute&lt;PrincipalEntity, EUserCategory&gt; category;
 	
 	/**
 	 * @see fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.model.PrincipalEntity
