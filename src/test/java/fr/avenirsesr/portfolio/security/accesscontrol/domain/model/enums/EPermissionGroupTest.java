@@ -287,6 +287,44 @@ class EPermissionGroupTest {
                 EPermission.PERM_RBAC_REVOKE,
                 EPermission.PERM_RBAC_MANAGE);
       }
+
+      @Test
+      void thenBackofficeConfigManagementShouldContainExactlyBackofficeConfigPermissions() {
+        BddLogger.then(
+            "BACKOFFICE_CONFIG_MANAGEMENT should contain exactly the back-office configuration"
+                + " permissions");
+
+        assertThat(EPermissionGroup.BACKOFFICE_CONFIG_MANAGEMENT.permissions())
+            .containsExactlyInAnyOrder(
+                EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
+                EPermission.PERM_ADDITIONAL_SKILL_CONFIG_UPDATE,
+                EPermission.PERM_INSTITUTION_CONFIG_READ,
+                EPermission.PERM_TRACE_CONFIG_READ,
+                EPermission.PERM_TRACE_CONFIG_UPDATE,
+                EPermission.PERM_WEBSITE_CONTENT_CONFIG_READ,
+                EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE);
+      }
+
+      @Test
+      void thenExternalUserManagementShouldContainExactlyExternalUserPermissions() {
+        BddLogger.then(
+            "EXTERNAL_USER_MANAGEMENT should contain exactly the external user permissions");
+
+        assertThat(EPermissionGroup.EXTERNAL_USER_MANAGEMENT.permissions())
+            .containsExactlyInAnyOrder(
+                EPermission.PERM_EXTERNAL_USER_READ,
+                EPermission.PERM_EXTERNAL_USER_IMPORT,
+                EPermission.PERM_EXTERNAL_USER_UPDATE,
+                EPermission.PERM_EXTERNAL_USER_DELETE);
+      }
+
+      @Test
+      void thenSystemAdministrationShouldContainExactlyTheSeederResetPermission() {
+        BddLogger.then("SYSTEM_ADMINISTRATION should contain exactly the seeder reset permission");
+
+        assertThat(EPermissionGroup.SYSTEM_ADMINISTRATION.permissions())
+            .containsExactlyInAnyOrder(EPermission.PERM_SEEDER_RESET);
+      }
     }
   }
 }
