@@ -29,50 +29,52 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 <span class="nc" id="L29">    log.warn(&quot;Accès refusé : {}&quot;, ex.getMessage());</span>
 
 <span class="nc" id="L31">    return ResponseEntity.status(HttpStatus.FORBIDDEN)</span>
-<span class="nc" id="L32">        .body(new ErrorResponse(EErrorCode.ACCESS_DENIED.name(), EErrorCode.ACCESS_DENIED.getMessage()));</span>
+<span class="nc" id="L32">        .body(</span>
+            new ErrorResponse(
+<span class="nc" id="L34">                EErrorCode.ACCESS_DENIED.name(), EErrorCode.ACCESS_DENIED.getMessage()));</span>
   }
 
   @ExceptionHandler(BusinessException.class)
   public ResponseEntity&lt;ErrorResponse&gt; handleBusinessException(BusinessException ex) {
-<span class="nc" id="L37">    log.error(&quot;Erreur métier : {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L39">    log.error(&quot;Erreur métier : {}&quot;, ex.getMessage());</span>
 
-<span class="nc" id="L39">    return ResponseEntity.status(ex.getErrorCode().getHttpStatus())</span>
-<span class="nc" id="L40">        .body(new ErrorResponse(ex.getErrorCode().name(), ex.getMessage()));</span>
+<span class="nc" id="L41">    return ResponseEntity.status(ex.getErrorCode().getHttpStatus())</span>
+<span class="nc" id="L42">        .body(new ErrorResponse(ex.getErrorCode().name(), ex.getMessage()));</span>
   }
 
   @ExceptionHandler(MaxUploadSizeExceededException.class)
   public ResponseEntity&lt;ErrorResponse&gt; handle(MaxUploadSizeExceededException ex) {
-<span class="nc" id="L45">    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)</span>
-<span class="nc" id="L46">        .body(</span>
+<span class="nc" id="L47">    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)</span>
+<span class="nc" id="L48">        .body(</span>
             new ErrorResponse(
-<span class="nc" id="L48">                EErrorCode.MAX_FILE_SIZE_EXCEEDED.name(),</span>
-<span class="nc" id="L49">                EErrorCode.MAX_FILE_SIZE_EXCEEDED.getMessage()));</span>
+<span class="nc" id="L50">                EErrorCode.MAX_FILE_SIZE_EXCEEDED.name(),</span>
+<span class="nc" id="L51">                EErrorCode.MAX_FILE_SIZE_EXCEEDED.getMessage()));</span>
   }
 
   @ExceptionHandler(MissingServletRequestParameterException.class)
   public ResponseEntity&lt;String&gt; handleMissingParams(MissingServletRequestParameterException ex) {
-<span class="nc" id="L54">    String name = ex.getParameterName();</span>
-<span class="nc" id="L55">    String message = String.format(&quot;Missing required parameter: %s&quot;, name);</span>
-<span class="nc" id="L56">    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);</span>
+<span class="nc" id="L56">    String name = ex.getParameterName();</span>
+<span class="nc" id="L57">    String message = String.format(&quot;Missing required parameter: %s&quot;, name);</span>
+<span class="nc" id="L58">    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);</span>
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity&lt;ErrorResponse&gt; handleMethodArgumentTypeMismatch(
       MethodArgumentTypeMismatchException ex) {
-<span class="nc" id="L62">    return ResponseEntity.status(HttpStatus.BAD_REQUEST)</span>
-<span class="nc" id="L63">        .body(</span>
+<span class="nc" id="L64">    return ResponseEntity.status(HttpStatus.BAD_REQUEST)</span>
+<span class="nc" id="L65">        .body(</span>
             new ErrorResponse(
-<span class="nc" id="L65">                EErrorCode.INVALID_ARGUMENT_TYPE.name(),</span>
-<span class="nc" id="L66">                EErrorCode.INVALID_ARGUMENT_TYPE.getMessage()));</span>
+<span class="nc" id="L67">                EErrorCode.INVALID_ARGUMENT_TYPE.name(),</span>
+<span class="nc" id="L68">                EErrorCode.INVALID_ARGUMENT_TYPE.getMessage()));</span>
   }
 
   @ExceptionHandler(ConfigurationException.class)
   public ResponseEntity&lt;ErrorResponse&gt; handleConfigurationError(ConfigurationException ex) {
-<span class="nc" id="L71">    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
-<span class="nc" id="L72">        .body(</span>
+<span class="nc" id="L73">    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L74">        .body(</span>
             new ErrorResponse(
-<span class="nc" id="L74">                EErrorCode.CONFIGURATION_ERROR.name(),</span>
-<span class="nc" id="L75">                EErrorCode.CONFIGURATION_ERROR.getMessage()));</span>
+<span class="nc" id="L76">                EErrorCode.CONFIGURATION_ERROR.name(),</span>
+<span class="nc" id="L77">                EErrorCode.CONFIGURATION_ERROR.getMessage()));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -18,15 +18,15 @@
 
 <span class="fc" id="L19">  PERM_COMPETENCY_READ(&quot;competency:read&quot;, &quot;View the target competencies of the framework&quot;),</span>
 
-<span class="fc" id="L21">  PERM_DECLARED_ACTIVITY_LIST_OWN(</span>
+<span class="fc" id="L21">  PERM_EXTERNAL_SKILL_READ(&quot;external-skill:read&quot;, &quot;View the external skill catalog&quot;),</span>
+
+<span class="fc" id="L23">  PERM_DECLARED_ACTIVITY_LIST_OWN(</span>
       &quot;declared-activity:list:own&quot;,
       &quot;View the list of own declared activities and their associations&quot;),
-<span class="fc" id="L24">  PERM_DECLARED_ACTIVITY_UPDATE_OWN(</span>
-      &quot;declared-activity:update:own&quot;,
-      &quot;Update, finish or add a reflection to a declared activity&quot;),
-<span class="fc" id="L27">  PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN(</span>
-      &quot;declared-activity:association:manage:own&quot;,
-      &quot;Remove associations of a declared activity&quot;),
+<span class="fc" id="L26">  PERM_DECLARED_ACTIVITY_UPDATE_OWN(</span>
+      &quot;declared-activity:update:own&quot;, &quot;Update, finish or add a reflection to a declared activity&quot;),
+<span class="fc" id="L28">  PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN(</span>
+      &quot;declared-activity:association:manage:own&quot;, &quot;Remove associations of a declared activity&quot;),
 
 <span class="fc" id="L31">  PERM_DECLARED_SKILL_LIST_OWN(&quot;declared-skill:list:own&quot;, &quot;View the list of own declared skills&quot;),</span>
 <span class="fc" id="L32">  PERM_DECLARED_SKILL_CREATE_OWN(&quot;declared-skill:create:own&quot;, &quot;Add a declared skill&quot;),</span>
@@ -57,89 +57,108 @@
       &quot;self-knowledge:list:own&quot;, &quot;View own self-knowledge elements and categories&quot;),
 <span class="fc" id="L58">  PERM_SELF_KNOWLEDGE_CREATE_OWN(</span>
       &quot;self-knowledge:create:own&quot;, &quot;Add a self-knowledge element or category&quot;),
-<span class="fc" id="L60">  PERM_SELF_KNOWLEDGE_UPDATE_OWN(</span>
-      &quot;self-knowledge:update:own&quot;, &quot;Update a self-knowledge element&quot;),
-<span class="fc" id="L62">  PERM_SELF_KNOWLEDGE_DELETE_OWN(</span>
+<span class="fc" id="L60">  PERM_SELF_KNOWLEDGE_UPDATE_OWN(&quot;self-knowledge:update:own&quot;, &quot;Update a self-knowledge element&quot;),</span>
+<span class="fc" id="L61">  PERM_SELF_KNOWLEDGE_DELETE_OWN(</span>
       &quot;self-knowledge:delete:own&quot;, &quot;Delete a self-knowledge element or category&quot;),
 
-<span class="fc" id="L65">  PERM_NOTIFICATION_READ_OWN(&quot;notification:read:own&quot;, &quot;View own notifications&quot;),</span>
-<span class="fc" id="L66">  PERM_NOTIFICATION_UPDATE_OWN(&quot;notification:update:own&quot;, &quot;Mark own notification as seen&quot;),</span>
+<span class="fc" id="L64">  PERM_NOTIFICATION_READ_OWN(&quot;notification:read:own&quot;, &quot;View own notifications&quot;),</span>
+<span class="fc" id="L65">  PERM_NOTIFICATION_UPDATE_OWN(&quot;notification:update:own&quot;, &quot;Mark own notification as seen&quot;),</span>
 
-<span class="fc" id="L68">  PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL(</span>
+<span class="fc" id="L67">  PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL(</span>
       &quot;activity:catalog:read:contextual&quot;, &quot;View the activity catalog&quot;),
-<span class="fc" id="L70">  PERM_ACTIVITY_REGISTER_OWN(&quot;activity:register:own&quot;, &quot;Register for an activity&quot;),</span>
-<span class="fc" id="L71">  PERM_ACTIVITY_READ_CONTEXTUAL(&quot;activity:read:contextual&quot;, &quot;View activity details&quot;),</span>
-<span class="fc" id="L72">  PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL(</span>
+<span class="fc" id="L69">  PERM_ACTIVITY_REGISTER_OWN(&quot;activity:register:own&quot;, &quot;Register for an activity&quot;),</span>
+<span class="fc" id="L70">  PERM_ACTIVITY_READ_CONTEXTUAL(&quot;activity:read:contextual&quot;, &quot;View activity details&quot;),</span>
+<span class="fc" id="L71">  PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL(</span>
       &quot;activity:document:download:contextual&quot;, &quot;Download an activity's documents and links&quot;),
-<span class="fc" id="L74">  PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL(</span>
+<span class="fc" id="L73">  PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL(</span>
       &quot;activity:document:read:contextual&quot;, &quot;View an activity's documents and links&quot;),
-<span class="fc" id="L76">  PERM_EMPLOYMENT_KIT_READ_OWN(&quot;employment-kit:read:own&quot;, &quot;View the My employment kit page&quot;),</span>
-<span class="fc" id="L77">  PERM_ACTIVITY_LIBRARY_STAFF_READ(</span>
+<span class="fc" id="L75">  PERM_EMPLOYMENT_KIT_READ_OWN(&quot;employment-kit:read:own&quot;, &quot;View the My employment kit page&quot;),</span>
+<span class="fc" id="L76">  PERM_ACTIVITY_LIBRARY_STAFF_READ(</span>
       &quot;activity:library:staff:read&quot;, &quot;View the staff activity library&quot;),
-<span class="fc" id="L79">  PERM_ACTIVITY_CREATE(&quot;activity:create&quot;, &quot;Create an activity&quot;),</span>
-<span class="fc" id="L80">  PERM_ACTIVITY_DUPLICATE(&quot;activity:duplicate&quot;, &quot;Duplicate an activity&quot;),</span>
-<span class="fc" id="L81">  PERM_ACTIVITY_UPDATE(&quot;activity:update&quot;, &quot;Update the content of an unpublished activity&quot;),</span>
-<span class="fc" id="L82">  PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL(</span>
+<span class="fc" id="L78">  PERM_ACTIVITY_CREATE(&quot;activity:create&quot;, &quot;Create an activity&quot;),</span>
+<span class="fc" id="L79">  PERM_ACTIVITY_DUPLICATE(&quot;activity:duplicate&quot;, &quot;Duplicate an activity&quot;),</span>
+<span class="fc" id="L80">  PERM_ACTIVITY_UPDATE(&quot;activity:update&quot;, &quot;Update the content of an unpublished activity&quot;),</span>
+<span class="fc" id="L81">  PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL(</span>
       &quot;activity:published:update:contextual&quot;, &quot;Update a published activity&quot;),
-<span class="fc" id="L84">  PERM_ACTIVITY_DELETE(&quot;activity:delete&quot;, &quot;Delete an unpublished activity&quot;),</span>
-<span class="fc" id="L85">  PERM_ACTIVITY_FEEDBACK_SETTINGS_UPDATE(</span>
+<span class="fc" id="L83">  PERM_ACTIVITY_DELETE(&quot;activity:delete&quot;, &quot;Delete an unpublished activity&quot;),</span>
+<span class="fc" id="L84">  PERM_ACTIVITY_FEEDBACK_SETTINGS_UPDATE(</span>
       &quot;activity:feedback-settings:update&quot;,
       &quot;Configure the feedback request settings of an activity&quot;),
 
-<span class="fc" id="L89">  PERM_FEEDBACK_REQUEST_CREATE_OWN(&quot;feedback:request:create:own&quot;, &quot;Request feedback&quot;),</span>
-<span class="fc" id="L90">  PERM_FEEDBACK_RECEIVED_READ_OWN(&quot;feedback:received:read:own&quot;, &quot;View received feedback&quot;),</span>
-<span class="fc" id="L91">  PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL(</span>
+<span class="fc" id="L88">  PERM_FEEDBACK_REQUEST_CREATE_OWN(&quot;feedback:request:create:own&quot;, &quot;Request feedback&quot;),</span>
+<span class="fc" id="L89">  PERM_FEEDBACK_RECEIVED_READ_OWN(&quot;feedback:received:read:own&quot;, &quot;View received feedback&quot;),</span>
+<span class="fc" id="L90">  PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL(</span>
       &quot;feedback:request:read:assigned&quot;, &quot;View feedback requests assigned to them&quot;),
-<span class="fc" id="L93">  PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL(</span>
+<span class="fc" id="L92">  PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL(</span>
       &quot;feedback:request:respond:assigned&quot;, &quot;Respond to an assigned feedback request&quot;),
-<span class="fc" id="L95">  PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL(</span>
+<span class="fc" id="L94">  PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL(</span>
       &quot;feedback:history:read:contextual&quot;, &quot;View the feedback history of their institution&quot;),
-<span class="fc" id="L97">  PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL(</span>
+<span class="fc" id="L96">  PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL(</span>
       &quot;feedback:dashboard:read:contextual&quot;, &quot;View the feedback dashboard of their institution&quot;),
 
-<span class="fc" id="L100">  PERM_PRIMARY_ESTABLISHMENT_READ(&quot;primary-establishment:read&quot;, &quot;View a primary institution&quot;),</span>
-<span class="fc" id="L101">  PERM_PRIMARY_ESTABLISHMENT_CREATE(&quot;primary-establishment:create&quot;, &quot;Create a primary institution&quot;),</span>
-<span class="fc" id="L102">  PERM_PRIMARY_ESTABLISHMENT_UPDATE(&quot;primary-establishment:update&quot;, &quot;Update a primary institution&quot;),</span>
-<span class="fc" id="L103">  PERM_PRIMARY_ESTABLISHMENT_DELETE(&quot;primary-establishment:delete&quot;, &quot;Delete a primary institution&quot;),</span>
-<span class="fc" id="L104">  PERM_SECONDARY_ESTABLISHMENT_READ(&quot;secondary-establishment:read&quot;, &quot;View a secondary institution&quot;),</span>
-<span class="fc" id="L105">  PERM_SECONDARY_ESTABLISHMENT_CREATE(</span>
+<span class="fc" id="L99">  PERM_PRIMARY_ESTABLISHMENT_READ(&quot;primary-establishment:read&quot;, &quot;View a primary institution&quot;),</span>
+<span class="fc" id="L100">  PERM_PRIMARY_ESTABLISHMENT_CREATE(&quot;primary-establishment:create&quot;, &quot;Create a primary institution&quot;),</span>
+<span class="fc" id="L101">  PERM_PRIMARY_ESTABLISHMENT_UPDATE(&quot;primary-establishment:update&quot;, &quot;Update a primary institution&quot;),</span>
+<span class="fc" id="L102">  PERM_PRIMARY_ESTABLISHMENT_DELETE(&quot;primary-establishment:delete&quot;, &quot;Delete a primary institution&quot;),</span>
+<span class="fc" id="L103">  PERM_SECONDARY_ESTABLISHMENT_READ(&quot;secondary-establishment:read&quot;, &quot;View a secondary institution&quot;),</span>
+<span class="fc" id="L104">  PERM_SECONDARY_ESTABLISHMENT_CREATE(</span>
       &quot;secondary-establishment:create&quot;, &quot;Create a secondary institution&quot;),
-<span class="fc" id="L107">  PERM_SECONDARY_ESTABLISHMENT_UPDATE(</span>
+<span class="fc" id="L106">  PERM_SECONDARY_ESTABLISHMENT_UPDATE(</span>
       &quot;secondary-establishment:update&quot;, &quot;Update a secondary institution&quot;),
-<span class="fc" id="L109">  PERM_SECONDARY_ESTABLISHMENT_DELETE(</span>
+<span class="fc" id="L108">  PERM_SECONDARY_ESTABLISHMENT_DELETE(</span>
       &quot;secondary-establishment:delete&quot;, &quot;Delete a secondary institution&quot;),
-<span class="fc" id="L111">  PERM_GROUP_READ(&quot;group:read&quot;, &quot;View a group&quot;),</span>
-<span class="fc" id="L112">  PERM_GROUP_IMPORT(&quot;group:import&quot;, &quot;Populate a group via import&quot;),</span>
-<span class="fc" id="L113">  PERM_GROUP_CREATE(&quot;group:create&quot;, &quot;Create a group&quot;),</span>
-<span class="fc" id="L114">  PERM_GROUP_UPDATE(&quot;group:update&quot;, &quot;Update a group&quot;),</span>
-<span class="fc" id="L115">  PERM_GROUP_DELETE(&quot;group:delete&quot;, &quot;Delete a group&quot;),</span>
+<span class="fc" id="L110">  PERM_GROUP_READ(&quot;group:read&quot;, &quot;View a group&quot;),</span>
+<span class="fc" id="L111">  PERM_GROUP_IMPORT(&quot;group:import&quot;, &quot;Populate a group via import&quot;),</span>
+<span class="fc" id="L112">  PERM_GROUP_CREATE(&quot;group:create&quot;, &quot;Create a group&quot;),</span>
+<span class="fc" id="L113">  PERM_GROUP_UPDATE(&quot;group:update&quot;, &quot;Update a group&quot;),</span>
+<span class="fc" id="L114">  PERM_GROUP_DELETE(&quot;group:delete&quot;, &quot;Delete a group&quot;),</span>
 
-<span class="fc" id="L117">  PERM_RBAC_READ(</span>
+<span class="fc" id="L116">  PERM_RBAC_READ(</span>
       &quot;rbac:read&quot;,
       &quot;Read RBAC administration data: roles, permissions, assignments, scopes and contexts&quot;),
-<span class="fc" id="L120">  PERM_RBAC_ASSIGN(&quot;rbac:assign&quot;, &quot;Create or grant an RBAC assignment to a principal&quot;),</span>
-<span class="fc" id="L121">  PERM_RBAC_REVOKE(&quot;rbac:revoke&quot;, &quot;Revoke an RBAC assignment&quot;),</span>
-<span class="fc" id="L122">  PERM_RBAC_MANAGE(</span>
-      &quot;rbac:manage&quot;, &quot;Create, update or delete structuring RBAC elements such as roles&quot;);
+<span class="fc" id="L119">  PERM_RBAC_ASSIGN(&quot;rbac:assign&quot;, &quot;Create or grant an RBAC assignment to a principal&quot;),</span>
+<span class="fc" id="L120">  PERM_RBAC_REVOKE(&quot;rbac:revoke&quot;, &quot;Revoke an RBAC assignment&quot;),</span>
+<span class="fc" id="L121">  PERM_RBAC_MANAGE(</span>
+      &quot;rbac:manage&quot;, &quot;Create, update or delete structuring RBAC elements such as roles&quot;),
+
+<span class="fc" id="L124">  PERM_ADDITIONAL_SKILL_CONFIG_READ(</span>
+      &quot;additional-skill-config:read&quot;, &quot;View the additional skill configuration&quot;),
+<span class="fc" id="L126">  PERM_ADDITIONAL_SKILL_CONFIG_UPDATE(</span>
+      &quot;additional-skill-config:update&quot;, &quot;Update the additional skill configuration&quot;),
+<span class="fc" id="L128">  PERM_INSTITUTION_CONFIG_READ(&quot;institution-config:read&quot;, &quot;View an institution's configuration&quot;),</span>
+<span class="fc" id="L129">  PERM_TRACE_CONFIG_READ(&quot;trace-config:read&quot;, &quot;View the trace retention configuration&quot;),</span>
+<span class="fc" id="L130">  PERM_TRACE_CONFIG_UPDATE(&quot;trace-config:update&quot;, &quot;Update the trace retention configuration&quot;),</span>
+<span class="fc" id="L131">  PERM_WEBSITE_CONTENT_CONFIG_READ(</span>
+      &quot;website-content-config:read&quot;, &quot;View the configurable website content&quot;),
+<span class="fc" id="L133">  PERM_WEBSITE_CONTENT_CONFIG_UPDATE(</span>
+      &quot;website-content-config:update&quot;, &quot;Update the configurable website content&quot;),
+
+<span class="fc" id="L136">  PERM_EXTERNAL_USER_READ(&quot;external-user:read&quot;, &quot;View external users&quot;),</span>
+<span class="fc" id="L137">  PERM_EXTERNAL_USER_IMPORT(&quot;external-user:import&quot;, &quot;Import external users in bulk&quot;),</span>
+<span class="fc" id="L138">  PERM_EXTERNAL_USER_UPDATE(&quot;external-user:update&quot;, &quot;Update or activate an external user in bulk&quot;),</span>
+<span class="fc" id="L139">  PERM_EXTERNAL_USER_DELETE(&quot;external-user:delete&quot;, &quot;Delete an external user&quot;),</span>
+
+<span class="fc" id="L141">  PERM_SEEDER_RESET(</span>
+      &quot;seeder:reset&quot;, &quot;Reset and reseed the database (destructive administration operation)&quot;);
 
   private final String authority;
   private final String description;
 
-<span class="fc" id="L128">  EPermission(String authority, String description) {</span>
-<span class="fc" id="L129">    this.authority = authority;</span>
-<span class="fc" id="L130">    this.description = description;</span>
-<span class="fc" id="L131">  }</span>
+<span class="fc" id="L147">  EPermission(String authority, String description) {</span>
+<span class="fc" id="L148">    this.authority = authority;</span>
+<span class="fc" id="L149">    this.description = description;</span>
+<span class="fc" id="L150">  }</span>
 
   public String authority() {
-<span class="fc" id="L134">    return authority;</span>
+<span class="fc" id="L153">    return authority;</span>
   }
 
   public String description() {
-<span class="fc" id="L138">    return description;</span>
+<span class="fc" id="L157">    return description;</span>
   }
 
   public String legacyAuthority() {
-<span class="fc" id="L142">    return name();</span>
+<span class="fc" id="L161">    return name();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

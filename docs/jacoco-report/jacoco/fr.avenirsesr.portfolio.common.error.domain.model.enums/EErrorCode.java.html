@@ -52,86 +52,88 @@ public enum EErrorCode {
   // 409 Conflict
 <span class="fc" id="L53">  FEEDBACK_MAXIMUM_ITERATION_REACHED(&quot;Maximum feedback iteration reached&quot;, HttpStatus.CONFLICT),</span>
 <span class="fc" id="L54">  FEEDBACK_IN_PROCESS(&quot;A feedback is currently in process&quot;, HttpStatus.CONFLICT),</span>
-<span class="fc" id="L55">  USER_ALREADY_EXISTS(&quot;User already exists&quot;, HttpStatus.CONFLICT),</span>
-<span class="fc" id="L56">  STUDENT_DECLARED_ALREADY_EXIST(</span>
+<span class="fc" id="L55">  FEEDBACK_SUBMITTED(&quot;This feedback has already been submitted&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L56">  FEEDBACK_SEEN(&quot;This feedback can no longer be edited once seen&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L57">  USER_ALREADY_EXISTS(&quot;User already exists&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L58">  STUDENT_DECLARED_ALREADY_EXIST(</span>
       &quot;This declared skill is already assigned to the student&quot;, HttpStatus.CONFLICT),
-<span class="fc" id="L58">  DECLARED_ACTIVITY_ALREADY_EXIST(&quot;Declared activity already exist&quot;, HttpStatus.CONFLICT),</span>
-<span class="fc" id="L59">  DECLARED_ACTIVITY_ALREADY_FINISHED(&quot;Declared activity already finished&quot;, HttpStatus.CONFLICT),</span>
-<span class="fc" id="L60">  DECLARED_ACTIVITY_HAS_NOT_STARTED(&quot;Declared activity has not started&quot;, HttpStatus.CONFLICT),</span>
-<span class="fc" id="L61">  DECLARED_ACTIVITY_LOCKED(&quot;Declared activity is submitted or finished&quot;, HttpStatus.CONFLICT),</span>
-<span class="fc" id="L62">  ASSOCIATION_ALREADY_EXIST(&quot;This association already exist&quot;, HttpStatus.CONFLICT),</span>
-<span class="fc" id="L63">  INSTITUTION_HAI_ALREADY_EXISTS(</span>
+<span class="fc" id="L60">  DECLARED_ACTIVITY_ALREADY_EXIST(&quot;Declared activity already exist&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L61">  DECLARED_ACTIVITY_ALREADY_FINISHED(&quot;Declared activity already finished&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L62">  DECLARED_ACTIVITY_HAS_NOT_STARTED(&quot;Declared activity has not started&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L63">  DECLARED_ACTIVITY_LOCKED(&quot;Declared activity is submitted or finished&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L64">  ASSOCIATION_ALREADY_EXIST(&quot;This association already exist&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L65">  INSTITUTION_HAI_ALREADY_EXISTS(</span>
       &quot;An institution with this HAI already exists&quot;, HttpStatus.CONFLICT),
-<span class="fc" id="L65">  GROUP_ID_SI_SCO_ALREADY_EXISTS(&quot;A group with this id_si_sco already exists&quot;, HttpStatus.CONFLICT),</span>
+<span class="fc" id="L67">  GROUP_ID_SI_SCO_ALREADY_EXISTS(&quot;A group with this id_si_sco already exists&quot;, HttpStatus.CONFLICT),</span>
 
   // 413 Payload Too Large
-<span class="fc" id="L68">  MAX_FILE_SIZE_EXCEEDED(&quot;Maximum upload size exceeded&quot;, HttpStatus.PAYLOAD_TOO_LARGE),</span>
+<span class="fc" id="L70">  MAX_FILE_SIZE_EXCEEDED(&quot;Maximum upload size exceeded&quot;, HttpStatus.PAYLOAD_TOO_LARGE),</span>
 
   // 500 Internal Server Error
-<span class="fc" id="L71">  FILE_STORAGE_ERROR(&quot;File storage operation failed&quot;, HttpStatus.INTERNAL_SERVER_ERROR),</span>
-<span class="fc" id="L72">  CONFIGURATION_ERROR(&quot;Configuration error&quot;, HttpStatus.INTERNAL_SERVER_ERROR),</span>
+<span class="fc" id="L73">  FILE_STORAGE_ERROR(&quot;File storage operation failed&quot;, HttpStatus.INTERNAL_SERVER_ERROR),</span>
+<span class="fc" id="L74">  CONFIGURATION_ERROR(&quot;Configuration error&quot;, HttpStatus.INTERNAL_SERVER_ERROR),</span>
 
   // 503 Service Unavailable
-<span class="fc" id="L75">  DEPENDENCY_CHECK_TIMEOUT(&quot;Dependency check timeout&quot;, HttpStatus.SERVICE_UNAVAILABLE),</span>
-<span class="fc" id="L76">  DEPENDENCY_CHECK_FAILED(&quot;Dependency check failed&quot;, HttpStatus.SERVICE_UNAVAILABLE),</span>
+<span class="fc" id="L77">  DEPENDENCY_CHECK_TIMEOUT(&quot;Dependency check timeout&quot;, HttpStatus.SERVICE_UNAVAILABLE),</span>
+<span class="fc" id="L78">  DEPENDENCY_CHECK_FAILED(&quot;Dependency check failed&quot;, HttpStatus.SERVICE_UNAVAILABLE),</span>
 
   // 400 Bad Request (default)
-<span class="fc" id="L79">  WRONG_CLASS_TYPE(&quot;The class type should be different&quot;),</span>
-<span class="fc" id="L80">  UNKNOWN_FILE_TYPE(&quot;File type is not supported&quot;),</span>
-<span class="fc" id="L81">  INVALID_TRACE_TYPE(&quot;Invalid trace type&quot;),</span>
-<span class="fc" id="L82">  LANGUAGE_NOT_SUPPORTED(&quot;Language not supported&quot;),</span>
-<span class="fc" id="L83">  INVALID_ARGUMENT_TYPE(&quot;The type of the argument is invalid&quot;),</span>
-<span class="fc" id="L84">  DECLARED_SKILL_NOT_AVAILABLE(&quot;Declared skill not available&quot;),</span>
-<span class="fc" id="L85">  TITLE_TOO_LONG(&quot;The length of the title is too long&quot;),</span>
-<span class="fc" id="L86">  DESCRIPTION_TOO_LONG(&quot;The length of the description is too long&quot;),</span>
-<span class="fc" id="L87">  RATING_OUT_OF_BOUNCE(&quot;Rating is out of bounce&quot;),</span>
-<span class="fc" id="L88">  SELF_KNOWLEDGE_ELEMENTS_ARE_NOT_IN_SAME_CATEGORY(</span>
+<span class="fc" id="L81">  WRONG_CLASS_TYPE(&quot;The class type should be different&quot;),</span>
+<span class="fc" id="L82">  UNKNOWN_FILE_TYPE(&quot;File type is not supported&quot;),</span>
+<span class="fc" id="L83">  INVALID_TRACE_TYPE(&quot;Invalid trace type&quot;),</span>
+<span class="fc" id="L84">  LANGUAGE_NOT_SUPPORTED(&quot;Language not supported&quot;),</span>
+<span class="fc" id="L85">  INVALID_ARGUMENT_TYPE(&quot;The type of the argument is invalid&quot;),</span>
+<span class="fc" id="L86">  DECLARED_SKILL_NOT_AVAILABLE(&quot;Declared skill not available&quot;),</span>
+<span class="fc" id="L87">  TITLE_TOO_LONG(&quot;The length of the title is too long&quot;),</span>
+<span class="fc" id="L88">  DESCRIPTION_TOO_LONG(&quot;The length of the description is too long&quot;),</span>
+<span class="fc" id="L89">  RATING_OUT_OF_BOUNCE(&quot;Rating is out of bounce&quot;),</span>
+<span class="fc" id="L90">  SELF_KNOWLEDGE_ELEMENTS_ARE_NOT_IN_SAME_CATEGORY(</span>
       &quot;Self knowledge elements are not in the same category&quot;),
-<span class="fc" id="L90">  SELF_KNOWLEDGE_CATEGORY_LIST_EMPTY(&quot;Self knowledge category list is empty&quot;),</span>
-<span class="fc" id="L91">  SELF_KNOWLEDGE_CATEGORY_NOT_AVAILABLE(&quot;Self knowledge category not available&quot;),</span>
-<span class="fc" id="L92">  SELF_KNOWLEDGE_CATEGORY_IS_MANDATORY(&quot;Self knowledge category is mandatory&quot;),</span>
-<span class="fc" id="L93">  SELF_KNOWLEDGE_CATEGORY_NOT_LINKED(&quot;Self knowledge category is not linked to the student&quot;),</span>
-<span class="fc" id="L94">  NOT_BLANK(&quot;The field {0} cannot be blank&quot;),</span>
-<span class="fc" id="L95">  NOT_NULL(&quot;The field {0} cannot be null&quot;),</span>
-<span class="fc" id="L96">  TOO_LONG(&quot;The field {0} exceeds the maximum allowed length&quot;),</span>
-<span class="fc" id="L97">  ENRICHED_TEXT_TOO_LONG(</span>
+<span class="fc" id="L92">  SELF_KNOWLEDGE_CATEGORY_LIST_EMPTY(&quot;Self knowledge category list is empty&quot;),</span>
+<span class="fc" id="L93">  SELF_KNOWLEDGE_CATEGORY_NOT_AVAILABLE(&quot;Self knowledge category not available&quot;),</span>
+<span class="fc" id="L94">  SELF_KNOWLEDGE_CATEGORY_IS_MANDATORY(&quot;Self knowledge category is mandatory&quot;),</span>
+<span class="fc" id="L95">  SELF_KNOWLEDGE_CATEGORY_NOT_LINKED(&quot;Self knowledge category is not linked to the student&quot;),</span>
+<span class="fc" id="L96">  NOT_BLANK(&quot;The field {0} cannot be blank&quot;),</span>
+<span class="fc" id="L97">  NOT_NULL(&quot;The field {0} cannot be null&quot;),</span>
+<span class="fc" id="L98">  TOO_LONG(&quot;The field {0} exceeds the maximum allowed length&quot;),</span>
+<span class="fc" id="L99">  ENRICHED_TEXT_TOO_LONG(</span>
       &quot;The field {0}, with its enriched content, exceeds the maximum allowed length&quot;),
-<span class="fc" id="L99">  NOT_URL(&quot;The field {0} is not a valid URL&quot;),</span>
-<span class="fc" id="L100">  END_DATE_BEFORE_START_DATE(&quot;The end date cannot be before the start date&quot;),</span>
-<span class="fc" id="L101">  INSTITUTION_ID_NULL(&quot;Institution id cannot be null&quot;),</span>
-<span class="fc" id="L102">  INSTITUTION_PRIMARY_CANNOT_HAVE_PARENT(</span>
+<span class="fc" id="L101">  NOT_URL(&quot;The field {0} is not a valid URL&quot;),</span>
+<span class="fc" id="L102">  END_DATE_BEFORE_START_DATE(&quot;The end date cannot be before the start date&quot;),</span>
+<span class="fc" id="L103">  INSTITUTION_ID_NULL(&quot;Institution id cannot be null&quot;),</span>
+<span class="fc" id="L104">  INSTITUTION_PRIMARY_CANNOT_HAVE_PARENT(</span>
       &quot;A primary institution cannot be attached to a parent institution&quot;),
-<span class="fc" id="L104">  INSTITUTION_SECONDARY_REQUIRES_PARENT(</span>
+<span class="fc" id="L106">  INSTITUTION_SECONDARY_REQUIRES_PARENT(</span>
       &quot;A secondary institution must be attached to a parent institution&quot;),
-<span class="fc" id="L106">  INSTITUTION_PARENT_MUST_BE_PRIMARY(</span>
+<span class="fc" id="L108">  INSTITUTION_PARENT_MUST_BE_PRIMARY(</span>
       &quot;A secondary institution must be attached to a primary institution&quot;),
-<span class="fc" id="L108">  GROUP_PROGRAM_CANNOT_HAVE_PARENT(&quot;A program cannot be attached to a parent group&quot;),</span>
-<span class="fc" id="L109">  GROUP_PROGRAM_OPTION_REQUIRES_PARENT(&quot;A program option must be attached to a parent group&quot;),</span>
-<span class="fc" id="L110">  GROUP_PROGRAM_OPTION_PARENT_MUST_BE_PROGRAM(&quot;A program option must be attached to a program&quot;),</span>
-<span class="fc" id="L111">  GROUP_STUDENT_GROUP_REQUIRES_PARENT(&quot;A student group must be attached to a parent group&quot;),</span>
-<span class="fc" id="L112">  GROUP_STUDENT_GROUP_PARENT_MUST_BE_PROGRAM_OR_OPTION(</span>
+<span class="fc" id="L110">  GROUP_PROGRAM_CANNOT_HAVE_PARENT(&quot;A program cannot be attached to a parent group&quot;),</span>
+<span class="fc" id="L111">  GROUP_PROGRAM_OPTION_REQUIRES_PARENT(&quot;A program option must be attached to a parent group&quot;),</span>
+<span class="fc" id="L112">  GROUP_PROGRAM_OPTION_PARENT_MUST_BE_PROGRAM(&quot;A program option must be attached to a program&quot;),</span>
+<span class="fc" id="L113">  GROUP_STUDENT_GROUP_REQUIRES_PARENT(&quot;A student group must be attached to a parent group&quot;),</span>
+<span class="fc" id="L114">  GROUP_STUDENT_GROUP_PARENT_MUST_BE_PROGRAM_OR_OPTION(</span>
       &quot;A student group must be attached to a program or a program option&quot;),
-<span class="fc" id="L114">  FIRSTNAME_IS_NULL(&quot;First name cannot be null&quot;),</span>
-<span class="fc" id="L115">  LASTNAME_IS_NULL(&quot;Last name cannot be null&quot;),</span>
-<span class="fc" id="L116">  INVALID_DATE_FORMAT(&quot;Invalid date format. Expected format: yyyy-MM-dd.&quot;),</span>
-<span class="fc" id="L117">  ACTIVITY_DATES(&quot;Start and end dates must either be both null or both provided&quot;),</span>
-<span class="fc" id="L118">  DECLARED_ACTIVITY_START_DATE_BEFORE_SUBSCRIPTION(</span>
+<span class="fc" id="L116">  FIRSTNAME_IS_NULL(&quot;First name cannot be null&quot;),</span>
+<span class="fc" id="L117">  LASTNAME_IS_NULL(&quot;Last name cannot be null&quot;),</span>
+<span class="fc" id="L118">  INVALID_DATE_FORMAT(&quot;Invalid date format. Expected format: yyyy-MM-dd.&quot;),</span>
+<span class="fc" id="L119">  ACTIVITY_DATES(&quot;Start and end dates must either be both null or both provided&quot;),</span>
+<span class="fc" id="L120">  DECLARED_ACTIVITY_START_DATE_BEFORE_SUBSCRIPTION(</span>
       &quot;Start date cannot be before the subscription date&quot;);
 
   private final String message;
   private final HttpStatus httpStatus;
 
   EErrorCode(String message) {
-<span class="fc" id="L125">    this(message, HttpStatus.BAD_REQUEST);</span>
-<span class="fc" id="L126">  }</span>
+<span class="fc" id="L127">    this(message, HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L128">  }</span>
 
-<span class="fc" id="L128">  EErrorCode(String message, HttpStatus httpStatus) {</span>
-<span class="fc" id="L129">    this.message = message;</span>
-<span class="fc" id="L130">    this.httpStatus = httpStatus;</span>
-<span class="fc" id="L131">  }</span>
+<span class="fc" id="L130">  EErrorCode(String message, HttpStatus httpStatus) {</span>
+<span class="fc" id="L131">    this.message = message;</span>
+<span class="fc" id="L132">    this.httpStatus = httpStatus;</span>
+<span class="fc" id="L133">  }</span>
 
   public String formatMessage(Object... args) {
-<span class="nc" id="L134">    return MessageFormat.format(this.message, args);</span>
+<span class="nc" id="L136">    return MessageFormat.format(this.message, args);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
