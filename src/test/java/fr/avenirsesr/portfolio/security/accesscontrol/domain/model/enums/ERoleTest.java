@@ -83,6 +83,7 @@ class ERoleTest {
                 EPermission.PERM_TRACE_DELETE_OWN,
                 EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN,
                 EPermission.PERM_COMPETENCY_READ,
+                EPermission.PERM_EXTERNAL_SKILL_READ,
                 EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN,
                 EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN,
                 EPermission.PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN,
@@ -162,9 +163,8 @@ class ERoleTest {
       }
 
       @Test
-      void thenItShouldExposeTheExactPreRefactorPermissionSet() {
-        BddLogger.then(
-            "it should expose the exact permission set the role had before the refactor");
+      void thenItShouldExposeTheExactExpectedPermissionSet() {
+        BddLogger.then("it should expose exactly the expected permission set");
 
         assertThat(ERole.ROLE_SUPER_ADMIN.permissions())
             .containsExactlyInAnyOrder(
@@ -187,7 +187,19 @@ class ERoleTest {
                 EPermission.PERM_RBAC_READ,
                 EPermission.PERM_RBAC_ASSIGN,
                 EPermission.PERM_RBAC_REVOKE,
-                EPermission.PERM_RBAC_MANAGE);
+                EPermission.PERM_RBAC_MANAGE,
+                EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
+                EPermission.PERM_ADDITIONAL_SKILL_CONFIG_UPDATE,
+                EPermission.PERM_INSTITUTION_CONFIG_READ,
+                EPermission.PERM_TRACE_CONFIG_READ,
+                EPermission.PERM_TRACE_CONFIG_UPDATE,
+                EPermission.PERM_WEBSITE_CONTENT_CONFIG_READ,
+                EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE,
+                EPermission.PERM_EXTERNAL_USER_READ,
+                EPermission.PERM_EXTERNAL_USER_IMPORT,
+                EPermission.PERM_EXTERNAL_USER_UPDATE,
+                EPermission.PERM_EXTERNAL_USER_DELETE,
+                EPermission.PERM_SEEDER_RESET);
       }
     }
 

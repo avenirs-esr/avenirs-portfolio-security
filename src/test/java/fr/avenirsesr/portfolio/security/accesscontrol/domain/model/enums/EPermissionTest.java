@@ -148,6 +148,7 @@ class EPermissionTest {
                 Map.entry(EPermission.PERM_TRACE_UPDATE_OWN, "trace:update:own"),
                 Map.entry(EPermission.PERM_TRACE_DELETE_OWN, "trace:delete:own"),
                 Map.entry(EPermission.PERM_COMPETENCY_READ, "competency:read"),
+                Map.entry(EPermission.PERM_EXTERNAL_SKILL_READ, "external-skill:read"),
                 Map.entry(
                     EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN, "declared-activity:list:own"),
                 Map.entry(
@@ -256,7 +257,25 @@ class EPermissionTest {
                 Map.entry(EPermission.PERM_RBAC_READ, "rbac:read"),
                 Map.entry(EPermission.PERM_RBAC_ASSIGN, "rbac:assign"),
                 Map.entry(EPermission.PERM_RBAC_REVOKE, "rbac:revoke"),
-                Map.entry(EPermission.PERM_RBAC_MANAGE, "rbac:manage"));
+                Map.entry(EPermission.PERM_RBAC_MANAGE, "rbac:manage"),
+                Map.entry(
+                    EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ, "additional-skill-config:read"),
+                Map.entry(
+                    EPermission.PERM_ADDITIONAL_SKILL_CONFIG_UPDATE,
+                    "additional-skill-config:update"),
+                Map.entry(EPermission.PERM_INSTITUTION_CONFIG_READ, "institution-config:read"),
+                Map.entry(EPermission.PERM_TRACE_CONFIG_READ, "trace-config:read"),
+                Map.entry(EPermission.PERM_TRACE_CONFIG_UPDATE, "trace-config:update"),
+                Map.entry(
+                    EPermission.PERM_WEBSITE_CONTENT_CONFIG_READ, "website-content-config:read"),
+                Map.entry(
+                    EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE,
+                    "website-content-config:update"),
+                Map.entry(EPermission.PERM_EXTERNAL_USER_READ, "external-user:read"),
+                Map.entry(EPermission.PERM_EXTERNAL_USER_IMPORT, "external-user:import"),
+                Map.entry(EPermission.PERM_EXTERNAL_USER_UPDATE, "external-user:update"),
+                Map.entry(EPermission.PERM_EXTERNAL_USER_DELETE, "external-user:delete"),
+                Map.entry(EPermission.PERM_SEEDER_RESET, "seeder:reset"));
 
         assertThat(expected).containsOnlyKeys(EPermission.values());
 
