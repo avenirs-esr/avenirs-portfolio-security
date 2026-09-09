@@ -16,7 +16,7 @@ This microservice provides OIDC-based authentication and RBAC (Role-Based Access
 
 ## 🚀 Prerequisites
 
-- **Java** 21
+- **Java** 25
 - **Maven** 4.0.0
 - **PostgreSQL** (development)
 - **Docker** (optional, to run PostgreSQL locally)
