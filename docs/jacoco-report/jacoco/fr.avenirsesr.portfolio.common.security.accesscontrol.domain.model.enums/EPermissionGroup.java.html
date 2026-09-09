@@ -109,38 +109,19 @@ import java.util.Set;
           EPermission.PERM_RBAC_READ,
           EPermission.PERM_RBAC_ASSIGN,
           EPermission.PERM_RBAC_REVOKE,
-          EPermission.PERM_RBAC_MANAGE)),
-
-<span class="fc" id="L114">  BACKOFFICE_CONFIG_MANAGEMENT(</span>
-<span class="fc" id="L115">      Set.of(</span>
-          EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
-          EPermission.PERM_ADDITIONAL_SKILL_CONFIG_UPDATE,
-          EPermission.PERM_INSTITUTION_CONFIG_READ,
-          EPermission.PERM_TRACE_CONFIG_READ,
-          EPermission.PERM_TRACE_CONFIG_UPDATE,
-          EPermission.PERM_WEBSITE_CONTENT_CONFIG_READ,
-          EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE)),
-
-<span class="fc" id="L124">  EXTERNAL_USER_MANAGEMENT(</span>
-<span class="fc" id="L125">      Set.of(</span>
-          EPermission.PERM_EXTERNAL_USER_READ,
-          EPermission.PERM_EXTERNAL_USER_IMPORT,
-          EPermission.PERM_EXTERNAL_USER_UPDATE,
-          EPermission.PERM_EXTERNAL_USER_DELETE)),
-
-<span class="fc" id="L131">  SYSTEM_ADMINISTRATION(Set.of(EPermission.PERM_SEEDER_RESET));</span>
+          EPermission.PERM_RBAC_MANAGE));
 
   private final Set&lt;EPermission&gt; permissions;
 
-<span class="fc" id="L135">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
-<span class="nc" id="L137">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
+<span class="fc" id="L116">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
+<span class="nc" id="L118">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
     }
-<span class="fc" id="L139">    this.permissions = Set.copyOf(permissions);</span>
-<span class="fc" id="L140">  }</span>
+<span class="fc" id="L120">    this.permissions = Set.copyOf(permissions);</span>
+<span class="fc" id="L121">  }</span>
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L143">    return permissions;</span>
+<span class="fc" id="L124">    return permissions;</span>
   }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
