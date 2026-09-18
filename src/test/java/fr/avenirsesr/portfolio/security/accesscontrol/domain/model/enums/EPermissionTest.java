@@ -143,8 +143,6 @@ class EPermissionTest {
                 Map.entry(EPermission.PERM_TRACE_LIST_OWN, "trace:list:own"),
                 Map.entry(EPermission.PERM_TRACE_READ_CONTEXTUAL, "trace:read:contextual"),
                 Map.entry(EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL, "trace:download:contextual"),
-                Map.entry(
-                    EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN, "trace:association:manage:own"),
                 Map.entry(EPermission.PERM_TRACE_UPDATE_OWN, "trace:update:own"),
                 Map.entry(EPermission.PERM_TRACE_DELETE_OWN, "trace:delete:own"),
                 Map.entry(EPermission.PERM_COMPETENCY_READ, "competency:read"),
@@ -153,16 +151,10 @@ class EPermissionTest {
                     EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN, "declared-activity:list:own"),
                 Map.entry(
                     EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN, "declared-activity:update:own"),
-                Map.entry(
-                    EPermission.PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN,
-                    "declared-activity:association:manage:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_LIST_OWN, "declared-skill:list:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_CREATE_OWN, "declared-skill:create:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_UPDATE_OWN, "declared-skill:update:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_DELETE_OWN, "declared-skill:delete:own"),
-                Map.entry(
-                    EPermission.PERM_DECLARED_SKILL_ASSOCIATION_MANAGE_OWN,
-                    "declared-skill:association:manage:own"),
                 Map.entry(
                     EPermission.PERM_DECLARED_EXPERIENCE_LIST_OWN, "declared-experience:list:own"),
                 Map.entry(
@@ -174,9 +166,7 @@ class EPermissionTest {
                 Map.entry(
                     EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN,
                     "declared-experience:delete:own"),
-                Map.entry(
-                    EPermission.PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN,
-                    "declared-experience:association:manage:own"),
+                Map.entry(EPermission.PERM_ASSOCIATION_MANAGE, "association:manage"),
                 Map.entry(EPermission.PERM_DECLARED_PROGRAM_LIST_OWN, "declared-program:list:own"),
                 Map.entry(
                     EPermission.PERM_DECLARED_PROGRAM_CREATE_OWN, "declared-program:create:own"),
@@ -275,7 +265,8 @@ class EPermissionTest {
                 Map.entry(EPermission.PERM_EXTERNAL_USER_IMPORT, "external-user:import"),
                 Map.entry(EPermission.PERM_EXTERNAL_USER_UPDATE, "external-user:update"),
                 Map.entry(EPermission.PERM_EXTERNAL_USER_DELETE, "external-user:delete"),
-                Map.entry(EPermission.PERM_SEEDER_RESET, "seeder:reset"));
+                Map.entry(EPermission.PERM_SEEDER_RESET, "seeder:reset"),
+                Map.entry(EPermission.PERM_KIT_DOWNLOAD_MEDIA_OWN, "kit:download-media:own"));
 
         assertThat(expected).containsOnlyKeys(EPermission.values());
 

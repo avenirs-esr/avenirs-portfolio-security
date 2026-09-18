@@ -11,7 +11,9 @@ import fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.se
 import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.jackson2.autoconfigure.Jackson2AutoConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @WebMvcTest(controllers = SpringSecurityConfigTest.TestController.class)
 @Import(SpringSecurityConfig.class)
+@ImportAutoConfiguration(Jackson2AutoConfiguration.class)
 @TestPropertySource(
     properties = {
       "springdoc.api-docs.path=/api-docs",
