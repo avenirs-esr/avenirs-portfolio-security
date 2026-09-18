@@ -7,40 +7,59 @@ import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
 import java.util.UUID;
 
+/**
+ * Static metamodel for {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity}
+ **/
 @StaticMetamodel(RBACActionEntity.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L12">public abstract class RBACActionEntity_ {</span>
+<span class="nc" id="L15">public abstract class RBACActionEntity_ {</span>
 
-	public static final String PERMISSIONS = &quot;permissions&quot;;
-	public static final String NAME = &quot;name&quot;;
-	public static final String DESCRIPTION = &quot;description&quot;;
+	
+	/**
+	 * @see #id
+	 **/
 	public static final String ID = &quot;id&quot;;
+	
+	/**
+	 * @see #name
+	 **/
+	public static final String NAME = &quot;name&quot;;
+	
+	/**
+	 * @see #description
+	 **/
+	public static final String DESCRIPTION = &quot;description&quot;;
+	
+	/**
+	 * @see #permissions
+	 **/
+	public static final String PERMISSIONS = &quot;permissions&quot;;
 
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity#permissions
+	 * Static metamodel type for {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity}
 	 **/
-	public static volatile ListAttribute&lt;RBACActionEntity, RBACPermissionEntity&gt; permissions;
+	public static volatile EntityType&lt;RBACActionEntity&gt; class_;
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity#name
-	 **/
-	public static volatile SingularAttribute&lt;RBACActionEntity, String&gt; name;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity#description
-	 **/
-	public static volatile SingularAttribute&lt;RBACActionEntity, String&gt; description;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity#id
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity#id}
 	 **/
 	public static volatile SingularAttribute&lt;RBACActionEntity, UUID&gt; id;
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity#name}
 	 **/
-	public static volatile EntityType&lt;RBACActionEntity&gt; class_;
+	public static volatile SingularAttribute&lt;RBACActionEntity, String&gt; name;
+	
+	/**
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity#description}
+	 **/
+	public static volatile SingularAttribute&lt;RBACActionEntity, String&gt; description;
+	
+	/**
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionEntity#permissions}
+	 **/
+	public static volatile ListAttribute&lt;RBACActionEntity, RBACPermissionEntity&gt; permissions;
 
 }
 
