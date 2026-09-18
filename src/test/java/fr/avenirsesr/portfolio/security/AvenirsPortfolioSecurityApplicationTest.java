@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 // Mainly for coverage report %.
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Disabled("Needs refactoring (tests outside authentication package)")
 class AvenirsPortfolioSecurityApplicationTest {
 
-  @SpyBean private AvenirsPortfolioSecurityApplication application;
+  @MockitoSpyBean private AvenirsPortfolioSecurityApplication application;
 
   @Test
   void testMain() {
