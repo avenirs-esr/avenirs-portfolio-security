@@ -43,6 +43,9 @@ public class PrincipalSeeder {
   @Value("${seeder.principal.nu.default-password}")
   private String nuDefaultPassword;
 
+  @Value("${seeder.principal.anr.default-password}")
+  private String anrDefaultPassword;
+
   private final ExternalUserClient externalUserClient;
   private final PrincipalJpaRepository principalJpaRepository;
 
@@ -106,6 +109,9 @@ public class PrincipalSeeder {
     }
     if (normalizedEppn.contains("NU")) {
       return nuDefaultPassword;
+    }
+    if (normalizedEppn.contains("ANR")) {
+      return anrDefaultPassword;
     }
 
     return defaultPassword;
