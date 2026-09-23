@@ -33,59 +33,63 @@ import java.util.Set;
           EPermission.PERM_TRACE_CREATE_OWN,
           EPermission.PERM_TRACE_LIST_OWN,
           EPermission.PERM_TRACE_UPDATE_OWN,
-          EPermission.PERM_TRACE_DELETE_OWN)),
+          EPermission.PERM_TRACE_DELETE_OWN,
+          EPermission.PERM_TRACE_ASSOCIATION_MANAGE_OWN)),
 
-<span class="fc" id="L38">  DECLARED_ACTIVITY_MANAGEMENT_OWN(</span>
-<span class="fc" id="L39">      Set.of(</span>
+<span class="fc" id="L39">  DECLARED_ACTIVITY_MANAGEMENT_OWN(</span>
+<span class="fc" id="L40">      Set.of(</span>
           EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN,
-          EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN)),
+          EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN,
+          EPermission.PERM_DECLARED_ACTIVITY_ASSOCIATION_MANAGE_OWN)),
 
-<span class="fc" id="L43">  DECLARED_SKILL_MANAGEMENT_OWN(</span>
-<span class="fc" id="L44">      Set.of(</span>
+<span class="fc" id="L45">  DECLARED_SKILL_MANAGEMENT_OWN(</span>
+<span class="fc" id="L46">      Set.of(</span>
           EPermission.PERM_DECLARED_SKILL_LIST_OWN,
           EPermission.PERM_DECLARED_SKILL_CREATE_OWN,
           EPermission.PERM_DECLARED_SKILL_UPDATE_OWN,
-          EPermission.PERM_DECLARED_SKILL_DELETE_OWN)),
+          EPermission.PERM_DECLARED_SKILL_DELETE_OWN,
+          EPermission.PERM_DECLARED_SKILL_ASSOCIATION_MANAGE_OWN)),
 
-<span class="fc" id="L50">  DECLARED_EXPERIENCE_MANAGEMENT_OWN(</span>
-<span class="fc" id="L51">      Set.of(</span>
+<span class="fc" id="L53">  DECLARED_EXPERIENCE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L54">      Set.of(</span>
           EPermission.PERM_DECLARED_EXPERIENCE_LIST_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_CREATE_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_UPDATE_OWN,
-          EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN)),
+          EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN,
+          EPermission.PERM_DECLARED_EXPERIENCE_ASSOCIATION_MANAGE_OWN)),
 
-<span class="fc" id="L57">  DECLARED_PROGRAM_MANAGEMENT_OWN(</span>
-<span class="fc" id="L58">      Set.of(</span>
+<span class="fc" id="L61">  DECLARED_PROGRAM_MANAGEMENT_OWN(</span>
+<span class="fc" id="L62">      Set.of(</span>
           EPermission.PERM_DECLARED_PROGRAM_LIST_OWN,
           EPermission.PERM_DECLARED_PROGRAM_CREATE_OWN,
           EPermission.PERM_DECLARED_PROGRAM_UPDATE_OWN,
           EPermission.PERM_DECLARED_PROGRAM_DELETE_OWN)),
 
-<span class="fc" id="L64">  SELF_KNOWLEDGE_MANAGEMENT_OWN(</span>
-<span class="fc" id="L65">      Set.of(</span>
+<span class="fc" id="L68">  SELF_KNOWLEDGE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L69">      Set.of(</span>
           EPermission.PERM_SELF_KNOWLEDGE_LIST_OWN,
           EPermission.PERM_SELF_KNOWLEDGE_CREATE_OWN,
           EPermission.PERM_SELF_KNOWLEDGE_UPDATE_OWN,
           EPermission.PERM_SELF_KNOWLEDGE_DELETE_OWN)),
 
-<span class="fc" id="L71">  NOTIFICATION_MANAGEMENT_OWN(</span>
-<span class="fc" id="L72">      Set.of(EPermission.PERM_NOTIFICATION_READ_OWN, EPermission.PERM_NOTIFICATION_UPDATE_OWN)),</span>
+<span class="fc" id="L75">  NOTIFICATION_MANAGEMENT_OWN(</span>
+<span class="fc" id="L76">      Set.of(EPermission.PERM_NOTIFICATION_READ_OWN, EPermission.PERM_NOTIFICATION_UPDATE_OWN)),</span>
 
-<span class="fc" id="L74">  STUDENT_ACTIVITY_ACCESS(</span>
-<span class="fc" id="L75">      Set.of(</span>
+<span class="fc" id="L78">  STUDENT_ACTIVITY_ACCESS(</span>
+<span class="fc" id="L79">      Set.of(</span>
           EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_REGISTER_OWN,
           EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL)),
 
-<span class="fc" id="L82">  STUDENT_FEEDBACK_ACCESS(</span>
-<span class="fc" id="L83">      Set.of(</span>
+<span class="fc" id="L86">  STUDENT_FEEDBACK_ACCESS(</span>
+<span class="fc" id="L87">      Set.of(</span>
           EPermission.PERM_FEEDBACK_REQUEST_CREATE_OWN,
           EPermission.PERM_FEEDBACK_RECEIVED_READ_OWN)),
 
-<span class="fc" id="L87">  STAFF_ACTIVITY_ACCESS(</span>
-<span class="fc" id="L88">      Set.of(</span>
+<span class="fc" id="L91">  STAFF_ACTIVITY_ACCESS(</span>
+<span class="fc" id="L92">      Set.of(</span>
           EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
@@ -93,22 +97,22 @@ import java.util.Set;
           EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DUPLICATE)),
 
-<span class="fc" id="L96">  STAFF_FEEDBACK_MANAGEMENT(</span>
-<span class="fc" id="L97">      Set.of(</span>
+<span class="fc" id="L100">  STAFF_FEEDBACK_MANAGEMENT(</span>
+<span class="fc" id="L101">      Set.of(</span>
           EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
           EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL)),
 
-<span class="fc" id="L103">  RBAC_MANAGEMENT(</span>
-<span class="fc" id="L104">      Set.of(</span>
+<span class="fc" id="L107">  RBAC_MANAGEMENT(</span>
+<span class="fc" id="L108">      Set.of(</span>
           EPermission.PERM_RBAC_READ,
           EPermission.PERM_RBAC_ASSIGN,
           EPermission.PERM_RBAC_REVOKE,
           EPermission.PERM_RBAC_MANAGE)),
 
-<span class="fc" id="L110">  BACKOFFICE_CONFIG_MANAGEMENT(</span>
-<span class="fc" id="L111">      Set.of(</span>
+<span class="fc" id="L114">  BACKOFFICE_CONFIG_MANAGEMENT(</span>
+<span class="fc" id="L115">      Set.of(</span>
           EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
           EPermission.PERM_ADDITIONAL_SKILL_CONFIG_UPDATE,
           EPermission.PERM_INSTITUTION_CONFIG_READ,
@@ -117,26 +121,26 @@ import java.util.Set;
           EPermission.PERM_WEBSITE_CONTENT_CONFIG_READ,
           EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE)),
 
-<span class="fc" id="L120">  EXTERNAL_USER_MANAGEMENT(</span>
-<span class="fc" id="L121">      Set.of(</span>
+<span class="fc" id="L124">  EXTERNAL_USER_MANAGEMENT(</span>
+<span class="fc" id="L125">      Set.of(</span>
           EPermission.PERM_EXTERNAL_USER_READ,
           EPermission.PERM_EXTERNAL_USER_IMPORT,
           EPermission.PERM_EXTERNAL_USER_UPDATE,
           EPermission.PERM_EXTERNAL_USER_DELETE)),
 
-<span class="fc" id="L127">  SYSTEM_ADMINISTRATION(Set.of(EPermission.PERM_SEEDER_RESET));</span>
+<span class="fc" id="L131">  SYSTEM_ADMINISTRATION(Set.of(EPermission.PERM_SEEDER_RESET));</span>
 
   private final Set&lt;EPermission&gt; permissions;
 
-<span class="fc" id="L131">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
-<span class="pc bpc" id="L132" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
-<span class="nc" id="L133">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
+<span class="fc" id="L135">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
+<span class="nc" id="L137">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
     }
-<span class="fc" id="L135">    this.permissions = Set.copyOf(permissions);</span>
-<span class="fc" id="L136">  }</span>
+<span class="fc" id="L139">    this.permissions = Set.copyOf(permissions);</span>
+<span class="fc" id="L140">  }</span>
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L139">    return permissions;</span>
+<span class="fc" id="L143">    return permissions;</span>
   }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

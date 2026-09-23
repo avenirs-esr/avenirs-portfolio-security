@@ -7,35 +7,35 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
-<span class="nc" id="L10">@Slf4j</span>
+<span class="fc" id="L10">@Slf4j</span>
 public enum ELanguage {
-<span class="nc" id="L12">  FRENCH(&quot;fr-FR&quot;),</span>
-<span class="nc" id="L13">  ENGLISH(&quot;en-US&quot;),</span>
-<span class="nc" id="L14">  SPANISH(&quot;es-ES&quot;);</span>
+<span class="fc" id="L12">  FRENCH(&quot;fr-FR&quot;),</span>
+<span class="fc" id="L13">  ENGLISH(&quot;en-US&quot;),</span>
+<span class="fc" id="L14">  SPANISH(&quot;es-ES&quot;);</span>
 
   private final String code;
 
-<span class="nc" id="L18">  public static final ELanguage FALLBACK = FRENCH;</span>
+<span class="fc" id="L18">  public static final ELanguage FALLBACK = FRENCH;</span>
 
-<span class="nc" id="L20">  ELanguage(String code) {</span>
-<span class="nc" id="L21">    this.code = code;</span>
-<span class="nc" id="L22">  }</span>
+<span class="fc" id="L20">  ELanguage(String code) {</span>
+<span class="fc" id="L21">    this.code = code;</span>
+<span class="fc" id="L22">  }</span>
 
   public String getCode() {
-<span class="nc" id="L25">    return code;</span>
+<span class="fc" id="L25">    return code;</span>
   }
 
-<span class="nc" id="L28">  private static final Map&lt;String, ELanguage&gt; BY_CODE =</span>
-<span class="nc" id="L29">      Arrays.stream(values()).collect(Collectors.toMap(ELanguage::getCode, Function.identity()));</span>
+<span class="fc" id="L28">  private static final Map&lt;String, ELanguage&gt; BY_CODE =</span>
+<span class="fc" id="L29">      Arrays.stream(values()).collect(Collectors.toMap(ELanguage::getCode, Function.identity()));</span>
 
   public static ELanguage fromCode(String code) {
-<span class="nc" id="L32">    var lang = Optional.ofNullable(BY_CODE.get(code));</span>
+<span class="fc" id="L32">    var lang = Optional.ofNullable(BY_CODE.get(code));</span>
 
-<span class="nc bnc" id="L34" title="All 2 branches missed.">    if (lang.isEmpty()) {</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">    if (lang.isEmpty()) {</span>
 <span class="nc" id="L35">      log.error(&quot;Unknown language code: {} - using fallback language {}&quot;, code, FALLBACK);</span>
     }
 
-<span class="nc" id="L38">    return lang.orElse(FALLBACK);</span>
+<span class="fc" id="L38">    return lang.orElse(FALLBACK);</span>
   }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
