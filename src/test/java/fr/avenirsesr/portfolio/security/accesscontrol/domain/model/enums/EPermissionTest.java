@@ -151,6 +151,8 @@ class EPermissionTest {
                     EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN, "declared-activity:list:own"),
                 Map.entry(
                     EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN, "declared-activity:update:own"),
+                Map.entry(
+                    EPermission.PERM_DECLARED_ACTIVITY_DELETE_OWN, "declared-activity:delete:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_LIST_OWN, "declared-skill:list:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_CREATE_OWN, "declared-skill:create:own"),
                 Map.entry(EPermission.PERM_DECLARED_SKILL_UPDATE_OWN, "declared-skill:update:own"),
@@ -261,10 +263,14 @@ class EPermissionTest {
                 Map.entry(
                     EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE,
                     "website-content-config:update"),
+                Map.entry(EPermission.PERM_CGU_UPDATE, "cgu:update"),
                 Map.entry(EPermission.PERM_EXTERNAL_USER_READ, "external-user:read"),
                 Map.entry(EPermission.PERM_EXTERNAL_USER_IMPORT, "external-user:import"),
                 Map.entry(EPermission.PERM_EXTERNAL_USER_UPDATE, "external-user:update"),
                 Map.entry(EPermission.PERM_EXTERNAL_USER_DELETE, "external-user:delete"),
+                Map.entry(
+                    EPermission.PERM_EXTERNAL_USER_AFFILIATION_IMPORT,
+                    "external-user-affiliation:import"),
                 Map.entry(EPermission.PERM_SEEDER_RESET, "seeder:reset"),
                 Map.entry(EPermission.PERM_KIT_DOWNLOAD_MEDIA_OWN, "kit:download-media:own"));
 

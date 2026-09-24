@@ -145,7 +145,8 @@ class EPermissionGroupTest {
         assertThat(EPermissionGroup.DECLARED_ACTIVITY_MANAGEMENT_OWN.permissions())
             .containsExactlyInAnyOrder(
                 EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN,
-                EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN);
+                EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN,
+                EPermission.PERM_DECLARED_ACTIVITY_DELETE_OWN);
       }
 
       @Test
@@ -298,7 +299,8 @@ class EPermissionGroupTest {
                 EPermission.PERM_TRACE_CONFIG_READ,
                 EPermission.PERM_TRACE_CONFIG_UPDATE,
                 EPermission.PERM_WEBSITE_CONTENT_CONFIG_READ,
-                EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE);
+                EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE,
+                EPermission.PERM_CGU_UPDATE);
       }
 
       @Test
@@ -311,7 +313,8 @@ class EPermissionGroupTest {
                 EPermission.PERM_EXTERNAL_USER_READ,
                 EPermission.PERM_EXTERNAL_USER_IMPORT,
                 EPermission.PERM_EXTERNAL_USER_UPDATE,
-                EPermission.PERM_EXTERNAL_USER_DELETE);
+                EPermission.PERM_EXTERNAL_USER_DELETE,
+                EPermission.PERM_EXTERNAL_USER_AFFILIATION_IMPORT);
       }
 
       @Test
