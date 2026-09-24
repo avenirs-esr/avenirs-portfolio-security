@@ -7,35 +7,50 @@ import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
 import java.util.UUID;
 
+/**
+ * Static metamodel for {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity}
+ **/
 @StaticMetamodel(RBACScopeEntity.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L12">public abstract class RBACScopeEntity_ {</span>
+<span class="nc" id="L15">public abstract class RBACScopeEntity_ {</span>
 
-	public static final String NAME = &quot;name&quot;;
-	public static final String RESOURCES = &quot;resources&quot;;
+	
+	/**
+	 * @see #id
+	 **/
 	public static final String ID = &quot;id&quot;;
+	
+	/**
+	 * @see #name
+	 **/
+	public static final String NAME = &quot;name&quot;;
+	
+	/**
+	 * @see #resources
+	 **/
+	public static final String RESOURCES = &quot;resources&quot;;
 
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity#name
+	 * Static metamodel type for {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity}
 	 **/
-	public static volatile SingularAttribute&lt;RBACScopeEntity, String&gt; name;
+	public static volatile EntityType&lt;RBACScopeEntity&gt; class_;
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity#resources
-	 **/
-	public static volatile ListAttribute&lt;RBACScopeEntity, RBACResourceEntity&gt; resources;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity#id
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity#id}
 	 **/
 	public static volatile SingularAttribute&lt;RBACScopeEntity, UUID&gt; id;
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity#name}
 	 **/
-	public static volatile EntityType&lt;RBACScopeEntity&gt; class_;
+	public static volatile SingularAttribute&lt;RBACScopeEntity, String&gt; name;
+	
+	/**
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACScopeEntity#resources}
+	 **/
+	public static volatile ListAttribute&lt;RBACScopeEntity, RBACResourceEntity&gt; resources;
 
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

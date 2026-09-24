@@ -9,7 +9,7 @@ import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.DataGen
 <span class="nc" id="L9">          .init(FakeExternalSource.class, SharedDataGenerator.class);</span>
 
   public static String generateExternalSourceId() {
-<span class="nc" id="L12">    int externalIdType = dataGenerator.with(&quot;type&quot;).number(0, 3);</span>
+<span class="nc" id="L12">    int externalIdType = dataGenerator.with(&quot;type&quot;).number(0, 2);</span>
 <span class="nc bnc" id="L13" title="All 4 branches missed.">    return switch (externalIdType) {</span>
 <span class="nc" id="L14">      case 0 -&gt; dataGenerator.with(&quot;uuid&quot;).uuid().toString();</span>
 <span class="nc" id="L15">      case 1 -&gt; String.valueOf(dataGenerator.with(&quot;number&quot;).number(1, 999_999));</span>
@@ -18,4 +18,4 @@ import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.DataGen
     };
   }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

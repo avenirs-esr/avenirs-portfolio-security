@@ -7,35 +7,50 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Static metamodel for {@link fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity}
+ **/
 @StaticMetamodel(AvenirsBaseEntity.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L12">public abstract class AvenirsBaseEntity_ {</span>
+<span class="nc" id="L15">public abstract class AvenirsBaseEntity_ {</span>
 
-	public static final String CREATED_AT = &quot;createdAt&quot;;
+	
+	/**
+	 * @see #id
+	 **/
 	public static final String ID = &quot;id&quot;;
+	
+	/**
+	 * @see #createdAt
+	 **/
+	public static final String CREATED_AT = &quot;createdAt&quot;;
+	
+	/**
+	 * @see #updatedAt
+	 **/
 	public static final String UPDATED_AT = &quot;updatedAt&quot;;
 
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity#createdAt
-	 **/
-	public static volatile SingularAttribute&lt;AvenirsBaseEntity, Instant&gt; createdAt;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity#id
-	 **/
-	public static volatile SingularAttribute&lt;AvenirsBaseEntity, UUID&gt; id;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity
+	 * Static metamodel type for {@link fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity}
 	 **/
 	public static volatile MappedSuperclassType&lt;AvenirsBaseEntity&gt; class_;
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity#updatedAt
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity#id}
+	 **/
+	public static volatile SingularAttribute&lt;AvenirsBaseEntity, UUID&gt; id;
+	
+	/**
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity#createdAt}
+	 **/
+	public static volatile SingularAttribute&lt;AvenirsBaseEntity, Instant&gt; createdAt;
+	
+	/**
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity#updatedAt}
 	 **/
 	public static volatile SingularAttribute&lt;AvenirsBaseEntity, Instant&gt; updatedAt;
 
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

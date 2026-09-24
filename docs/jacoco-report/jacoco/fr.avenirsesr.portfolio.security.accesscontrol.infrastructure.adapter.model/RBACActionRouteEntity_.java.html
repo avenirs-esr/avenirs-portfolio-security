@@ -6,41 +6,60 @@ import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
 import java.util.UUID;
 
+/**
+ * Static metamodel for {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity}
+ **/
 @StaticMetamodel(RBACActionRouteEntity.class)
 @Generated(&quot;org.hibernate.processor.HibernateProcessor&quot;)
-<span class="nc" id="L11">public abstract class RBACActionRouteEntity_ {</span>
+<span class="nc" id="L14">public abstract class RBACActionRouteEntity_ {</span>
 
-	public static final String METHOD = &quot;method&quot;;
-	public static final String ACTION = &quot;action&quot;;
+	
+	/**
+	 * @see #id
+	 **/
 	public static final String ID = &quot;id&quot;;
+	
+	/**
+	 * @see #uri
+	 **/
 	public static final String URI = &quot;uri&quot;;
+	
+	/**
+	 * @see #method
+	 **/
+	public static final String METHOD = &quot;method&quot;;
+	
+	/**
+	 * @see #action
+	 **/
+	public static final String ACTION = &quot;action&quot;;
 
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity#method
-	 **/
-	public static volatile SingularAttribute&lt;RBACActionRouteEntity, String&gt; method;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity#action
-	 **/
-	public static volatile SingularAttribute&lt;RBACActionRouteEntity, RBACActionEntity&gt; action;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity#id
-	 **/
-	public static volatile SingularAttribute&lt;RBACActionRouteEntity, UUID&gt; id;
-	
-	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity
+	 * Static metamodel type for {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity}
 	 **/
 	public static volatile EntityType&lt;RBACActionRouteEntity&gt; class_;
 	
 	/**
-	 * @see fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity#uri
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity#id}
+	 **/
+	public static volatile SingularAttribute&lt;RBACActionRouteEntity, UUID&gt; id;
+	
+	/**
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity#uri}
 	 **/
 	public static volatile SingularAttribute&lt;RBACActionRouteEntity, String&gt; uri;
+	
+	/**
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity#method}
+	 **/
+	public static volatile SingularAttribute&lt;RBACActionRouteEntity, String&gt; method;
+	
+	/**
+	 * Static metamodel for attribute {@link fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACActionRouteEntity#action}
+	 **/
+	public static volatile SingularAttribute&lt;RBACActionRouteEntity, RBACActionEntity&gt; action;
 
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
