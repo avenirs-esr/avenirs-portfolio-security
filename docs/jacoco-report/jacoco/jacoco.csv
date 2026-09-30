@@ -161,7 +161,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructur
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.configuration,PrincipalServiceConfig,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.configuration,StructureServiceConfig,8,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.file.application.adapter.dto,FileDTO,21,0,0,0,1,0,1,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.configuration,WebClientConfig,6,0,0,0,2,0,2,0,2,0
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.configuration,WebClientConfig,14,0,0,0,4,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.shared.infrastructure.configuration,UserServiceConfig,7,0,0,0,2,0,2,0,2,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.client,ExternalUserClient.new ParameterizedTypeReference() {...},8,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastructure.adapter.client,ExternalUserClient,59,0,2,0,18,0,4,0,3,0
