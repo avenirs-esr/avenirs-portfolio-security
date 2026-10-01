@@ -1,10 +1,12 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.mapper;
 
+import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantPermissionsRequestDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantRequestDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantResponseDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlRevokeRequestDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlRevokeResponseDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlGrantCommand;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlGrantPermissionsCommand;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlGrantResult;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlRevokeCommand;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.AccessControlRevokeResult;
@@ -17,6 +19,18 @@ public final class AccessControlDTOMapper {
     return new AccessControlGrantCommand(
         dto.getLogin(),
         dto.getRoleId(),
+        dto.getResourceIds(),
+        dto.getValidityStart(),
+        dto.getValidityEnd(),
+        dto.getStructureIds());
+  }
+
+  public static AccessControlGrantPermissionsCommand toCommand(
+      AccessControlGrantPermissionsRequestDTO dto) {
+    return new AccessControlGrantPermissionsCommand(
+        dto.getLogin(),
+        dto.getPermissions(),
+        dto.getPermissionGroups(),
         dto.getResourceIds(),
         dto.getValidityStart(),
         dto.getValidityEnd(),

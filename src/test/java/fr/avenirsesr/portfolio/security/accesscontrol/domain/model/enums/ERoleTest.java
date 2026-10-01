@@ -142,6 +142,7 @@ class ERoleTest {
                 EPermission.PERM_NOTIFICATION_UPDATE_OWN,
                 EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
+                EPermission.PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
                 EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,

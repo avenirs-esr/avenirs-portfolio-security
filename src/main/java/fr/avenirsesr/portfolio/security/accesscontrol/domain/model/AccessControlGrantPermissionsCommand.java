@@ -1,0 +1,13 @@
+package fr.avenirsesr.portfolio.security.accesscontrol.domain.model;
+
+import java.util.List;
+import java.util.UUID;
+
+public record AccessControlGrantPermissionsCommand(
+    String login,
+    List<String> permissions,
+    List<String> permissionGroups,
+    List<UUID> resourceIds,
+    String validityStart,
+    String validityEnd,
+    List<UUID> structureIds) {}

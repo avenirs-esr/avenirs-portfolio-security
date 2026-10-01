@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.controller;
 
+import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantPermissionsRequestDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantRequestDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantResponseDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlRevokeRequestDTO;
@@ -26,6 +27,23 @@ public class AccessControlController {
       @RequestBody AccessControlGrantRequestDTO request) {
     try {
       var result = accessControlService.grantAccess(AccessControlDTOMapper.toCommand(request));
+      return ResponseEntity.ok(AccessControlDTOMapper.fromResult(result));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body(
+              new AccessControlGrantResponseDTO()
+                  .setLogin(request.getLogin())
+                  .setGranted(false)
+                  .setError(e.getMessage()));
+    }
+  }
+
+  @PreAuthorize("hasAuthority('rbac:assign')")
+  @PostMapping("/grant-permissions")
+  public ResponseEntity<AccessControlGrantResponseDTO> grantPermissions(
+      @RequestBody AccessControlGrantPermissionsRequestDTO request) {
+    try {
+      var result = accessControlService.grantPermissions(AccessControlDTOMapper.toCommand(request));
       return ResponseEntity.ok(AccessControlDTOMapper.fromResult(result));
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN)
