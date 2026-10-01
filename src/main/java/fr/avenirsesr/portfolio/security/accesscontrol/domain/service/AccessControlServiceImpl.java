@@ -1,5 +1,7 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.domain.service;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermissionGroup;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlInvalidDateException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
@@ -13,12 +15,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +34,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AccessControlServiceImpl implements AccessControlService {
 
+  private static final String DIRECT_ROLE_PREFIX = "DIRECT_";
+
   private final RBACActionRepository actionRepository;
   private final RBACAssignmentRepository assignmentRepository;
   private final PrincipalRepository principalRepository;
+  private final RBACPermissionRepository permissionRepository;
   private final RBACResourceRepository resourceRepository;
   private final RBACRoleRepository roleRepository;
   private final StructureRepository structureRepository;
@@ -66,6 +75,54 @@ public class AccessControlServiceImpl implements AccessControlService {
         new RBACAssignment(null, principal, role, new RBACScope(null, resources), context);
 
     RBACAssignment savedAssignment = assignmentRepository.save(assignment);
+
+    return new AccessControlGrantResult(command.login(), true, savedAssignment.id(), null);
+  }
+
+  @Override
+  public AccessControlGrantResult grantPermissions(AccessControlGrantPermissionsCommand command) {
+    log.trace("grantPermissions, command: {}", command);
+
+    Set<EPermission> requested =
+        resolvePermissions(command.permissions(), command.permissionGroups());
+
+    Principal principal =
+        principalRepository
+            .findByLogin(command.login())
+            .orElseThrow(() -> AccessControlNotFoundException.principal(command.login()));
+
+    Set<RBACPermission> permissions = new HashSet<>();
+    for (EPermission permission : requested) {
+      permissions.add(
+          permissionRepository
+              .findByName(permission.authority())
+              .orElseThrow(
+                  () ->
+                      AccessControlNotFoundException.permissions(List.of(permission.authority()))));
+    }
+
+    List<RBACResource> resources = resolveResources(command.resourceIds());
+    List<Structure> structures = resolveStructures(command.structureIds());
+
+    RBACContext context =
+        new RBACContext(
+            null,
+            parseDate(command.validityStart()),
+            parseDate(command.validityEnd()),
+            new HashSet<>(structures));
+
+    RBACRole directRole =
+        roleRepository.save(
+            new RBACRole(
+                null,
+                DIRECT_ROLE_PREFIX + UUID.randomUUID(),
+                "Direct permissions assignment",
+                permissions));
+
+    RBACAssignment savedAssignment =
+        assignmentRepository.save(
+            new RBACAssignment(
+                null, principal, directRole, new RBACScope(null, resources), context));
 
     return new AccessControlGrantResult(command.login(), true, savedAssignment.id(), null);
   }
@@ -118,6 +175,39 @@ public class AccessControlServiceImpl implements AccessControlService {
 
   private RBACContext createExecutionContext(Principal principal) {
     return new RBACContext(null, null, null, new HashSet<>(principal.getStructures()));
+  }
+
+  private Set<EPermission> resolvePermissions(List<String> names, List<String> groupNames) {
+    Set<EPermission> result = EnumSet.noneOf(EPermission.class);
+    List<String> unknownPermissions = new ArrayList<>();
+    List<String> unknownGroups = new ArrayList<>();
+
+    for (String name : names == null ? List.<String>of() : names) {
+      Arrays.stream(EPermission.values())
+          .filter(permission -> permission.authority().equals(name))
+          .findFirst()
+          .ifPresentOrElse(result::add, () -> unknownPermissions.add(name));
+    }
+
+    for (String name : groupNames == null ? List.<String>of() : groupNames) {
+      Arrays.stream(EPermissionGroup.values())
+          .filter(group -> group.name().equals(name))
+          .findFirst()
+          .ifPresentOrElse(
+              group -> result.addAll(group.permissions()), () -> unknownGroups.add(name));
+    }
+
+    if (!unknownPermissions.isEmpty()) {
+      throw AccessControlNotFoundException.permissions(unknownPermissions);
+    }
+    if (!unknownGroups.isEmpty()) {
+      throw AccessControlNotFoundException.permissionGroups(unknownGroups);
+    }
+    if (result.isEmpty()) {
+      throw new IllegalArgumentException("At least one permission or permission group is required");
+    }
+
+    return result;
   }
 
   private List<RBACResource> resolveResources(List<UUID> resourceIds) {

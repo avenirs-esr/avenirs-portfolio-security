@@ -48,6 +48,7 @@ class AccessControlServiceImplTest {
   @Mock private RBACActionRepository actionRepository;
   @Mock private RBACAssignmentRepository assignmentRepository;
   @Mock private PrincipalRepository principalRepository;
+  @Mock private RBACPermissionRepository permissionRepository;
   @Mock private RBACResourceRepository resourceRepository;
   @Mock private RBACRoleRepository roleRepository;
   @Mock private StructureRepository structureRepository;
@@ -69,6 +70,7 @@ class AccessControlServiceImplTest {
             actionRepository,
             assignmentRepository,
             principalRepository,
+            permissionRepository,
             resourceRepository,
             roleRepository,
             structureRepository,
@@ -120,6 +122,127 @@ class AccessControlServiceImplTest {
     @BeforeEach
     void setupGiven() {
       BddLogger.given("an access control service");
+    }
+
+    @Nested
+    class WhenGrantingPermissions {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("granting permissions directly");
+      }
+
+      @Nested
+      class AndPermissionsAndGroupsAreKnown {
+        private AccessControlGrantResult result;
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("a permission and a permission group are requested");
+
+          when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
+          when(permissionRepository.findByName(anyString()))
+              .thenAnswer(
+                  invocation ->
+                      Optional.of(
+                          new RBACPermission(
+                              UUID.randomUUID(),
+                              invocation.<String>getArgument(0),
+                              "description")));
+          when(roleRepository.save(any(RBACRole.class)))
+              .thenAnswer(invocation -> invocation.getArgument(0));
+          when(assignmentRepository.save(any(RBACAssignment.class)))
+              .thenAnswer(
+                  invocation -> {
+                    RBACAssignment assignment = invocation.getArgument(0);
+                    return new RBACAssignment(
+                        ASSIGNMENT_ID,
+                        assignment.principal(),
+                        assignment.role(),
+                        assignment.scope(),
+                        assignment.context());
+                  });
+
+          result =
+              service.grantPermissions(
+                  new AccessControlGrantPermissionsCommand(
+                      LOGIN,
+                      List.of("institution-config:read"),
+                      List.of("RBAC_MANAGEMENT"),
+                      null,
+                      null,
+                      null,
+                      null));
+        }
+
+        @Test
+        void thenItShouldAssignADirectRoleHoldingAllThePermissions() {
+          BddLogger.then("it should assign a direct role holding all the permissions");
+
+          assertEquals(new AccessControlGrantResult(LOGIN, true, ASSIGNMENT_ID, null), result);
+
+          ArgumentCaptor<RBACAssignment> captor = ArgumentCaptor.forClass(RBACAssignment.class);
+          verify(assignmentRepository).save(captor.capture());
+
+          RBACRole directRole = captor.getValue().role();
+          assertEquals(principal, captor.getValue().principal());
+          assertThat(directRole.name()).startsWith("DIRECT_");
+          assertThat(directRole.permissions())
+              .extracting(RBACPermission::name)
+              .containsExactlyInAnyOrder(
+                  "institution-config:read",
+                  "rbac:read",
+                  "rbac:assign",
+                  "rbac:revoke",
+                  "rbac:manage");
+        }
+      }
+
+      @Nested
+      class AndAPermissionIsUnknown {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("an unknown permission is requested");
+        }
+
+        @Test
+        void thenItShouldThrowNotFoundException() {
+          BddLogger.then("it should throw an AccessControlNotFoundException");
+
+          AccessControlGrantPermissionsCommand command =
+              new AccessControlGrantPermissionsCommand(
+                  LOGIN, List.of("unknown:perm"), null, null, null, null, null);
+
+          assertThatThrownBy(() -> service.grantPermissions(command))
+              .isInstanceOf(AccessControlNotFoundException.class)
+              .hasMessageContaining("unknown:perm");
+
+          verifyNoInteractions(assignmentRepository, roleRepository);
+        }
+      }
+
+      @Nested
+      class AndNothingIsRequested {
+
+        @BeforeEach
+        void setupAnd() {
+          BddLogger.and("no permission nor group is requested");
+        }
+
+        @Test
+        void thenItShouldThrowIllegalArgumentException() {
+          BddLogger.then("it should throw an IllegalArgumentException");
+
+          AccessControlGrantPermissionsCommand command =
+              new AccessControlGrantPermissionsCommand(LOGIN, null, null, null, null, null, null);
+
+          assertThatThrownBy(() -> service.grantPermissions(command))
+              .isInstanceOf(IllegalArgumentException.class);
+
+          verifyNoInteractions(assignmentRepository, roleRepository);
+        }
+      }
     }
 
     @Nested

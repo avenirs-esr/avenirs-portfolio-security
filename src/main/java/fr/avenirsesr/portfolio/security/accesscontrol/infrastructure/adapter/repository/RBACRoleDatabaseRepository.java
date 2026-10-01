@@ -3,9 +3,13 @@ package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.re
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACRole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper.RBACRoleMapper;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACPermissionEntity;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACRoleEntity;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RBACRoleDatabaseRepository implements RBACRoleRepository {
 
   private final RBACRoleJpaRepository rbacRoleJpaRepository;
+  private final RBACPermissionJpaRepository rbacPermissionJpaRepository;
   private final RBACRoleMapper roleMapper;
 
   @Override
@@ -38,7 +43,18 @@ public class RBACRoleDatabaseRepository implements RBACRoleRepository {
   @Override
   @Transactional
   public RBACRole save(RBACRole role) {
-    return roleMapper.toDomain(rbacRoleJpaRepository.save(roleMapper.fromDomain(role)));
+    RBACRoleEntity entity = roleMapper.fromDomain(role);
+    entity.setPermissions(
+        entity.getPermissions().stream()
+            .map(this::managedPermission)
+            .collect(Collectors.toCollection(ArrayList::new)));
+    return roleMapper.toDomain(rbacRoleJpaRepository.save(entity));
+  }
+
+  private RBACPermissionEntity managedPermission(RBACPermissionEntity permission) {
+    return permission.getId() == null
+        ? permission
+        : rbacPermissionJpaRepository.getReferenceById(permission.getId());
   }
 
   @Override

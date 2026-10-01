@@ -25,6 +25,14 @@ public class AccessControlNotFoundException extends RuntimeException {
     return new AccessControlNotFoundException("Missing structures, IDs: %s".formatted(ids));
   }
 
+  public static AccessControlNotFoundException permissions(Collection<String> names) {
+    return new AccessControlNotFoundException("Unknown permissions: %s".formatted(names));
+  }
+
+  public static AccessControlNotFoundException permissionGroups(Collection<String> names) {
+    return new AccessControlNotFoundException("Unknown permission groups: %s".formatted(names));
+  }
+
   public static AccessControlNotFoundException assignment(UUID assignmentId) {
     return new AccessControlNotFoundException(
         "Assignment not found, ID: %s".formatted(assignmentId));

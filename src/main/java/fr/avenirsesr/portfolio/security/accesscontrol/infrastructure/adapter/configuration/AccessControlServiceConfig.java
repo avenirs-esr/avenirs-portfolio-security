@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.co
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.input.AccessControlService;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACActionRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACPermissionRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACResourceRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.service.AccessControlServiceImpl;
@@ -19,6 +20,7 @@ public class AccessControlServiceConfig {
       RBACActionRepository actionRepository,
       RBACAssignmentRepository assignmentRepository,
       PrincipalRepository principalRepository,
+      RBACPermissionRepository permissionRepository,
       RBACResourceRepository resourceRepository,
       RBACRoleRepository roleRepository,
       StructureRepository structureRepository,
@@ -28,6 +30,7 @@ public class AccessControlServiceConfig {
         actionRepository,
         assignmentRepository,
         principalRepository,
+        permissionRepository,
         resourceRepository,
         roleRepository,
         structureRepository,

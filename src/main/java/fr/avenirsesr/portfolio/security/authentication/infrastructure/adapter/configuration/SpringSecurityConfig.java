@@ -73,6 +73,9 @@ public class SpringSecurityConfig {
   @Value("${avenirs.access.control.grant}")
   private String accessControlGrantPath;
 
+  @Value("${avenirs.access.control.grant-permissions}")
+  private String accessControlGrantPermissionsPath;
+
   @Value("${avenirs.access.control.revoke}")
   private String accessControlRevokePath;
 
@@ -113,7 +116,8 @@ public class SpringSecurityConfig {
   @Order(2)
   SecurityFilterChain accessControlFilterChain(HttpSecurity httpSecurity) throws Exception {
     return httpSecurity
-        .securityMatcher(accessControlGrantPath, accessControlRevokePath)
+        .securityMatcher(
+            accessControlGrantPath, accessControlGrantPermissionsPath, accessControlRevokePath)
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
         .addFilterBefore(casTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
