@@ -3,9 +3,13 @@
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACRole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.mapper.RBACRoleMapper;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACPermissionEntity;
+import fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.model.RBACRoleEntity;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,36 +19,48 @@ import org.springframework.transaction.annotation.Transactional;
 public class RBACRoleDatabaseRepository implements RBACRoleRepository {
 
   private final RBACRoleJpaRepository rbacRoleJpaRepository;
+  private final RBACPermissionJpaRepository rbacPermissionJpaRepository;
   private final RBACRoleMapper roleMapper;
 
   @Override
   @Transactional
   public Optional&lt;RBACRole&gt; findById(UUID roleId) {
-<span class="nc" id="L23">    return rbacRoleJpaRepository.findById(roleId).map(roleMapper::toDomain);</span>
+<span class="nc" id="L28">    return rbacRoleJpaRepository.findById(roleId).map(roleMapper::toDomain);</span>
   }
 
   @Override
   @Transactional
   public Optional&lt;RBACRole&gt; findByName(String roleName) {
-<span class="nc" id="L29">    return rbacRoleJpaRepository.findByName(roleName).map(roleMapper::toDomain);</span>
+<span class="nc" id="L34">    return rbacRoleJpaRepository.findByName(roleName).map(roleMapper::toDomain);</span>
   }
 
   @Override
   @Transactional
   public List&lt;RBACRole&gt; findAll() {
-<span class="nc" id="L35">    return rbacRoleJpaRepository.findAll().stream().map(roleMapper::toDomain).toList();</span>
+<span class="nc" id="L40">    return rbacRoleJpaRepository.findAll().stream().map(roleMapper::toDomain).toList();</span>
   }
 
   @Override
   @Transactional
   public RBACRole save(RBACRole role) {
-<span class="nc" id="L41">    return roleMapper.toDomain(rbacRoleJpaRepository.save(roleMapper.fromDomain(role)));</span>
+<span class="nc" id="L46">    RBACRoleEntity entity = roleMapper.fromDomain(role);</span>
+<span class="nc" id="L47">    entity.setPermissions(</span>
+<span class="nc" id="L48">        entity.getPermissions().stream()</span>
+<span class="nc" id="L49">            .map(this::managedPermission)</span>
+<span class="nc" id="L50">            .collect(Collectors.toCollection(ArrayList::new)));</span>
+<span class="nc" id="L51">    return roleMapper.toDomain(rbacRoleJpaRepository.save(entity));</span>
+  }
+
+  private RBACPermissionEntity managedPermission(RBACPermissionEntity permission) {
+<span class="nc bnc" id="L55" title="All 2 branches missed.">    return permission.getId() == null</span>
+<span class="nc" id="L56">        ? permission</span>
+<span class="nc" id="L57">        : rbacPermissionJpaRepository.getReferenceById(permission.getId());</span>
   }
 
   @Override
   @Transactional
   public void deleteById(UUID roleId) {
-<span class="nc" id="L47">    rbacRoleJpaRepository.deleteById(roleId);</span>
-<span class="nc" id="L48">  }</span>
+<span class="nc" id="L63">    rbacRoleJpaRepository.deleteById(roleId);</span>
+<span class="nc" id="L64">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

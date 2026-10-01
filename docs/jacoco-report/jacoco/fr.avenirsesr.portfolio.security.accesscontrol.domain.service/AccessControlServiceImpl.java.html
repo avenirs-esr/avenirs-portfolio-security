@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccessControlServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.accesscontrol.domain.service</a> &gt; <span class="el_source">AccessControlServiceImpl.java</span></div><h1>AccessControlServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.accesscontrol.domain.service;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermissionGroup;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlInvalidDateException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlNotFoundException;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.*;
@@ -13,24 +15,31 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-<span class="fc" id="L27">@Slf4j</span>
+<span class="fc" id="L33">@Slf4j</span>
 @RequiredArgsConstructor
 public class AccessControlServiceImpl implements AccessControlService {
+
+  private static final String DIRECT_ROLE_PREFIX = &quot;DIRECT_&quot;;
 
   private final RBACActionRepository actionRepository;
   private final RBACAssignmentRepository assignmentRepository;
   private final PrincipalRepository principalRepository;
+  private final RBACPermissionRepository permissionRepository;
   private final RBACResourceRepository resourceRepository;
   private final RBACRoleRepository roleRepository;
   private final StructureRepository structureRepository;
@@ -40,143 +49,224 @@ public class AccessControlServiceImpl implements AccessControlService {
 
   @Override
   public AccessControlGrantResult grantAccess(AccessControlGrantCommand command) {
-<span class="fc" id="L43">    log.trace(&quot;grantAccess, command: {}&quot;, command);</span>
+<span class="fc" id="L52">    log.trace(&quot;grantAccess, command: {}&quot;, command);</span>
 
-<span class="fc" id="L45">    RBACRole role =</span>
+<span class="fc" id="L54">    RBACRole role =</span>
         roleRepository
-<span class="fc" id="L47">            .findById(command.roleId())</span>
-<span class="fc" id="L48">            .orElseThrow(() -&gt; AccessControlNotFoundException.role(command.roleId()));</span>
+<span class="fc" id="L56">            .findById(command.roleId())</span>
+<span class="fc" id="L57">            .orElseThrow(() -&gt; AccessControlNotFoundException.role(command.roleId()));</span>
 
-<span class="fc" id="L50">    Principal principal =</span>
+<span class="fc" id="L59">    Principal principal =</span>
         principalRepository
-<span class="fc" id="L52">            .findByLogin(command.login())</span>
-<span class="fc" id="L53">            .orElseThrow(() -&gt; AccessControlNotFoundException.principal(command.login()));</span>
+<span class="fc" id="L61">            .findByLogin(command.login())</span>
+<span class="fc" id="L62">            .orElseThrow(() -&gt; AccessControlNotFoundException.principal(command.login()));</span>
 
-<span class="fc" id="L55">    List&lt;RBACResource&gt; resources = resolveResources(command.resourceIds());</span>
-<span class="fc" id="L56">    List&lt;Structure&gt; structures = resolveStructures(command.structureIds());</span>
+<span class="fc" id="L64">    List&lt;RBACResource&gt; resources = resolveResources(command.resourceIds());</span>
+<span class="fc" id="L65">    List&lt;Structure&gt; structures = resolveStructures(command.structureIds());</span>
 
-<span class="fc" id="L58">    RBACContext context =</span>
+<span class="fc" id="L67">    RBACContext context =</span>
         new RBACContext(
             null,
-<span class="fc" id="L61">            parseDate(command.validityStart()),</span>
-<span class="fc" id="L62">            parseDate(command.validityEnd()),</span>
+<span class="fc" id="L70">            parseDate(command.validityStart()),</span>
+<span class="fc" id="L71">            parseDate(command.validityEnd()),</span>
             new HashSet&lt;&gt;(structures));
 
-<span class="fc" id="L65">    RBACAssignment assignment =</span>
+<span class="fc" id="L74">    RBACAssignment assignment =</span>
         new RBACAssignment(null, principal, role, new RBACScope(null, resources), context);
 
-<span class="fc" id="L68">    RBACAssignment savedAssignment = assignmentRepository.save(assignment);</span>
+<span class="fc" id="L77">    RBACAssignment savedAssignment = assignmentRepository.save(assignment);</span>
 
-<span class="fc" id="L70">    return new AccessControlGrantResult(command.login(), true, savedAssignment.id(), null);</span>
+<span class="fc" id="L79">    return new AccessControlGrantResult(command.login(), true, savedAssignment.id(), null);</span>
+  }
+
+  @Override
+  public AccessControlGrantResult grantPermissions(AccessControlGrantPermissionsCommand command) {
+<span class="fc" id="L84">    log.trace(&quot;grantPermissions, command: {}&quot;, command);</span>
+
+<span class="fc" id="L86">    Set&lt;EPermission&gt; requested =</span>
+<span class="fc" id="L87">        resolvePermissions(command.permissions(), command.permissionGroups());</span>
+
+<span class="fc" id="L89">    Principal principal =</span>
+        principalRepository
+<span class="fc" id="L91">            .findByLogin(command.login())</span>
+<span class="pc" id="L92">            .orElseThrow(() -&gt; AccessControlNotFoundException.principal(command.login()));</span>
+
+<span class="fc" id="L94">    Set&lt;RBACPermission&gt; permissions = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">    for (EPermission permission : requested) {</span>
+<span class="fc" id="L96">      permissions.add(</span>
+          permissionRepository
+<span class="fc" id="L98">              .findByName(permission.authority())</span>
+<span class="fc" id="L99">              .orElseThrow(</span>
+                  () -&gt;
+<span class="nc" id="L101">                      AccessControlNotFoundException.permissions(List.of(permission.authority()))));</span>
+<span class="fc" id="L102">    }</span>
+
+<span class="fc" id="L104">    List&lt;RBACResource&gt; resources = resolveResources(command.resourceIds());</span>
+<span class="fc" id="L105">    List&lt;Structure&gt; structures = resolveStructures(command.structureIds());</span>
+
+<span class="fc" id="L107">    RBACContext context =</span>
+        new RBACContext(
+            null,
+<span class="fc" id="L110">            parseDate(command.validityStart()),</span>
+<span class="fc" id="L111">            parseDate(command.validityEnd()),</span>
+            new HashSet&lt;&gt;(structures));
+
+<span class="fc" id="L114">    RBACRole directRole =</span>
+<span class="fc" id="L115">        roleRepository.save(</span>
+            new RBACRole(
+                null,
+<span class="fc" id="L118">                DIRECT_ROLE_PREFIX + UUID.randomUUID(),</span>
+                &quot;Direct permissions assignment&quot;,
+                permissions));
+
+<span class="fc" id="L122">    RBACAssignment savedAssignment =</span>
+<span class="fc" id="L123">        assignmentRepository.save(</span>
+            new RBACAssignment(
+                null, principal, directRole, new RBACScope(null, resources), context));
+
+<span class="fc" id="L127">    return new AccessControlGrantResult(command.login(), true, savedAssignment.id(), null);</span>
   }
 
   @Override
   public AccessControlRevokeResult revokeAccess(AccessControlRevokeCommand command) {
-<span class="fc" id="L75">    log.trace(&quot;revokeAccess, command: {}&quot;, command);</span>
+<span class="fc" id="L132">    log.trace(&quot;revokeAccess, command: {}&quot;, command);</span>
 
-<span class="fc" id="L77">    assignmentRepository.deleteById(command.assignmentId());</span>
+<span class="fc" id="L134">    assignmentRepository.deleteById(command.assignmentId());</span>
 
-<span class="fc" id="L79">    return new AccessControlRevokeResult(command.login(), true, command.assignmentId(), null);</span>
+<span class="fc" id="L136">    return new AccessControlRevokeResult(command.login(), true, command.assignmentId(), null);</span>
   }
 
   @Override
   public boolean isAuthorized(String login, UUID actionId, UUID resourceId) {
-<span class="fc" id="L84">    log.trace(&quot;isAuthorized, login: {}, actionId: {}, resourceId: {}&quot;, login, actionId, resourceId);</span>
+<span class="fc" id="L141">    log.trace(&quot;isAuthorized, login: {}, actionId: {}, resourceId: {}&quot;, login, actionId, resourceId);</span>
 
-<span class="fc" id="L86">    Principal principal = principalRepository.findByLogin(login).orElse(null);</span>
+<span class="fc" id="L143">    Principal principal = principalRepository.findByLogin(login).orElse(null);</span>
 
-<span class="fc bfc" id="L88" title="All 2 branches covered.">    if (principal == null) {</span>
-<span class="fc" id="L89">      log.debug(&quot;isAuthorized, principal not found for login: {}&quot;, login);</span>
-<span class="fc" id="L90">      return false;</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">    if (principal == null) {</span>
+<span class="fc" id="L146">      log.debug(&quot;isAuthorized, principal not found for login: {}&quot;, login);</span>
+<span class="fc" id="L147">      return false;</span>
     }
 
-<span class="fc" id="L93">    RBACContext executionContext = createExecutionContext(principal);</span>
+<span class="fc" id="L150">    RBACContext executionContext = createExecutionContext(principal);</span>
 
-<span class="fc" id="L95">    List&lt;RBACAssignment&gt; principalAssignments =</span>
-<span class="fc" id="L96">        assignmentRepository.findByPrincipalContextAndResource(login, executionContext, resourceId);</span>
+<span class="fc" id="L152">    List&lt;RBACAssignment&gt; principalAssignments =</span>
+<span class="fc" id="L153">        assignmentRepository.findByPrincipalContextAndResource(login, executionContext, resourceId);</span>
 
-<span class="fc" id="L98">    HashSet&lt;RBACPermission&gt; principalPermissions =</span>
-<span class="fc" id="L99">        principalAssignments.stream()</span>
-<span class="fc" id="L100">            .map(assignment -&gt; assignment.role().permissions())</span>
-<span class="fc" id="L101">            .flatMap(Collection::stream)</span>
-<span class="fc" id="L102">            .collect(Collectors.toCollection(HashSet::new));</span>
+<span class="fc" id="L155">    HashSet&lt;RBACPermission&gt; principalPermissions =</span>
+<span class="fc" id="L156">        principalAssignments.stream()</span>
+<span class="fc" id="L157">            .map(assignment -&gt; assignment.role().permissions())</span>
+<span class="fc" id="L158">            .flatMap(Collection::stream)</span>
+<span class="fc" id="L159">            .collect(Collectors.toCollection(HashSet::new));</span>
 
-<span class="fc bfc" id="L104" title="All 2 branches covered.">    if (principalPermissions.isEmpty()) {</span>
-<span class="fc" id="L105">      log.debug(&quot;isAuthorized, principal {} has no permission&quot;, login);</span>
-<span class="fc" id="L106">      return false;</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">    if (principalPermissions.isEmpty()) {</span>
+<span class="fc" id="L162">      log.debug(&quot;isAuthorized, principal {} has no permission&quot;, login);</span>
+<span class="fc" id="L163">      return false;</span>
     }
 
-<span class="fc" id="L109">    List&lt;RBACPermission&gt; requiredPermissions = fetchPermissions(actionId);</span>
+<span class="fc" id="L166">    List&lt;RBACPermission&gt; requiredPermissions = fetchPermissions(actionId);</span>
 
-<span class="fc bfc" id="L111" title="All 2 branches covered.">    boolean accessGranted =</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        requiredPermissions != null &amp;&amp; principalPermissions.containsAll(requiredPermissions);</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">    boolean accessGranted =</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        requiredPermissions != null &amp;&amp; principalPermissions.containsAll(requiredPermissions);</span>
 
-<span class="fc" id="L114">    log.trace(&quot;isAuthorized, accessGranted: {}&quot;, accessGranted);</span>
+<span class="fc" id="L171">    log.trace(&quot;isAuthorized, accessGranted: {}&quot;, accessGranted);</span>
 
-<span class="fc" id="L116">    return accessGranted;</span>
+<span class="fc" id="L173">    return accessGranted;</span>
   }
 
   private RBACContext createExecutionContext(Principal principal) {
-<span class="fc" id="L120">    return new RBACContext(null, null, null, new HashSet&lt;&gt;(principal.getStructures()));</span>
+<span class="fc" id="L177">    return new RBACContext(null, null, null, new HashSet&lt;&gt;(principal.getStructures()));</span>
+  }
+
+  private Set&lt;EPermission&gt; resolvePermissions(List&lt;String&gt; names, List&lt;String&gt; groupNames) {
+<span class="fc" id="L181">    Set&lt;EPermission&gt; result = EnumSet.noneOf(EPermission.class);</span>
+<span class="fc" id="L182">    List&lt;String&gt; unknownPermissions = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L183">    List&lt;String&gt; unknownGroups = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L185" title="All 4 branches covered.">    for (String name : names == null ? List.&lt;String&gt;of() : names) {</span>
+<span class="fc" id="L186">      Arrays.stream(EPermission.values())</span>
+<span class="fc" id="L187">          .filter(permission -&gt; permission.authority().equals(name))</span>
+<span class="fc" id="L188">          .findFirst()</span>
+<span class="fc" id="L189">          .ifPresentOrElse(result::add, () -&gt; unknownPermissions.add(name));</span>
+<span class="fc" id="L190">    }</span>
+
+<span class="fc bfc" id="L192" title="All 4 branches covered.">    for (String name : groupNames == null ? List.&lt;String&gt;of() : groupNames) {</span>
+<span class="fc" id="L193">      Arrays.stream(EPermissionGroup.values())</span>
+<span class="fc" id="L194">          .filter(group -&gt; group.name().equals(name))</span>
+<span class="fc" id="L195">          .findFirst()</span>
+<span class="fc" id="L196">          .ifPresentOrElse(</span>
+<span class="pc" id="L197">              group -&gt; result.addAll(group.permissions()), () -&gt; unknownGroups.add(name));</span>
+<span class="fc" id="L198">    }</span>
+
+<span class="fc bfc" id="L200" title="All 2 branches covered.">    if (!unknownPermissions.isEmpty()) {</span>
+<span class="fc" id="L201">      throw AccessControlNotFoundException.permissions(unknownPermissions);</span>
+    }
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">    if (!unknownGroups.isEmpty()) {</span>
+<span class="nc" id="L204">      throw AccessControlNotFoundException.permissionGroups(unknownGroups);</span>
+    }
+<span class="fc bfc" id="L206" title="All 2 branches covered.">    if (result.isEmpty()) {</span>
+<span class="fc" id="L207">      throw new IllegalArgumentException(&quot;At least one permission or permission group is required&quot;);</span>
+    }
+
+<span class="fc" id="L210">    return result;</span>
   }
 
   private List&lt;RBACResource&gt; resolveResources(List&lt;UUID&gt; resourceIds) {
-<span class="pc bpc" id="L124" title="1 of 4 branches missed.">    if (resourceIds == null || resourceIds.isEmpty()) {</span>
-<span class="fc" id="L125">      return Collections.emptyList();</span>
+<span class="pc bpc" id="L214" title="1 of 4 branches missed.">    if (resourceIds == null || resourceIds.isEmpty()) {</span>
+<span class="fc" id="L215">      return Collections.emptyList();</span>
     }
 
-<span class="fc" id="L128">    List&lt;RBACResource&gt; resources = resourceRepository.findAllByIds(resourceIds);</span>
-<span class="fc" id="L129">    List&lt;UUID&gt; foundIds = resources.stream().map(RBACResource::id).toList();</span>
+<span class="fc" id="L218">    List&lt;RBACResource&gt; resources = resourceRepository.findAllByIds(resourceIds);</span>
+<span class="fc" id="L219">    List&lt;UUID&gt; foundIds = resources.stream().map(RBACResource::id).toList();</span>
 
-<span class="fc bfc" id="L131" title="All 2 branches covered.">    List&lt;UUID&gt; missingIds = resourceIds.stream().filter(id -&gt; !foundIds.contains(id)).toList();</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">    List&lt;UUID&gt; missingIds = resourceIds.stream().filter(id -&gt; !foundIds.contains(id)).toList();</span>
 
-<span class="fc bfc" id="L133" title="All 2 branches covered.">    if (!missingIds.isEmpty()) {</span>
-<span class="fc" id="L134">      log.warn(&quot;Missing resource ids: {}&quot;, missingIds);</span>
-<span class="fc" id="L135">      throw AccessControlNotFoundException.resources(missingIds);</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">    if (!missingIds.isEmpty()) {</span>
+<span class="fc" id="L224">      log.warn(&quot;Missing resource ids: {}&quot;, missingIds);</span>
+<span class="fc" id="L225">      throw AccessControlNotFoundException.resources(missingIds);</span>
     }
 
-<span class="fc" id="L138">    return resources;</span>
+<span class="fc" id="L228">    return resources;</span>
   }
 
   private List&lt;Structure&gt; resolveStructures(List&lt;UUID&gt; structureIds) {
-<span class="pc bpc" id="L142" title="1 of 4 branches missed.">    if (structureIds == null || structureIds.isEmpty()) {</span>
-<span class="fc" id="L143">      return Collections.emptyList();</span>
+<span class="pc bpc" id="L232" title="1 of 4 branches missed.">    if (structureIds == null || structureIds.isEmpty()) {</span>
+<span class="fc" id="L233">      return Collections.emptyList();</span>
     }
 
-<span class="fc" id="L146">    List&lt;Structure&gt; structures = structureRepository.findAllByIds(structureIds);</span>
-<span class="fc" id="L147">    List&lt;UUID&gt; foundIds = structures.stream().map(Structure::id).toList();</span>
+<span class="fc" id="L236">    List&lt;Structure&gt; structures = structureRepository.findAllByIds(structureIds);</span>
+<span class="fc" id="L237">    List&lt;UUID&gt; foundIds = structures.stream().map(Structure::id).toList();</span>
 
-<span class="fc bfc" id="L149" title="All 2 branches covered.">    List&lt;UUID&gt; missingIds = structureIds.stream().filter(id -&gt; !foundIds.contains(id)).toList();</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">    List&lt;UUID&gt; missingIds = structureIds.stream().filter(id -&gt; !foundIds.contains(id)).toList();</span>
 
-<span class="fc bfc" id="L151" title="All 2 branches covered.">    if (!missingIds.isEmpty()) {</span>
-<span class="fc" id="L152">      log.warn(&quot;Missing structure ids: {}&quot;, missingIds);</span>
-<span class="fc" id="L153">      throw AccessControlNotFoundException.structures(missingIds);</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">    if (!missingIds.isEmpty()) {</span>
+<span class="fc" id="L242">      log.warn(&quot;Missing structure ids: {}&quot;, missingIds);</span>
+<span class="fc" id="L243">      throw AccessControlNotFoundException.structures(missingIds);</span>
     }
 
-<span class="fc" id="L156">    return structures;</span>
+<span class="fc" id="L246">    return structures;</span>
   }
 
   private LocalDateTime parseDate(String value) {
-<span class="pc bpc" id="L160" title="1 of 4 branches missed.">    if (value == null || value.isBlank()) {</span>
-<span class="fc" id="L161">      return null;</span>
+<span class="fc bfc" id="L250" title="All 4 branches covered.">    if (value == null || value.isBlank()) {</span>
+<span class="fc" id="L251">      return null;</span>
     }
 
     try {
-<span class="fc" id="L165">      return LocalDate.parse(value, DateTimeFormatter.ofPattern(dateFormat)).atStartOfDay();</span>
-<span class="fc" id="L166">    } catch (DateTimeParseException e) {</span>
-<span class="fc" id="L167">      throw new AccessControlInvalidDateException(dateFormat, value, e);</span>
+<span class="fc" id="L255">      return LocalDate.parse(value, DateTimeFormatter.ofPattern(dateFormat)).atStartOfDay();</span>
+<span class="fc" id="L256">    } catch (DateTimeParseException e) {</span>
+<span class="fc" id="L257">      throw new AccessControlInvalidDateException(dateFormat, value, e);</span>
     }
   }
 
   private List&lt;RBACPermission&gt; fetchPermissions(UUID actionId) {
-<span class="pc bpc" id="L172" title="1 of 4 branches missed.">    if (actionId != null &amp;&amp; !permissionsByActionId.containsKey(actionId)) {</span>
-<span class="fc" id="L173">      List&lt;RBACPermission&gt; permissions =</span>
-<span class="fc" id="L174">          actionRepository.findById(actionId).map(RBACAction::permissions).orElse(null);</span>
+<span class="pc bpc" id="L262" title="1 of 4 branches missed.">    if (actionId != null &amp;&amp; !permissionsByActionId.containsKey(actionId)) {</span>
+<span class="fc" id="L263">      List&lt;RBACPermission&gt; permissions =</span>
+<span class="fc" id="L264">          actionRepository.findById(actionId).map(RBACAction::permissions).orElse(null);</span>
 
-<span class="fc" id="L176">      permissionsByActionId.put(actionId, permissions);</span>
+<span class="fc" id="L266">      permissionsByActionId.put(actionId, permissions);</span>
     }
 
-<span class="fc" id="L179">    return permissionsByActionId.get(actionId);</span>
+<span class="fc" id="L269">    return permissionsByActionId.get(actionId);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -3,6 +3,7 @@
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.input.AccessControlService;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACActionRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
+import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACPermissionRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACResourceRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.service.AccessControlServiceImpl;
@@ -13,21 +14,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-<span class="nc" id="L16">public class AccessControlServiceConfig {</span>
+<span class="nc" id="L17">public class AccessControlServiceConfig {</span>
   @Bean
   public AccessControlService accessControlService(
       RBACActionRepository actionRepository,
       RBACAssignmentRepository assignmentRepository,
       PrincipalRepository principalRepository,
+      RBACPermissionRepository permissionRepository,
       RBACResourceRepository resourceRepository,
       RBACRoleRepository roleRepository,
       StructureRepository structureRepository,
       @Value(&quot;${avenirs.access.control.date.format}&quot;) String dateFormat) {
 
-<span class="nc" id="L27">    return new AccessControlServiceImpl(</span>
+<span class="nc" id="L29">    return new AccessControlServiceImpl(</span>
         actionRepository,
         assignmentRepository,
         principalRepository,
+        permissionRepository,
         resourceRepository,
         roleRepository,
         structureRepository,
