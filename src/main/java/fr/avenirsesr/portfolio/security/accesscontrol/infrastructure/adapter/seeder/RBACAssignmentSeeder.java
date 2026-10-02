@@ -45,7 +45,6 @@ public class RBACAssignmentSeeder {
       if (superAdminLogins.contains(principal.getLogin())) {
         seedAssignment(principal, ERole.ROLE_SUPER_ADMIN);
         superAdminCount++;
-        continue;
       }
 
       for (EUserCategory category : principal.getCategories()) {
