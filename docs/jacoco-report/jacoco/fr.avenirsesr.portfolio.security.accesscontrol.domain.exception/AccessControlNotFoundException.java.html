@@ -25,29 +25,21 @@ public class AccessControlNotFoundException extends RuntimeException {
 <span class="fc" id="L25">    return new AccessControlNotFoundException(&quot;Missing structures, IDs: %s&quot;.formatted(ids));</span>
   }
 
-  public static AccessControlNotFoundException permissions(Collection&lt;String&gt; names) {
-<span class="fc" id="L29">    return new AccessControlNotFoundException(&quot;Unknown permissions: %s&quot;.formatted(names));</span>
-  }
-
-  public static AccessControlNotFoundException permissionGroups(Collection&lt;String&gt; names) {
-<span class="nc" id="L33">    return new AccessControlNotFoundException(&quot;Unknown permission groups: %s&quot;.formatted(names));</span>
-  }
-
   public static AccessControlNotFoundException assignment(UUID assignmentId) {
-<span class="fc" id="L37">    return new AccessControlNotFoundException(</span>
-<span class="fc" id="L38">        &quot;Assignment not found, ID: %s&quot;.formatted(assignmentId));</span>
+<span class="fc" id="L29">    return new AccessControlNotFoundException(</span>
+<span class="fc" id="L30">        &quot;Assignment not found, ID: %s&quot;.formatted(assignmentId));</span>
   }
 
   public static AccessControlNotFoundException resource(UUID resourceId) {
-<span class="fc" id="L42">    return new AccessControlNotFoundException(&quot;Resource not found, ID: %s&quot;.formatted(resourceId));</span>
+<span class="fc" id="L34">    return new AccessControlNotFoundException(&quot;Resource not found, ID: %s&quot;.formatted(resourceId));</span>
   }
 
   public static AccessControlNotFoundException context(UUID contextId) {
-<span class="fc" id="L46">    return new AccessControlNotFoundException(&quot;Context not found, ID: %s&quot;.formatted(contextId));</span>
+<span class="fc" id="L38">    return new AccessControlNotFoundException(&quot;Context not found, ID: %s&quot;.formatted(contextId));</span>
   }
 
   public static AccessControlNotFoundException scope(UUID scopeId) {
-<span class="fc" id="L50">    return new AccessControlNotFoundException(&quot;Scope not found, ID: %s&quot;.formatted(scopeId));</span>
+<span class="fc" id="L42">    return new AccessControlNotFoundException(&quot;Scope not found, ID: %s&quot;.formatted(scopeId));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
