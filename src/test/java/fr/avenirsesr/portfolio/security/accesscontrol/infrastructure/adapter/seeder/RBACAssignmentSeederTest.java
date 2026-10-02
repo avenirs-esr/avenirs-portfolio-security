@@ -2,7 +2,6 @@ package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.se
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -134,21 +133,24 @@ class RBACAssignmentSeederTest {
     }
 
     @Test
-    void thenThatPrincipalShouldBeAssignedRoleSuperAdminRegardlessOfCategory() {
+    void thenThatPrincipalShouldBeAssignedRoleSuperAdminAndItsCategoryRole() {
       BddLogger.when("seeding a staff principal matching the configured login");
-      BddLogger.then("it should be assigned ROLE_SUPER_ADMIN, not ROLE_STAFF");
+      BddLogger.then("it should be assigned ROLE_SUPER_ADMIN and ROLE_STAFF");
 
       Principal configuredStaff = principal("admin.login", EUserCategory.STAFF);
       when(principalRepository.findAll()).thenReturn(List.of(configuredStaff));
       when(roleRepository.findByName(ERole.ROLE_SUPER_ADMIN.name()))
           .thenReturn(java.util.Optional.of(role(ERole.ROLE_SUPER_ADMIN)));
+      when(roleRepository.findByName(ERole.ROLE_STAFF.name()))
+          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STAFF)));
       when(assignmentRepository.findByPrincipal("admin.login")).thenReturn(List.of());
 
       seeder.seed();
 
       verify(assignmentRepository)
           .save(argThat(assignment -> assignment.role().name().equals("ROLE_SUPER_ADMIN")));
-      verify(roleRepository, never()).findByName(ERole.ROLE_STAFF.name());
+      verify(assignmentRepository)
+          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STAFF")));
     }
 
     @Test
