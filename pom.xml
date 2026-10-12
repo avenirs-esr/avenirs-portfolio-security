@@ -206,11 +206,6 @@
 
 
     
-        <!--
-          Required to compile the file registry carried by the common library, whose sources every
-          service embeds. This service owns no file: the registry stays unwired, as
-          file.registry.enabled is left unset.
-        -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
