@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.file.infrastructure.adapter.model</a> &gt; <span class="el_source">FileEntity.java</span></div><h1>FileEntity.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.file.infrastructure.adapter.model;
+
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
+import fr.avenirsesr.portfolio.common.file.domain.model.enums.EFileType;
+import jakarta.persistence.*;
+import java.time.Instant;
+import java.util.UUID;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;file&quot;)
+@NoArgsConstructor
+public class FileEntity extends AvenirsBaseEntity {
+  @Column(nullable = false, name = &quot;file_type&quot;)
+  @Enumerated(EnumType.STRING)
+  private EFileType fileType;
+
+  @Column(nullable = false, name = &quot;file_name&quot;)
+  private String fileName;
+
+  @Column(nullable = false)
+  private long size;
+
+  @Column(nullable = false)
+  private String uri;
+
+  @Column(nullable = false, name = &quot;uploaded_by&quot;)
+  private UUID uploadedById;
+
+  @Column(nullable = false, name = &quot;uploaded_at&quot;)
+  private Instant uploadedAt;
+
+  @Column(nullable = false, name = &quot;is_restricted&quot;)
+  private boolean isRestricted;
+
+  private FileEntity(
+      UUID id,
+      EFileType fileType,
+      String fileName,
+      long size,
+      String uri,
+      UUID uploadedById,
+      Instant uploadedAt,
+      boolean isRestricted,
+      Instant createdAt,
+<span class="nc" id="L50">      Instant updatedAt) {</span>
+<span class="nc" id="L51">    this.setId(id);</span>
+<span class="nc" id="L52">    this.fileType = fileType;</span>
+<span class="nc" id="L53">    this.fileName = fileName;</span>
+<span class="nc" id="L54">    this.size = size;</span>
+<span class="nc" id="L55">    this.uri = uri;</span>
+<span class="nc" id="L56">    this.uploadedById = uploadedById;</span>
+<span class="nc" id="L57">    this.uploadedAt = uploadedAt;</span>
+<span class="nc" id="L58">    this.isRestricted = isRestricted;</span>
+<span class="nc" id="L59">    this.setCreatedAt(createdAt);</span>
+<span class="nc" id="L60">    this.setUpdatedAt(updatedAt);</span>
+<span class="nc" id="L61">  }</span>
+
+  public static FileEntity of(
+      UUID id,
+      EFileType fileType,
+      String fileName,
+      long size,
+      String uri,
+      UUID uploadedById,
+      Instant uploadedAt,
+      boolean isRestricted,
+      Instant createdAt,
+      Instant updatedAt) {
+<span class="nc" id="L74">    return new FileEntity(</span>
+        id,
+        fileType,
+        fileName,
+        size,
+        uri,
+        uploadedById,
+        uploadedAt,
+        isRestricted,
+        createdAt,
+        updatedAt);
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
