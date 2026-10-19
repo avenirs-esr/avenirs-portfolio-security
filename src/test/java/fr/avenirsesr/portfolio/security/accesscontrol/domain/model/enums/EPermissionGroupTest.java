@@ -251,24 +251,18 @@ class EPermissionGroupTest {
             .containsExactlyInAnyOrder(
                 EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
+                EPermission.PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
-                EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
-                EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,
-                EPermission.PERM_ACTIVITY_DUPLICATE);
+                EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ);
       }
 
       @Test
-      void thenStaffFeedbackManagementShouldContainExactlyStaffFeedbackPermissions() {
-        BddLogger.then(
-            "STAFF_FEEDBACK_MANAGEMENT should contain exactly the staff-facing feedback"
-                + " permissions");
+      void thenProfileManagementOwnShouldContainExactlyTheOwnProfilePermissions() {
+        BddLogger.then("PROFILE_MANAGEMENT_OWN should contain exactly the own profile permissions");
 
-        assertThat(EPermissionGroup.STAFF_FEEDBACK_MANAGEMENT.permissions())
+        assertThat(EPermissionGroup.PROFILE_MANAGEMENT_OWN.permissions())
             .containsExactlyInAnyOrder(
-                EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL,
-                EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL,
-                EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
-                EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL);
+                EPermission.PERM_PROFILE_READ_OWN, EPermission.PERM_PROFILE_UPDATE_OWN);
       }
 
       @Test
