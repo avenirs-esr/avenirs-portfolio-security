@@ -28,89 +28,83 @@ import java.util.Set;
           EPermission.PERM_ACTIVITY_UPDATE,
           EPermission.PERM_ACTIVITY_DELETE)),
 
-<span class="fc" id="L31">  TRACE_MANAGEMENT_OWN(</span>
-<span class="fc" id="L32">      Set.of(</span>
+<span class="fc" id="L31">  PROFILE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L32">      Set.of(EPermission.PERM_PROFILE_READ_OWN, EPermission.PERM_PROFILE_UPDATE_OWN)),</span>
+
+<span class="fc" id="L34">  TRACE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L35">      Set.of(</span>
           EPermission.PERM_TRACE_CREATE_OWN,
           EPermission.PERM_TRACE_LIST_OWN,
           EPermission.PERM_TRACE_UPDATE_OWN,
           EPermission.PERM_TRACE_DELETE_OWN)),
 
-<span class="fc" id="L38">  DECLARED_ACTIVITY_MANAGEMENT_OWN(</span>
-<span class="fc" id="L39">      Set.of(</span>
+<span class="fc" id="L41">  DECLARED_ACTIVITY_MANAGEMENT_OWN(</span>
+<span class="fc" id="L42">      Set.of(</span>
           EPermission.PERM_DECLARED_ACTIVITY_LIST_OWN,
           EPermission.PERM_DECLARED_ACTIVITY_UPDATE_OWN,
           EPermission.PERM_DECLARED_ACTIVITY_DELETE_OWN)),
 
-<span class="fc" id="L44">  DECLARED_SKILL_MANAGEMENT_OWN(</span>
-<span class="fc" id="L45">      Set.of(</span>
+<span class="fc" id="L47">  DECLARED_SKILL_MANAGEMENT_OWN(</span>
+<span class="fc" id="L48">      Set.of(</span>
           EPermission.PERM_DECLARED_SKILL_LIST_OWN,
           EPermission.PERM_DECLARED_SKILL_CREATE_OWN,
           EPermission.PERM_DECLARED_SKILL_UPDATE_OWN,
           EPermission.PERM_DECLARED_SKILL_DELETE_OWN)),
 
-<span class="fc" id="L51">  DECLARED_EXPERIENCE_MANAGEMENT_OWN(</span>
-<span class="fc" id="L52">      Set.of(</span>
+<span class="fc" id="L54">  DECLARED_EXPERIENCE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L55">      Set.of(</span>
           EPermission.PERM_DECLARED_EXPERIENCE_LIST_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_CREATE_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_UPDATE_OWN,
           EPermission.PERM_DECLARED_EXPERIENCE_DELETE_OWN)),
 
-<span class="fc" id="L58">  DECLARED_PROGRAM_MANAGEMENT_OWN(</span>
-<span class="fc" id="L59">      Set.of(</span>
+<span class="fc" id="L61">  DECLARED_PROGRAM_MANAGEMENT_OWN(</span>
+<span class="fc" id="L62">      Set.of(</span>
           EPermission.PERM_DECLARED_PROGRAM_LIST_OWN,
           EPermission.PERM_DECLARED_PROGRAM_CREATE_OWN,
           EPermission.PERM_DECLARED_PROGRAM_UPDATE_OWN,
           EPermission.PERM_DECLARED_PROGRAM_DELETE_OWN)),
 
-<span class="fc" id="L65">  SELF_KNOWLEDGE_MANAGEMENT_OWN(</span>
-<span class="fc" id="L66">      Set.of(</span>
+<span class="fc" id="L68">  SELF_KNOWLEDGE_MANAGEMENT_OWN(</span>
+<span class="fc" id="L69">      Set.of(</span>
           EPermission.PERM_SELF_KNOWLEDGE_LIST_OWN,
           EPermission.PERM_SELF_KNOWLEDGE_CREATE_OWN,
           EPermission.PERM_SELF_KNOWLEDGE_UPDATE_OWN,
           EPermission.PERM_SELF_KNOWLEDGE_DELETE_OWN)),
 
-<span class="fc" id="L72">  NOTIFICATION_MANAGEMENT_OWN(</span>
-<span class="fc" id="L73">      Set.of(EPermission.PERM_NOTIFICATION_READ_OWN, EPermission.PERM_NOTIFICATION_UPDATE_OWN)),</span>
+<span class="fc" id="L75">  NOTIFICATION_MANAGEMENT_OWN(</span>
+<span class="fc" id="L76">      Set.of(EPermission.PERM_NOTIFICATION_READ_OWN, EPermission.PERM_NOTIFICATION_UPDATE_OWN)),</span>
 
-<span class="fc" id="L75">  STUDENT_ACTIVITY_ACCESS(</span>
-<span class="fc" id="L76">      Set.of(</span>
+<span class="fc" id="L78">  STUDENT_ACTIVITY_ACCESS(</span>
+<span class="fc" id="L79">      Set.of(</span>
           EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_REGISTER_OWN,
           EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL)),
 
-<span class="fc" id="L83">  STUDENT_FEEDBACK_ACCESS(</span>
-<span class="fc" id="L84">      Set.of(</span>
+<span class="fc" id="L86">  STUDENT_FEEDBACK_ACCESS(</span>
+<span class="fc" id="L87">      Set.of(</span>
           EPermission.PERM_FEEDBACK_REQUEST_CREATE_OWN,
           EPermission.PERM_FEEDBACK_RECEIVED_READ_OWN)),
 
-<span class="fc" id="L88">  STAFF_ACTIVITY_ACCESS(</span>
-<span class="fc" id="L89">      Set.of(</span>
+<span class="fc" id="L91">  STAFF_ACTIVITY_ACCESS(</span>
+<span class="fc" id="L92">      Set.of(</span>
           EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL,
           EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
-          EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
-          EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,
-          EPermission.PERM_ACTIVITY_DUPLICATE)),
+          EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ)),
 
-<span class="fc" id="L98">  STAFF_FEEDBACK_MANAGEMENT(</span>
-<span class="fc" id="L99">      Set.of(</span>
-          EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL,
-          EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL,
-          EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
-          EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL)),
-
-<span class="fc" id="L105">  RBAC_MANAGEMENT(</span>
-<span class="fc" id="L106">      Set.of(</span>
+<span class="fc" id="L99">  RBAC_MANAGEMENT(</span>
+<span class="fc" id="L100">      Set.of(</span>
           EPermission.PERM_RBAC_READ,
           EPermission.PERM_RBAC_ASSIGN,
           EPermission.PERM_RBAC_REVOKE,
           EPermission.PERM_RBAC_MANAGE)),
 
-<span class="fc" id="L112">  BACKOFFICE_CONFIG_MANAGEMENT(</span>
-<span class="fc" id="L113">      Set.of(</span>
+<span class="fc" id="L106">  BACKOFFICE_CONFIG_MANAGEMENT(</span>
+<span class="fc" id="L107">      Set.of(</span>
           EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
           EPermission.PERM_ADDITIONAL_SKILL_CONFIG_UPDATE,
           EPermission.PERM_INSTITUTION_CONFIG_READ,
@@ -120,27 +114,27 @@ import java.util.Set;
           EPermission.PERM_WEBSITE_CONTENT_CONFIG_UPDATE,
           EPermission.PERM_CGU_UPDATE)),
 
-<span class="fc" id="L123">  EXTERNAL_USER_MANAGEMENT(</span>
-<span class="fc" id="L124">      Set.of(</span>
+<span class="fc" id="L117">  EXTERNAL_USER_MANAGEMENT(</span>
+<span class="fc" id="L118">      Set.of(</span>
           EPermission.PERM_EXTERNAL_USER_READ,
           EPermission.PERM_EXTERNAL_USER_IMPORT,
           EPermission.PERM_EXTERNAL_USER_UPDATE,
           EPermission.PERM_EXTERNAL_USER_DELETE,
           EPermission.PERM_EXTERNAL_USER_AFFILIATION_IMPORT)),
 
-<span class="fc" id="L131">  SYSTEM_ADMINISTRATION(Set.of(EPermission.PERM_SEEDER_RESET));</span>
+<span class="fc" id="L125">  SYSTEM_ADMINISTRATION(Set.of(EPermission.PERM_SEEDER_RESET));</span>
 
   private final Set&lt;EPermission&gt; permissions;
 
-<span class="fc" id="L135">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
-<span class="nc" id="L137">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
+<span class="fc" id="L129">  EPermissionGroup(Set&lt;EPermission&gt; permissions) {</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">    if (permissions.isEmpty()) {</span>
+<span class="nc" id="L131">      throw new IllegalStateException(&quot;Permission group &quot; + name() + &quot; must not be empty&quot;);</span>
     }
-<span class="fc" id="L139">    this.permissions = Set.copyOf(permissions);</span>
-<span class="fc" id="L140">  }</span>
+<span class="fc" id="L133">    this.permissions = Set.copyOf(permissions);</span>
+<span class="fc" id="L134">  }</span>
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L143">    return permissions;</span>
+<span class="fc" id="L137">    return permissions;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

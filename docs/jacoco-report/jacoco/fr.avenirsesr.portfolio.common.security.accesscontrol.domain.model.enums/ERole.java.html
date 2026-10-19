@@ -4,101 +4,292 @@ import java.util.HashSet;
 import java.util.Set;
 
 <span class="fc" id="L6">public enum ERole {</span>
-<span class="fc" id="L7">  ROLE_STUDENT(</span>
-      &quot;Learner with a personal COFOLIO space for their life project and skills-based approach&quot;,
-<span class="fc" id="L9">      Set.of(</span>
-          EPermission.PERM_PROFILE_READ_OWN,
-          EPermission.PERM_PROFILE_UPDATE_OWN,
-          EPermission.PERM_COMPETENCY_READ,
-          EPermission.PERM_EXTERNAL_SKILL_READ,
-          EPermission.PERM_EMPLOYMENT_KIT_READ_OWN,
-          EPermission.PERM_KIT_DOWNLOAD_MEDIA_OWN,
-          EPermission.PERM_ASSOCIATION_MANAGE),
-<span class="fc" id="L17">      Set.of(</span>
+  // ---- Common ----
+<span class="fc" id="L8">  ROLE_USER_BASE(</span>
+      &quot;Base account capabilities: own profile and own notifications&quot;,
+<span class="fc" id="L10">      Set.of(),</span>
+<span class="fc" id="L11">      Set.of(),</span>
+<span class="fc" id="L12">      Set.of(</span>
+          EPermissionGroup.PROFILE_MANAGEMENT_OWN, EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN)),
+
+  // ---- Learner space ----
+<span class="fc" id="L16">  ROLE_LEARNER_PORTFOLIO(</span>
+      &quot;Personal portfolio content: traces, declared activities, skills, experiences, programs,&quot;
+          + &quot; self-knowledge and their associations&quot;,
+<span class="fc" id="L19">      Set.of(),</span>
+<span class="fc" id="L20">      Set.of(EPermission.PERM_ASSOCIATION_MANAGE),</span>
+<span class="fc" id="L21">      Set.of(</span>
           EPermissionGroup.TRACE_MANAGEMENT_OWN,
           EPermissionGroup.DECLARED_ACTIVITY_MANAGEMENT_OWN,
           EPermissionGroup.DECLARED_SKILL_MANAGEMENT_OWN,
           EPermissionGroup.DECLARED_EXPERIENCE_MANAGEMENT_OWN,
           EPermissionGroup.DECLARED_PROGRAM_MANAGEMENT_OWN,
-          EPermissionGroup.SELF_KNOWLEDGE_MANAGEMENT_OWN,
-          EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN,
-          EPermissionGroup.STUDENT_ACTIVITY_ACCESS,
-          EPermissionGroup.STUDENT_FEEDBACK_ACCESS)),
+          EPermissionGroup.SELF_KNOWLEDGE_MANAGEMENT_OWN)),
 
-<span class="fc" id="L28">  ROLE_STAFF(</span>
+<span class="fc" id="L29">  ROLE_LEARNER_ACTIVITY(</span>
+      &quot;Learner access to the activity catalog, registration and activity documents&quot;,
+<span class="fc" id="L31">      Set.of(),</span>
+<span class="fc" id="L32">      Set.of(),</span>
+<span class="fc" id="L33">      Set.of(EPermissionGroup.STUDENT_ACTIVITY_ACCESS)),</span>
+
+<span class="fc" id="L35">  ROLE_LEARNER_FEEDBACK(</span>
+      &quot;Learner feedback: request feedback and view the feedback received&quot;,
+<span class="fc" id="L37">      Set.of(),</span>
+<span class="fc" id="L38">      Set.of(),</span>
+<span class="fc" id="L39">      Set.of(EPermissionGroup.STUDENT_FEEDBACK_ACCESS)),</span>
+
+<span class="fc" id="L41">  ROLE_LEARNER_EMPLOYMENT_KIT(</span>
+      &quot;Own employment kit page and download of its multimedia content&quot;,
+<span class="fc" id="L43">      Set.of(),</span>
+<span class="fc" id="L44">      Set.of(EPermission.PERM_EMPLOYMENT_KIT_READ_OWN, EPermission.PERM_KIT_DOWNLOAD_MEDIA_OWN),</span>
+<span class="fc" id="L45">      Set.of()),</span>
+
+<span class="fc" id="L47">  ROLE_LEARNER_REFERENCE_DATA(</span>
+      &quot;Read access to the reference data used by the learner space: competencies, external skills&quot;
+          + &quot; and trace/additional-skill settings&quot;,
+<span class="fc" id="L50">      Set.of(),</span>
+<span class="fc" id="L51">      Set.of(</span>
+          EPermission.PERM_COMPETENCY_READ,
+          EPermission.PERM_EXTERNAL_SKILL_READ,
+          EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
+          EPermission.PERM_TRACE_CONFIG_READ),
+<span class="fc" id="L56">      Set.of()),</span>
+
+  // ---- Staff space ----
+<span class="fc" id="L59">  ROLE_STAFF_TRACE_REVIEWER(</span>
+      &quot;View and download learner traces made accessible in an authorized context&quot;,
+<span class="fc" id="L61">      Set.of(),</span>
+<span class="fc" id="L62">      Set.of(EPermission.PERM_TRACE_READ_CONTEXTUAL, EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL),</span>
+<span class="fc" id="L63">      Set.of()),</span>
+
+<span class="fc" id="L65">  ROLE_STAFF_ACTIVITY_VIEWER(</span>
+      &quot;Read-only access to the activity catalog, activity documents and the staff library&quot;,
+<span class="fc" id="L67">      Set.of(),</span>
+<span class="fc" id="L68">      Set.of(),</span>
+<span class="fc" id="L69">      Set.of(EPermissionGroup.STAFF_ACTIVITY_ACCESS)),</span>
+
+<span class="fc" id="L71">  ROLE_ACTIVITY_EDITOR(</span>
+      &quot;Create, update and delete unpublished activities&quot;,
+<span class="fc" id="L73">      Set.of(),</span>
+<span class="fc" id="L74">      Set.of(),</span>
+<span class="fc" id="L75">      Set.of(EPermissionGroup.ACTIVITY_MANAGEMENT)),</span>
+
+<span class="fc" id="L77">  ROLE_STAFF_ACTIVITY_AUTHOR(</span>
+      &quot;Activity authoring: edition of activities plus duplication and update of published ones&quot;,
+<span class="fc" id="L79">      Set.of(ROLE_ACTIVITY_EDITOR),</span>
+<span class="fc" id="L80">      Set.of(</span>
+          EPermission.PERM_ACTIVITY_DUPLICATE,
+          EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL),
+<span class="fc" id="L83">      Set.of()),</span>
+
+<span class="fc" id="L85">  ROLE_STAFF_FEEDBACK_RESPONDER(</span>
+      &quot;View and respond to the feedback requests assigned to the staff member&quot;,
+<span class="fc" id="L87">      Set.of(),</span>
+<span class="fc" id="L88">      Set.of(</span>
+          EPermission.PERM_FEEDBACK_REQUEST_READ_ASSIGNED_CONTEXTUAL,
+          EPermission.PERM_FEEDBACK_REQUEST_RESPOND_ASSIGNED_CONTEXTUAL),
+<span class="fc" id="L91">      Set.of()),</span>
+
+<span class="fc" id="L93">  ROLE_STAFF_FEEDBACK_SUPERVISOR(</span>
+      &quot;Monitor the feedback history and dashboard of the institution&quot;,
+<span class="fc" id="L95">      Set.of(),</span>
+<span class="fc" id="L96">      Set.of(</span>
+          EPermission.PERM_FEEDBACK_HISTORY_READ_CONTEXTUAL,
+          EPermission.PERM_FEEDBACK_DASHBOARD_READ_CONTEXTUAL),
+<span class="fc" id="L99">      Set.of()),</span>
+
+  // ---- Administration: one viewer / manager pair per domain ----
+<span class="fc" id="L102">  ROLE_ESTABLISHMENT_VIEWER(</span>
+      &quot;Read-only access to primary and secondary institutions&quot;,
+<span class="fc" id="L104">      Set.of(),</span>
+<span class="fc" id="L105">      Set.of(</span>
+          EPermission.PERM_PRIMARY_ESTABLISHMENT_READ,
+          EPermission.PERM_SECONDARY_ESTABLISHMENT_READ),
+<span class="fc" id="L108">      Set.of()),</span>
+
+<span class="fc" id="L110">  ROLE_ESTABLISHMENT_MANAGER(</span>
+      &quot;Full management of primary and secondary institutions&quot;,
+<span class="fc" id="L112">      Set.of(),</span>
+<span class="fc" id="L113">      Set.of(),</span>
+<span class="fc" id="L114">      Set.of(EPermissionGroup.ESTABLISHMENT_MANAGEMENT)),</span>
+
+<span class="fc" id="L116">  ROLE_GROUP_VIEWER(</span>
+<span class="fc" id="L117">      &quot;Read-only access to groups&quot;, Set.of(), Set.of(EPermission.PERM_GROUP_READ), Set.of()),</span>
+
+<span class="fc" id="L119">  ROLE_GROUP_MANAGER(</span>
+      &quot;Full management of groups, including import&quot;,
+<span class="fc" id="L121">      Set.of(),</span>
+<span class="fc" id="L122">      Set.of(),</span>
+<span class="fc" id="L123">      Set.of(EPermissionGroup.GROUP_MANAGEMENT)),</span>
+
+<span class="fc" id="L125">  ROLE_EXTERNAL_USER_VIEWER(</span>
+      &quot;Read-only access to external users&quot;,
+<span class="fc" id="L127">      Set.of(),</span>
+<span class="fc" id="L128">      Set.of(EPermission.PERM_EXTERNAL_USER_READ),</span>
+<span class="fc" id="L129">      Set.of()),</span>
+
+<span class="fc" id="L131">  ROLE_EXTERNAL_USER_MANAGER(</span>
+      &quot;Full management of external users and their affiliations&quot;,
+<span class="fc" id="L133">      Set.of(),</span>
+<span class="fc" id="L134">      Set.of(),</span>
+<span class="fc" id="L135">      Set.of(EPermissionGroup.EXTERNAL_USER_MANAGEMENT)),</span>
+
+<span class="fc" id="L137">  ROLE_CONFIG_VIEWER(</span>
+      &quot;Read-only access to the back-office configuration&quot;,
+<span class="fc" id="L139">      Set.of(),</span>
+<span class="fc" id="L140">      Set.of(</span>
+          EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
+          EPermission.PERM_INSTITUTION_CONFIG_READ,
+          EPermission.PERM_TRACE_CONFIG_READ,
+          EPermission.PERM_WEBSITE_CONTENT_CONFIG_READ),
+<span class="fc" id="L145">      Set.of()),</span>
+
+<span class="fc" id="L147">  ROLE_CONFIG_MANAGER(</span>
+      &quot;Full management of the back-office configuration and terms of use&quot;,
+<span class="fc" id="L149">      Set.of(),</span>
+<span class="fc" id="L150">      Set.of(),</span>
+<span class="fc" id="L151">      Set.of(EPermissionGroup.BACKOFFICE_CONFIG_MANAGEMENT)),</span>
+
+<span class="fc" id="L153">  ROLE_RBAC_AUDITOR(</span>
+      &quot;Read-only access to RBAC administration data&quot;,
+<span class="fc" id="L155">      Set.of(),</span>
+<span class="fc" id="L156">      Set.of(EPermission.PERM_RBAC_READ),</span>
+<span class="fc" id="L157">      Set.of()),</span>
+
+<span class="fc" id="L159">  ROLE_RBAC_ADMIN(</span>
+      &quot;Full RBAC administration: roles, assignments, scopes and contexts&quot;,
+<span class="fc" id="L161">      Set.of(),</span>
+<span class="fc" id="L162">      Set.of(),</span>
+<span class="fc" id="L163">      Set.of(EPermissionGroup.RBAC_MANAGEMENT)),</span>
+
+<span class="fc" id="L165">  ROLE_ACTIVITY_ADMIN(</span>
+      &quot;Administer any activity of the platform, including definitive deletion&quot;,
+<span class="fc" id="L167">      Set.of(ROLE_ACTIVITY_EDITOR),</span>
+<span class="fc" id="L168">      Set.of(EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT),</span>
+<span class="fc" id="L169">      Set.of()),</span>
+
+<span class="fc" id="L171">  ROLE_SYSTEM_OPERATOR(</span>
+      &quot;Destructive system operations such as resetting and reseeding the database&quot;,
+<span class="fc" id="L173">      Set.of(),</span>
+<span class="fc" id="L174">      Set.of(),</span>
+<span class="fc" id="L175">      Set.of(EPermissionGroup.SYSTEM_ADMINISTRATION)),</span>
+
+  // ---- Profiles: compositions of the roles above ----
+<span class="fc" id="L178">  ROLE_STUDENT(</span>
+      &quot;Learner with a personal COFOLIO space for their life project and skills-based approach&quot;,
+<span class="fc" id="L180">      Set.of(</span>
+          ROLE_USER_BASE,
+          ROLE_LEARNER_PORTFOLIO,
+          ROLE_LEARNER_ACTIVITY,
+          ROLE_LEARNER_FEEDBACK,
+          ROLE_LEARNER_EMPLOYMENT_KIT,
+          ROLE_LEARNER_REFERENCE_DATA),
+<span class="fc" id="L187">      Set.of(),</span>
+<span class="fc" id="L188">      Set.of()),</span>
+
+<span class="fc" id="L190">  ROLE_STAFF(</span>
       &quot;Staff member providing educational guidance and handling feedback&quot;,
-<span class="fc" id="L30">      Set.of(</span>
-          EPermission.PERM_PROFILE_READ_OWN,
-          EPermission.PERM_PROFILE_UPDATE_OWN,
-          EPermission.PERM_TRACE_READ_CONTEXTUAL,
-          EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL),
-<span class="fc" id="L35">      Set.of(</span>
-          EPermissionGroup.ACTIVITY_MANAGEMENT,
-          EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN,
-          EPermissionGroup.STAFF_ACTIVITY_ACCESS,
-          EPermissionGroup.STAFF_FEEDBACK_MANAGEMENT)),
+<span class="fc" id="L192">      Set.of(</span>
+          ROLE_USER_BASE,
+          ROLE_STAFF_TRACE_REVIEWER,
+          ROLE_STAFF_ACTIVITY_VIEWER,
+          ROLE_STAFF_ACTIVITY_AUTHOR,
+          ROLE_STAFF_FEEDBACK_RESPONDER,
+          ROLE_STAFF_FEEDBACK_SUPERVISOR),
+<span class="fc" id="L199">      Set.of(),</span>
+<span class="fc" id="L200">      Set.of()),</span>
 
-<span class="fc" id="L41">  ROLE_SUPER_ADMIN(</span>
+<span class="fc" id="L202">  ROLE_ADMIN(</span>
+      &quot;Administrator of an institution, in charge of its secondary institutions, its groups and&quot;
+          + &quot; its external users&quot;,
+<span class="fc" id="L205">      Set.of(ROLE_ESTABLISHMENT_MANAGER, ROLE_GROUP_MANAGER, ROLE_EXTERNAL_USER_MANAGER),</span>
+<span class="fc" id="L206">      Set.of(),</span>
+<span class="fc" id="L207">      Set.of()),</span>
+
+<span class="fc" id="L209">  ROLE_SUPER_ADMIN(</span>
       &quot;Global administrator of the COFOLIO platform&quot;,
-<span class="fc" id="L43">      Set.of(EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT),</span>
-<span class="fc" id="L44">      Set.of(</span>
-          EPermissionGroup.ESTABLISHMENT_MANAGEMENT,
-          EPermissionGroup.GROUP_MANAGEMENT,
-          EPermissionGroup.ACTIVITY_MANAGEMENT,
-          EPermissionGroup.RBAC_MANAGEMENT,
-          EPermissionGroup.BACKOFFICE_CONFIG_MANAGEMENT,
-          EPermissionGroup.EXTERNAL_USER_MANAGEMENT,
-          EPermissionGroup.SYSTEM_ADMINISTRATION));
+<span class="fc" id="L211">      Set.of(</span>
+          ROLE_ESTABLISHMENT_MANAGER,
+          ROLE_GROUP_MANAGER,
+          ROLE_EXTERNAL_USER_MANAGER,
+          ROLE_ACTIVITY_ADMIN,
+          ROLE_RBAC_ADMIN,
+          ROLE_CONFIG_MANAGER,
+          ROLE_SYSTEM_OPERATOR),
+<span class="fc" id="L219">      Set.of(),</span>
+<span class="fc" id="L220">      Set.of());</span>
 
   private final String description;
+  private final Set&lt;ERole&gt; includedRoles;
   private final Set&lt;EPermission&gt; directPermissions;
   private final Set&lt;EPermissionGroup&gt; permissionGroups;
   private final Set&lt;EPermission&gt; permissions;
 
   ERole(
       String description,
+      Set&lt;ERole&gt; includedRoles,
       Set&lt;EPermission&gt; directPermissions,
-<span class="fc" id="L61">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
-<span class="fc" id="L62">    this.description = description;</span>
-<span class="fc" id="L63">    this.directPermissions = Set.copyOf(directPermissions);</span>
-<span class="fc" id="L64">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
-<span class="fc" id="L65">    this.permissions = flatten(this.directPermissions, this.permissionGroups);</span>
-<span class="fc" id="L66">  }</span>
+<span class="fc" id="L232">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
+<span class="fc" id="L233">    this.description = description;</span>
+<span class="fc" id="L234">    this.includedRoles = Set.copyOf(includedRoles);</span>
+<span class="fc" id="L235">    this.directPermissions = Set.copyOf(directPermissions);</span>
+<span class="fc" id="L236">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
+<span class="fc" id="L237">    this.permissions = flatten(this.includedRoles, this.directPermissions, this.permissionGroups);</span>
+<span class="fc" id="L238">  }</span>
 
   public String description() {
-<span class="fc" id="L69">    return description;</span>
+<span class="fc" id="L241">    return description;</span>
   }
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L73">    return permissions;</span>
+<span class="fc" id="L245">    return permissions;</span>
+  }
+
+  public Set&lt;ERole&gt; includedRoles() {
+<span class="fc" id="L249">    return includedRoles;</span>
   }
 
   public Set&lt;EPermission&gt; directPermissions() {
-<span class="fc" id="L77">    return directPermissions;</span>
+<span class="fc" id="L253">    return directPermissions;</span>
   }
 
   public Set&lt;EPermissionGroup&gt; permissionGroups() {
-<span class="fc" id="L81">    return permissionGroups;</span>
+<span class="fc" id="L257">    return permissionGroups;</span>
   }
 
   private static Set&lt;EPermission&gt; flatten(
-      Set&lt;EPermission&gt; directPermissions, Set&lt;EPermissionGroup&gt; permissionGroups) {
-<span class="fc" id="L86">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
+      Set&lt;ERole&gt; includedRoles,
+      Set&lt;EPermission&gt; directPermissions,
+      Set&lt;EPermissionGroup&gt; permissionGroups) {
+<span class="fc" id="L264">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
 
-<span class="fc bfc" id="L88" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
-<span class="fc" id="L91">          throw new IllegalStateException(</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">    for (ERole included : includedRoles) {</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">      for (EPermission permission : included.permissions()) {</span>
+<span class="pc bpc" id="L268" title="1 of 2 branches missed.">        if (!flattened.add(permission)) {</span>
+<span class="nc" id="L269">          throw new IllegalStateException(</span>
+              &quot;Permission &quot;
+                  + permission
+                  + &quot; is declared twice, including via role &quot;
+                  + included
+                  + &quot;; remove the redundant declaration.&quot;);
+        }
+<span class="fc" id="L276">      }</span>
+<span class="fc" id="L277">    }</span>
+
+<span class="fc bfc" id="L279" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
+<span class="fc" id="L282">          throw new IllegalStateException(</span>
               &quot;Permission &quot;
                   + permission
                   + &quot; is declared both directly and via group &quot;
                   + group
                   + &quot;; remove the redundant declaration.&quot;);
         }
-<span class="fc" id="L98">      }</span>
-<span class="fc" id="L99">    }</span>
+<span class="fc" id="L289">      }</span>
+<span class="fc" id="L290">    }</span>
 
-<span class="fc" id="L101">    return Set.copyOf(flattened);</span>
+<span class="fc" id="L292">    return Set.copyOf(flattened);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
