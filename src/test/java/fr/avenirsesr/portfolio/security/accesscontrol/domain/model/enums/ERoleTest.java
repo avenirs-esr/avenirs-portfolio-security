@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 class ERoleTest {
@@ -55,6 +56,9 @@ class ERoleTest {
             role.directPermissions().size()
                 + role.permissionGroups().stream()
                     .mapToLong(group -> group.permissions().size())
+                    .sum()
+                + role.includedRoles().stream()
+                    .mapToLong(included -> included.permissions().size())
                     .sum();
 
         assertThat(role.permissions()).hasSize((int) expectedSize);
@@ -113,7 +117,9 @@ class ERoleTest {
                 EPermission.PERM_EMPLOYMENT_KIT_READ_OWN,
                 EPermission.PERM_KIT_DOWNLOAD_MEDIA_OWN,
                 EPermission.PERM_FEEDBACK_REQUEST_CREATE_OWN,
-                EPermission.PERM_FEEDBACK_RECEIVED_READ_OWN);
+                EPermission.PERM_FEEDBACK_RECEIVED_READ_OWN,
+                EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
+                EPermission.PERM_TRACE_CONFIG_READ);
       }
     }
 
@@ -143,6 +149,7 @@ class ERoleTest {
                 EPermission.PERM_ACTIVITY_CATALOG_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_READ_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_DOCUMENT_READ_CONTEXTUAL,
+                EPermission.PERM_ACTIVITY_DOCUMENT_DOWNLOAD_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_LIBRARY_STAFF_READ,
                 EPermission.PERM_ACTIVITY_PUBLISHED_UPDATE_CONTEXTUAL,
                 EPermission.PERM_ACTIVITY_DUPLICATE,
@@ -200,7 +207,52 @@ class ERoleTest {
                 EPermission.PERM_EXTERNAL_USER_UPDATE,
                 EPermission.PERM_EXTERNAL_USER_DELETE,
                 EPermission.PERM_EXTERNAL_USER_AFFILIATION_IMPORT,
-                EPermission.PERM_SEEDER_RESET);
+                EPermission.PERM_SEEDER_RESET,
+                EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT);
+      }
+    }
+
+    @Nested
+    class WhenComparingViewerAndManagerRoles {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("comparing each viewer role with the manager role of the same domain");
+      }
+
+      @ParameterizedTest
+      @CsvSource({
+        "ROLE_ESTABLISHMENT_VIEWER,ROLE_ESTABLISHMENT_MANAGER",
+        "ROLE_GROUP_VIEWER,ROLE_GROUP_MANAGER",
+        "ROLE_EXTERNAL_USER_VIEWER,ROLE_EXTERNAL_USER_MANAGER",
+        "ROLE_CONFIG_VIEWER,ROLE_CONFIG_MANAGER",
+        "ROLE_RBAC_AUDITOR,ROLE_RBAC_ADMIN"
+      })
+      void thenTheViewerShouldBeAStrictSubsetOfTheManager(ERole viewer, ERole manager) {
+        BddLogger.then("the viewer permissions should be a strict subset of the manager's");
+
+        assertThat(manager.permissions()).containsAll(viewer.permissions());
+        assertThat(manager.permissions().size()).isGreaterThan(viewer.permissions().size());
+      }
+    }
+
+    @Nested
+    class WhenFlatteningProfileRoles {
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("flattening the profile roles");
+      }
+
+      @Test
+      void thenAdminShouldBeComposedOfTheEstablishmentGroupAndExternalUserManagers() {
+        BddLogger.then("ROLE_ADMIN should include exactly the three domain managers");
+
+        assertThat(ERole.ROLE_ADMIN.includedRoles())
+            .containsExactlyInAnyOrder(
+                ERole.ROLE_ESTABLISHMENT_MANAGER,
+                ERole.ROLE_GROUP_MANAGER,
+                ERole.ROLE_EXTERNAL_USER_MANAGER);
       }
     }
 
@@ -242,7 +294,7 @@ class ERoleTest {
       void thenFlatteningShouldFailExplicitly() throws NoSuchMethodException {
         BddLogger.then("flattening should fail explicitly instead of silently deduplicating");
 
-        Method flatten = ERole.class.getDeclaredMethod("flatten", Set.class, Set.class);
+        Method flatten = ERole.class.getDeclaredMethod("flatten", Set.class, Set.class, Set.class);
         flatten.setAccessible(true);
 
         InvocationTargetException thrown =
@@ -251,6 +303,7 @@ class ERoleTest {
                 () ->
                     flatten.invoke(
                         null,
+                        Set.of(),
                         Set.of(EPermission.PERM_GROUP_READ),
                         Set.of(EPermissionGroup.GROUP_MANAGEMENT)));
 

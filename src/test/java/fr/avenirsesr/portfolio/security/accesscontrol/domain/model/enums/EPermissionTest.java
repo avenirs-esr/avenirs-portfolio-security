@@ -206,6 +206,7 @@ class EPermissionTest {
                 Map.entry(
                     EPermission.PERM_ACTIVITY_FEEDBACK_SETTINGS_UPDATE,
                     "activity:feedback-settings:update"),
+                Map.entry(EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT, "activity:admin:management"),
                 Map.entry(
                     EPermission.PERM_FEEDBACK_REQUEST_CREATE_OWN, "feedback:request:create:own"),
                 Map.entry(
