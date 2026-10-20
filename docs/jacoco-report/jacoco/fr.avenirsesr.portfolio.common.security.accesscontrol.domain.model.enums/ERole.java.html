@@ -209,15 +209,13 @@ import java.util.Set;
 <span class="fc" id="L209">  ROLE_SUPER_ADMIN(</span>
       &quot;Global administrator of the COFOLIO platform&quot;,
 <span class="fc" id="L211">      Set.of(</span>
-          ROLE_ESTABLISHMENT_MANAGER,
-          ROLE_GROUP_MANAGER,
-          ROLE_EXTERNAL_USER_MANAGER,
+          ROLE_ADMIN,
           ROLE_ACTIVITY_ADMIN,
           ROLE_RBAC_ADMIN,
           ROLE_CONFIG_MANAGER,
           ROLE_SYSTEM_OPERATOR),
-<span class="fc" id="L219">      Set.of(),</span>
-<span class="fc" id="L220">      Set.of());</span>
+<span class="fc" id="L217">      Set.of(),</span>
+<span class="fc" id="L218">      Set.of());</span>
 
   private final String description;
   private final Set&lt;ERole&gt; includedRoles;
@@ -229,67 +227,67 @@ import java.util.Set;
       String description,
       Set&lt;ERole&gt; includedRoles,
       Set&lt;EPermission&gt; directPermissions,
-<span class="fc" id="L232">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
-<span class="fc" id="L233">    this.description = description;</span>
-<span class="fc" id="L234">    this.includedRoles = Set.copyOf(includedRoles);</span>
-<span class="fc" id="L235">    this.directPermissions = Set.copyOf(directPermissions);</span>
-<span class="fc" id="L236">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
-<span class="fc" id="L237">    this.permissions = flatten(this.includedRoles, this.directPermissions, this.permissionGroups);</span>
-<span class="fc" id="L238">  }</span>
+<span class="fc" id="L230">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
+<span class="fc" id="L231">    this.description = description;</span>
+<span class="fc" id="L232">    this.includedRoles = Set.copyOf(includedRoles);</span>
+<span class="fc" id="L233">    this.directPermissions = Set.copyOf(directPermissions);</span>
+<span class="fc" id="L234">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
+<span class="fc" id="L235">    this.permissions = flatten(this.includedRoles, this.directPermissions, this.permissionGroups);</span>
+<span class="fc" id="L236">  }</span>
 
   public String description() {
-<span class="fc" id="L241">    return description;</span>
+<span class="fc" id="L239">    return description;</span>
   }
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L245">    return permissions;</span>
+<span class="fc" id="L243">    return permissions;</span>
   }
 
   public Set&lt;ERole&gt; includedRoles() {
-<span class="fc" id="L249">    return includedRoles;</span>
+<span class="fc" id="L247">    return includedRoles;</span>
   }
 
   public Set&lt;EPermission&gt; directPermissions() {
-<span class="fc" id="L253">    return directPermissions;</span>
+<span class="fc" id="L251">    return directPermissions;</span>
   }
 
   public Set&lt;EPermissionGroup&gt; permissionGroups() {
-<span class="fc" id="L257">    return permissionGroups;</span>
+<span class="fc" id="L255">    return permissionGroups;</span>
   }
 
   private static Set&lt;EPermission&gt; flatten(
       Set&lt;ERole&gt; includedRoles,
       Set&lt;EPermission&gt; directPermissions,
       Set&lt;EPermissionGroup&gt; permissionGroups) {
-<span class="fc" id="L264">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
+<span class="fc" id="L262">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
 
-<span class="fc bfc" id="L266" title="All 2 branches covered.">    for (ERole included : includedRoles) {</span>
-<span class="fc bfc" id="L267" title="All 2 branches covered.">      for (EPermission permission : included.permissions()) {</span>
-<span class="pc bpc" id="L268" title="1 of 2 branches missed.">        if (!flattened.add(permission)) {</span>
-<span class="nc" id="L269">          throw new IllegalStateException(</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">    for (ERole included : includedRoles) {</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">      for (EPermission permission : included.permissions()) {</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        if (!flattened.add(permission)) {</span>
+<span class="nc" id="L267">          throw new IllegalStateException(</span>
               &quot;Permission &quot;
                   + permission
                   + &quot; is declared twice, including via role &quot;
                   + included
                   + &quot;; remove the redundant declaration.&quot;);
         }
-<span class="fc" id="L276">      }</span>
-<span class="fc" id="L277">    }</span>
+<span class="fc" id="L274">      }</span>
+<span class="fc" id="L275">    }</span>
 
-<span class="fc bfc" id="L279" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
-<span class="fc bfc" id="L280" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
-<span class="fc bfc" id="L281" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
-<span class="fc" id="L282">          throw new IllegalStateException(</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
+<span class="fc" id="L280">          throw new IllegalStateException(</span>
               &quot;Permission &quot;
                   + permission
                   + &quot; is declared both directly and via group &quot;
                   + group
                   + &quot;; remove the redundant declaration.&quot;);
         }
-<span class="fc" id="L289">      }</span>
-<span class="fc" id="L290">    }</span>
+<span class="fc" id="L287">      }</span>
+<span class="fc" id="L288">    }</span>
 
-<span class="fc" id="L292">    return Set.copyOf(flattened);</span>
+<span class="fc" id="L290">    return Set.copyOf(flattened);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
