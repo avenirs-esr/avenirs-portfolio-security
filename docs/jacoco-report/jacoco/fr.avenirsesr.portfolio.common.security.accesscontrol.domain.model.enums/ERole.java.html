@@ -12,8 +12,8 @@ import java.util.Set;
 <span class="fc" id="L12">      Set.of(</span>
           EPermissionGroup.PROFILE_MANAGEMENT_OWN, EPermissionGroup.NOTIFICATION_MANAGEMENT_OWN)),
 
-  // ---- Learner space ----
-<span class="fc" id="L16">  ROLE_LEARNER_PORTFOLIO(</span>
+  // ---- Student space ----
+<span class="fc" id="L16">  ROLE_STUDENT_PORTFOLIO(</span>
       &quot;Personal portfolio content: traces, declared activities, skills, experiences, programs,&quot;
           + &quot; self-knowledge and their associations&quot;,
 <span class="fc" id="L19">      Set.of(),</span>
@@ -26,26 +26,26 @@ import java.util.Set;
           EPermissionGroup.DECLARED_PROGRAM_MANAGEMENT_OWN,
           EPermissionGroup.SELF_KNOWLEDGE_MANAGEMENT_OWN)),
 
-<span class="fc" id="L29">  ROLE_LEARNER_ACTIVITY(</span>
-      &quot;Learner access to the activity catalog, registration and activity documents&quot;,
+<span class="fc" id="L29">  ROLE_STUDENT_ACTIVITY(</span>
+      &quot;Student access to the activity catalog, registration and activity documents&quot;,
 <span class="fc" id="L31">      Set.of(),</span>
 <span class="fc" id="L32">      Set.of(),</span>
 <span class="fc" id="L33">      Set.of(EPermissionGroup.STUDENT_ACTIVITY_ACCESS)),</span>
 
-<span class="fc" id="L35">  ROLE_LEARNER_FEEDBACK(</span>
-      &quot;Learner feedback: request feedback and view the feedback received&quot;,
+<span class="fc" id="L35">  ROLE_STUDENT_FEEDBACK(</span>
+      &quot;Student feedback: request feedback and view the feedback received&quot;,
 <span class="fc" id="L37">      Set.of(),</span>
 <span class="fc" id="L38">      Set.of(),</span>
 <span class="fc" id="L39">      Set.of(EPermissionGroup.STUDENT_FEEDBACK_ACCESS)),</span>
 
-<span class="fc" id="L41">  ROLE_LEARNER_EMPLOYMENT_KIT(</span>
+<span class="fc" id="L41">  ROLE_STUDENT_EMPLOYMENT_KIT(</span>
       &quot;Own employment kit page and download of its multimedia content&quot;,
 <span class="fc" id="L43">      Set.of(),</span>
 <span class="fc" id="L44">      Set.of(EPermission.PERM_EMPLOYMENT_KIT_READ_OWN, EPermission.PERM_KIT_DOWNLOAD_MEDIA_OWN),</span>
 <span class="fc" id="L45">      Set.of()),</span>
 
-<span class="fc" id="L47">  ROLE_LEARNER_REFERENCE_DATA(</span>
-      &quot;Read access to the reference data used by the learner space: competencies, external skills&quot;
+<span class="fc" id="L47">  ROLE_STUDENT_REFERENCE_DATA(</span>
+      &quot;Read access to the reference data used by the student space: competencies, external skills&quot;
           + &quot; and trace/additional-skill settings&quot;,
 <span class="fc" id="L50">      Set.of(),</span>
 <span class="fc" id="L51">      Set.of(</span>
@@ -57,7 +57,7 @@ import java.util.Set;
 
   // ---- Staff space ----
 <span class="fc" id="L59">  ROLE_STAFF_TRACE_REVIEWER(</span>
-      &quot;View and download learner traces made accessible in an authorized context&quot;,
+      &quot;View and download student traces made accessible in an authorized context&quot;,
 <span class="fc" id="L61">      Set.of(),</span>
 <span class="fc" id="L62">      Set.of(EPermission.PERM_TRACE_READ_CONTEXTUAL, EPermission.PERM_TRACE_DOWNLOAD_CONTEXTUAL),</span>
 <span class="fc" id="L63">      Set.of()),</span>
@@ -176,14 +176,14 @@ import java.util.Set;
 
   // ---- Profiles: compositions of the roles above ----
 <span class="fc" id="L178">  ROLE_STUDENT(</span>
-      &quot;Learner with a personal COFOLIO space for their life project and skills-based approach&quot;,
+      &quot;Student with a personal COFOLIO space for their life project and skills-based approach&quot;,
 <span class="fc" id="L180">      Set.of(</span>
           ROLE_USER_BASE,
-          ROLE_LEARNER_PORTFOLIO,
-          ROLE_LEARNER_ACTIVITY,
-          ROLE_LEARNER_FEEDBACK,
-          ROLE_LEARNER_EMPLOYMENT_KIT,
-          ROLE_LEARNER_REFERENCE_DATA),
+          ROLE_STUDENT_PORTFOLIO,
+          ROLE_STUDENT_ACTIVITY,
+          ROLE_STUDENT_FEEDBACK,
+          ROLE_STUDENT_EMPLOYMENT_KIT,
+          ROLE_STUDENT_REFERENCE_DATA),
 <span class="fc" id="L187">      Set.of(),</span>
 <span class="fc" id="L188">      Set.of()),</span>
 
