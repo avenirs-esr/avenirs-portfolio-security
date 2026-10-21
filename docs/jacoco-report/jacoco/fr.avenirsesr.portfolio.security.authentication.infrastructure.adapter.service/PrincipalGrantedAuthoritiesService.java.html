@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrincipalGrantedAuthoritiesService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-security</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service</a> &gt; <span class="el_source">PrincipalGrantedAuthoritiesService.java</span></div><h1>PrincipalGrantedAuthoritiesService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACContext;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACPermission;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthorizationsPort;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-<span class="fc" id="L17">@Slf4j</span>
+<span class="fc" id="L20">@Slf4j</span>
 @Component
 @RequiredArgsConstructor
 public class PrincipalGrantedAuthoritiesService implements AuthorizationsPort {
@@ -22,48 +25,61 @@ public class PrincipalGrantedAuthoritiesService implements AuthorizationsPort {
   private final RBACAssignmentRepository assignmentRepository;
 
   public Set&lt;GrantedAuthority&gt; loadAuthorities(String login) {
-<span class="fc" id="L25">    Set&lt;GrantedAuthority&gt; authorities =</span>
-<span class="fc" id="L26">        resolveAuthorities(login).stream()</span>
-<span class="fc" id="L27">            .map((String authority) -&gt; (GrantedAuthority) new SimpleGrantedAuthority(authority))</span>
-<span class="fc" id="L28">            .collect(Collectors.toUnmodifiableSet());</span>
+<span class="fc" id="L28">    Set&lt;GrantedAuthority&gt; authorities =</span>
+<span class="fc" id="L29">        resolveAuthorities(login).stream()</span>
+<span class="fc" id="L30">            .map((String authority) -&gt; (GrantedAuthority) new SimpleGrantedAuthority(authority))</span>
+<span class="fc" id="L31">            .collect(Collectors.toUnmodifiableSet());</span>
 
-<span class="fc" id="L30">    log.trace(&quot;loadAuthorities, login: {}, authorities: {}&quot;, login, authorities);</span>
+<span class="fc" id="L33">    log.trace(&quot;loadAuthorities, login: {}, authorities: {}&quot;, login, authorities);</span>
 
-<span class="fc" id="L32">    return authorities;</span>
+<span class="fc" id="L35">    return authorities;</span>
   }
 
   @Override
   public Set&lt;String&gt; resolveAuthorities(String login) {
-<span class="fc" id="L37">    LocalDateTime now = LocalDateTime.now();</span>
+<span class="fc" id="L40">    LocalDateTime now = LocalDateTime.now();</span>
 
-<span class="fc" id="L39">    return assignmentRepository.findByPrincipal(login).stream()</span>
-<span class="fc" id="L40">        .filter(assignment -&gt; isCurrentlyValid(assignment, now))</span>
-<span class="fc" id="L41">        .flatMap(assignment -&gt; assignment.role().permissions().stream())</span>
-<span class="fc" id="L42">        .map(RBACPermission::name)</span>
-<span class="fc" id="L43">        .collect(Collectors.toUnmodifiableSet());</span>
+<span class="fc" id="L42">    return assignmentRepository.findByPrincipal(login).stream()</span>
+<span class="fc" id="L43">        .filter(assignment -&gt; isCurrentlyValid(assignment, now))</span>
+<span class="fc" id="L44">        .flatMap(assignment -&gt; assignment.role().permissions().stream())</span>
+<span class="fc" id="L45">        .map(RBACPermission::name)</span>
+<span class="fc" id="L46">        .collect(Collectors.toUnmodifiableSet());</span>
   }
 
   @Override
   public Set&lt;String&gt; resolveRoles(String login) {
-<span class="fc" id="L48">    LocalDateTime now = LocalDateTime.now();</span>
+<span class="fc" id="L51">    LocalDateTime now = LocalDateTime.now();</span>
 
-<span class="fc" id="L50">    return assignmentRepository.findByPrincipal(login).stream()</span>
-<span class="fc" id="L51">        .filter(assignment -&gt; isCurrentlyValid(assignment, now))</span>
-<span class="fc" id="L52">        .map(assignment -&gt; assignment.role().name())</span>
-<span class="fc" id="L53">        .collect(Collectors.toUnmodifiableSet());</span>
+<span class="fc" id="L53">    return assignmentRepository.findByPrincipal(login).stream()</span>
+<span class="fc" id="L54">        .filter(assignment -&gt; isCurrentlyValid(assignment, now))</span>
+<span class="fc" id="L55">        .flatMap(assignment -&gt; withIncludedRoles(assignment.role().name()))</span>
+<span class="fc" id="L56">        .collect(Collectors.toUnmodifiableSet());</span>
+  }
+
+  private Stream&lt;String&gt; withIncludedRoles(String roleName) {
+<span class="fc" id="L60">    return Arrays.stream(ERole.values())</span>
+<span class="fc" id="L61">        .filter(role -&gt; role.name().equals(roleName))</span>
+<span class="fc" id="L62">        .findFirst()</span>
+<span class="fc" id="L63">        .map(role -&gt; Stream.concat(Stream.of(role), allIncludedRoles(role)).map(ERole::name))</span>
+<span class="pc" id="L64">        .orElseGet(() -&gt; Stream.of(roleName));</span>
+  }
+
+  private Stream&lt;ERole&gt; allIncludedRoles(ERole role) {
+<span class="fc" id="L68">    return role.includedRoles().stream()</span>
+<span class="fc" id="L69">        .flatMap(included -&gt; Stream.concat(Stream.of(included), allIncludedRoles(included)));</span>
   }
 
   private boolean isCurrentlyValid(RBACAssignment assignment, LocalDateTime now) {
-<span class="fc" id="L57">    RBACContext context = assignment.context();</span>
+<span class="fc" id="L73">    RBACContext context = assignment.context();</span>
 
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">    if (context == null) {</span>
-<span class="nc" id="L60">      return true;</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">    if (context == null) {</span>
+<span class="nc" id="L76">      return true;</span>
     }
 
-<span class="pc bpc" id="L63" title="1 of 4 branches missed.">    boolean started = context.validityStart() == null || !context.validityStart().isAfter(now);</span>
-<span class="pc bpc" id="L64" title="1 of 4 branches missed.">    boolean notEnded = context.validityEnd() == null || !context.validityEnd().isBefore(now);</span>
+<span class="pc bpc" id="L79" title="1 of 4 branches missed.">    boolean started = context.validityStart() == null || !context.validityStart().isAfter(now);</span>
+<span class="pc bpc" id="L80" title="1 of 4 branches missed.">    boolean notEnded = context.validityEnd() == null || !context.validityEnd().isBefore(now);</span>
 
-<span class="fc bfc" id="L66" title="All 4 branches covered.">    return started &amp;&amp; notEnded;</span>
+<span class="fc bfc" id="L82" title="All 4 branches covered.">    return started &amp;&amp; notEnded;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

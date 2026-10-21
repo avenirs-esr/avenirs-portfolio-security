@@ -33,7 +33,7 @@ avenirs-portfolio-security,fr.avenirsesr.portfolio.security.principal.infrastruc
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums,ESecurityFilter,78,0,4,0,14,0,6,0,4,0
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,HmacAuthContextSigningService,7,67,0,0,2,17,0,2,0,2
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,AuthenticationSessionReader,24,0,4,0,7,0,3,0,1,0
-avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,PrincipalGrantedAuthoritiesService,2,118,3,11,1,23,3,14,0,10
+avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,PrincipalGrantedAuthoritiesService,5,163,3,11,1,30,4,19,1,15
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,JWTService,128,275,8,22,38,66,6,16,0,7
 avenirs-portfolio-security,fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service,OIDCClientOidcAuthenticationService,158,541,14,12,23,133,10,18,0,15
 avenirs-portfolio-security,fr.avenirsesr.portfolio.common.user.domain.exceptions,ExternalUserNotFoundException,13,0,0,0,6,0,3,0,3,0
