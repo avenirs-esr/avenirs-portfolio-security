@@ -1,13 +1,16 @@
 package fr.avenirsesr.portfolio.security.authentication.infrastructure.adapter.service;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACAssignment;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACContext;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.model.RBACPermission;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACAssignmentRepository;
 import fr.avenirsesr.portfolio.security.authentication.domain.port.output.AuthorizationsPort;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,8 +52,21 @@ public class PrincipalGrantedAuthoritiesService implements AuthorizationsPort {
 
     return assignmentRepository.findByPrincipal(login).stream()
         .filter(assignment -> isCurrentlyValid(assignment, now))
-        .map(assignment -> assignment.role().name())
+        .flatMap(assignment -> withIncludedRoles(assignment.role().name()))
         .collect(Collectors.toUnmodifiableSet());
+  }
+
+  private Stream<String> withIncludedRoles(String roleName) {
+    return Arrays.stream(ERole.values())
+        .filter(role -> role.name().equals(roleName))
+        .findFirst()
+        .map(role -> Stream.concat(Stream.of(role), allIncludedRoles(role)).map(ERole::name))
+        .orElseGet(() -> Stream.of(roleName));
+  }
+
+  private Stream<ERole> allIncludedRoles(ERole role) {
+    return role.includedRoles().stream()
+        .flatMap(included -> Stream.concat(Stream.of(included), allIncludedRoles(included)));
   }
 
   private boolean isCurrentlyValid(RBACAssignment assignment, LocalDateTime now) {

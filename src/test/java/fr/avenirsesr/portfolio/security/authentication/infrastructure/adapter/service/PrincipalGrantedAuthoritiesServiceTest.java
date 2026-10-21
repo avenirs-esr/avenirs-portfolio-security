@@ -92,10 +92,39 @@ class PrincipalGrantedAuthoritiesServiceTest {
       }
 
       @Test
-      void thenItShouldReturnTheSuperAdminRole() {
-        BddLogger.then("it should return the ROLE_SUPER_ADMIN role");
+      void thenItShouldReturnTheSuperAdminRoleAndAllItsNestedRoles() {
+        BddLogger.then("it should return ROLE_SUPER_ADMIN and every role it includes, recursively");
 
-        assertThat(service.resolveRoles(LOGIN)).containsExactly(ERole.ROLE_SUPER_ADMIN.name());
+        assertThat(service.resolveRoles(LOGIN))
+            .contains(
+                ERole.ROLE_SUPER_ADMIN.name(),
+                ERole.ROLE_ADMIN.name(),
+                ERole.ROLE_ESTABLISHMENT_MANAGER.name(),
+                ERole.ROLE_ACTIVITY_ADMIN.name(),
+                ERole.ROLE_ACTIVITY_EDITOR.name(),
+                ERole.ROLE_RBAC_ADMIN.name(),
+                ERole.ROLE_SYSTEM_OPERATOR.name());
+      }
+    }
+
+    @Nested
+    class WhenThePrincipalHasAStaffAssignment {
+
+      @Test
+      void thenItShouldReturnTheStaffRoleAndItsSubRoles() {
+        BddLogger.when("the principal has an active assignment to ROLE_STAFF");
+        BddLogger.then("it should return ROLE_STAFF and its sub-roles, including nested ones");
+
+        when(assignmentRepository.findByPrincipal(LOGIN))
+            .thenReturn(List.of(assignment(role(ERole.ROLE_STAFF), noValidityContext())));
+
+        assertThat(service.resolveRoles(LOGIN))
+            .contains(
+                ERole.ROLE_STAFF.name(),
+                ERole.ROLE_USER_BASE.name(),
+                ERole.ROLE_STAFF_ACTIVITY_AUTHOR.name(),
+                ERole.ROLE_ACTIVITY_EDITOR.name())
+            .doesNotContain(ERole.ROLE_SUPER_ADMIN.name());
       }
     }
 
@@ -205,7 +234,9 @@ class PrincipalGrantedAuthoritiesServiceTest {
       void thenItShouldNotDuplicateRoles() {
         BddLogger.then("it should not contain duplicate roles");
 
-        assertThat(service.resolveRoles(LOGIN)).containsExactly(ERole.ROLE_SUPER_ADMIN.name());
+        assertThat(
+                service.resolveRoles(LOGIN).stream().filter(ERole.ROLE_SUPER_ADMIN.name()::equals))
+            .hasSize(1);
       }
     }
   }
