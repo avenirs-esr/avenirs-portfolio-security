@@ -101,8 +101,11 @@ public class RBACCatalogSeeder {
   }
 
   private void seedRole(ERole role, RoleSyncSummary summary) {
+    Set<EPermission> ownPermissions = new HashSet<>(role.directPermissions());
+    role.permissionGroups().forEach(group -> ownPermissions.addAll(group.permissions()));
+
     Set<RBACPermission> permissions =
-        role.permissions().stream()
+        ownPermissions.stream()
             .map(
                 permission ->
                     permissionRepository
