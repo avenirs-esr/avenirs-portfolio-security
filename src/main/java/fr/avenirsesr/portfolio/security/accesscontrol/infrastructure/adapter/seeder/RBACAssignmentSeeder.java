@@ -11,6 +11,7 @@ import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.reposit
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -95,6 +96,17 @@ public class RBACAssignmentSeeder {
   }
 
   private void seedAssignment(Principal principal, ERole role) {
+    withIncludedRoles(role).forEach(included -> seedSingleAssignment(principal, included));
+  }
+
+  private Set<ERole> withIncludedRoles(ERole role) {
+    Set<ERole> roles = new LinkedHashSet<>();
+    roles.add(role);
+    role.includedRoles().forEach(included -> roles.addAll(withIncludedRoles(included)));
+    return roles;
+  }
+
+  private void seedSingleAssignment(Principal principal, ERole role) {
     RBACRole rbacRole = roleRepository.findByName(role.name()).orElseThrow();
 
     boolean alreadyAssigned =

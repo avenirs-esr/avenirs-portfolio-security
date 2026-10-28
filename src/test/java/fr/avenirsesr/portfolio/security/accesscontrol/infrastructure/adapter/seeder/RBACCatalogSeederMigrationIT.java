@@ -110,8 +110,8 @@ class RBACCatalogSeederMigrationIT {
             .extracting(RBACPermissionEntity::getId)
             .contains(legacyId);
 
-        RBACRole studentRole = roleRepository.findByName("ROLE_STUDENT").orElseThrow();
-        assertThat(studentRole.permissions()).extracting(RBACPermission::id).contains(legacyId);
+        RBACRole portfolioRole = roleRepository.findByName("ROLE_STUDENT_PORTFOLIO").orElseThrow();
+        assertThat(portfolioRole.permissions()).extracting(RBACPermission::id).contains(legacyId);
       }
     }
   }
@@ -196,14 +196,15 @@ class RBACCatalogSeederMigrationIT {
       @BeforeEach
       void setupWhen() {
         BddLogger.when(
-            "an expected relation is removed from ROLE_STUDENT and the catalog is"
+            "an expected relation is removed from ROLE_STUDENT_PORTFOLIO and the catalog is"
                 + " resynchronized");
 
-        RBACRoleEntity studentRole = roleJpaRepository.findByName("ROLE_STUDENT").orElseThrow();
-        studentRole
+        RBACRoleEntity portfolioRole =
+            roleJpaRepository.findByName("ROLE_STUDENT_PORTFOLIO").orElseThrow();
+        portfolioRole
             .getPermissions()
             .removeIf(p -> p.getName().equals(EPermission.PERM_TRACE_CREATE_OWN.authority()));
-        roleJpaRepository.save(studentRole);
+        roleJpaRepository.save(portfolioRole);
 
         rbacCatalogSeeder.seed();
       }
@@ -212,8 +213,8 @@ class RBACCatalogSeederMigrationIT {
       void thenTheMissingRelationIsAddedBack() {
         BddLogger.then("the missing relation is added back");
 
-        RBACRole studentRole = roleRepository.findByName("ROLE_STUDENT").orElseThrow();
-        assertThat(studentRole.permissions())
+        RBACRole portfolioRole = roleRepository.findByName("ROLE_STUDENT_PORTFOLIO").orElseThrow();
+        assertThat(portfolioRole.permissions())
             .extracting(RBACPermission::name)
             .contains(EPermission.PERM_TRACE_CREATE_OWN.authority());
       }

@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.security.accesscontrol.infrastructure.adapter.seeder;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,7 +19,10 @@ import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.reposit
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.port.output.repository.RBACRoleRepository;
 import fr.avenirsesr.portfolio.security.principal.domain.model.Principal;
 import fr.avenirsesr.portfolio.security.principal.domain.port.output.repository.PrincipalRepository;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,8 +56,24 @@ class RBACAssignmentSeederTest {
         login, login, "OIDC", login, Set.of(categories), EUserStatus.ACTIVE, Set.of());
   }
 
+  private final Map<ERole, RBACRole> rolesByEnum = new HashMap<>();
+
   private RBACRole role(ERole role) {
-    return new RBACRole(UUID.randomUUID(), role.name(), role.description(), Set.of());
+    return rolesByEnum.computeIfAbsent(
+        role, r -> new RBACRole(UUID.randomUUID(), r.name(), r.description(), Set.of()));
+  }
+
+  private void givenAllRolesExist() {
+    when(roleRepository.findByName(anyString()))
+        .thenAnswer(
+            invocation -> Optional.of(role(ERole.valueOf(invocation.<String>getArgument(0)))));
+  }
+
+  private void verifyAssigned(ERole... roles) {
+    for (ERole role : roles) {
+      verify(assignmentRepository)
+          .save(argThat(assignment -> assignment.role().name().equals(role.name())));
+    }
   }
 
   @Nested
@@ -69,35 +89,39 @@ class RBACAssignmentSeederTest {
     @Test
     void thenAStaffPrincipalShouldBeAssignedRoleStaff() {
       BddLogger.when("seeding a staff principal");
-      BddLogger.then("it should be assigned ROLE_STAFF");
+      BddLogger.then("it should be assigned ROLE_STAFF and each of its included roles");
 
       Principal staff = principal("staffLogin", EUserCategory.STAFF);
       when(principalRepository.findAll()).thenReturn(List.of(staff));
-      when(roleRepository.findByName(ERole.ROLE_STAFF.name()))
-          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STAFF)));
+      givenAllRolesExist();
       when(assignmentRepository.findByPrincipal("staffLogin")).thenReturn(List.of());
 
       seeder.seed();
 
-      verify(assignmentRepository)
-          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STAFF")));
+      verifyAssigned(
+          ERole.ROLE_STAFF,
+          ERole.ROLE_USER_BASE,
+          ERole.ROLE_STAFF_ACTIVITY_AUTHOR,
+          ERole.ROLE_ACTIVITY_EDITOR);
     }
 
     @Test
     void thenAStudentPrincipalShouldBeAssignedRoleStudent() {
       BddLogger.when("seeding a student principal");
-      BddLogger.then("it should be assigned ROLE_STUDENT");
+      BddLogger.then("it should be assigned ROLE_STUDENT and each of its included roles");
 
       Principal student = principal("studentLogin", EUserCategory.STUDENT);
       when(principalRepository.findAll()).thenReturn(List.of(student));
-      when(roleRepository.findByName(ERole.ROLE_STUDENT.name()))
-          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STUDENT)));
+      givenAllRolesExist();
       when(assignmentRepository.findByPrincipal("studentLogin")).thenReturn(List.of());
 
       seeder.seed();
 
-      verify(assignmentRepository)
-          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STUDENT")));
+      verifyAssigned(
+          ERole.ROLE_STUDENT,
+          ERole.ROLE_USER_BASE,
+          ERole.ROLE_STUDENT_PORTFOLIO,
+          ERole.ROLE_STUDENT_REFERENCE_DATA);
     }
 
     @Test
@@ -107,18 +131,12 @@ class RBACAssignmentSeederTest {
 
       Principal both = principal("bothLogin", EUserCategory.STUDENT, EUserCategory.STAFF);
       when(principalRepository.findAll()).thenReturn(List.of(both));
-      when(roleRepository.findByName(ERole.ROLE_STUDENT.name()))
-          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STUDENT)));
-      when(roleRepository.findByName(ERole.ROLE_STAFF.name()))
-          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STAFF)));
+      givenAllRolesExist();
       when(assignmentRepository.findByPrincipal("bothLogin")).thenReturn(List.of());
 
       seeder.seed();
 
-      verify(assignmentRepository)
-          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STUDENT")));
-      verify(assignmentRepository)
-          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STAFF")));
+      verifyAssigned(ERole.ROLE_STUDENT, ERole.ROLE_STAFF);
     }
   }
 
@@ -135,22 +153,23 @@ class RBACAssignmentSeederTest {
     @Test
     void thenThatPrincipalShouldBeAssignedRoleSuperAdminAndItsCategoryRole() {
       BddLogger.when("seeding a staff principal matching the configured login");
-      BddLogger.then("it should be assigned ROLE_SUPER_ADMIN and ROLE_STAFF");
+      BddLogger.then(
+          "it should be assigned ROLE_SUPER_ADMIN, its nested roles such as ROLE_GROUP_MANAGER,"
+              + " and ROLE_STAFF");
 
       Principal configuredStaff = principal("admin.login", EUserCategory.STAFF);
       when(principalRepository.findAll()).thenReturn(List.of(configuredStaff));
-      when(roleRepository.findByName(ERole.ROLE_SUPER_ADMIN.name()))
-          .thenReturn(java.util.Optional.of(role(ERole.ROLE_SUPER_ADMIN)));
-      when(roleRepository.findByName(ERole.ROLE_STAFF.name()))
-          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STAFF)));
+      givenAllRolesExist();
       when(assignmentRepository.findByPrincipal("admin.login")).thenReturn(List.of());
 
       seeder.seed();
 
-      verify(assignmentRepository)
-          .save(argThat(assignment -> assignment.role().name().equals("ROLE_SUPER_ADMIN")));
-      verify(assignmentRepository)
-          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STAFF")));
+      verifyAssigned(
+          ERole.ROLE_SUPER_ADMIN,
+          ERole.ROLE_ADMIN,
+          ERole.ROLE_GROUP_MANAGER,
+          ERole.ROLE_RBAC_ADMIN,
+          ERole.ROLE_STAFF);
     }
 
     @Test
@@ -160,14 +179,12 @@ class RBACAssignmentSeederTest {
 
       Principal unrelated = principal("someone.else", EUserCategory.STUDENT);
       when(principalRepository.findAll()).thenReturn(List.of(unrelated));
-      when(roleRepository.findByName(ERole.ROLE_STUDENT.name()))
-          .thenReturn(java.util.Optional.of(role(ERole.ROLE_STUDENT)));
+      givenAllRolesExist();
       when(assignmentRepository.findByPrincipal("someone.else")).thenReturn(List.of());
 
       seeder.seed();
 
-      verify(assignmentRepository)
-          .save(argThat(assignment -> assignment.role().name().equals("ROLE_STUDENT")));
+      verifyAssigned(ERole.ROLE_STUDENT);
     }
   }
 
@@ -187,20 +204,30 @@ class RBACAssignmentSeederTest {
       BddLogger.then("it should not create a duplicate assignment");
 
       Principal student = principal("studentLogin", EUserCategory.STUDENT);
-      RBACRole studentRole = role(ERole.ROLE_STUDENT);
+      Set<ERole> studentRoles =
+          Set.of(
+              ERole.ROLE_STUDENT,
+              ERole.ROLE_USER_BASE,
+              ERole.ROLE_STUDENT_PORTFOLIO,
+              ERole.ROLE_STUDENT_ACTIVITY,
+              ERole.ROLE_STUDENT_FEEDBACK,
+              ERole.ROLE_STUDENT_EMPLOYMENT_KIT,
+              ERole.ROLE_STUDENT_REFERENCE_DATA);
 
       when(principalRepository.findAll()).thenReturn(List.of(student));
-      when(roleRepository.findByName(ERole.ROLE_STUDENT.name()))
-          .thenReturn(java.util.Optional.of(studentRole));
+      givenAllRolesExist();
       when(assignmentRepository.findByPrincipal("studentLogin"))
           .thenReturn(
-              List.of(
-                  new RBACAssignment(
-                      UUID.randomUUID(),
-                      student,
-                      studentRole,
-                      new RBACScope(null, List.of()),
-                      new RBACContext(null, null, null, Set.of()))));
+              studentRoles.stream()
+                  .map(
+                      role ->
+                          new RBACAssignment(
+                              UUID.randomUUID(),
+                              student,
+                              role(role),
+                              new RBACScope(null, List.of()),
+                              new RBACContext(null, null, null, Set.of())))
+                  .toList());
 
       seeder.seed();
 

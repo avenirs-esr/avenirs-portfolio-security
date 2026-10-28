@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -65,10 +66,10 @@ class RBACCatalogSeederIT {
 
       @ParameterizedTest
       @EnumSource(ERole.class)
-      void thenEveryRoleShouldHaveExactlyItsFlattenedPermissionsInDatabase(ERole role) {
+      void thenEveryRoleShouldHaveExactlyItsOwnPermissionsInDatabase(ERole role) {
         BddLogger.then(
-            "every ERole should be persisted with exactly the permissions returned by"
-                + " permissions()");
+            "every ERole should be persisted with exactly its direct and group permissions,"
+                + " included roles being separate assignments");
 
         Optional<RBACRole> stored = roleRepository.findByName(role.name());
 
@@ -80,7 +81,11 @@ class RBACCatalogSeederIT {
                 .collect(Collectors.toSet());
 
         Set<String> expectedPermissionNames =
-            role.permissions().stream().map(EPermission::authority).collect(Collectors.toSet());
+            Stream.concat(
+                    role.directPermissions().stream(),
+                    role.permissionGroups().stream().flatMap(group -> group.permissions().stream()))
+                .map(EPermission::authority)
+                .collect(Collectors.toSet());
 
         assertThat(storedPermissionNames)
             .containsExactlyInAnyOrderElementsOf(expectedPermissionNames);
