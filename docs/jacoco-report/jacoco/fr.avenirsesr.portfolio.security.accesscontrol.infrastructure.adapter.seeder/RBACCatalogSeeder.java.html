@@ -101,53 +101,56 @@ public class RBACCatalogSeeder {
   }
 
   private void seedRole(ERole role, RoleSyncSummary summary) {
-<span class="nc" id="L104">    Set&lt;RBACPermission&gt; permissions =</span>
-<span class="nc" id="L105">        role.permissions().stream()</span>
-<span class="nc" id="L106">            .map(</span>
+<span class="nc" id="L104">    Set&lt;EPermission&gt; ownPermissions = new HashSet&lt;&gt;(role.directPermissions());</span>
+<span class="nc" id="L105">    role.permissionGroups().forEach(group -&gt; ownPermissions.addAll(group.permissions()));</span>
+
+<span class="nc" id="L107">    Set&lt;RBACPermission&gt; permissions =</span>
+<span class="nc" id="L108">        ownPermissions.stream()</span>
+<span class="nc" id="L109">            .map(</span>
                 permission -&gt;
                     permissionRepository
-<span class="nc" id="L109">                        .findByName(permission.authority())</span>
-<span class="nc" id="L110">                        .orElseThrow(</span>
+<span class="nc" id="L112">                        .findByName(permission.authority())</span>
+<span class="nc" id="L113">                        .orElseThrow(</span>
                             () -&gt;
-<span class="nc" id="L112">                                RBACCatalogSynchronizationException.permissionNotFound(</span>
-<span class="nc" id="L113">                                    role.name(), permission)))</span>
-<span class="nc" id="L114">            .collect(Collectors.toSet());</span>
+<span class="nc" id="L115">                                RBACCatalogSynchronizationException.permissionNotFound(</span>
+<span class="nc" id="L116">                                    role.name(), permission)))</span>
+<span class="nc" id="L117">            .collect(Collectors.toSet());</span>
 
-<span class="nc" id="L116">    Optional&lt;RBACRole&gt; existing = roleRepository.findByName(role.name());</span>
+<span class="nc" id="L119">    Optional&lt;RBACRole&gt; existing = roleRepository.findByName(role.name());</span>
 
-<span class="nc" id="L118">    Set&lt;UUID&gt; previousPermissionIds =</span>
+<span class="nc" id="L121">    Set&lt;UUID&gt; previousPermissionIds =</span>
         existing
-<span class="nc" id="L120">            .map(r -&gt; r.permissions().stream().map(RBACPermission::id).collect(Collectors.toSet()))</span>
-<span class="nc" id="L121">            .orElseGet(HashSet::new);</span>
-<span class="nc" id="L122">    Set&lt;UUID&gt; nextPermissionIds =</span>
-<span class="nc" id="L123">        permissions.stream().map(RBACPermission::id).collect(Collectors.toSet());</span>
+<span class="nc" id="L123">            .map(r -&gt; r.permissions().stream().map(RBACPermission::id).collect(Collectors.toSet()))</span>
+<span class="nc" id="L124">            .orElseGet(HashSet::new);</span>
+<span class="nc" id="L125">    Set&lt;UUID&gt; nextPermissionIds =</span>
+<span class="nc" id="L126">        permissions.stream().map(RBACPermission::id).collect(Collectors.toSet());</span>
 
-<span class="nc bnc" id="L125" title="All 2 branches missed.">    if (existing.isEmpty()) {</span>
-<span class="nc" id="L126">      summary.rolesCreated.incrementAndGet();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">    if (existing.isEmpty()) {</span>
+<span class="nc" id="L129">      summary.rolesCreated.incrementAndGet();</span>
       // Persisting a brand-new role with its permissions in one call would cascade
       // CascadeType.PERSIST onto already-existing (detached) permission entities and fail:
       // create it bare first, so the follow-up save merges instead of persisting.
-<span class="nc" id="L130">      existing =</span>
-<span class="nc" id="L131">          Optional.of(</span>
-<span class="nc" id="L132">              roleRepository.save(new RBACRole(null, role.name(), role.description(), Set.of())));</span>
+<span class="nc" id="L133">      existing =</span>
+<span class="nc" id="L134">          Optional.of(</span>
+<span class="nc" id="L135">              roleRepository.save(new RBACRole(null, role.name(), role.description(), Set.of())));</span>
     }
 
-<span class="nc" id="L135">    summary.relationsAdded.addAndGet(countMissing(nextPermissionIds, previousPermissionIds));</span>
-<span class="nc" id="L136">    summary.relationsRemoved.addAndGet(countMissing(previousPermissionIds, nextPermissionIds));</span>
+<span class="nc" id="L138">    summary.relationsAdded.addAndGet(countMissing(nextPermissionIds, previousPermissionIds));</span>
+<span class="nc" id="L139">    summary.relationsRemoved.addAndGet(countMissing(previousPermissionIds, nextPermissionIds));</span>
 
-<span class="nc" id="L138">    roleRepository.save(</span>
-<span class="nc" id="L139">        new RBACRole(existing.get().id(), role.name(), role.description(), permissions));</span>
-<span class="nc" id="L140">  }</span>
+<span class="nc" id="L141">    roleRepository.save(</span>
+<span class="nc" id="L142">        new RBACRole(existing.get().id(), role.name(), role.description(), permissions));</span>
+<span class="nc" id="L143">  }</span>
 
   private static int countMissing(Set&lt;UUID&gt; target, Set&lt;UUID&gt; reference) {
-<span class="nc bnc" id="L143" title="All 2 branches missed.">    return (int) target.stream().filter(id -&gt; !reference.contains(id)).count();</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">    return (int) target.stream().filter(id -&gt; !reference.contains(id)).count();</span>
   }
 
-<span class="nc" id="L146">  private enum PermissionSyncOutcome {</span>
-<span class="nc" id="L147">    CREATED,</span>
-<span class="nc" id="L148">    RENAMED,</span>
-<span class="nc" id="L149">    UPDATED,</span>
-<span class="nc" id="L150">    UNCHANGED</span>
+<span class="nc" id="L149">  private enum PermissionSyncOutcome {</span>
+<span class="nc" id="L150">    CREATED,</span>
+<span class="nc" id="L151">    RENAMED,</span>
+<span class="nc" id="L152">    UPDATED,</span>
+<span class="nc" id="L153">    UNCHANGED</span>
   }
 
   private static final class PermissionSyncSummary {
@@ -157,19 +160,19 @@ public class RBACCatalogSeeder {
     private int unchanged;
 
     private void record(PermissionSyncOutcome outcome) {
-<span class="nc bnc" id="L160" title="All 5 branches missed.">      switch (outcome) {</span>
-<span class="nc" id="L161">        case CREATED -&gt; created++;</span>
-<span class="nc" id="L162">        case RENAMED -&gt; renamed++;</span>
-<span class="nc" id="L163">        case UPDATED -&gt; updated++;</span>
-<span class="nc" id="L164">        case UNCHANGED -&gt; unchanged++;</span>
+<span class="nc bnc" id="L163" title="All 5 branches missed.">      switch (outcome) {</span>
+<span class="nc" id="L164">        case CREATED -&gt; created++;</span>
+<span class="nc" id="L165">        case RENAMED -&gt; renamed++;</span>
+<span class="nc" id="L166">        case UPDATED -&gt; updated++;</span>
+<span class="nc" id="L167">        case UNCHANGED -&gt; unchanged++;</span>
       }
-<span class="nc" id="L166">    }</span>
+<span class="nc" id="L169">    }</span>
   }
 
-<span class="nc" id="L169">  private static final class RoleSyncSummary {</span>
-<span class="nc" id="L170">    private final AtomicInteger rolesCreated = new AtomicInteger();</span>
-<span class="nc" id="L171">    private final AtomicInteger relationsAdded = new AtomicInteger();</span>
-<span class="nc" id="L172">    private final AtomicInteger relationsRemoved = new AtomicInteger();</span>
+<span class="nc" id="L172">  private static final class RoleSyncSummary {</span>
+<span class="nc" id="L173">    private final AtomicInteger rolesCreated = new AtomicInteger();</span>
+<span class="nc" id="L174">    private final AtomicInteger relationsAdded = new AtomicInteger();</span>
+<span class="nc" id="L175">    private final AtomicInteger relationsRemoved = new AtomicInteger();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
