@@ -46,6 +46,9 @@ public class PrincipalSeeder {
   @Value("${seeder.principal.anr.default-password}")
   private String anrDefaultPassword;
 
+  @Value("${seeder.principal.ia-usmb.default-password}")
+  private String iaUsmbDefaultPassword;
+
   private final ExternalUserClient externalUserClient;
   private final PrincipalJpaRepository principalJpaRepository;
 
@@ -89,6 +92,9 @@ public class PrincipalSeeder {
 
     String normalizedEppn = eppn.toUpperCase();
 
+    if (normalizedEppn.contains("IA.USMB")) {
+      return iaUsmbDefaultPassword;
+    }
     if (normalizedEppn.contains("ULILLE")) {
       return ulilleDefaultPassword;
     }
