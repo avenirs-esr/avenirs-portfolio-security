@@ -103,7 +103,8 @@ public class SpringSecurityConfig {
             oidcCallback,
             oidcRedirect,
             "/auth/**",
-            "/internal/**")
+            "/internal/**",
+            "/security/seeder/**")
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
         .build();
