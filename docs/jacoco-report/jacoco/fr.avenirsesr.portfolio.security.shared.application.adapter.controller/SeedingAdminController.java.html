@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 <span class="nc" id="L16">@Slf4j</span>
 @RestController
-@RequestMapping(&quot;/admin/seeding&quot;)
+@RequestMapping(&quot;/security/seeder&quot;)
 @RequiredArgsConstructor
 public class SeedingAdminController {
 
@@ -24,7 +24,7 @@ public class SeedingAdminController {
   @Value(&quot;${admin.token:}&quot;)
   private String adminToken;
 
-  @PostMapping(&quot;/run&quot;)
+  @PostMapping(&quot;/reset&quot;)
   public ResponseEntity&lt;String&gt; run(@RequestHeader(name = &quot;X-ADMIN-TOKEN&quot;) String token) {
 <span class="nc bnc" id="L29" title="All 4 branches missed.">    if (adminToken == null || adminToken.isBlank()) {</span>
 <span class="nc" id="L30">      return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();</span>

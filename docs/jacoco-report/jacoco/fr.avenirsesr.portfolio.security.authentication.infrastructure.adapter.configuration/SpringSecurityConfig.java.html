@@ -104,7 +104,7 @@ public class SpringSecurityConfig {
             oidcRedirect,
             &quot;/auth/**&quot;,
             &quot;/internal/**&quot;,
-            &quot;/admin/seeding/**&quot;)
+            &quot;/security/seeder/**&quot;)
 <span class="fc" id="L108">        .csrf(AbstractHttpConfigurer::disable)</span>
 <span class="fc" id="L109">        .authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll())</span>
 <span class="fc" id="L110">        .build();</span>
