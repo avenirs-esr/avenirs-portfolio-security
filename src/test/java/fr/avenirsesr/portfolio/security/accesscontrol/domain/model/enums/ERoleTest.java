@@ -207,6 +207,7 @@ class ERoleTest {
                 EPermission.PERM_EXTERNAL_USER_UPDATE,
                 EPermission.PERM_EXTERNAL_USER_DELETE,
                 EPermission.PERM_EXTERNAL_USER_AFFILIATION_IMPORT,
+                EPermission.PERM_EXTERNAL_SKILL_READ,
                 EPermission.PERM_SEEDER_RESET,
                 EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT);
       }
@@ -245,14 +246,15 @@ class ERoleTest {
       }
 
       @Test
-      void thenAdminShouldBeComposedOfTheEstablishmentGroupAndExternalUserManagers() {
-        BddLogger.then("ROLE_ADMIN should include exactly the three domain managers");
+      void thenAdminShouldBeComposedOfTheEstablishmentGroupExternalUserAndExternalSkillManagers() {
+        BddLogger.then("ROLE_ADMIN should include exactly the four domain managers");
 
         assertThat(ERole.ROLE_ADMIN.includedRoles())
             .containsExactlyInAnyOrder(
                 ERole.ROLE_ESTABLISHMENT_MANAGER,
                 ERole.ROLE_GROUP_MANAGER,
-                ERole.ROLE_EXTERNAL_USER_MANAGER);
+                ERole.ROLE_EXTERNAL_USER_MANAGER,
+                ERole.ROLE_EXTERNAL_SKILL_MANAGER);
       }
     }
 
