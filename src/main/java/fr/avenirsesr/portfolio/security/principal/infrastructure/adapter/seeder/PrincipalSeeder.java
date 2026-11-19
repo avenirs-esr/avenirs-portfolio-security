@@ -57,14 +57,19 @@ public class PrincipalSeeder {
     List<ExternalUserDTO> externalUsers = externalUserClient.getAll();
 
     List<PrincipalEntity> principalEntities =
-        externalUsers.stream().map(this::toPrincipalEntity).toList();
+        externalUsers.stream()
+            .filter(
+                externalUser -> principalJpaRepository.findByLogin(externalUser.eppn()).isEmpty())
+            .map(this::toPrincipalEntity)
+            .toList();
 
     List<PrincipalEntity> savedPrincipalEntities =
         principalJpaRepository.saveAll(principalEntities);
 
     log.info(
-        "✔ {} principals created from interoperability external users",
-        savedPrincipalEntities.size());
+        "✔ {} new principals created from interoperability external users ({} already existing)",
+        savedPrincipalEntities.size(),
+        externalUsers.size() - savedPrincipalEntities.size());
 
     return savedPrincipalEntities;
   }

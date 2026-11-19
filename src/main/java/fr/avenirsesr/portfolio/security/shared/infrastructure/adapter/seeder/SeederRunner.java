@@ -30,6 +30,6 @@ public class SeederRunner implements CommandLineRunner {
       return;
     }
 
-    seederOrchestrator.resetAndSeed();
+    seederOrchestrator.seedMissing();
   }
 }
