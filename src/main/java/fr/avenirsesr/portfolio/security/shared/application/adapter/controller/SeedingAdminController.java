@@ -27,14 +27,7 @@ public class SeedingAdminController {
   @PostMapping("/reset")
   public ResponseEntity<String> run(
       @RequestHeader(name = "X-ADMIN-TOKEN", required = false) String token) {
-    if (adminToken == null || adminToken.isBlank()) {
-      log.error("Seeding admin endpoint called but admin.token is not configured");
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-    }
-
-    if (token == null
-        || !MessageDigest.isEqual(
-            adminToken.getBytes(StandardCharsets.UTF_8), token.getBytes(StandardCharsets.UTF_8))) {
+    if (!isAuthorized(token)) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
@@ -49,5 +42,36 @@ public class SeedingAdminController {
           .body("Security seeding failed: " + e.getMessage());
     }
     return ResponseEntity.ok("Security seeding is completed.");
+  }
+
+  @PostMapping("/sync")
+  public ResponseEntity<String> sync(
+      @RequestHeader(name = "X-ADMIN-TOKEN", required = false) String token) {
+    if (!isAuthorized(token)) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    try {
+      log.info("Seeding missing security data via admin endpoint");
+      seederOrchestrator.seedMissing();
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    } catch (Exception e) {
+      log.error("Security missing data seeding failed", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Security seeding failed: " + e.getMessage());
+    }
+    return ResponseEntity.ok("Security missing data seeding is completed.");
+  }
+
+  private boolean isAuthorized(String token) {
+    if (adminToken == null || adminToken.isBlank()) {
+      log.error("Seeding admin endpoint called but admin.token is not configured");
+      return false;
+    }
+
+    return token != null
+        && MessageDigest.isEqual(
+            adminToken.getBytes(StandardCharsets.UTF_8), token.getBytes(StandardCharsets.UTF_8));
   }
 }

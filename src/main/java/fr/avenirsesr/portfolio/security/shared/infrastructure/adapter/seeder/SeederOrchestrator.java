@@ -103,6 +103,18 @@ public class SeederOrchestrator {
     jdbcTemplate.execute(sql);
   }
 
+  public void seedMissing() {
+    if (!lock.tryLock()) {
+      throw new IllegalStateException("Security seeding already running");
+    }
+
+    try {
+      seedAll();
+    } finally {
+      lock.unlock();
+    }
+  }
+
   public void resetAndSeed() {
     if (!lock.tryLock()) {
       throw new IllegalStateException("Security seeding already running");
