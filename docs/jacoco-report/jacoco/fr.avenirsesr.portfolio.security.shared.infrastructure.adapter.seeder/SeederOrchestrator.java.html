@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-<span class="nc" id="L18">@Slf4j</span>
+<span class="fc" id="L18">@Slf4j</span>
 @Service
 @RequiredArgsConstructor
 public class SeederOrchestrator {
@@ -52,31 +52,31 @@ public class SeederOrchestrator {
   @Transactional
   public void seedAll() {
     try {
-<span class="nc" id="L55">      log.info(&quot;Security seeding enabled and starting...&quot;);</span>
+<span class="fc" id="L55">      log.info(&quot;Security seeding enabled and starting...&quot;);</span>
 
-<span class="nc bnc" id="L57" title="All 2 branches missed.">      if (dependenciesCheck) {</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">      if (dependenciesCheck) {</span>
 <span class="nc" id="L58">        dependencyChecker.checkAndWait(&quot;Back-office&quot;, backOfficeHealthUrl);</span>
       }
 
-<span class="nc" id="L61">      rbacCatalogSeeder.seed();</span>
+<span class="fc" id="L61">      rbacCatalogSeeder.seed();</span>
 
-<span class="nc" id="L63">      List&lt;PrincipalEntity&gt; principalsSaved = principalSeeder.seed();</span>
+<span class="fc" id="L63">      List&lt;PrincipalEntity&gt; principalsSaved = principalSeeder.seed();</span>
 
-<span class="nc" id="L65">      rbacAssignmentSeeder.seed();</span>
+<span class="fc" id="L65">      rbacAssignmentSeeder.seed();</span>
 
-<span class="nc" id="L67">      seedingState.markCompleted();</span>
-<span class="nc" id="L68">      log.info(&quot;✔ Security seeding successfully finished&quot;);</span>
-<span class="nc" id="L69">    } catch (Exception e) {</span>
-<span class="nc" id="L70">      seedingState.markFailed(e);</span>
-<span class="nc" id="L71">      log.error(&quot;✘ Security seeding failed&quot;, e);</span>
-<span class="nc" id="L72">      throw e;</span>
-<span class="nc" id="L73">    }</span>
-<span class="nc" id="L74">  }</span>
+<span class="fc" id="L67">      seedingState.markCompleted();</span>
+<span class="fc" id="L68">      log.info(&quot;✔ Security seeding successfully finished&quot;);</span>
+<span class="fc" id="L69">    } catch (Exception e) {</span>
+<span class="fc" id="L70">      seedingState.markFailed(e);</span>
+<span class="fc" id="L71">      log.error(&quot;✘ Security seeding failed&quot;, e);</span>
+<span class="fc" id="L72">      throw e;</span>
+<span class="fc" id="L73">    }</span>
+<span class="fc" id="L74">  }</span>
 
   @Transactional
   public void clearAll() {
-<span class="nc" id="L78">    List&lt;String&gt; tables =</span>
-<span class="nc" id="L79">        jdbcTemplate.queryForList(</span>
+<span class="fc" id="L78">    List&lt;String&gt; tables =</span>
+<span class="fc" id="L79">        jdbcTemplate.queryForList(</span>
             &quot;&quot;&quot;
             SELECT tablename
             FROM pg_tables
@@ -86,9 +86,9 @@ public class SeederOrchestrator {
             String.class,
             schemaName);
 
-<span class="nc bnc" id="L89" title="All 2 branches missed.">    if (tables.isEmpty()) {</span>
-<span class="nc" id="L90">      log.warn(&quot;No tables found in security schema '{}'&quot;, schemaName);</span>
-<span class="nc" id="L91">      return;</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    if (tables.isEmpty()) {</span>
+<span class="fc" id="L90">      log.warn(&quot;No tables found in security schema '{}'&quot;, schemaName);</span>
+<span class="fc" id="L91">      return;</span>
     }
 
 <span class="nc" id="L94">    String joined =</span>
@@ -103,17 +103,29 @@ public class SeederOrchestrator {
 <span class="nc" id="L103">    jdbcTemplate.execute(sql);</span>
 <span class="nc" id="L104">  }</span>
 
-  public void resetAndSeed() {
-<span class="nc bnc" id="L107" title="All 2 branches missed.">    if (!lock.tryLock()) {</span>
-<span class="nc" id="L108">      throw new IllegalStateException(&quot;Security seeding already running&quot;);</span>
+  public void seedMissing() {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">    if (!lock.tryLock()) {</span>
+<span class="fc" id="L108">      throw new IllegalStateException(&quot;Security seeding already running&quot;);</span>
     }
 
     try {
-<span class="nc" id="L112">      clearAll();</span>
-<span class="nc" id="L113">      seedAll();</span>
+<span class="fc" id="L112">      seedAll();</span>
     } finally {
-<span class="nc" id="L115">      lock.unlock();</span>
+<span class="fc" id="L114">      lock.unlock();</span>
     }
-<span class="nc" id="L117">  }</span>
+<span class="fc" id="L116">  }</span>
+
+  public void resetAndSeed() {
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">    if (!lock.tryLock()) {</span>
+<span class="nc" id="L120">      throw new IllegalStateException(&quot;Security seeding already running&quot;);</span>
+    }
+
+    try {
+<span class="fc" id="L124">      clearAll();</span>
+<span class="fc" id="L125">      seedAll();</span>
+    } finally {
+<span class="fc" id="L127">      lock.unlock();</span>
+    }
+<span class="fc" id="L129">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
