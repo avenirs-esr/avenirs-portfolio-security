@@ -140,92 +140,106 @@ import java.util.Set;
 <span class="fc" id="L140">      Set.of(EPermission.PERM_EXTERNAL_SKILL_READ),</span>
 <span class="fc" id="L141">      Set.of()),</span>
 
-<span class="fc" id="L143">  ROLE_CONFIG_VIEWER(</span>
-      &quot;Read-only access to the back-office configuration&quot;,
+<span class="fc" id="L143">  ROLE_NATIONAL_TOOL_MANAGER(</span>
+      &quot;Management of the national tools&quot;,
 <span class="fc" id="L145">      Set.of(),</span>
-<span class="fc" id="L146">      Set.of(</span>
+<span class="fc" id="L146">      Set.of(EPermission.PERM_TOOL_NATIONAL_MANAGEMENT),</span>
+<span class="fc" id="L147">      Set.of()),</span>
+
+<span class="fc" id="L149">  ROLE_LOCAL_TOOL_MANAGER(</span>
+      &quot;Management of the regional and institution tools within the accessible institutions&quot;,
+<span class="fc" id="L151">      Set.of(),</span>
+<span class="fc" id="L152">      Set.of(EPermission.PERM_TOOL_LOCAL_MANAGEMENT),</span>
+<span class="fc" id="L153">      Set.of()),</span>
+
+<span class="fc" id="L155">  ROLE_CONFIG_VIEWER(</span>
+      &quot;Read-only access to the back-office configuration&quot;,
+<span class="fc" id="L157">      Set.of(),</span>
+<span class="fc" id="L158">      Set.of(</span>
           EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
           EPermission.PERM_INSTITUTION_CONFIG_READ,
           EPermission.PERM_TRACE_CONFIG_READ,
           EPermission.PERM_WEBSITE_CONTENT_CONFIG_READ),
-<span class="fc" id="L151">      Set.of()),</span>
-
-<span class="fc" id="L153">  ROLE_CONFIG_MANAGER(</span>
-      &quot;Full management of the back-office configuration and terms of use&quot;,
-<span class="fc" id="L155">      Set.of(),</span>
-<span class="fc" id="L156">      Set.of(),</span>
-<span class="fc" id="L157">      Set.of(EPermissionGroup.BACKOFFICE_CONFIG_MANAGEMENT)),</span>
-
-<span class="fc" id="L159">  ROLE_RBAC_AUDITOR(</span>
-      &quot;Read-only access to RBAC administration data&quot;,
-<span class="fc" id="L161">      Set.of(),</span>
-<span class="fc" id="L162">      Set.of(EPermission.PERM_RBAC_READ),</span>
 <span class="fc" id="L163">      Set.of()),</span>
 
-<span class="fc" id="L165">  ROLE_RBAC_ADMIN(</span>
-      &quot;Full RBAC administration: roles, assignments, scopes and contexts&quot;,
+<span class="fc" id="L165">  ROLE_CONFIG_MANAGER(</span>
+      &quot;Full management of the back-office configuration and terms of use&quot;,
 <span class="fc" id="L167">      Set.of(),</span>
 <span class="fc" id="L168">      Set.of(),</span>
-<span class="fc" id="L169">      Set.of(EPermissionGroup.RBAC_MANAGEMENT)),</span>
+<span class="fc" id="L169">      Set.of(EPermissionGroup.BACKOFFICE_CONFIG_MANAGEMENT)),</span>
 
-<span class="fc" id="L171">  ROLE_ACTIVITY_ADMIN(</span>
-      &quot;Administer any activity of the platform, including definitive deletion&quot;,
-<span class="fc" id="L173">      Set.of(ROLE_ACTIVITY_EDITOR),</span>
-<span class="fc" id="L174">      Set.of(EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT),</span>
+<span class="fc" id="L171">  ROLE_RBAC_AUDITOR(</span>
+      &quot;Read-only access to RBAC administration data&quot;,
+<span class="fc" id="L173">      Set.of(),</span>
+<span class="fc" id="L174">      Set.of(EPermission.PERM_RBAC_READ),</span>
 <span class="fc" id="L175">      Set.of()),</span>
 
-<span class="fc" id="L177">  ROLE_SYSTEM_OPERATOR(</span>
-      &quot;Destructive system operations such as resetting and reseeding the database&quot;,
+<span class="fc" id="L177">  ROLE_RBAC_ADMIN(</span>
+      &quot;Full RBAC administration: roles, assignments, scopes and contexts&quot;,
 <span class="fc" id="L179">      Set.of(),</span>
 <span class="fc" id="L180">      Set.of(),</span>
-<span class="fc" id="L181">      Set.of(EPermissionGroup.SYSTEM_ADMINISTRATION)),</span>
+<span class="fc" id="L181">      Set.of(EPermissionGroup.RBAC_MANAGEMENT)),</span>
+
+<span class="fc" id="L183">  ROLE_ACTIVITY_ADMIN(</span>
+      &quot;Administer any activity of the platform, including definitive deletion&quot;,
+<span class="fc" id="L185">      Set.of(ROLE_ACTIVITY_EDITOR),</span>
+<span class="fc" id="L186">      Set.of(EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT),</span>
+<span class="fc" id="L187">      Set.of()),</span>
+
+<span class="fc" id="L189">  ROLE_SYSTEM_OPERATOR(</span>
+      &quot;Destructive system operations such as resetting and reseeding the database&quot;,
+<span class="fc" id="L191">      Set.of(),</span>
+<span class="fc" id="L192">      Set.of(),</span>
+<span class="fc" id="L193">      Set.of(EPermissionGroup.SYSTEM_ADMINISTRATION)),</span>
 
   // ---- Profiles: compositions of the roles above ----
-<span class="fc" id="L184">  ROLE_STUDENT(</span>
+<span class="fc" id="L196">  ROLE_STUDENT(</span>
       &quot;Student with a personal COFOLIO space for their life project and skills-based approach&quot;,
-<span class="fc" id="L186">      Set.of(</span>
+<span class="fc" id="L198">      Set.of(</span>
           ROLE_USER_BASE,
           ROLE_STUDENT_PORTFOLIO,
           ROLE_STUDENT_ACTIVITY,
           ROLE_STUDENT_FEEDBACK,
           ROLE_STUDENT_EMPLOYMENT_KIT,
           ROLE_STUDENT_REFERENCE_DATA),
-<span class="fc" id="L193">      Set.of(),</span>
-<span class="fc" id="L194">      Set.of()),</span>
+<span class="fc" id="L205">      Set.of(EPermission.PERM_TOOL_READ),</span>
+<span class="fc" id="L206">      Set.of()),</span>
 
-<span class="fc" id="L196">  ROLE_STAFF(</span>
+<span class="fc" id="L208">  ROLE_STAFF(</span>
       &quot;Staff member providing educational guidance and handling feedback&quot;,
-<span class="fc" id="L198">      Set.of(</span>
+<span class="fc" id="L210">      Set.of(</span>
           ROLE_USER_BASE,
           ROLE_STAFF_TRACE_REVIEWER,
           ROLE_STAFF_ACTIVITY_VIEWER,
           ROLE_STAFF_ACTIVITY_AUTHOR,
           ROLE_STAFF_FEEDBACK_RESPONDER,
           ROLE_STAFF_FEEDBACK_SUPERVISOR),
-<span class="fc" id="L205">      Set.of(),</span>
-<span class="fc" id="L206">      Set.of()),</span>
+<span class="fc" id="L217">      Set.of(),</span>
+<span class="fc" id="L218">      Set.of()),</span>
 
-<span class="fc" id="L208">  ROLE_ADMIN(</span>
+<span class="fc" id="L220">  ROLE_ADMIN(</span>
       &quot;Administrator of an institution, in charge of its secondary institutions, its groups, its&quot;
-          + &quot; external users and its external skills&quot;,
-<span class="fc" id="L211">      Set.of(</span>
+          + &quot; external users, its external skills and its tools&quot;,
+<span class="fc" id="L223">      Set.of(</span>
           ROLE_ESTABLISHMENT_MANAGER,
           ROLE_GROUP_MANAGER,
           ROLE_EXTERNAL_USER_MANAGER,
-          ROLE_EXTERNAL_SKILL_MANAGER),
-<span class="fc" id="L216">      Set.of(),</span>
-<span class="fc" id="L217">      Set.of()),</span>
+          ROLE_EXTERNAL_SKILL_MANAGER,
+          ROLE_LOCAL_TOOL_MANAGER),
+<span class="fc" id="L229">      Set.of(),</span>
+<span class="fc" id="L230">      Set.of()),</span>
 
-<span class="fc" id="L219">  ROLE_SUPER_ADMIN(</span>
+<span class="fc" id="L232">  ROLE_SUPER_ADMIN(</span>
       &quot;Global administrator of the COFOLIO platform&quot;,
-<span class="fc" id="L221">      Set.of(</span>
+<span class="fc" id="L234">      Set.of(</span>
           ROLE_ADMIN,
           ROLE_ACTIVITY_ADMIN,
           ROLE_RBAC_ADMIN,
           ROLE_CONFIG_MANAGER,
-          ROLE_SYSTEM_OPERATOR),
-<span class="fc" id="L227">      Set.of(),</span>
-<span class="fc" id="L228">      Set.of());</span>
+          ROLE_SYSTEM_OPERATOR,
+          ROLE_NATIONAL_TOOL_MANAGER),
+<span class="fc" id="L241">      Set.of(),</span>
+<span class="fc" id="L242">      Set.of());</span>
 
   private final String description;
   private final Set&lt;ERole&gt; includedRoles;
@@ -237,67 +251,67 @@ import java.util.Set;
       String description,
       Set&lt;ERole&gt; includedRoles,
       Set&lt;EPermission&gt; directPermissions,
-<span class="fc" id="L240">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
-<span class="fc" id="L241">    this.description = description;</span>
-<span class="fc" id="L242">    this.includedRoles = Set.copyOf(includedRoles);</span>
-<span class="fc" id="L243">    this.directPermissions = Set.copyOf(directPermissions);</span>
-<span class="fc" id="L244">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
-<span class="fc" id="L245">    this.permissions = flatten(this.includedRoles, this.directPermissions, this.permissionGroups);</span>
-<span class="fc" id="L246">  }</span>
+<span class="fc" id="L254">      Set&lt;EPermissionGroup&gt; permissionGroups) {</span>
+<span class="fc" id="L255">    this.description = description;</span>
+<span class="fc" id="L256">    this.includedRoles = Set.copyOf(includedRoles);</span>
+<span class="fc" id="L257">    this.directPermissions = Set.copyOf(directPermissions);</span>
+<span class="fc" id="L258">    this.permissionGroups = Set.copyOf(permissionGroups);</span>
+<span class="fc" id="L259">    this.permissions = flatten(this.includedRoles, this.directPermissions, this.permissionGroups);</span>
+<span class="fc" id="L260">  }</span>
 
   public String description() {
-<span class="fc" id="L249">    return description;</span>
+<span class="fc" id="L263">    return description;</span>
   }
 
   public Set&lt;EPermission&gt; permissions() {
-<span class="fc" id="L253">    return permissions;</span>
+<span class="fc" id="L267">    return permissions;</span>
   }
 
   public Set&lt;ERole&gt; includedRoles() {
-<span class="fc" id="L257">    return includedRoles;</span>
+<span class="fc" id="L271">    return includedRoles;</span>
   }
 
   public Set&lt;EPermission&gt; directPermissions() {
-<span class="fc" id="L261">    return directPermissions;</span>
+<span class="fc" id="L275">    return directPermissions;</span>
   }
 
   public Set&lt;EPermissionGroup&gt; permissionGroups() {
-<span class="fc" id="L265">    return permissionGroups;</span>
+<span class="fc" id="L279">    return permissionGroups;</span>
   }
 
   private static Set&lt;EPermission&gt; flatten(
       Set&lt;ERole&gt; includedRoles,
       Set&lt;EPermission&gt; directPermissions,
       Set&lt;EPermissionGroup&gt; permissionGroups) {
-<span class="fc" id="L272">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
+<span class="fc" id="L286">    Set&lt;EPermission&gt; flattened = new HashSet&lt;&gt;(directPermissions);</span>
 
-<span class="fc bfc" id="L274" title="All 2 branches covered.">    for (ERole included : includedRoles) {</span>
-<span class="fc bfc" id="L275" title="All 2 branches covered.">      for (EPermission permission : included.permissions()) {</span>
-<span class="pc bpc" id="L276" title="1 of 2 branches missed.">        if (!flattened.add(permission)) {</span>
-<span class="nc" id="L277">          throw new IllegalStateException(</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">    for (ERole included : includedRoles) {</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">      for (EPermission permission : included.permissions()) {</span>
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">        if (!flattened.add(permission)) {</span>
+<span class="nc" id="L291">          throw new IllegalStateException(</span>
               &quot;Permission &quot;
                   + permission
                   + &quot; is declared twice, including via role &quot;
                   + included
                   + &quot;; remove the redundant declaration.&quot;);
         }
-<span class="fc" id="L284">      }</span>
-<span class="fc" id="L285">    }</span>
+<span class="fc" id="L298">      }</span>
+<span class="fc" id="L299">    }</span>
 
-<span class="fc bfc" id="L287" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
-<span class="fc bfc" id="L288" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
-<span class="fc bfc" id="L289" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
-<span class="fc" id="L290">          throw new IllegalStateException(</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">    for (EPermissionGroup group : permissionGroups) {</span>
+<span class="fc bfc" id="L302" title="All 2 branches covered.">      for (EPermission permission : group.permissions()) {</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">        if (!flattened.add(permission)) {</span>
+<span class="fc" id="L304">          throw new IllegalStateException(</span>
               &quot;Permission &quot;
                   + permission
                   + &quot; is declared both directly and via group &quot;
                   + group
                   + &quot;; remove the redundant declaration.&quot;);
         }
-<span class="fc" id="L297">      }</span>
-<span class="fc" id="L298">    }</span>
+<span class="fc" id="L311">      }</span>
+<span class="fc" id="L312">    }</span>
 
-<span class="fc" id="L300">    return Set.copyOf(flattened);</span>
+<span class="fc" id="L314">    return Set.copyOf(flattened);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
