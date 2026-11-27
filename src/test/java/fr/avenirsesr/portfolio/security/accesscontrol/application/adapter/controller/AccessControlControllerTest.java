@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantRequestDTO;
 import fr.avenirsesr.portfolio.security.accesscontrol.application.adapter.dto.AccessControlGrantResponseDTO;
@@ -29,7 +30,7 @@ import org.springframework.http.ResponseEntity;
 @ExtendWith(MockitoExtension.class)
 class AccessControlControllerTest {
 
-  private static final UUID ROLE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+  private static final String ROLE_NAME = "ROLE_RBAC_ADMIN";
   private static final UUID RESOURCE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
   private static final UUID STRUCTURE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
   private static final UUID ASSIGNMENT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
@@ -228,7 +229,7 @@ class AccessControlControllerTest {
   private AccessControlGrantRequestDTO grantRequest() {
     return new AccessControlGrantRequestDTO()
         .setLogin(LOGIN)
-        .setRoleId(ROLE_ID)
+        .setRole(ERole.valueOf(ROLE_NAME))
         .setResourceIds(List.of(RESOURCE_ID))
         .setValidityStart("2024-10-01")
         .setValidityEnd("2024-12-31")

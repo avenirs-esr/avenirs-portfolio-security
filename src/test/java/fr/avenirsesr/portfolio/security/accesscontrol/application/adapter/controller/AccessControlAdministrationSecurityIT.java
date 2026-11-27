@@ -47,6 +47,7 @@ class AccessControlAdministrationSecurityIT {
 
   private static final UUID GRANTABLE_ROLE_ID =
       UUID.fromString("00000000-0000-0000-0000-000000000001");
+  private static final String ROLE_NAME = "ROLE_SUPER_ADMIN";
   private static final String GRANTEE_LOGIN = "dugat";
   private static final UUID REVOCABLE_ASSIGNMENT_ID =
       UUID.fromString("00000000-0000-0000-0000-0000000000f6");
@@ -296,10 +297,10 @@ class AccessControlAdministrationSecurityIT {
     return """
     {
       "login": "%s",
-      "roleId": "%s"
+      "role": "%s"
     }
     """
-        .formatted(GRANTEE_LOGIN, GRANTABLE_ROLE_ID);
+        .formatted(GRANTEE_LOGIN, ROLE_NAME);
   }
 
   private String revokeRequestBody(UUID assignmentId) {

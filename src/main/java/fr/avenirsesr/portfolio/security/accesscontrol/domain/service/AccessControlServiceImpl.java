@@ -44,8 +44,8 @@ public class AccessControlServiceImpl implements AccessControlService {
 
     RBACRole role =
         roleRepository
-            .findById(command.roleId())
-            .orElseThrow(() -> AccessControlNotFoundException.role(command.roleId()));
+            .findByName(command.role().name())
+            .orElseThrow(() -> AccessControlNotFoundException.role(command.role().name()));
 
     Principal principal =
         principalRepository
