@@ -273,7 +273,10 @@ class EPermissionTest {
                     EPermission.PERM_EXTERNAL_USER_AFFILIATION_IMPORT,
                     "external-user-affiliation:import"),
                 Map.entry(EPermission.PERM_SEEDER_RESET, "seeder:reset"),
-                Map.entry(EPermission.PERM_KIT_DOWNLOAD_MEDIA_OWN, "kit:download-media:own"));
+                Map.entry(EPermission.PERM_KIT_DOWNLOAD_MEDIA_OWN, "kit:download-media:own"),
+                Map.entry(EPermission.PERM_TOOL_NATIONAL_MANAGEMENT, "tool:national:management"),
+                Map.entry(EPermission.PERM_TOOL_LOCAL_MANAGEMENT, "tool:local:management"),
+                Map.entry(EPermission.PERM_TOOL_READ, "tool:read"));
 
         assertThat(expected).containsOnlyKeys(EPermission.values());
 

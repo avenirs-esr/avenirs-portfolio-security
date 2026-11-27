@@ -119,7 +119,8 @@ class ERoleTest {
                 EPermission.PERM_FEEDBACK_REQUEST_CREATE_OWN,
                 EPermission.PERM_FEEDBACK_RECEIVED_READ_OWN,
                 EPermission.PERM_ADDITIONAL_SKILL_CONFIG_READ,
-                EPermission.PERM_TRACE_CONFIG_READ);
+                EPermission.PERM_TRACE_CONFIG_READ,
+                EPermission.PERM_TOOL_READ);
       }
     }
 
@@ -209,7 +210,9 @@ class ERoleTest {
                 EPermission.PERM_EXTERNAL_USER_AFFILIATION_IMPORT,
                 EPermission.PERM_EXTERNAL_SKILL_READ,
                 EPermission.PERM_SEEDER_RESET,
-                EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT);
+                EPermission.PERM_ACTIVITY_ADMIN_MANAGEMENT,
+                EPermission.PERM_TOOL_LOCAL_MANAGEMENT,
+                EPermission.PERM_TOOL_NATIONAL_MANAGEMENT);
       }
     }
 
@@ -254,7 +257,8 @@ class ERoleTest {
                 ERole.ROLE_ESTABLISHMENT_MANAGER,
                 ERole.ROLE_GROUP_MANAGER,
                 ERole.ROLE_EXTERNAL_USER_MANAGER,
-                ERole.ROLE_EXTERNAL_SKILL_MANAGER);
+                ERole.ROLE_EXTERNAL_SKILL_MANAGER,
+                ERole.ROLE_LOCAL_TOOL_MANAGER);
       }
     }
 

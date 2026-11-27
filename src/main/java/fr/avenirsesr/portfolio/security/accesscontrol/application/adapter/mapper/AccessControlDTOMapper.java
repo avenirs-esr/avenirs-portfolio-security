@@ -16,7 +16,7 @@ public final class AccessControlDTOMapper {
   public static AccessControlGrantCommand toCommand(AccessControlGrantRequestDTO dto) {
     return new AccessControlGrantCommand(
         dto.getLogin(),
-        dto.getRoleId(),
+        dto.getRole(),
         dto.getResourceIds(),
         dto.getValidityStart(),
         dto.getValidityEnd(),

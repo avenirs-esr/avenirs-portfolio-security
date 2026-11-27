@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.security.accesscontrol.domain.exception.AccessControlInvalidDateException;
@@ -37,6 +38,7 @@ class AccessControlServiceImplTest {
   private static final UUID PRINCIPAL_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
   private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000101");
   private static final UUID ROLE_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+  private static final String ROLE_NAME = "ROLE_RBAC_ADMIN";
   private static final UUID RESOURCE_ID = UUID.fromString("00000000-0000-0000-0000-000000000003");
   private static final UUID RESOURCE_ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000004");
   private static final UUID STRUCTURE_ID = UUID.fromString("00000000-0000-0000-0000-000000000005");
@@ -102,7 +104,7 @@ class AccessControlServiceImplTest {
             "PERM_WRITE",
             "Write permission");
 
-    role = new RBACRole(ROLE_ID, "ROLE_OWNER", "Owner", Set.of(readPermission, writePermission));
+    role = new RBACRole(ROLE_ID, ROLE_NAME, "Owner", Set.of(readPermission, writePermission));
 
     RBACResourceType resourceType =
         new RBACResourceType(
@@ -204,9 +206,10 @@ class AccessControlServiceImplTest {
           BddLogger.and("dates are blank");
 
           AccessControlGrantCommand command =
-              new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "", "   ", null);
+              new AccessControlGrantCommand(
+                  LOGIN, ERole.valueOf(role.name()), null, "", "   ", null);
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
           when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
           when(assignmentRepository.save(any(RBACAssignment.class)))
               .thenAnswer(this::savedAssignment);
@@ -251,7 +254,7 @@ class AccessControlServiceImplTest {
 
           command = grantCommand(List.of(RESOURCE_ID), "2024-10-01", "2024-12-31", null);
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.empty());
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.empty());
         }
 
         @Test
@@ -260,7 +263,7 @@ class AccessControlServiceImplTest {
 
           assertThatThrownBy(() -> service.grantAccess(command))
               .isInstanceOf(AccessControlNotFoundException.class)
-              .hasMessage("Role not found, ID: " + ROLE_ID);
+              .hasMessage("Role not found, name: " + ROLE_NAME);
 
           verifyNoInteractions(
               principalRepository, resourceRepository, structureRepository, assignmentRepository);
@@ -277,7 +280,7 @@ class AccessControlServiceImplTest {
 
           command = grantCommand(List.of(RESOURCE_ID), "2024-10-01", "2024-12-31", null);
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
           when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
         }
 
@@ -307,7 +310,7 @@ class AccessControlServiceImplTest {
               grantCommand(
                   List.of(RESOURCE_ID, missingResourceId), "2024-10-01", "2024-12-31", null);
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
           when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
           when(resourceRepository.findAllByIds(List.of(RESOURCE_ID, missingResourceId)))
               .thenReturn(List.of(resource));
@@ -342,7 +345,7 @@ class AccessControlServiceImplTest {
                   "2024-12-31",
                   List.of(STRUCTURE_ID, missingStructureId));
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
           when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
           when(resourceRepository.findAllByIds(List.of(RESOURCE_ID))).thenReturn(List.of(resource));
           when(structureRepository.findAllByIds(List.of(STRUCTURE_ID, missingStructureId)))
@@ -370,9 +373,10 @@ class AccessControlServiceImplTest {
           BddLogger.and("validity start format is invalid");
 
           command =
-              new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "01/10/2024", "2024-12-31", null);
+              new AccessControlGrantCommand(
+                  LOGIN, ERole.valueOf(role.name()), null, "01/10/2024", "2024-12-31", null);
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
           when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
         }
 
@@ -397,9 +401,10 @@ class AccessControlServiceImplTest {
           BddLogger.and("validity end format is invalid");
 
           command =
-              new AccessControlGrantCommand(LOGIN, ROLE_ID, null, "2024-10-01", "31/12/2024", null);
+              new AccessControlGrantCommand(
+                  LOGIN, ERole.valueOf(role.name()), null, "2024-10-01", "31/12/2024", null);
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
           when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
         }
 
@@ -614,11 +619,11 @@ class AccessControlServiceImplTest {
   private AccessControlGrantCommand grantCommand(
       List<UUID> resourceIds, String validityStart, String validityEnd, List<UUID> structureIds) {
     return new AccessControlGrantCommand(
-        LOGIN, ROLE_ID, resourceIds, validityStart, validityEnd, structureIds);
+        LOGIN, ERole.valueOf(role.name()), resourceIds, validityStart, validityEnd, structureIds);
   }
 
   private void mockValidGrantDependencies() {
-    when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+    when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
     when(principalRepository.findByLogin(LOGIN)).thenReturn(Optional.of(principal));
     when(resourceRepository.findAllByIds(List.of(RESOURCE_ID, RESOURCE_ID_2)))
         .thenReturn(List.of(resource, resource2));

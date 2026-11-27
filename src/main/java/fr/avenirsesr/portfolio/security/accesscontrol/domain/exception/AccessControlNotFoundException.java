@@ -9,8 +9,8 @@ public class AccessControlNotFoundException extends RuntimeException {
     super(message);
   }
 
-  public static AccessControlNotFoundException role(UUID roleId) {
-    return new AccessControlNotFoundException("Role not found, ID: %s".formatted(roleId));
+  public static AccessControlNotFoundException role(String name) {
+    return new AccessControlNotFoundException("Role not found, name: %s".formatted(name));
   }
 
   public static AccessControlNotFoundException principal(String login) {

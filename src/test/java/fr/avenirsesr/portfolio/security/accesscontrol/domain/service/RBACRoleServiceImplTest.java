@@ -30,7 +30,7 @@ class RBACRoleServiceImplTest {
   private static final UUID UNKNOWN_ROLE_ID =
       UUID.fromString("00000000-0000-0000-0000-000000000999");
 
-  private static final String ROLE_NAME = "ROLE_OWNER";
+  private static final String ROLE_NAME = "ROLE_RBAC_ADMIN";
   private static final String UNKNOWN_ROLE_NAME = "ROLE_UNKNOWN";
   private static final String LOGIN = "deman";
 
@@ -283,7 +283,7 @@ class RBACRoleServiceImplTest {
 
           role = role();
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.of(role));
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.of(role));
           when(roleRepository.save(role)).thenReturn(role);
 
           result = service.updateRole(role);
@@ -295,7 +295,7 @@ class RBACRoleServiceImplTest {
 
           assertEquals(role, result);
 
-          verify(roleRepository).findById(ROLE_ID);
+          verify(roleRepository).findByName(ROLE_NAME);
           verify(roleRepository).save(role);
           verifyNoMoreInteractions(roleRepository, assignmentRepository);
         }
@@ -312,7 +312,7 @@ class RBACRoleServiceImplTest {
 
           role = role();
 
-          when(roleRepository.findById(ROLE_ID)).thenReturn(Optional.empty());
+          when(roleRepository.findByName(ROLE_NAME)).thenReturn(Optional.empty());
 
           exception =
               assertThrows(AccessControlNotFoundException.class, () -> service.updateRole(role));
@@ -322,10 +322,9 @@ class RBACRoleServiceImplTest {
         void thenItShouldThrowNotFoundException() {
           BddLogger.then("it should throw a not found exception");
 
-          assertEquals(
-              "Role not found, ID: 00000000-0000-0000-0000-000000000001", exception.getMessage());
+          assertEquals("Role not found, name: ROLE_RBAC_ADMIN", exception.getMessage());
 
-          verify(roleRepository).findById(ROLE_ID);
+          verify(roleRepository).findByName(ROLE_NAME);
           verifyNoMoreInteractions(roleRepository, assignmentRepository);
         }
       }

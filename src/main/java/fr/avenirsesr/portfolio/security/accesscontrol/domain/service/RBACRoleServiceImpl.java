@@ -48,8 +48,8 @@ public class RBACRoleServiceImpl implements RBACRoleService {
     log.trace("updateRole, role: {}", role);
 
     roleRepository
-        .findById(role.id())
-        .orElseThrow(() -> AccessControlNotFoundException.role(role.id()));
+        .findByName(role.name())
+        .orElseThrow(() -> AccessControlNotFoundException.role(role.name()));
 
     return roleRepository.save(role);
   }
